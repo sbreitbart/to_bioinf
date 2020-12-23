@@ -1,0 +1,138 @@
+---
+title: "Chapter 3"
+author: "Sophie Breitbart"
+date: "12/22/2020"
+output: html_document
+---
+
+# Set up notebook
+## Load packages
+```{r}
+library(ggmap)
+library(ggsn)
+library(here)
+```
+
+# Methods
+## Sampling site map
+```{r}
+sites <- read.csv(here("./raw_data/102_Sites_updatedASlatlongs.csv"), sep = ",", header = TRUE)
+
+sites$Urb_Rur <- factor(sites$Urb_Rur , levels = c("Urban", "Rural"))
+
+# Number of rural vs urban sites
+sum(sites$Urb_Rur == "Urban") # 54 sites
+sum(sites$Urb_Rur == "Rural") # 48 sites
+
+
+##### MAIN MAP #####
+mylocation <- c(-80.5, 43.2, -78.5, 44.2)
+base_map <- ggmap(get_map(location = mylocation, maptype = 'terrain', source = 'stamen'))
+
+ map1 <- base_map +
+  geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
+  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
+scale_shape_manual(name = "Site Classification",
+                     values = c(24,21)) +
+  scale_fill_manual(name = "Site Classification",
+                    values = c('red', 'cyan')) +
+  scalebar(x.min = -80.5, x.max = -78.6,
+            y.min = 43.25, y.max = 44.2,
+            dist = 20, dist_unit = "km",
+            st.bottom = FALSE, st.color = "black",
+            transform = TRUE, model = 'WGS84',
+           st.dist=.04) +
+  theme(legend.position = c(0.85, 0.25),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)
+        ) 
+north2(map1, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+# Watercolor background (trying to show rivers)
+base_map2 <- ggmap(get_stamenmap(location = c(-80.5, 43.2, -78.5, 44.2), maptype = 'watercolor', source = 'stamen'))
+
+watercolor1 <- get_stamenmap( bbox = c(-80.5, 43.2, -78.5, 44.2), zoom = 11, maptype = "watercolor")
+
+map3 <- ggmap(watercolor1) +
+  geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
+  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") + scale_shape_manual(name = "Site Classification",
+                     values = c(24,21)) +
+  scale_fill_manual(name = "Site Classification",
+                    values = c('red', 'cyan')) +
+  scalebar(x.min = -80.5, x.max = -78.6,
+            y.min = 43.25, y.max = 44.2,
+            dist = 20, dist_unit = "km",
+            st.bottom = FALSE, st.color = "black",
+            transform = TRUE, model = 'WGS84',
+           st.dist=.04) +
+  theme(legend.position = c(0.85, 0.25),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6))
+
+north2(map3, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+#  map2 <- base_map2 +
+#   geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
+#   labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
+# scale_shape_manual(name = "Site Classification",
+#                      values = c(24,21)) +
+#   scale_fill_manual(name = "Site Classification",
+#                     values = c('red', 'cyan')) +
+#   scalebar(x.min = -80.5, x.max = -78.6,
+#             y.min = 43.25, y.max = 44.2,
+#             dist = 20, dist_unit = "km",
+#             st.bottom = FALSE, st.color = "black",
+#             transform = TRUE, model = 'WGS84',
+#            st.dist=.04) +
+#   theme(legend.position = c(0.85, 0.25),
+#         legend.background = element_rect(fill = "white",colour = "black"),
+#         legend.box.margin = margin(6, 6, 6, 6)
+#         ) 
+# north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+```
+
+## INCORRECT original classifications as urban and rural
+```{r}
+sites$Incorrect_outdated_Urb_Rur <- factor(sites$Incorrect_outdated_Urb_Rur , levels = c("Urban", "Rural"))
+
+
+ map2 <- base_map +
+  geom_point(data = sites, mapping = aes(x = long, y = lat, fill = Incorrect_outdated_Urb_Rur, shape = Incorrect_outdated_Urb_Rur), size=3) + 
+  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
+  scale_shape_manual(name = "Site Classification",
+                     values = c(21,24)) +
+  scale_fill_manual(name = "Site Classification",
+                    values = c('red', 'cyan')) +
+  scalebar(x.min = -80.5, x.max = -78.6,
+            y.min = 43.25, y.max = 44.2,
+            dist = 20, dist_unit = "km",
+            st.bottom = FALSE, st.color = "black",
+            transform = TRUE, model = 'WGS84',
+           st.dist=.04) +
+  theme(legend.position = c(0.85, 0.25),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)
+        ) 
+ 
+north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+
+```
+
+
+## Adding river valley markers
+```{r}
+# first need to find out which sites are characterized as being near a river valley...
+# need the greenbelt planning map
+# then have to put coordinates in those cells and assign them
+
+
+map3 <- map1 + 
+
+north2(map3, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+```
