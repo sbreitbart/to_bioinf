@@ -2,7 +2,7 @@
 title: "chinchilla"
 author: "Sophie Breitbart"
 date: "December 23, 2020"
-output: html_document
+output: github_document
 ---
 
 
