@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="UTF-8"?><MD_Metadata xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xalan="http://xml.apache.org/xalan" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns="http://www.isotc211.org/2005/gmd">
+    <fileIdentifier>
+        <gco:CharacterString>7dbefc2c1b714964ba833467aa10d7aa</gco:CharacterString>
+    </fileIdentifier>
+    <language>
+        <LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng" codeSpace="ISO639-2">eng</LanguageCode>
+    </language>
+    <characterSet>
+        <MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8" codeSpace="ISOTC211/19115">utf8</MD_CharacterSetCode>
+    </characterSet>
+    <hierarchyLevel>
+        <MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" codeSpace="ISOTC211/19115">dataset</MD_ScopeCode>
+    </hierarchyLevel>
+    <contact>
+        <CI_ResponsibleParty>
+            <individualName>
+                <gco:CharacterString>Paul McKenzie</gco:CharacterString>
+            </individualName>
+            <organisationName>
+                <gco:CharacterString>Ministry of Municipal Affairs and Housing</gco:CharacterString>
+            </organisationName>
+            <positionName>
+                <gco:CharacterString>Geomatics Technician</gco:CharacterString>
+            </positionName>
+            <contactInfo>
+                <CI_Contact>
+                    <phone>
+                        <CI_Telephone>
+                            <voice>
+                                <gco:CharacterString>1 (416) 585-7256</gco:CharacterString>
+                            </voice>
+                        </CI_Telephone>
+                    </phone>
+                    <address>
+                        <CI_Address>
+                            <electronicMailAddress>
+                                <gco:CharacterString>Paul.McKenzie@Ontario.ca</gco:CharacterString>
+                            </electronicMailAddress>
+                        </CI_Address>
+                    </address>
+                </CI_Contact>
+            </contactInfo>
+            <role>
+                <CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact" codeSpace="ISOTC211/19115">pointOfContact</CI_RoleCode>
+            </role>
+        </CI_ResponsibleParty>
+    </contact>
+    <dateStamp>
+        <gco:Date>2021-08-06</gco:Date>
+    </dateStamp>
+    <metadataStandardName>
+        <gco:CharacterString>NAP - Metadata</gco:CharacterString>
+    </metadataStandardName>
+    <metadataStandardVersion>
+        <gco:CharacterString>1.2</gco:CharacterString>
+    </metadataStandardVersion>
+    <referenceSystemInfo>
+        <MD_ReferenceSystem>
+            <referenceSystemIdentifier>
+                <RS_Identifier>
+                    <code>
+                        <gco:CharacterString>Grid CS = Geographic (Lat, Long); Map Proj = Not Applicable; Horiz. Datum = NAD83; Vert. Datum = Not Applicable</gco:CharacterString>
+                    </code>
+                </RS_Identifier>
+            </referenceSystemIdentifier>
+        </MD_ReferenceSystem>
+    </referenceSystemInfo>
+    <identificationInfo>
+        <MD_DataIdentification>
+            <citation>
+                <CI_Citation>
+                    <title>
+                        <gco:CharacterString>Greenbelt Designation</gco:CharacterString>
+                    </title>
+                    <alternateTitle>
+                        <gco:CharacterString>GBDESIGN</gco:CharacterString>
+                    </alternateTitle>
+                    <date>
+                        <CI_Date>
+                            <date>
+                                <gco:Date>2017-05-18</gco:Date>
+                            </date>
+                            <dateType>
+                                <CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision" codeSpace="ISOTC211/19115">revision</CI_DateTypeCode>
+                            </dateType>
+                        </CI_Date>
+                    </date>
+                    <identifier>
+                        <MD_Identifier>
+                            <authority>
+                                <CI_Citation>
+                                    <title>
+                                        <gco:CharacterString>LIO Metadata Management Tool UUID</gco:CharacterString>
+                                    </title>
+                                    <date>
+                                        <CI_Date>
+                                            <date>
+                                                <gco:DateTime>2019-04-11T14:56:49.893164</gco:DateTime>
+                                            </date>
+                                            <dateType>
+                                                <CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" codeSpace="ISOTC211/19115">publication</CI_DateTypeCode>
+                                            </dateType>
+                                        </CI_Date>
+                                    </date>
+                                    <citedResponsibleParty gco:nilReason="missing"/>
+                                </CI_Citation>
+                            </authority>
+                            <code>
+                                <gco:CharacterString>2cb5ce0f-4337-49e3-90a1-d8b4986c67a5</gco:CharacterString>
+                            </code>
+                        </MD_Identifier>
+                    </identifier>
+                    <identifier>
+                        <MD_Identifier>
+                            <authority>
+                                <CI_Citation>
+                                    <title>
+                                        <gco:CharacterString>LIO Concrete Class Short Name</gco:CharacterString>
+                                    </title>
+                                    <date>
+                                        <CI_Date>
+                                            <date>
+                                                <gco:DateTime>2019-04-11T14:56:49.901160</gco:DateTime>
+                                            </date>
+                                            <dateType>
+                                                <CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" codeSpace="ISOTC211/19115">publication</CI_DateTypeCode>
+                                            </dateType>
+                                        </CI_Date>
+                                    </date>
+                                    <citedResponsibleParty gco:nilReason="missing"/>
+                                </CI_Citation>
+                            </authority>
+                            <code>
+                                <gco:CharacterString>GBDESIGN</gco:CharacterString>
+                            </code>
+                        </MD_Identifier>
+                    </identifier>
+                    <identifier>
+                        <MD_Identifier>
+                            <authority>
+                                <CI_Citation>
+                                    <title>
+                                        <gco:CharacterString>Ontario GeoHub French Record ID</gco:CharacterString>
+                                    </title>
+                                    <date>
+                                        <CI_Date>
+                                            <date>
+                                                <gco:DateTime>2021-06-30T11:29:43.063249</gco:DateTime>
+                                            </date>
+                                            <dateType>
+                                                <CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication" codeSpace="ISOTC211/19115">publication</CI_DateTypeCode>
+                                            </dateType>
+                                        </CI_Date>
+                                    </date>
+                                    <citedResponsibleParty gco:nilReason="missing"/>
+                                </CI_Citation>
+                            </authority>
+                            <code>
+                                <gco:CharacterString>d34284c8ea784c38a1bf87cf87bd0cb5_15</gco:CharacterString>
+                            </code>
+                        </MD_Identifier>
+                    </identifier>
+                    <citedResponsibleParty>
+                        <CI_ResponsibleParty>
+                            <organisationName>
+                                <gco:CharacterString>Ontario Ministry of Municipal Affairs and Housing</gco:CharacterString>
+                            </organisationName>
+                            <contactInfo gco:nilReason="missing"/>
+                            <role>
+                                <CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="publisher" codeSpace="ISOTC211/19115">publisher</CI_RoleCode>
+                            </role>
+                        </CI_ResponsibleParty>
+                    </citedResponsibleParty>
+                </CI_Citation>
+            </citation>
+            <abstract>
+                <gco:CharacterString>There are currently four designations:
+
+Niagara Escarpment Plan
+Oak Ridges Moraine Conservation Plan
+Protected Countryside
+Urban River Valley.
+ Additional Documentation Greenbelt Designation - Data Description (PDF)Greenbelt Designation - Documentation (Word)  Status  Completed: production of the data has been completed     Maintenance and Update Frequency  As needed: data is updated as deemed necessary     Contact  Paul McKenzie, Paul.McKenzie@ontario.ca  </gco:CharacterString>
+            </abstract>
+            <purpose>
+                <gco:CharacterString>This layer was built to show the component parts of the Greenbelt Area as set out in Ontario Regulation 59/05, as amended.</gco:CharacterString>
+            </purpose>
+            <credit>
+                <gco:CharacterString>Ontario Ministry of Municipal Affairs and Housing © Queen’s Printer for Ontario, 2021</gco:CharacterString>
+            </credit>
+            <status>
+                <MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="ISOTC211/19115">completed</MD_ProgressCode>
+            </status>
+            <pointOfContact>
+                <CI_ResponsibleParty>
+                    <individualName>
+                        <gco:CharacterString>Paul McKenzie</gco:CharacterString>
+                    </individualName>
+                    <organisationName>
+                        <gco:CharacterString>Ministry of Municipal Affairs and Housing</gco:CharacterString>
+                    </organisationName>
+                    <positionName>
+                        <gco:CharacterString>Geomatics Technician</gco:CharacterString>
+                    </positionName>
+                    <contactInfo>
+                        <CI_Contact>
+                            <phone>
+                                <CI_Telephone>
+                                    <voice>
+                                        <gco:CharacterString>1 (416) 585-7256</gco:CharacterString>
+                                    </voice>
+                                </CI_Telephone>
+                            </phone>
+                            <address>
+                                <CI_Address>
+                                    <electronicMailAddress>
+                                        <gco:CharacterString>Paul.McKenzie@Ontario.ca</gco:CharacterString>
+                                    </electronicMailAddress>
+                                </CI_Address>
+                            </address>
+                        </CI_Contact>
+                    </contactInfo>
+                    <role>
+                        <CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="custodian" codeSpace="ISOTC211/19115">custodian</CI_RoleCode>
+                    </role>
+                </CI_ResponsibleParty>
+            </pointOfContact>
+            <pointOfContact>
+                <CI_ResponsibleParty>
+                    <individualName>
+                        <gco:CharacterString>John Taylor</gco:CharacterString>
+                    </individualName>
+                    <organisationName>
+                        <gco:CharacterString>Ministry of Municipal Affairs and Housing</gco:CharacterString>
+                    </organisationName>
+                    <positionName>
+                        <gco:CharacterString>Senior Planner</gco:CharacterString>
+                    </positionName>
+                    <contactInfo>
+                        <CI_Contact>
+                            <address>
+                                <CI_Address>
+                                    <electronicMailAddress>
+                                        <gco:CharacterString>John.M.Taylor@Ontario.ca</gco:CharacterString>
+                                    </electronicMailAddress>
+                                </CI_Address>
+                            </address>
+                        </CI_Contact>
+                    </contactInfo>
+                    <role>
+                        <CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact" codeSpace="ISOTC211/19115">pointOfContact</CI_RoleCode>
+                    </role>
+                </CI_ResponsibleParty>
+            </pointOfContact>
+            <resourceMaintenance>
+                <MD_MaintenanceInformation>
+                    <maintenanceAndUpdateFrequency>
+                        <MD_MaintenanceFrequencyCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_MaintenanceFrequencyCode" codeListValue="asNeeded" codeSpace="ISOTC211/19115">asNeeded</MD_MaintenanceFrequencyCode>
+                    </maintenanceAndUpdateFrequency>
+                </MD_MaintenanceInformation>
+            </resourceMaintenance>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <descriptiveKeywords>
+                <MD_Keywords>
+                    <keyword>
+                        <gco:CharacterString>ENVIRONMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Urban River Valley</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Niagara Escarpment Plan</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Protected Countryside</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>GREENBELT DESIGNATIONS</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>Oak ridges moraine</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>PLANNING/DEVELOPMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND MANAGEMENT</gco:CharacterString>
+                    </keyword>
+                    <keyword>
+                        <gco:CharacterString>LAND USE PLANNING</gco:CharacterString>
+                    </keyword>
+                    <type>
+                        <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" codeSpace="ISOTC211/19115">theme</MD_KeywordTypeCode>
+                    </type>
+                    <thesaurusName>
+                        <CI_Citation>
+                            <title>
+                                <gco:CharacterString>external</gco:CharacterString>
+                            </title>
+                            <date gco:nilReason="missing"/>
+                            <citedResponsibleParty gco:nilReason="missing"/>
+                        </CI_Citation>
+                    </thesaurusName>
+                </MD_Keywords>
+            </descriptiveKeywords>
+            <resourceConstraints>
+                <MD_Constraints>
+                    <useLimitation>
+                        <gco:CharacterString>Open Government Licence – Ontario</gco:CharacterString>
+                    </useLimitation>
+                </MD_Constraints>
+            </resourceConstraints>
+            <resourceConstraints>
+                <MD_LegalConstraints>
+                    <useLimitation>
+                        <gco:CharacterString>Open Government Licence – Ontario - You are encouraged to use the Information that is available under this licence with only a few conditions. Using Information under this licence - 1. Use of any Information indicates your acceptance of the terms below. 2. The Information Provider grants you a worldwide, royalty-free, perpetual, non-exclusive licence to use the Information, including for commercial purposes, subject to the terms below. You are free to: 3. Copy, modify, publish, translate, adapt, distribute or otherwise use the Information in any medium, mode or format for any lawful purpose. You must, where you do any of the above: 4. Acknowledge the source of the Information by including any attribution statement specified by the Information Provider(s) and, where possible, provide a link to this licence. If the Information Provider does not provide a specific attribution statement, or if you are using Information from several Information Providers and multiple attributions are not practical for your product or application, you must use the following attribution statement: Contains information licensed under the Open Government Licence – Ontario. 5. The terms of this licence are important, and if you fail to comply with any of them, the rights granted to you under this licence, or any similar licence granted by the Information Provider, will end automatically. Exemptions 6. This licence does not grant you any right to use: a) Personal Information; b) Information or Records not accessible under the Freedom of Information and Protection of Privacy Act (Ontario); c) third party rights the Information Provider is not authorized to license; d) the names, crests, logos, or other official symbols of the Information Provider; and e) Information subject to other intellectual property rights, including patents, trade-marks and official marks. Non-endorsement 7. This licence does not grant you any right to use the Information in a way that suggests any official status or that the Information Provider endorses you or your use of the Information. No warranty 8. The Information is licensed “as is”, and the Information Provider excludes all representations, warranties, obligations, and liabilities, whether express or implied, to the maximum extent permitted by law. 9. The Information Provider is not liable for any errors or omissions in the Information, and will not under any circumstances be liable for any direct, indirect, special, incidental, consequential, or other loss, injury or damage caused by its use or otherwise arising in connection with this licence or the Information, even if specifically advised of the possibility of such loss, injury or damage. Governing Law 10. This licence is governed by the laws of the Province of Ontario and the applicable laws of Canada. 11. Legal proceedings related to this licence may only be brought in the courts of Ontario. Definitions 12. In this licence, the terms below have the following meanings: "Information" means information resources or Records protected by copyright or other information or Records that are offered for use under the terms of this licence. "Information Provider" means Her Majesty the Queen in right of Ontario. “Personal Information” has the meaning set out in section 2(1) of the Freedom of Information and Protection of Privacy Act (Ontario). “Records” has the meaning of “record” as set out in the Freedom of Information and Protection of Privacy Act (Ontario). "You" means the natural or legal person, or body of persons corporate or incorporate, acquiring rights under this licence. Versioning 13. This is version 1.0of the Open Government Licence – Ontario. The Information Provider may make changes to the terms of this licence from time to time and issue a new version of the licence. Your use of the Information will be governed by the terms of the licence in force as of the date you accessed the information.</gco:CharacterString>
+                    </useLimitation>
+                </MD_LegalConstraints>
+            </resourceConstraints>
+            <resourceConstraints>
+                <MD_LegalConstraints>
+                    <accessConstraints>
+                        <MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="otherRestrictions" codeSpace="ISOTC211/19115">otherRestrictions</MD_RestrictionCode>
+                    </accessConstraints>
+                    <otherConstraints>
+                        <gco:CharacterString>Other Constraints</gco:CharacterString>
+                    </otherConstraints>
+                </MD_LegalConstraints>
+            </resourceConstraints>
+            <resourceConstraints>
+                <MD_LegalConstraints>
+                    <useConstraints>
+                        <MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="otherRestrictions" codeSpace="ISOTC211/19115">otherRestrictions</MD_RestrictionCode>
+                    </useConstraints>
+                    <otherConstraints>
+                        <gco:CharacterString>Other Constraints</gco:CharacterString>
+                    </otherConstraints>
+                </MD_LegalConstraints>
+            </resourceConstraints>
+            <resourceConstraints>
+                <MD_LegalConstraints>
+                    <accessConstraints>
+                        <MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="otherRestrictions" codeSpace="ISOTC211/19115">otherRestrictions</MD_RestrictionCode>
+                    </accessConstraints>
+                    <otherConstraints>
+                        <gco:CharacterString>Other Constraints</gco:CharacterString>
+                    </otherConstraints>
+                </MD_LegalConstraints>
+            </resourceConstraints>
+            <resourceConstraints>
+                <MD_LegalConstraints>
+                    <useConstraints>
+                        <MD_RestrictionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="otherRestrictions" codeSpace="ISOTC211/19115">otherRestrictions</MD_RestrictionCode>
+                    </useConstraints>
+                    <otherConstraints>
+                        <gco:CharacterString>Other Constraints</gco:CharacterString>
+                    </otherConstraints>
+                </MD_LegalConstraints>
+            </resourceConstraints>
+            <language gco:nilReason="missing"/>
+            <characterSet>
+                <MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8" codeSpace="ISOTC211/19115">utf8</MD_CharacterSetCode>
+            </characterSet>
+            <topicCategory>
+                <MD_TopicCategoryCode>boundaries</MD_TopicCategoryCode>
+            </topicCategory>
+            <topicCategory>
+                <MD_TopicCategoryCode>environment</MD_TopicCategoryCode>
+            </topicCategory>
+            <topicCategory>
+                <MD_TopicCategoryCode>planningCadastre</MD_TopicCategoryCode>
+            </topicCategory>
+            <environmentDescription>
+                <gco:CharacterString>Data require mapping/CAD software to view. Data created in ESRI shape files.</gco:CharacterString>
+            </environmentDescription>
+            <extent>
+                <EX_Extent>
+                    <geographicElement>
+                        <EX_GeographicBoundingBox>
+                            <westBoundLongitude>
+                                <gco:Decimal>-81.309</gco:Decimal>
+                            </westBoundLongitude>
+                            <eastBoundLongitude>
+                                <gco:Decimal>-75.772</gco:Decimal>
+                            </eastBoundLongitude>
+                            <southBoundLatitude>
+                                <gco:Decimal>42.555</gco:Decimal>
+                            </southBoundLatitude>
+                            <northBoundLatitude>
+                                <gco:Decimal>46.742</gco:Decimal>
+                            </northBoundLatitude>
+                        </EX_GeographicBoundingBox>
+                    </geographicElement>
+                </EX_Extent>
+            </extent>
+            <supplementalInformation>
+                <gco:CharacterString>The Greenbelt designations are areas that have Provincial plans and/or specific policies associated with them.</gco:CharacterString>
+            </supplementalInformation>
+        </MD_DataIdentification>
+    </identificationInfo>
+    <distributionInfo>
+        <MD_Distribution>
+            <distributionFormat gco:nilReason="missing"/>
+            <transferOptions>
+                <MD_DigitalTransferOptions>
+                    <onLine>
+                        <CI_OnlineResource>
+                            <linkage>
+                                <URL>https://www.gisapplication.lrc.gov.on.ca/fmedatadownload/Packages/fgdb/GBDESIGN.zip</URL>
+                            </linkage>
+                            <protocol gco:nilReason="missing"/>
+                            <name>
+                                <gco:CharacterString>Complete File Geodatabase</gco:CharacterString>
+                            </name>
+                        </CI_OnlineResource>
+                    </onLine>
+                    <onLine>
+                        <CI_OnlineResource>
+                            <linkage>
+                                <URL>https://www.gisapplication.lrc.gov.on.ca/fmedatadownload/Packages/GBDESIGN.zip</URL>
+                            </linkage>
+                            <protocol gco:nilReason="missing"/>
+                            <name>
+                                <gco:CharacterString>Complete Shapefile</gco:CharacterString>
+                            </name>
+                        </CI_OnlineResource>
+                    </onLine>
+                    <onLine>
+                        <CI_OnlineResource>
+                            <linkage>
+                                <URL>https://www.sdc.gov.on.ca/sites/MNRF-PublicDocs/EN/CMID/lio-open-qlr-eng/greenbelt-designation.qlr</URL>
+                            </linkage>
+                            <protocol gco:nilReason="missing"/>
+                            <name>
+                                <gco:CharacterString>QGIS Layer Definition File (.qlr)</gco:CharacterString>
+                            </name>
+                        </CI_OnlineResource>
+                    </onLine>
+                </MD_DigitalTransferOptions>
+            </transferOptions>
+        </MD_Distribution>
+    </distributionInfo>
+    <dataQualityInfo>
+        <DQ_DataQuality>
+            <scope>
+                <DQ_Scope>
+                    <level>
+                        <MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" codeSpace="ISOTC211/19115">dataset</MD_ScopeCode>
+                    </level>
+                </DQ_Scope>
+            </scope>
+            <report>
+                <DQ_RelativeInternalPositionalAccuracy>
+                    <measureDescription>
+                        <gco:CharacterString>Horizontal: Reliable: +/- 100 m</gco:CharacterString>
+                    </measureDescription>
+                    <result gco:nilReason="missing"/>
+                </DQ_RelativeInternalPositionalAccuracy>
+            </report>
+        </DQ_DataQuality>
+    </dataQualityInfo>
+</MD_Metadata>

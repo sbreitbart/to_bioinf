@@ -1,0 +1,239 @@
+# Set up notebook
+## Load packages
+```{r}
+library(ggmap)
+library(ggsn)
+library(here)
+```
+
+## Import data
+```{r}
+sites <- read.csv(here("./raw_data/102_Sites_updatedASlatlongs.csv"), sep = ",", header = TRUE)
+
+sites$Urb_Rur <- factor(sites$Urb_Rur , levels = c("Urban", "Rural"))
+
+# Number of rural vs urban sites
+sum(sites$Urb_Rur == "Urban") # 54 sites
+sum(sites$Urb_Rur == "Rural") # 48 sites
+
+
+
+urb_scores <- read.csv(here("./clean_data/urb_metrics.csv"), sep = ",", header = TRUE)
+
+
+```
+
+# Methods
+## Sampling site maps
+### Main map: Urban/rural symbols
+```{r}
+mylocation <- c(-80.5, 43.2, -78.5, 44.2)
+base_map <- ggmap(get_map(location = mylocation, maptype = 'terrain', source = 'stamen'))
+
+ map1 <- base_map +
+  geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
+  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
+scale_shape_manual(name = "Site Classification",
+                     values = c(24,21)) +
+  scale_fill_manual(name = "Site Classification",
+                    values = c('red', 'cyan')) +
+  scalebar(x.min = -80.5, x.max = -78.6,
+            y.min = 43.25, y.max = 44.2,
+            dist = 20, dist_unit = "km",
+            st.bottom = FALSE, st.color = "black",
+            transform = TRUE, model = 'WGS84',
+           st.dist=.04) +
+  theme(legend.position = c(0.85, 0.25),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)
+        ) 
+north2(map1, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_urbrursymbols.pdf"),
+             width = 7.5, height = 5)
+```
+
+### Main map: Distance to CC
+```{r}
+
+map1_dist <- base_map +
+  geom_point(data = urb_scores,
+             mapping = aes(x = long,
+                           y = lat,
+                           fill = City_dist),
+             size = 3,
+             shape = 23,
+             color = "black") +
+  labs(x = 'Longitude', 
+       y = 'Latitude', 
+       fill = "Urbanization Score") +
+  scale_fill_gradient(low = "dark red", high = "white",
+                      #breaks=c(-4, -2, 0, 2, 4),
+                      labels=c("0 (Urban)", 20, 40, 60, "80 (Rural)"),
+                       limits=c(0, 80),
+                      name = "Distance to \nCity Center (km)"
+                      ) +
+  scalebar(x.min = -80.5,
+           x.max = -78.6,
+            y.min = 43.25, 
+           y.max = 44.2,
+            dist = 20, 
+           dist_unit = "km",
+            st.bottom = FALSE, 
+           st.color = "black",
+            transform = TRUE,
+           model = 'WGS84',
+           st.dist=.04) +
+  theme(
+    legend.position = c(0.85, 0.37),
+        legend.background = element_rect(fill = "white",
+                                         colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)) 
+
+north2(map1_dist, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_citydist.pdf"),
+             width = 7.5, height = 5)
+```
+
+
+### Main map: urbanization score
+```{r}
+
+map1_usc <- base_map +
+  geom_point(data = urb_scores,
+             mapping = aes(x = long,
+                           y = lat,
+                           fill = urb_score),
+             size = 3,
+             shape = 21,
+             color = "black") +
+  labs(x = 'Longitude', 
+       y = 'Latitude', 
+       fill = "Urbanization Score") +
+  scale_fill_gradient(low = "white", high = "dark red",
+                      breaks=c(-4, -2, 0, 2, 4),
+                      labels=c("-4 (Rural)", -2, 0, 2, "4 (Urban)"),
+                      limits=c(-4, 4),
+                      name = "Urbanization Score"
+                      ) +
+  scalebar(x.min = -80.5,
+           x.max = -78.6,
+            y.min = 43.25, 
+           y.max = 44.2,
+            dist = 20, 
+           dist_unit = "km",
+            st.bottom = FALSE, 
+           st.color = "black",
+            transform = TRUE,
+           model = 'WGS84',
+           st.dist=.04) +
+  theme(
+    legend.position = c(0.85, 0.37),
+        legend.background = element_rect(fill = "white",
+                                         colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)) 
+
+north2(map1_usc, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_urbscore.pdf"),
+             width = 7.5, height = 5)
+```
+
+### Watercolor map
+```{r}
+# Watercolor background (trying to show rivers)
+base_map2 <- ggmap(get_stamenmap(location = c(-80.5, 43.2, -78.5, 44.2), maptype = 'watercolor', source = 'stamen'))
+
+watercolor1 <- get_stamenmap( bbox = c(-80.5, 43.2, -78.5, 44.2), zoom = 11, maptype = "watercolor")
+
+map3 <- ggmap(watercolor1) +
+  geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
+  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") + scale_shape_manual(name = "Site Classification",
+                     values = c(24,21)) +
+  scale_fill_manual(name = "Site Classification",
+                    values = c('red', 'cyan')) +
+  scalebar(x.min = -80.5, x.max = -78.6,
+            y.min = 43.25, y.max = 44.2,
+            dist = 20, dist_unit = "km",
+            st.bottom = FALSE, st.color = "black",
+            transform = TRUE, model = 'WGS84',
+           st.dist=.04) +
+  theme(legend.position = c(0.85, 0.25),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6))
+
+north2(map3, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+
+
+#  map2 <- base_map2 +
+#   geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
+#   labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
+# scale_shape_manual(name = "Site Classification",
+#                      values = c(24,21)) +
+#   scale_fill_manual(name = "Site Classification",
+#                     values = c('red', 'cyan')) +
+#   scalebar(x.min = -80.5, x.max = -78.6,
+#             y.min = 43.25, y.max = 44.2,
+#             dist = 20, dist_unit = "km",
+#             st.bottom = FALSE, st.color = "black",
+#             transform = TRUE, model = 'WGS84',
+#            st.dist=.04) +
+#   theme(legend.position = c(0.85, 0.25),
+#         legend.background = element_rect(fill = "white",colour = "black"),
+#         legend.box.margin = margin(6, 6, 6, 6)
+#         ) 
+# north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+```
+
+## INCORRECT original classifications as urban and rural
+```{r}
+sites$Incorrect_outdated_Urb_Rur <- factor(sites$Incorrect_outdated_Urb_Rur , levels = c("Urban", "Rural"))
+
+
+ map2 <- base_map +
+  geom_point(data = sites, mapping = aes(x = long, y = lat, fill = Incorrect_outdated_Urb_Rur, shape = Incorrect_outdated_Urb_Rur), size=3) + 
+  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
+  scale_shape_manual(name = "Site Classification",
+                     values = c(21,24)) +
+  scale_fill_manual(name = "Site Classification",
+                    values = c('red', 'cyan')) +
+  scalebar(x.min = -80.5, x.max = -78.6,
+            y.min = 43.25, y.max = 44.2,
+            dist = 20, dist_unit = "km",
+            st.bottom = FALSE, st.color = "black",
+            transform = TRUE, model = 'WGS84',
+           st.dist=.04) +
+  theme(legend.position = c(0.85, 0.25),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)
+        ) 
+ 
+north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+
+```
+
+
+## Adding river valley markers
+```{r}
+# first need to find out which sites are characterized as being near a river valley...
+# need the greenbelt planning map
+# then have to put coordinates in those cells and assign them
+
+
+map3 <- map1 + 
+
+north2(map3, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+```

@@ -1,0 +1,55 @@
+# Set up notebook
+## Load packages
+```{r}
+library(tidyverse)
+library(here)
+library(magrittr)
+library(janitor)
+library(geosphere)
+```
+
+# Import data
+```{r}
+# urbanization data
+urb <- read.csv(here::here("./raw_data/102_Sites_updatedASlatlongs.csv")) %>%
+  janitor::clean_names() %>%
+  dplyr::select(-c(6,7,8))
+
+# urbanization score data
+usc <- read.csv(here::here("./raw_data/Urb_index_sgs.csv")) %>%
+  janitor::clean_names()
+```
+
+# Join dist to CC with urb score data
+```{r}
+urb_clean <- full_join(urb,
+                       usc,
+                       by = c("site_id",
+                              "patch_id",
+                              "lat",
+                              "long"))
+
+```
+
+# Get haversine distances from populations to city center
+```{r}
+# Ref lat and longs are for Yonge & Dundas intersection in downtown Toronto
+urb_clean$Ref_Lat <- 43.656327
+urb_clean$Ref_Long <- -79.380904
+
+
+# Find distances from Yonge/Dundas to sample sites (in meters)
+urb_clean %<>%
+  dplyr::mutate(CTD_m = geosphere::distHaversine(cbind(long, lat),
+                                      cbind(Ref_Long, Ref_Lat))) %>%
+  # convert to km
+  dplyr::mutate(City_dist = CTD_m / 1000) %>%
+  # drop ref lat, long, and city_dist (in m) cols
+  dplyr::select(-c(Ref_Lat, Ref_Long, CTD_m))
+```
+
+# Export
+```{r}
+write.csv(urb_clean,
+          here::here("./clean_data/urb_metrics.csv"))
+```
