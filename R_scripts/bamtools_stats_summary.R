@@ -44,7 +44,9 @@ results_plates1_2_summary <- results_plates1_2 %>%
                    min_mapped_reads_percent = min(mapped_reads_percent),
                    max_mapped_reads_percent = max(mapped_reads_percent)) %T>%
   view
-  
+
+hist(results_plates1_2$total_reads, breaks = 20)
+
 # Plate 3, run 2 ################# 
 
 # Set the directory containing the bamtools stats files
@@ -87,3 +89,6 @@ results_plate3_summary <- results_plate3 %>%
                    min_mapped_reads_percent = min(mapped_reads_percent),
                    max_mapped_reads_percent = max(mapped_reads_percent)) %T>%
   view
+
+
+hist(results_plate3$total_reads, breaks = 30)
