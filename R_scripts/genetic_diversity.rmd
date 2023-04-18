@@ -1,11 +1,21 @@
-To do:
-- export anova
-- export figures
+---
+title: Comparing continuous/categorical urbanization data AND all/variant only genetic data
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: true
+    theme: lumen
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
 
 - looks like there are differences btwn the ch2 and ch3 plants re: pop sizes, which is associated with many effects. What if I removed the ch2 plants? what would I see then?
 
-
-- updated "urb is categorical" section since I changed the "continous" section a lot. Copy/paste it, then rename vars/change out response vars?
 -Compare data from all_data csv w/ variants csv
 
 # Set up notebook
@@ -370,79 +380,32 @@ car::Anova(test1) # yes
 r.squaredGLMM(test1) # ~4% variance explained
 ```
 
-## try to automate diagnostics/model fitting
-```{r}
-create_glm <- function(df, model_family, response_var, predictor_var) {
-  # create the formula string
-  formula_str <- paste(response_var, "~", predictor_var)
-  
-  # create the formula object
-  formula_obj <- as.formula(formula_str)
-  
-  # fit the model
-  model <- glmmTMB(formula_obj, data = df, family = model_family)
-  
-  # plot the residuals
-  plot(DHARMa::simulateResiduals(model))
-  
-  # create the output data frame
-  output_df <- data.frame(Response_Variable = rep(response_var, length(predictor_var)),
-                           Predictor_Variable = predictor_var,
-                           Model_Family = rep(model_family, length(predictor_var)),
-                           Model_Formula = rep(formula_str, length(predictor_var)))
-  
-  print(output_df)
-  
-  return(model)
-}
-
-test <- create_glm(diversity, "gaussian", "private", "City_dist")
-
-```
-
-## Urbanization is continuous
+## Urbanization is continuous / data = all sites
 ### Fit linear models/diagnostics
 #### Private alleles
 ##### City_dist
 ```{r}
-priv_dist_rar <- glmmTMB(private ~ City_dist +
+priv_dist <- glmmTMB(private ~ City_dist +
                            (1|num_indv) 
                     #   +    (1|sites)
                          ,
            diversity_all_sites,
            family = "nbinom2")
 
-performance::check_model(priv_dist_rar)
-car::Anova(priv_dist_rar) # becomes insignificant after accounting for sites and indivs/pop
+performance::check_model(priv_dist)
+car::Anova(priv_dist) # becomes insignificant after accounting for sites and indivs/pop
 ```
 
 ##### Urb_score
 ```{r}
-priv_usc_rar <- glmmTMB(private ~ urb_score  +
+priv_usc <- glmmTMB(private ~ urb_score  +
                            (1|num_indv) 
                      #    +  (1|sites)
                         ,
            diversity_all_sites,
            family = "nbinom2")
 
-performance::check_model(priv_usc_rar)
-```
-
-#### Observed heterozygosity (Het_obs)
-##### City_dist
-```{r}
-Het_obs_dist <- glmmTMB(obs_het ~ City_dist,
-           diversity_all_sites)
-
-performance::check_model(Het_obs_dist)
-```
-
-##### Urb_score
-```{r}
-Het_obs_usc <- glmmTMB(obs_het ~ urb_score,
-           diversity_all_sites)
-
-performance::check_model(Het_obs_usc)
+performance::check_model(priv_usc)
 ```
 
 #### Expected heterozygosity (Het_exp)
@@ -462,21 +425,21 @@ Het_exp_usc <- glmmTMB(exp_het ~ urb_score,
 performance::check_model(Het_exp_usc)
 ```
 
-#### Observed homozygosity (Hom_obs)
+#### Observed heterozygosity (Het_obs)
 ##### City_dist
 ```{r}
-Hom_obs_dist <- glmmTMB(obs_hom ~ City_dist,
+Het_obs_dist <- glmmTMB(obs_het ~ City_dist,
            diversity_all_sites)
 
-performance::check_model(Hom_obs_dist)
+performance::check_model(Het_obs_dist)
 ```
 
 ##### Urb_score
 ```{r}
-Hom_obs_usc <- glmmTMB(obs_hom ~ urb_score,
+Het_obs_usc <- glmmTMB(obs_het ~ urb_score,
            diversity_all_sites)
 
-performance::check_model(Hom_obs_usc)
+performance::check_model(Het_obs_usc)
 ```
 
 #### Expected homozygosity (Hom_exp)
@@ -494,6 +457,24 @@ Hom_exp_usc <- glmmTMB(exp_hom ~ urb_score,
            diversity_all_sites)
 
 performance::check_model(Hom_exp_usc)
+```
+
+
+#### Observed homozygosity (Hom_obs)
+##### City_dist
+```{r}
+Hom_obs_dist <- glmmTMB(obs_hom ~ City_dist,
+           diversity_all_sites)
+
+performance::check_model(Hom_obs_dist)
+```
+
+##### Urb_score
+```{r}
+Hom_obs_usc <- glmmTMB(obs_hom ~ urb_score,
+           diversity_all_sites)
+
+performance::check_model(Hom_obs_usc)
 ```
 
 #### Inbreeding coefficient (FIS)
@@ -552,27 +533,27 @@ performance::check_model(fis_usc_quant)
 #### Pi
 ##### City_dist
 ```{r}
-pi_dist_rar <- glmmTMB(pi ~ City_dist +
+pi_dist <- glmmTMB(pi ~ City_dist +
                          (1|num_indv),
            diversity_all_sites)
 
-performance::check_model(pi_dist_rar)
+performance::check_model(pi_dist)
 ```
 
 ##### Urb_score
 ```{r}
-pi_usc_rar <- glmmTMB(pi ~ urb_score +
+pi_usc <- glmmTMB(pi ~ urb_score +
                         (1|num_indv),
            diversity_all_sites)
 
-performance::check_model(pi_usc_rar)
+performance::check_model(pi_usc)
 ```
 
 ### ANOVA & effect sizes
 ```{r}
 
-mod_list <- list(priv_dist_rar,
-                 priv_usc_rar,
+mod_list <- list(priv_dist,
+                 priv_usc,
                  Het_obs_dist,
                  Het_obs_usc,
                  Hom_obs_dist,
@@ -581,8 +562,1086 @@ mod_list <- list(priv_dist_rar,
                  fis_dist_quant,
                  fis_usc_bin,
                  fis_usc_quant,
-                 pi_dist_rar,
-                 pi_usc_rar)
+                 pi_dist,
+                 pi_usc)
+
+create_anova_df <- lapply(mod_list, function(model) {
+  anova_result <- car::Anova(model)
+  
+  formula <- formula(model)[2] %>%
+    unlist()
+  
+  Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
+  round(digits = 3) %>%
+  format(nsmall = 3)
+  
+  # ADD EFFECT SIZES
+  
+  anova_tidy <- broom::tidy(anova_result) %>%
+    dplyr::mutate("Variable" = as.character(formula),
+                  "Rsq" = as.numeric(Rsq)) %>%
+    dplyr::rename("Chi_sq" = statistic,
+                  "p" = p.value,
+                  "Urbanization" = term) %>%
+    dplyr::mutate("Sig" = case_when(
+      p <= 0.05 & p > 0.01 ~ "*",
+      p <= 0.01 & p > 0.001 ~ "**",
+      p <= 0.001 ~ "***",
+      TRUE ~ "")) %>%
+    dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
+                  p = format(round(p, digits = 3), nsmall = 3)) %>%
+  dplyr::arrange(Urbanization, Variable) %>%
+  dplyr::mutate("Variable" = case_when(
+      # Variable == "exp_het" ~ "Expected heterozygosity",
+      Variable == "obs_het" ~ "Observed heterozygosity",
+      # Variable == "exp_hom" ~ "Expected homozygosity",
+      Variable == "obs_hom" ~ "Observed homozygosity",
+      Variable == "fis * 10" ~ "FIS (quantitative)",
+      Variable == "fis" ~ "FIS (quantitative)",
+      Variable == "fis_bin" ~ "FIS (binary)",
+      Variable == "pi" ~ "Pi",
+      Variable == "private" ~ "Private alleles",
+      TRUE ~ ""))
+  })
+
+all_anovas <- do.call(rbind, create_anova_df) %>%
+  dplyr::select(1,5,2,3,4,7,6) %T>%
+  view
+
+# create flextable
+all_anovas %>%
+  dplyr::select(-Sig) %>%
+  flextable::flextable() %>%
+  flextable::compose(i = 1, j = 2, part = "header",
+                     value = as_paragraph("Χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 5, part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%
+  bold(~ p <= 0.05) %>%
+  flextable::autofit()
+```
+
+### Figures
+#### Private alleles
+##### City_dist
+```{r}
+priv_dist_pred <- ggeffects::ggpredict(priv_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+plot(priv_dist_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+#ggsave(here::here("./Figures_Tables/regressions/private_alleles.png"))
+```
+
+##### Urb_score
+```{r}
+priv_usc_pred <- ggeffects::ggpredict(priv_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(priv_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "")+
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+```
+
+#### Expected heterozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = exp_het)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Expected Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = exp_het)) +
+  xlab("Urbanization Score") +
+  ylab("Expected Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+```
+
+#### Obs heterozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = obs_het)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Observed Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = obs_het)) +
+  xlab("Urbanization Score") +
+  ylab("Observed Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+#### Expected homozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = exp_hom)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Expected Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = exp_hom)) +
+  xlab("Urbanization Score") +
+  ylab("Expected Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+```
+
+#### Obs homozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = obs_hom)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Observed Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = obs_hom)) +
+  xlab("Urbanization Score") +
+  ylab("Observed Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+#### FIS
+##### City_dist
+```{r}
+# binary
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = fis_bin)) +
+  xlab("Distance to City Center (km)") +
+  ylab("FIS (binary)") + 
+  geom_point(size = 1.5,
+             shape = 1) +
+  stat_smooth(method = "glm",
+              color = "black",
+              size = 0.5,
+              method.args = list(family="binomial"),
+              se = T) +
+  theme_pubr() +
+  labs_pubr() 
+
+
+# quantitative
+ggplot(diversity_all_sites %>%
+         dplyr::filter(fis != 0),
+       aes(x = City_dist,
+           y = fis)) +
+  xlab("Distance to City Center (km)") +
+  ylab("FIS (Quantitative)") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+##### Urb_score
+```{r}
+# binary
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = fis_bin)) +
+  xlab("Urbanization Score") +
+  ylab("FIS (binary)") + 
+  geom_point(size = 1.5,
+             shape = 1) +
+  stat_smooth(method = "glm",
+              color = "black",
+              size = 0.5,
+              method.args = list(family="binomial"),
+              se = T) +
+  theme_pubr() +
+  labs_pubr()  +
+  xlim(4, -4)
+
+
+# quantitative
+ggplot(diversity_all_sites %>%
+         dplyr::filter(fis != 0),
+       aes(x = urb_score,
+           y = fis)) +
+  xlab("Urbanization Score") +
+  ylab("FIS (Quantitative)") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+#### Pi
+##### City_dist
+```{r}
+
+pi_dist_pred <- ggeffects::ggpredict(pi_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+plot(pi_dist_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()
+
+ggsave(here::here("./Figures_Tables/regressions/pi.png"))
+```
+
+###### Urb_score
+```{r}
+pi_usc_pred <- ggeffects::ggpredict(pi_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(pi_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()+
+  xlim(4, -4)
+
+
+```
+
+#### Number of individuals per pop
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = num_indv)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Individuals/Population") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = num_indv)) +
+  xlab("Urbanization Score") +
+  ylab("Individuals/Population") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+## Urbanization is categorical / data = all sites
+### Fit linear models/diagnostics
+#### Private alleles
+##### u_r_dist
+```{r}
+priv_dist_cat <- glmmTMB(private ~ u_r_dist +
+                           (1|num_indv) 
+                    #   +    (1|sites)
+                         ,
+           diversity_all_sites,
+           family = "nbinom2")
+
+performance::check_model(priv_dist_cat)
+car::Anova(priv_dist_cat) # becomes insignificant after accounting for sites and indivs/pop
+```
+
+##### u_r_usc
+```{r}
+priv_usc_cat <- glmmTMB(private ~ u_r_usc  +
+                           (1|num_indv) 
+                     #    +  (1|sites)
+                        ,
+           diversity_all_sites,
+           family = "nbinom2")
+
+performance::check_model(priv_usc_cat)
+```
+
+#### Expected heterozygosity (Het_exp)
+##### u_r_dist
+```{r}
+Het_exp_dist_cat <- glmmTMB(exp_het ~ u_r_dist,
+           diversity_all_sites)
+
+performance::check_model(Het_exp_dist_cat)
+```
+
+##### u_r_usc
+```{r}
+Het_exp_usc_cat <- glmmTMB(exp_het ~ u_r_usc,
+           diversity_all_sites)
+
+performance::check_model(Het_exp_usc_cat)
+```
+
+#### Observed heterozygosity (Het_obs)
+##### u_r_dist
+```{r}
+Het_obs_dist_cat <- glmmTMB(obs_het ~ u_r_dist,
+           diversity_all_sites)
+
+performance::check_model(Het_obs_dist_cat)
+```
+
+##### u_r_usc
+```{r}
+Het_obs_usc_cat <- glmmTMB(obs_het ~ u_r_usc,
+           diversity_all_sites)
+
+performance::check_model(Het_obs_usc_cat)
+```
+
+#### Expected homozygosity (Hom_exp)
+##### u_r_dist
+```{r}
+Hom_exp_dist_cat <- glmmTMB(exp_hom ~ u_r_dist,
+           diversity_all_sites)
+
+performance::check_model(Hom_exp_dist_cat)
+```
+
+##### u_r_usc
+```{r}
+Hom_exp_usc_cat <- glmmTMB(exp_hom ~ u_r_usc,
+           diversity_all_sites)
+
+performance::check_model(Hom_exp_usc_cat)
+```
+
+
+#### Observed homozygosity (Hom_obs)
+##### u_r_dist
+```{r}
+Hom_obs_dist_cat <- glmmTMB(obs_hom ~ u_r_dist,
+           diversity_all_sites)
+
+performance::check_model(Hom_obs_dist_cat)
+```
+
+##### u_r_usc
+```{r}
+Hom_obs_usc_cat <- glmmTMB(obs_hom ~ u_r_usc,
+           diversity_all_sites)
+
+performance::check_model(Hom_obs_usc_cat)
+```
+
+#### Inbreeding coefficient (FIS)
+This is extremely zero-inflated. I've tried fitting models with zero inflation parameters w/glmmTMB but they don't converge and/or diagnostics don't pass tests. I'll fit manual hurdle models instead.
+##### u_r_dist
+```{r}
+diversity_all_sites %<>%
+  mutate(fis_bin = case_when(
+    fis == 0 ~ 0,
+    fis > 0 ~ 1)
+  )
+  
+# binary
+fis_dist_bin_cat <- glmmTMB(fis_bin ~ u_r_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_all_sites,
+           family = "binomial")
+
+performance::check_model(fis_dist_bin_cat)
+
+
+# quantitative
+fis_dist_quant_cat <- glmmTMB(fis ~  u_r_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_all_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_dist_quant_cat)
+```
+
+##### u_r_usc
+```{r}
+# binary
+fis_usc_bin_cat <- glmmTMB(fis_bin ~ u_r_usc 
+                        + (1|num_indv)
+                        ,
+           diversity_all_sites,
+           family = "binomial")
+
+performance::check_model(fis_usc_bin_cat)
+
+
+# quantitative
+fis_usc_quant_cat <- glmmTMB(fis * 100 ~ u_r_usc 
+                        + (1|num_indv)
+                        ,
+           diversity_all_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_usc_quant_cat)
+```
+
+#### Pi
+##### u_r_dist
+```{r}
+pi_dist_cat <- glmmTMB(pi ~ u_r_dist +
+                         (1|num_indv),
+           diversity_all_sites)
+
+performance::check_model(pi_dist_cat)
+```
+
+##### u_r_usc
+```{r}
+pi_usc_cat <- glmmTMB(pi ~ u_r_usc +
+                        (1|num_indv),
+           diversity_all_sites)
+
+performance::check_model(pi_usc_cat)
+```
+
+### ANOVA & effect sizes
+```{r}
+
+mod_list_cat <- list(priv_dist_cat,
+                 priv_usc_cat,
+                 Het_obs_dist_cat,
+                 Het_obs_usc_cat,
+                 Hom_obs_dist_cat,
+                 Hom_obs_usc_cat,
+                 fis_dist_bin_cat,
+                 fis_dist_quant_cat,
+                 fis_usc_bin_cat,
+                 fis_usc_quant_cat,
+                 pi_dist_cat,
+                 pi_usc_cat)
+
+create_anova_df_cat <- lapply(mod_list_cat, function(model) {
+  anova_result <- car::Anova(model)
+  
+  formula <- formula(model)[2] %>%
+    unlist()
+  
+  Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
+  round(digits = 3) %>%
+  format(nsmall = 3)
+  
+  # ADD EFFECT SIZES
+  
+  anova_tidy <- broom::tidy(anova_result) %>%
+    dplyr::mutate("Variable" = as.character(formula),
+                  "Rsq" = as.numeric(Rsq)) %>%
+    dplyr::rename("Chi_sq" = statistic,
+                  "p" = p.value,
+                  "Urbanization" = term) %>%
+    dplyr::mutate("Sig" = case_when(
+      p <= 0.05 & p > 0.01 ~ "*",
+      p <= 0.01 & p > 0.001 ~ "**",
+      p <= 0.001 ~ "***",
+      TRUE ~ "")) %>%
+    dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
+                  p = format(round(p, digits = 3), nsmall = 3)) %>%
+  dplyr::arrange(Urbanization, Variable) %>%
+  dplyr::mutate("Variable" = case_when(
+      # Variable == "exp_het" ~ "Expected heterozygosity",
+      Variable == "obs_het" ~ "Observed heterozygosity",
+      # Variable == "exp_hom" ~ "Expected homozygosity",
+      Variable == "obs_hom" ~ "Observed homozygosity",
+      Variable == "fis" ~ "FIS (quantitative)",
+      Variable == "fis * 100" ~ "FIS (quantitative)",
+      Variable == "fis_bin" ~ "FIS (binary)",
+      Variable == "pi" ~ "Pi",
+      Variable == "private" ~ "Private alleles",
+      TRUE ~ "")) %>%
+  dplyr::mutate("Urbanization" = case_when(
+      Urbanization == "u_r_dist" ~ "Distance (categorical)",
+      Urbanization == "u_r_usc" ~ "Urbanization Score (categorical)",
+      TRUE ~ ""))
+  })
+
+all_anovas_cat <- do.call(rbind, create_anova_df_cat) %>%
+  dplyr::select(1,5,2,3,4,7,6) %T>%
+  view
+
+# create flextable
+all_anovas_cat %>%
+  dplyr::select( -Sig) %>%
+  flextable::flextable() %>%
+  flextable::compose(i = 1, j = 2, part = "header",
+                     value = as_paragraph("Χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 5, part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%
+  bold(~ p <= 0.05) %>%
+  flextable::autofit()
+```
+
+
+### Figures
+#### Private alleles
+##### City_dist
+```{r}
+priv_dist_pred <- ggeffects::ggpredict(priv_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+plot(priv_dist_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+#ggsave(here::here("./Figures_Tables/regressions/private_alleles.png"))
+```
+
+##### Urb_score
+```{r}
+priv_usc_pred <- ggeffects::ggpredict(priv_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(priv_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "")+
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+```
+
+#### Expected heterozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = exp_het)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Expected Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = exp_het)) +
+  xlab("Urbanization Score") +
+  ylab("Expected Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+```
+
+#### Obs heterozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = obs_het)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Observed Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = obs_het)) +
+  xlab("Urbanization Score") +
+  ylab("Observed Heterozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+#### Expected homozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = exp_hom)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Expected Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = exp_hom)) +
+  xlab("Urbanization Score") +
+  ylab("Expected Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+```
+
+#### Obs homozygosity
+##### City_dist
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = obs_hom)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Observed Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = obs_hom)) +
+  xlab("Urbanization Score") +
+  ylab("Observed Homozygosity") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+#### FIS
+##### City_dist
+```{r}
+# binary
+ggplot(diversity_all_sites,
+       aes(x = City_dist,
+           y = fis_bin)) +
+  xlab("Distance to City Center (km)") +
+  ylab("FIS (binary)") + 
+  geom_point(size = 1.5,
+             shape = 1) +
+  stat_smooth(method = "glm",
+              color = "black",
+              size = 0.5,
+              method.args = list(family="binomial"),
+              se = T) +
+  theme_pubr() +
+  labs_pubr() 
+
+
+# quantitative
+ggplot(diversity_all_sites %>%
+         dplyr::filter(fis != 0),
+       aes(x = City_dist,
+           y = fis)) +
+  xlab("Distance to City Center (km)") +
+  ylab("FIS (Quantitative)") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+##### Urb_score
+```{r}
+# binary
+ggplot(diversity_all_sites,
+       aes(x = urb_score,
+           y = fis_bin)) +
+  xlab("Urbanization Score") +
+  ylab("FIS (binary)") + 
+  geom_point(size = 1.5,
+             shape = 1) +
+  stat_smooth(method = "glm",
+              color = "black",
+              size = 0.5,
+              method.args = list(family="binomial"),
+              se = T) +
+  theme_pubr() +
+  labs_pubr()  +
+  xlim(4, -4)
+
+
+# quantitative
+ggplot(diversity_all_sites %>%
+         dplyr::filter(fis != 0),
+       aes(x = urb_score,
+           y = fis)) +
+  xlab("Urbanization Score") +
+  ylab("FIS (Quantitative)") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+#### Pi
+##### City_dist
+```{r}
+
+pi_dist_pred <- ggeffects::ggpredict(pi_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+plot(pi_dist_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()
+
+ggsave(here::here("./Figures_Tables/regressions/pi.png"))
+```
+
+###### Urb_score
+```{r}
+pi_usc_pred <- ggeffects::ggpredict(pi_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(pi_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()+
+  xlim(4, -4)
+
+
+```
+
+For the next section (only variant sites considered), I just copy/pasted the above code and switched the data. The object names are the SAME. Beware.
+
+## Urbanization is continuous / data = ONLY VARIANT sites
+### Fit linear models/diagnostics
+#### Private alleles
+##### City_dist
+```{r}
+priv_dist <- glmmTMB(private ~ City_dist +
+                           (1|num_indv) 
+                    #   +    (1|sites)
+                         ,
+           diversity_variant_sites,
+           family = "nbinom2")
+
+performance::check_model(priv_dist)
+car::Anova(priv_dist)
+```
+
+##### Urb_score
+```{r}
+priv_usc <- glmmTMB(private ~ urb_score  +
+                           (1|num_indv) 
+                     #    +  (1|sites)
+                        ,
+           diversity_variant_sites,
+           family = "nbinom2")
+
+performance::check_model(priv_usc)
+```
+
+#### Expected heterozygosity (Het_exp)
+##### City_dist
+```{r}
+Het_exp_dist <- glmmTMB(exp_het ~ City_dist,
+           diversity_variant_sites)
+
+performance::check_model(Het_exp_dist)
+```
+
+##### Urb_score
+```{r}
+Het_exp_usc <- glmmTMB(exp_het ~ urb_score,
+           diversity_variant_sites)
+
+performance::check_model(Het_exp_usc)
+```
+
+#### Observed heterozygosity (Het_obs)
+##### City_dist
+```{r}
+Het_obs_dist <- glmmTMB(obs_het ~ City_dist,
+           diversity_variant_sites)
+
+performance::check_model(Het_obs_dist)
+```
+
+##### Urb_score
+```{r}
+Het_obs_usc <- glmmTMB(obs_het ~ urb_score,
+           diversity_variant_sites)
+
+performance::check_model(Het_obs_usc)
+```
+
+#### Expected homozygosity (Hom_exp)
+##### City_dist
+```{r}
+Hom_exp_dist <- glmmTMB(exp_hom ~ City_dist,
+           diversity_variant_sites)
+
+performance::check_model(Hom_exp_dist)
+```
+
+##### Urb_score
+```{r}
+Hom_exp_usc <- glmmTMB(exp_hom ~ urb_score,
+           diversity_variant_sites)
+
+performance::check_model(Hom_exp_usc)
+```
+
+
+#### Observed homozygosity (Hom_obs)
+##### City_dist
+```{r}
+Hom_obs_dist <- glmmTMB(obs_hom ~ City_dist,
+           diversity_variant_sites)
+
+performance::check_model(Hom_obs_dist)
+```
+
+##### Urb_score
+```{r}
+Hom_obs_usc <- glmmTMB(obs_hom ~ urb_score,
+           diversity_variant_sites)
+
+performance::check_model(Hom_obs_usc)
+```
+
+#### Inbreeding coefficient (FIS)
+This is extremely zero-inflated. I've tried fitting models with zero inflation parameters w/glmmTMB but they don't converge and/or diagnostics don't pass tests. I'll fit manual hurdle models instead.
+##### City_dist
+```{r}
+diversity_variant_sites %<>%
+  mutate(fis_bin = case_when(
+    fis == 0 ~ 0,
+    fis > 0 ~ 1)
+  )
+  
+# binary
+fis_dist_bin <- glmmTMB(fis_bin ~ City_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites,
+           family = "binomial")
+
+performance::check_model(fis_dist_bin)
+
+
+# quantitative
+# wont' converge unless I multiply it
+fis_dist_quant <- glmmTMB(fis * 10 ~  City_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_dist_quant)
+```
+
+##### Urb_score
+```{r}
+# binary
+fis_usc_bin <- glmmTMB(fis_bin ~ urb_score 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites,
+           family = "binomial")
+
+performance::check_model(fis_usc_bin)
+
+
+# quantitative
+fis_usc_quant <- glmmTMB(fis ~ urb_score 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_usc_quant)
+```
+
+#### Pi
+##### City_dist
+```{r}
+pi_dist <- glmmTMB(pi ~ City_dist +
+                         (1|num_indv),
+           diversity_variant_sites)
+
+performance::check_model(pi_dist)
+```
+
+##### Urb_score
+```{r}
+pi_usc <- glmmTMB(pi ~ urb_score +
+                        (1|num_indv),
+           diversity_variant_sites)
+
+performance::check_model(pi_usc)
+```
+
+### ANOVA & effect sizes
+```{r}
+
+mod_list <- list(priv_dist,
+                 priv_usc,
+                 Het_obs_dist,
+                 Het_obs_usc,
+                 Hom_obs_dist,
+                 Hom_obs_usc,
+                 fis_dist_bin,
+                 fis_dist_quant,
+                 fis_usc_bin,
+                 fis_usc_quant,
+                 pi_dist,
+                 pi_usc)
 
 create_anova_df <- lapply(mod_list, function(model) {
   anova_result <- car::Anova(model)
@@ -629,7 +1688,7 @@ all_anovas <- do.call(rbind, create_anova_df) %>%
 
 # create flextable
 all_anovas %>%
-  dplyr::select(-1, -Sig) %>%
+  dplyr::select(-Sig) %>%
   flextable::flextable() %>%
   flextable::compose(i = 1, j = 2, part = "header",
                      value = as_paragraph("Χ", as_sup("2"))) %>%
@@ -643,11 +1702,11 @@ all_anovas %>%
 #### Private alleles
 ##### City_dist
 ```{r}
-priv_dist_rar_pred <- ggeffects::ggpredict(priv_dist_rar,
+priv_dist_pred <- ggeffects::ggpredict(priv_dist,
                                    terms = c("City_dist"),
                                    type = "fe")
 
-plot(priv_dist_rar_pred, 
+plot(priv_dist_pred, 
      add.data = F,
      colors = "bw") +
   geom_ribbon(aes(x = x,
@@ -658,32 +1717,44 @@ plot(priv_dist_rar_pred,
                alpha = 0.1
               ) +
   xlab("Distance to City Center (km)") +
-  ylab("Private alleles") +
-  ylim(0, 500) +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
   labs(title = "") +
-  theme_pubr()
+  theme_pubr() +
+  labs_pubr() 
 
-ggsave(here::here("./Figures_Tables/regressions/private_alleles.png"))
+#ggsave(here::here("./Figures_Tables/regressions/private_alleles.png"))
 ```
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_all_sites,
-       aes(x = urb_score,
-           y = private/sites)) +
+priv_usc_pred <- ggeffects::ggpredict(priv_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(priv_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Urbanization Score") +
-  ylab("Private Alleles per Site") +
-  plot_aesthetics +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "")+
   theme_pubr() +
   labs_pubr() +
   xlim(4, -4)
-
 ```
 
 #### Expected heterozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = exp_het)) +
   xlab("Distance to City Center (km)") +
@@ -696,7 +1767,7 @@ ggplot(diversity_all_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = exp_het)) +
   xlab("Urbanization Score") +
@@ -710,7 +1781,7 @@ ggplot(diversity_all_sites,
 #### Obs heterozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = obs_het)) +
   xlab("Distance to City Center (km)") +
@@ -723,7 +1794,7 @@ ggplot(diversity_all_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = obs_het)) +
   xlab("Urbanization Score") +
@@ -738,7 +1809,7 @@ ggplot(diversity_all_sites,
 #### Expected homozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = exp_hom)) +
   xlab("Distance to City Center (km)") +
@@ -751,7 +1822,7 @@ ggplot(diversity_all_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = exp_hom)) +
   xlab("Urbanization Score") +
@@ -765,7 +1836,7 @@ ggplot(diversity_all_sites,
 #### Obs homozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = obs_hom)) +
   xlab("Distance to City Center (km)") +
@@ -778,7 +1849,7 @@ ggplot(diversity_all_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = obs_hom)) +
   xlab("Urbanization Score") +
@@ -794,7 +1865,7 @@ ggplot(diversity_all_sites,
 ##### City_dist
 ```{r}
 # binary
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = fis_bin)) +
   xlab("Distance to City Center (km)") +
@@ -811,7 +1882,7 @@ ggplot(diversity_all_sites,
 
 
 # quantitative
-ggplot(diversity_all_sites %>%
+ggplot(diversity_variant_sites %>%
          dplyr::filter(fis != 0),
        aes(x = City_dist,
            y = fis)) +
@@ -825,7 +1896,7 @@ ggplot(diversity_all_sites %>%
 ##### Urb_score
 ```{r}
 # binary
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = fis_bin)) +
   xlab("Urbanization Score") +
@@ -843,7 +1914,7 @@ ggplot(diversity_all_sites,
 
 
 # quantitative
-ggplot(diversity_all_sites %>%
+ggplot(diversity_variant_sites %>%
          dplyr::filter(fis != 0),
        aes(x = urb_score,
            y = fis)) +
@@ -859,20 +1930,12 @@ ggplot(diversity_all_sites %>%
 #### Pi
 ##### City_dist
 ```{r}
-# ggplot(diversity_all_sites,
-#        aes(x = City_dist,
-#            y = pi/sites)) +
-#   xlab("Distance to City Center (km)") +
-#   ylab("Pi/sites") +
-#   plot_aesthetics +
-#   theme_pubr() +
-#   labs_pubr() 
 
-pi_dist_rar_pred <- ggeffects::ggpredict(pi_dist_rar,
+pi_dist_pred <- ggeffects::ggpredict(pi_dist,
                                    terms = c("City_dist"),
                                    type = "fe")
 
-plot(pi_dist_rar_pred, 
+plot(pi_dist_pred, 
      add.data = F,
      colors = "bw") +
   geom_ribbon(aes(x = x,
@@ -883,8 +1946,8 @@ plot(pi_dist_rar_pred,
                alpha = 0.1
               ) +
   xlab("Distance to City Center (km)") +
-  ylab("Pi * 10") +
-  ylim(NA, 0.04) +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
   labs(title = "") +
   theme_pubr()
 
@@ -893,54 +1956,38 @@ ggsave(here::here("./Figures_Tables/regressions/pi.png"))
 
 ###### Urb_score
 ```{r}
-ggplot(diversity_all_sites,
-       aes(x = urb_score,
-           y = pi/sites)) +
+pi_usc_pred <- ggeffects::ggpredict(pi_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(pi_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Urbanization Score") +
-  ylab("Pi/sites") +
-  plot_aesthetics +
-  theme_pubr() +
-  labs_pubr() +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()+
   xlim(4, -4)
 
-```
-
-#### Sites
-##### City_dist
-```{r}
-ggplot(diversity_all_sites,
-       aes(x = City_dist,
-           y = sites)) +
-  xlab("Distance to City Center (km)") +
-  ylab("Sites") +
-  plot_aesthetics +
-  theme_pubr() +
-  labs_pubr() 
-
-```
-
-##### Urb_score
-```{r}
-ggplot(diversity_all_sites,
-       aes(x = urb_score,
-           y = sites)) +
-  xlab("Urbanization Score") +
-  ylab("Sites") +
-  plot_aesthetics +
-  theme_pubr() +
-  labs_pubr() +
-  xlim(4, -4)
 
 ```
 
 #### Number of individuals per pop
 ##### City_dist
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = num_indv)) +
   xlab("Distance to City Center (km)") +
-  ylab("Sites") +
+  ylab("Individuals/Population") +
   plot_aesthetics +
   theme_pubr() +
   labs_pubr() 
@@ -949,11 +1996,11 @@ ggplot(diversity_all_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_all_sites,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = num_indv)) +
   xlab("Urbanization Score") +
-  ylab("Sites") +
+  ylab("Individuals/Population") +
   plot_aesthetics +
   theme_pubr() +
   labs_pubr() +
@@ -961,292 +2008,191 @@ ggplot(diversity_all_sites,
 
 ```
 
-## Urbanization is categorical
+## Urbanization is categorical / data = ONLY VARIANT sites
 ### Fit linear models/diagnostics
 #### Private alleles
-###### u_r_dist
-```{r}
-priv_dist_rar2 <- glmmTMB(private ~ u_r_dist + (1|sites),
-           diversity,
-           family = "nbinom2")
-
-performance::check_model(priv_dist_rar2)
-```
-
-###### u_r_usc
-```{r}
-priv_usc_rar2 <- glmmTMB(private ~ u_r_usc + (1|sites),
-           diversity,
-           family = "nbinom2")
-
-performance::check_model(priv_usc_rar2)
-```
-
-#### Observed heterozygosity (Het_obs)
 ##### u_r_dist
 ```{r}
-Het_obs_dist2 <- glmmTMB(obs_het ~ u_r_dist,
-           diversity)
+priv_dist_cat <- glmmTMB(private ~ u_r_dist +
+                           (1|num_indv) 
+                    #   +    (1|sites)
+                         ,
+           diversity_variant_sites,
+           family = "nbinom2")
 
-performance::check_model(Het_obs_dist2)
+performance::check_model(priv_dist_cat)
+car::Anova(priv_dist_cat) # becomes insignificant after accounting for sites and indivs/pop
 ```
 
 ##### u_r_usc
 ```{r}
-Het_obs_usc2 <- glmmTMB(obs_het ~ u_r_usc,
-           diversity)
+priv_usc_cat <- glmmTMB(private ~ u_r_usc  +
+                           (1|num_indv) 
+                     #    +  (1|sites)
+                        ,
+           diversity_variant_sites,
+           family = "nbinom2")
 
-performance::check_model(Het_obs_usc2)
+performance::check_model(priv_usc_cat)
 ```
 
 #### Expected heterozygosity (Het_exp)
 ##### u_r_dist
 ```{r}
-Het_exp_dist2 <- glmmTMB(exp_het ~ u_r_dist,
-           diversity)
+Het_exp_dist_cat <- glmmTMB(exp_het ~ u_r_dist,
+           diversity_variant_sites)
 
-performance::check_model(Het_exp_dist2)
+performance::check_model(Het_exp_dist_cat)
 ```
 
 ##### u_r_usc
 ```{r}
-Het_exp_usc2 <- glmmTMB(exp_het ~ u_r_usc,
-           diversity)
+Het_exp_usc_cat <- glmmTMB(exp_het ~ u_r_usc,
+           diversity_variant_sites)
 
-performance::check_model(Het_exp_usc2)
+performance::check_model(Het_exp_usc_cat)
 ```
 
-#### Observed homozygosity (Hom_obs)
+#### Observed heterozygosity (Het_obs)
 ##### u_r_dist
 ```{r}
-Hom_obs_dist2 <- glmmTMB(obs_hom ~ u_r_dist,
-           diversity)
+Het_obs_dist_cat <- glmmTMB(obs_het ~ u_r_dist,
+           diversity_variant_sites)
 
-performance::check_model(Hom_obs_dist2)
+performance::check_model(Het_obs_dist_cat)
 ```
 
 ##### u_r_usc
 ```{r}
-Hom_obs_usc2 <- glmmTMB(obs_hom ~ u_r_usc,
-           diversity)
+Het_obs_usc_cat <- glmmTMB(obs_het ~ u_r_usc,
+           diversity_variant_sites)
 
-performance::check_model(Hom_obs_usc2)
+performance::check_model(Het_obs_usc_cat)
 ```
 
 #### Expected homozygosity (Hom_exp)
 ##### u_r_dist
 ```{r}
-Hom_exp_dist2 <- glmmTMB(exp_hom ~ u_r_dist,
-           diversity)
+Hom_exp_dist_cat <- glmmTMB(exp_hom ~ u_r_dist,
+           diversity_variant_sites)
 
-performance::check_model(Hom_exp_dist2)
+performance::check_model(Hom_exp_dist_cat)
 ```
 
 ##### u_r_usc
 ```{r}
-Hom_exp_usc2 <- glmmTMB(exp_hom ~ u_r_usc,
-           diversity)
+Hom_exp_usc_cat <- glmmTMB(exp_hom ~ u_r_usc,
+           diversity_variant_sites)
 
-performance::check_model(Hom_exp_usc2)
+performance::check_model(Hom_exp_usc_cat)
+```
+
+
+#### Observed homozygosity (Hom_obs)
+##### u_r_dist
+```{r}
+Hom_obs_dist_cat <- glmmTMB(obs_hom ~ u_r_dist,
+           diversity_variant_sites)
+
+performance::check_model(Hom_obs_dist_cat)
+```
+
+##### u_r_usc
+```{r}
+Hom_obs_usc_cat <- glmmTMB(obs_hom ~ u_r_usc,
+           diversity_variant_sites)
+
+performance::check_model(Hom_obs_usc_cat)
 ```
 
 #### Inbreeding coefficient (FIS)
 This is extremely zero-inflated. I've tried fitting models with zero inflation parameters w/glmmTMB but they don't converge and/or diagnostics don't pass tests. I'll fit manual hurdle models instead.
 ##### u_r_dist
 ```{r}
-diversity %<>%
+diversity_variant_sites %<>%
   mutate(fis_bin = case_when(
     fis == 0 ~ 0,
     fis > 0 ~ 1)
   )
   
 # binary
-fis_dist_bin2 <- glmmTMB(fis_bin ~ u_r_dist,
-           diversity,
+fis_dist_bin_cat <- glmmTMB(fis_bin ~ u_r_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites,
            family = "binomial")
 
-performance::check_model(fis_dist_bin2)
+performance::check_model(fis_dist_bin_cat)
 
 
 # quantitative
-fis_dist_quant2 <- glmmTMB(fis ~ u_r_dist,
-           diversity %>%
+fis_dist_quant_cat <- glmmTMB(fis ~  u_r_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
              dplyr::filter(fis != 0))
 
-performance::check_model(fis_dist_quant2)
+performance::check_model(fis_dist_quant_cat)
 ```
 
 ##### u_r_usc
 ```{r}
 # binary
-fis_usc_bin2 <- glmmTMB(fis_bin ~ u_r_usc,
-           diversity,
+fis_usc_bin_cat <- glmmTMB(fis_bin ~ u_r_usc 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites,
            family = "binomial")
 
-performance::check_model(fis_usc_bin2)
+performance::check_model(fis_usc_bin_cat)
 
 
 # quantitative
-fis_usc_quant2 <- glmmTMB(fis ~ u_r_usc,
-           diversity %>%
+fis_usc_quant_cat <- glmmTMB(fis * 100 ~ u_r_usc 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
              dplyr::filter(fis != 0))
 
-performance::check_model(fis_usc_quant2)
+performance::check_model(fis_usc_quant_cat)
 ```
 
 #### Pi
 ##### u_r_dist
 ```{r}
-# have to mult by 10 or else doesn't converge
-pi_dist_rar2 <- glmmTMB(pi*10 ~ u_r_dist + (1|sites),
-           diversity)
+pi_dist_cat <- glmmTMB(pi ~ u_r_dist +
+                         (1|num_indv),
+           diversity_variant_sites)
 
-performance::check_model(pi_dist_rar2)
+performance::check_model(pi_dist_cat)
 ```
 
 ##### u_r_usc
 ```{r}
-pi_usc_rar2 <- glmmTMB(pi*10 ~ u_r_usc + (1|sites),
-           diversity)
+pi_usc_cat <- glmmTMB(pi ~ u_r_usc +
+                        (1|num_indv),
+           diversity_variant_sites)
 
-performance::check_model(pi_usc_rar2)
+performance::check_model(pi_usc_cat)
 ```
-
 
 ### ANOVA & effect sizes
-#### Private alleles
-##### City_dist
-```{r}
-# ANOVA
-car::Anova(priv_dist_rar2)
-summary(priv_dist_rar2)
-
-test <- ggeffects::ggpredict(priv_dist_rar2)
-# Pi(Urban) = 269.6539
-# Pi(Rural) = 181.9130
-
-(181.9130-269.6539)/181.9130
-# 48% mean increase from rural to urban!
-```
-
-##### Urb_score
-```{r}
-car::Anova(priv_usc_rar2)
-```
-
-#### Expected heterozygosity
-##### City_dist
-```{r}
-# ANOVA
-car::Anova(Het_exp_dist2)
-summary(Het_exp_dist2)
-```
-
-##### Urb_score
-```{r}
-# ANOVA
-car::Anova(Het_exp_usc2)
-```
-
-#### Observed heterozygosity
-##### City_dist
-```{r}
-# ANOVA
-car::Anova(Het_obs_dist2)
-
-```
-
-##### Urb_score
-```{r}
-# ANOVA
-car::Anova(Het_obs_usc2)
-```
-
-#### Expected homozygosity
-##### City_dist
-```{r}
-# ANOVA
-car::Anova(Hom_exp_dist2)
-summary(Hom_exp_dist2)
-
-```
-
-##### Urb_score
-```{r}
-car::Anova(Hom_exp_usc2)
-```
-
-#### Observed homozygosity
-##### City_dist
-```{r}
-car::Anova(Hom_obs_dist2)
-```
-
-##### Urb_score
-```{r}
-car::Anova(Hom_obs_usc2)
-```
-
-#### FIS
-##### City_dist
-```{r}
-# ANOVA
-# bin
-car::Anova(fis_dist_bin2)
-
-# quant
-car::Anova(fis_dist_quant2)
-```
-
-##### Urb_score
-```{r}
-# ANOVA
-# bin
-car::Anova(fis_usc_bin2)
-
-# quant
-car::Anova(fis_usc_quant2)
-```
-
-#### Pi
-##### City_dist
-```{r}
-car::Anova(pi_dist_rar2)
-
-test <- ggeffects::ggpredict(pi_dist_rar2)
-# Pi(Urban) = 0.03276026
-# Pi(Rural) = 0.02818478
-
-(0.02818478-0.03276026)/0.02818478
-# 16% increase from rural to urban!
-```
-
-###### Urb_score
-```{r}
-car::Anova(pi_usc_rar2)
-```
-
-#### All
 ```{r}
 
-mod_list <- list(#priv_dist2,
-                 priv_dist_rar2,
-                 #priv_usc2,
-                 priv_usc_rar2,
-                 Het_obs_dist2,
-                 Het_obs_usc2,
-                 Hom_obs_dist2,
-                 Hom_obs_usc2,
-                 fis_dist_bin2,
-                 fis_dist_quant2,
-                 fis_usc_bin2,
-                 fis_usc_quant2,
-                 #pi_dist2,
-                 #pi_usc2,
-                 pi_dist_rar2,
-                 pi_usc_rar2)
+mod_list_cat <- list(priv_dist_cat,
+                 priv_usc_cat,
+                 Het_obs_dist_cat,
+                 Het_obs_usc_cat,
+                 Hom_obs_dist_cat,
+                 Hom_obs_usc_cat,
+                 fis_dist_bin_cat,
+                 fis_dist_quant_cat,
+                 fis_usc_bin_cat,
+                 fis_usc_quant_cat,
+                 pi_dist_cat,
+                 pi_usc_cat)
 
-anova_l2 <- lapply(mod_list, function(model) {
+create_anova_df_cat <- lapply(mod_list_cat, function(model) {
   anova_result <- car::Anova(model)
   
   formula <- formula(model)[2] %>%
@@ -1270,125 +2216,99 @@ anova_l2 <- lapply(mod_list, function(model) {
       p <= 0.001 ~ "***",
       TRUE ~ "")) %>%
     dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
-                  p = format(round(p, digits = 3), nsmall = 3))
-  })
-
-all_anovas2 <- do.call(rbind, anova_l2) %>%
+                  p = format(round(p, digits = 3), nsmall = 3)) %>%
   dplyr::arrange(Urbanization, Variable) %>%
-  dplyr::select(1,5,2,3,4,7,6) %>%
   dplyr::mutate("Variable" = case_when(
       Variable == "exp_het" ~ "Expected heterozygosity",
       Variable == "obs_het" ~ "Observed heterozygosity",
       Variable == "exp_hom" ~ "Expected homozygosity",
       Variable == "obs_hom" ~ "Observed homozygosity",
       Variable == "fis" ~ "FIS (quantitative)",
+      Variable == "fis * 100" ~ "FIS (quantitative)",
       Variable == "fis_bin" ~ "FIS (binary)",
-      Variable == "pi * 10" ~ "Pi (standardized)",
-      Variable == "private" ~ "Private alleles (standardized)",
+      Variable == "pi" ~ "Pi",
+      Variable == "private" ~ "Private alleles",
       TRUE ~ "")) %>%
   dplyr::mutate("Urbanization" = case_when(
-      Urbanization == "u_r_dist" ~ "Distance to City Center",
-      Urbanization == "u_r_usc" ~ "Urbanization Score",
-      TRUE ~ "")) %>%
-  dplyr::arrange(p) %T>%
+      Urbanization == "u_r_dist" ~ "Distance (categorical)",
+      Urbanization == "u_r_usc" ~ "Urbanization Score (categorical)",
+      TRUE ~ ""))
+  })
+
+all_anovas_cat <- do.call(rbind, create_anova_df_cat) %>%
+  dplyr::select(1,5,2,3,4,7,6) %T>%
   view
 
-
-all_anovas2 %>%
-  dplyr::filter(Sig != "") %>%
+# create flextable
+all_anovas_cat %>%
   dplyr::select(-Sig) %>%
   flextable::flextable() %>%
-  flextable::compose(i = 1, j = 3, part = "header",
+  flextable::compose(i = 1, j = 2, part = "header",
                      value = as_paragraph("Χ", as_sup("2"))) %>%
-  flextable::compose(i = 1, j = 6, part = "header",
+  flextable::compose(i = 1, j = 5, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
+  bold(~ p <= 0.05) %>%
   flextable::autofit()
 ```
 
 
-### Figures- HAVEN'T UPDATED YET
+### Figures
 #### Private alleles
-###### Without rarefaction
-####### City_dist
+##### City_dist
 ```{r}
-ggplot(diversity,
-       aes(x = u_r_dist,
-           y = private)) +
-  geom_violin(aes(fill = u_r_dist)) +
-  geom_dotplot(binaxis = "y",
-               stackdir = "center",
-               binwidth = 20) +
-  xlab("Urbanization based on Distance to City Center") +
-  ylab("Private Alleles") +
-  #plot_aesthetics +
-  theme_pubr() +
-  labs_pubr() +
-  theme(legend.position = "none" )
+priv_dist_pred <- ggeffects::ggpredict(priv_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
 
-```
-
-####### Urb_score
-```{r}
-ggplot(diversity,
-       aes(x = urb_score,
-           y = private)) +
-  xlab("Urbanization Score") +
-  ylab("Private Alleles") +
-  plot_aesthetics +
-  theme_pubr() +
-  labs_pubr() +
-  xlim(4, -4)
-
-```
-
-###### With rarefaction
-####### City_dist
-```{r}
-# ggplot(diversity,
-#        aes(x = City_dist,
-#            y = private/sites)) +
-#   xlab("Distance to City Center (km)") +
-#   ylab("Private Alleles per Site") +
-#   plot_aesthetics +
-#   theme_pubr() +
-#   labs_pubr() 
-
-
-
-priv_dist_rar_pred2 <- ggeffects::ggpredict(priv_dist_rar2,
-                     terms = c("u_r_dist"),
-                     type = "fe")
-
-plot(priv_dist_rar_pred2, 
+plot(priv_dist_pred, 
      add.data = F,
      colors = "bw") +
-  xlab("Urbanization based on\n Distance to City Center") +
-  ylab("Private alleles (standardized)") +
-  ylim(0, 400) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
   labs(title = "") +
-  theme_pubr()
+  theme_pubr() +
+  labs_pubr() 
 
-# ggsave(here::here("./Figures_Tables/regressions/private_alleles.png"))
+#ggsave(here::here("./Figures_Tables/regressions/private_alleles.png"))
 ```
 
-####### Urb_score
+##### Urb_score
 ```{r}
-ggplot(diversity,
-       aes(x = urb_score,
-           y = private/sites)) +
+priv_usc_pred <- ggeffects::ggpredict(priv_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(priv_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Urbanization Score") +
-  ylab("Private Alleles per Site") +
-  plot_aesthetics +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "")+
   theme_pubr() +
   labs_pubr() +
   xlim(4, -4)
-
 ```
 
 #### Expected heterozygosity
-###### City_dist
+##### City_dist
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = exp_het)) +
   xlab("Distance to City Center (km)") +
@@ -1399,9 +2319,9 @@ ggplot(diversity,
 
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = exp_het)) +
   xlab("Urbanization Score") +
@@ -1413,9 +2333,9 @@ ggplot(diversity,
 ```
 
 #### Obs heterozygosity
-###### City_dist
+##### City_dist
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = obs_het)) +
   xlab("Distance to City Center (km)") +
@@ -1426,9 +2346,9 @@ ggplot(diversity,
 
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = obs_het)) +
   xlab("Urbanization Score") +
@@ -1441,9 +2361,9 @@ ggplot(diversity,
 ```
 
 #### Expected homozygosity
-###### City_dist
+##### City_dist
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = exp_hom)) +
   xlab("Distance to City Center (km)") +
@@ -1454,9 +2374,9 @@ ggplot(diversity,
 
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = exp_hom)) +
   xlab("Urbanization Score") +
@@ -1468,9 +2388,9 @@ ggplot(diversity,
 ```
 
 #### Obs homozygosity
-###### City_dist
+##### City_dist
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = obs_hom)) +
   xlab("Distance to City Center (km)") +
@@ -1481,9 +2401,9 @@ ggplot(diversity,
 
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = obs_hom)) +
   xlab("Urbanization Score") +
@@ -1496,10 +2416,10 @@ ggplot(diversity,
 ```
 
 #### FIS
-###### City_dist
+##### City_dist
 ```{r}
 # binary
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = City_dist,
            y = fis_bin)) +
   xlab("Distance to City Center (km)") +
@@ -1516,7 +2436,7 @@ ggplot(diversity,
 
 
 # quantitative
-ggplot(diversity %>%
+ggplot(diversity_variant_sites %>%
          dplyr::filter(fis != 0),
        aes(x = City_dist,
            y = fis)) +
@@ -1527,10 +2447,10 @@ ggplot(diversity %>%
   labs_pubr() 
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
 # binary
-ggplot(diversity,
+ggplot(diversity_variant_sites,
        aes(x = urb_score,
            y = fis_bin)) +
   xlab("Urbanization Score") +
@@ -1548,7 +2468,7 @@ ggplot(diversity,
 
 
 # quantitative
-ggplot(diversity %>%
+ggplot(diversity_variant_sites %>%
          dplyr::filter(fis != 0),
        aes(x = urb_score,
            y = fis)) +
@@ -1562,45 +2482,55 @@ ggplot(diversity %>%
 ```
 
 #### Pi
-###### With rarefaction
-####### City_dist
+##### City_dist
 ```{r}
-# ggplot(diversity,
-#        aes(x = City_dist,
-#            y = pi/sites)) +
-#   xlab("Distance to City Center (km)") +
-#   ylab("Pi/sites") +
-#   plot_aesthetics +
-#   theme_pubr() +
-#   labs_pubr() 
 
-pi_dist_rar_pred2 <- ggeffects::ggpredict(pi_dist_rar2,
-                                   terms = c("u_r_dist"),
+pi_dist_pred <- ggeffects::ggpredict(pi_dist,
+                                   terms = c("City_dist"),
                                    type = "fe")
 
-plot(pi_dist_rar_pred2, 
+plot(pi_dist_pred, 
      add.data = F,
      colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Distance to City Center (km)") +
-  ylab("Pi * 10") +
+  ylab("Pi") +
   #ylim(NA, 0.04) +
   labs(title = "") +
   theme_pubr()
 
-# ggsave(here::here("./Figures_Tables/regressions/pi.png"))
+ggsave(here::here("./Figures_Tables/regressions/pi.png"))
 ```
 
-####### Urb_score
+###### Urb_score
 ```{r}
-ggplot(diversity,
-       aes(x = urb_score,
-           y = pi/sites)) +
+pi_usc_pred <- ggeffects::ggpredict(pi_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(pi_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Urbanization Score") +
-  ylab("Pi/sites") +
-  plot_aesthetics +
-  theme_pubr() +
-  labs_pubr() +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()+
   xlim(4, -4)
+
 
 ```
 
