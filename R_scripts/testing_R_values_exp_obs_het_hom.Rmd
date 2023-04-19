@@ -66,7 +66,8 @@ file_list <- c(
   here::here("./summary_stats/trial_02/output_filtering_fstats_trial09/populations.sumstats_summary.tsv"),
   here::here("./summary_stats/trial_02/output_filtering_fstats_trial10/populations.sumstats_summary.tsv"),
   here::here("./summary_stats/trial_02/output_filtering_fstats_trial11/populations.sumstats_summary.tsv"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial12/populations.sumstats_summary.tsv")
+  here::here("./summary_stats/trial_02/output_filtering_fstats_trial12/populations.sumstats_summary.tsv"),
+  here::here("./summary_stats/trial_02/output_filtering_fstats_trial13/populations.sumstats_summary.tsv")
   )
 
 # loop through each file and apply the function
@@ -163,8 +164,10 @@ for (i in seq_along(output_list)) {
     output_list[[i]]$R <- "0.5"
   } else if (i == 5 || i == 11) {
     output_list[[i]]$R <- "0.75"
-  } else {
+  } else if (i == 6 || i == 12) {
     output_list[[i]]$R <- "1"
+  } else {
+    output_list[[i]]$R <- "0.0038"
   }
 }
 
@@ -182,6 +185,7 @@ trial09 <- output_list[[file_list[09]]]
 trial10 <- output_list[[file_list[10]]]
 trial11 <- output_list[[file_list[11]]]
 trial12 <- output_list[[file_list[12]]]
+trial13 <- output_list[[file_list[13]]]
 ```
 
 # How do -R values impact exp/obs homozygosity/heterozygosity?
@@ -284,7 +288,7 @@ ex_het_dist <- ggplot(data = exp_het_dist_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.005,
        size = 2)  +
   ggtitle(label = "Expected Heterozygosity",
           subtitle = "Distance to the City Center (continuous)") +
@@ -295,7 +299,7 @@ ex_het_dist <- ggplot(data = exp_het_dist_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+ex_het_dist
 # ggsave("Figures_Tables/comparing_R_minmaf/Exp_het_dist.png",
 #        last_plot(),
 #        width = 22,
@@ -316,7 +320,7 @@ ex_het_usc <- ggplot(data = exp_het_usc_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.0009,
        size = 2)  +
   ggtitle(label = "Expected Heterozygosity",
           subtitle = "Urbanization Score (continuous)") +
@@ -327,7 +331,7 @@ ex_het_usc <- ggplot(data = exp_het_usc_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+ex_het_usc
 # ggsave("Figures_Tables/comparing_R_minmaf/Exp_het_usc.png",
 #        last_plot(),
 #        width = 22,
@@ -348,7 +352,7 @@ obs_het_dist <- ggplot(data = obs_het_dist_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.008,
        size = 2)  +
   ggtitle(label = "Observed Heterozygosity",
           subtitle = "Distance to the City Center (continuous)") +
@@ -359,7 +363,7 @@ obs_het_dist <- ggplot(data = obs_het_dist_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+obs_het_dist
 # ggsave("Figures_Tables/comparing_R_minmaf/obs_het_dist.png",
 #        last_plot(),
 #        width = 22,
@@ -380,7 +384,7 @@ obs_het_usc <- ggplot(data = obs_het_usc_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.009,
        size = 2)  +
   ggtitle(label = "Observed Heterozygosity",
           subtitle = "Urbanization Score (continuous)") +
@@ -391,7 +395,7 @@ obs_het_usc <- ggplot(data = obs_het_usc_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+obs_het_usc
 # ggsave("Figures_Tables/comparing_R_minmaf/obs_het_usc.png",
 #        last_plot(),
 #        width = 22,
@@ -412,7 +416,7 @@ ex_hom_dist <- ggplot(data = exp_hom_dist_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.005,
        size = 2)  +
   ggtitle(label = "Expected Homozygosity",
           subtitle = "Distance to the City Center (continuous)") +
@@ -423,7 +427,7 @@ ex_hom_dist <- ggplot(data = exp_hom_dist_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+ex_hom_dist
 # ggsave("Figures_Tables/comparing_R_minmaf/Exp_hom_dist.png",
 #        last_plot(),
 #        width = 22,
@@ -444,7 +448,7 @@ ex_hom_usc <- ggplot(data = exp_hom_usc_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.0007,
        size = 2)  +
   ggtitle(label = "Expected Homozygosity",
           subtitle = "Urbanization Score (continuous)") +
@@ -455,7 +459,7 @@ ex_hom_usc <- ggplot(data = exp_hom_usc_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+ex_hom_usc
 # ggsave("Figures_Tables/comparing_R_minmaf/Exp_hom_usc.png",
 #        last_plot(),
 #        width = 22,
@@ -476,7 +480,7 @@ obs_hom_dist <- ggplot(data = obs_hom_dist_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.001,
        size = 2)  +
   ggtitle(label = "Observed Homozygosity",
           subtitle = "Distance to the City Center (continuous)") +
@@ -487,7 +491,7 @@ obs_hom_dist <- ggplot(data = obs_hom_dist_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+obs_hom_dist
 # ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_dist.png",
 #        last_plot(),
 #        width = 22,
@@ -508,7 +512,7 @@ obs_hom_usc <- ggplot(data = obs_hom_usc_anova,
            fill = R),
        color = "black",
        shape = 21,
-       width = 0.0005,
+       width = 0.0009,
        size = 2)  +
   ggtitle(label = "Observed Homozygosity",
           subtitle = "Urbanization Score (continuous)") +
@@ -519,7 +523,7 @@ obs_hom_usc <- ggplot(data = obs_hom_usc_anova,
   theme_bw() +
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
-
+obs_hom_usc
 # ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_usc.png",
 #        last_plot(),
 #        width = 22,
@@ -560,7 +564,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/homozygosity_all.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = City_dist, y = exp_het)) +
     geom_point() +
@@ -593,7 +597,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/exp_het_regressions_dist.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = urb_score, y = exp_het)) +
     geom_point() +
@@ -630,7 +634,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/exp_het_regressions_usc.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = City_dist, y = obs_het)) +
     geom_point() +
@@ -663,7 +667,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/obs_het_regressions_dist.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = urb_score, y = obs_het)) +
     geom_point() +
@@ -701,7 +705,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/obs_het_regressions_usc.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = City_dist, y = exp_hom)) +
     geom_point() +
@@ -734,7 +738,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/exp_hom_regressions_dist.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = urb_score, y = exp_hom)) +
     geom_point() +
@@ -769,7 +773,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/exp_hom_regressions_usc.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = City_dist, y = obs_hom)) +
     geom_point() +
@@ -802,7 +806,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_regressions_dist.png",
 plot_list <- list()
 
 # Loop over the data frames and create a ggplot2 regression for each one
-for (i in 1:12) {
+for (i in 1:13) {
   p <- ggplot(output_list[[i]],
               aes(x = urb_score, y = obs_hom)) +
     geom_point() +
@@ -833,6 +837,7 @@ ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_regressions_usc.png",
 ## Urbanization is categorical
 
 ## Compare expected w/observed heterozygosity, homozygosity
+### Create table
 ```{r}
 # Create an empty list to store results
 chisq_results <- list()
@@ -857,11 +862,11 @@ for (i in seq_along(output_list)) {
 }
 
 # Combine all results into one table
-all_chisq_results <- do.call(rbind, chisq_results)
+all_chisq_results <- do.call(rbind, chisq_results) %>%
+  dplyr::mutate(p = round(p, 3)) %>%
+  dplyr::mutate(p = ifelse(p < 0.001, "<0.001", p))
 
 all_chisq_results %>%
-  dplyr::mutate(p = round(p, 3)) %>%
-  dplyr::mutate(p = ifelse(p < 0.001, "<0.001", p)) %>%
   flextable() %>%
   flextable::compose(i = 1, j = 4, part = "header",
                      value = as_paragraph("Χ", as_sup("2"))) %>%
@@ -869,7 +874,34 @@ all_chisq_results %>%
   flextable::autofit() %>%
   #flextable::save_as_image("Figures_Tables/comparing_R_minmaf/ChiSq_tests.png") %>%
   flextable::save_as_docx(path = "Figures_Tables/comparing_R_minmaf/ChiSq_tests.docx")
+```
 
+### Create basic graph
+```{r}
+# create labels for only 3 super-close points
+all_chisq_results$label <- all_chisq_results$R
+all_chisq_results$label[c(1:6, 9:13)] <- ""
 
+ggplot(data = all_chisq_results %>%
+         dplyr::filter(min_maf == 0.05) %>%
+         dplyr::mutate(p = ifelse(p == "<0.001", 0.001, p)) %>%
+         dplyr::mutate(p = as.numeric(p)) %>%
+         dplyr::mutate(R = as.numeric(R)),
+        aes(x = R,
+            y = p,
+            label = label)) +
+    geom_line(color = "blue",
+            size = 1) +
+    ggrepel::geom_label_repel(
+    aes(R, p, label = label),
+    nudge_y = -0.015) +
+  geom_point(color = "blue",
+             fill = "orange",
+             size = 3,
+             shape = 21) +
+  ggpubr::theme_pubr()
+
+ggsave("Figures_Tables/comparing_R_minmaf/chisq_graph.png", last_plot())
 
 ```
+

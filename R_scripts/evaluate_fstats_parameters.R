@@ -31,8 +31,9 @@ file_paths <- c(
   here::here("./summary_stats/trial_02/output_filtering_fstats_trial09/populations.log.distribs"),
   here::here("./summary_stats/trial_02/output_filtering_fstats_trial10/populations.log.distribs"),
   here::here("./summary_stats/trial_02/output_filtering_fstats_trial11/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial12/populations.log.distribs")
-  )
+  here::here("./summary_stats/trial_02/output_filtering_fstats_trial12/populations.log.distribs"),
+  here::here("./summary_stats/trial_02/output_filtering_fstats_trial13/populations.log.distribs")
+)
 
 samples_per_locus <- extract_samples_per_locus(file_paths)
 
@@ -54,7 +55,8 @@ df_combined %<>%
     ID %in% c("trial3", "trial9") ~ "0.25",
     ID %in% c("trial4", "trial10") ~ "0.5",
     ID %in% c("trial5", "trial11") ~ "0.75",
-    ID %in% c("trial6", "trial12") ~ "1"))
+    ID %in% c("trial6", "trial12") ~ "1",
+    TRUE ~ "(1/261)"))
 
 
 ggplot(data = df_combined,
@@ -66,6 +68,7 @@ ggplot(data = df_combined,
   geom_point(size = 1) +
   facet_grid(rows = vars(min_maf),
              cols = vars(R),
+             labeller = "label_both",
              scales = "free_y",
              switch = "y") +
   theme_bw() 
