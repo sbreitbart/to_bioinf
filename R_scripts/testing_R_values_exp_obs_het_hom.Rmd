@@ -154,7 +154,7 @@ for (i in seq_along(output_list)) {
 # add -R values
 for (i in seq_along(output_list)) {
   if (i == 1 || i == 7) {
-    output_list[[i]]$R <- "0.0038"
+    output_list[[i]]$R <- "0.0076"
   } else if (i == 2 || i == 8) {
     output_list[[i]]$R <- "0.01"
   } else if (i == 3 || i == 9) {
@@ -275,7 +275,7 @@ obs_hom_usc_anova <- fit_analyze_lm("obs_hom ~ urb_score",
 ###### City_dist
 ```{r}
 
-ex_het_dist <- ggplot(data = exp_hom_dist_anova,
+ex_het_dist <- ggplot(data = exp_het_dist_anova,
        aes(x = r_squared,
            y = p.value,
            label = R)) +
@@ -296,18 +296,18 @@ ex_het_dist <- ggplot(data = exp_hom_dist_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/Exp_het_dist.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/Exp_het_dist.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 
 ```
 
 ###### Urb_score
 ```{r}
 
-ex_het_usc <- ggplot(data = exp_hom_usc_anova,
+ex_het_usc <- ggplot(data = exp_het_usc_anova,
        aes(x = r_squared,
            y = p.value,
            label = R)) +
@@ -328,18 +328,18 @@ ex_het_usc <- ggplot(data = exp_hom_usc_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/Exp_het_usc.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/Exp_het_usc.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 ```
 
 ##### Obs heterozygosity
 ###### City_dist
 ```{r}
 
-obs_het_dist <- ggplot(data = obs_hom_dist_anova,
+obs_het_dist <- ggplot(data = obs_het_dist_anova,
        aes(x = r_squared,
            y = p.value,
            label = R)) +
@@ -360,18 +360,18 @@ obs_het_dist <- ggplot(data = obs_hom_dist_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/obs_het_dist.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/obs_het_dist.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 
 ```
 
 ###### Urb_score
 ```{r}
 
-obs_het_usc <- ggplot(data = obs_hom_usc_anova,
+obs_het_usc <- ggplot(data = obs_het_usc_anova,
        aes(x = r_squared,
            y = p.value,
            label = R)) +
@@ -392,11 +392,11 @@ obs_het_usc <- ggplot(data = obs_hom_usc_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/obs_het_usc.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/obs_het_usc.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 ```
 
 ##### Expected homozygosity
@@ -424,11 +424,11 @@ ex_hom_dist <- ggplot(data = exp_hom_dist_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/Exp_hom_dist.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/Exp_hom_dist.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 
 ```
 
@@ -456,11 +456,11 @@ ex_hom_usc <- ggplot(data = exp_hom_usc_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/Exp_hom_usc.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/Exp_hom_usc.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 ```
 
 ##### Obs homozygosity
@@ -478,7 +478,7 @@ obs_hom_dist <- ggplot(data = obs_hom_dist_anova,
        shape = 21,
        width = 0.0005,
        size = 2)  +
-  ggtitle(label = "Observed homerozygosity",
+  ggtitle(label = "Observed Homozygosity",
           subtitle = "Distance to the City Center (continuous)") +
   facet_wrap(facets = "min_maf",
              labeller = "label_both",
@@ -488,11 +488,11 @@ obs_hom_dist <- ggplot(data = obs_hom_dist_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_dist.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_dist.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 
 ```
 
@@ -520,11 +520,11 @@ obs_hom_usc <- ggplot(data = obs_hom_usc_anova,
   labs_pubr()+
   theme(panel.spacing = unit(22, "pt")) 
 
-ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_usc.png",
-       last_plot(),
-       width = 22,
-       height = 6,
-       units = "cm")
+# ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_usc.png",
+#        last_plot(),
+#        width = 22,
+#        height = 6,
+#        units = "cm")
 ```
 
 ##### All
@@ -834,45 +834,42 @@ ggsave("Figures_Tables/comparing_R_minmaf/obs_hom_regressions_usc.png",
 
 ## Compare expected w/observed heterozygosity, homozygosity
 ```{r}
-# All populations
-chisq.test(diversity_all_sites$obs_hom, diversity_all_sites$exp_hom)
-chisq.test(diversity_all_sites$obs_het, diversity_all_sites$exp_het)
+# Create an empty list to store results
+chisq_results <- list()
+
+# Loop through each dataframe and perform chi square test
+for (i in seq_along(output_list)) {
+  
+  chisq_test_hom_het <- chisq.test(
+    output_list[[i]]$obs_hom, 
+    output_list[[i]]$exp_hom)
+  
+  
+  chisq_results[[i]] <- data.frame(
+    trial = i,
+    R = output_list[[i]]$R[1],
+    min_maf = output_list[[i]]$min_maf[1],
+    statistic = chisq_test_hom_het$statistic,
+    df = chisq_test_hom_het$parameter,
+    p = chisq_test_hom_het$p.value
+    
+  )
+}
+
+# Combine all results into one table
+all_chisq_results <- do.call(rbind, chisq_results)
+
+all_chisq_results %>%
+  dplyr::mutate(p = round(p, 3)) %>%
+  dplyr::mutate(p = ifelse(p < 0.001, "<0.001", p)) %>%
+  flextable() %>%
+  flextable::compose(i = 1, j = 4, part = "header",
+                     value = as_paragraph("Χ", as_sup("2"))) %>%
+  flextable::set_caption("Chi Square Tests") %>%
+  flextable::autofit() %>%
+  #flextable::save_as_image("Figures_Tables/comparing_R_minmaf/ChiSq_tests.png") %>%
+  flextable::save_as_docx(path = "Figures_Tables/comparing_R_minmaf/ChiSq_tests.docx")
 
 
-# Only urban populations
-## distance
-div_urb_dist <- diversity_all_sites %>%
-   dplyr::filter(u_r_dist == "Urban")
 
-chisq.test(div_urb_dist$obs_hom, div_urb_dist$exp_hom)
-chisq.test(div_urb_dist$obs_het, div_urb_dist$exp_het)
-
-
-## urb score
-div_urb_usc <- diversity_all_sites %>%
-   dplyr::filter(u_r_usc == "Urban")
-
-chisq.test(div_urb_usc$obs_hom, div_urb_usc$exp_hom)
-chisq.test(div_urb_usc$obs_het, div_urb_usc$exp_het)
-
-
-
-# Only rural populations
-## distance
-div_rur_dist <- diversity_all_sites %>%
-   dplyr::filter(u_r_dist == "Rural")
-
-chisq.test(div_rur_dist$obs_hom, div_rur_dist$exp_hom)
-chisq.test(div_rur_dist$obs_het, div_rur_dist$exp_het)
-
-
-## urb score
-div_rur_usc <- diversity_all_sites %>%
-   dplyr::filter(u_r_usc == "Rural")
-
-chisq.test(div_rur_usc$obs_hom, div_rur_usc$exp_hom)
-chisq.test(div_rur_usc$obs_het, div_rur_usc$exp_het)
-
-
-# Looks like the largest differences btwn exp and obs het/hom are in the rural plants when urb = urb score
 ```

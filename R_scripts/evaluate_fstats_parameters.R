@@ -49,7 +49,7 @@ df_combined %<>%
     TRUE ~ 0.05)) %>%
   dplyr::mutate(min_maf = as.factor(min_maf)) %>%
   dplyr::mutate(R = case_when(
-    ID %in% c("trial1", "trial7") ~ "(1/261)",
+    ID %in% c("trial1", "trial7") ~ "(2/261)",
     ID %in% c("trial2", "trial8") ~ "0.01",
     ID %in% c("trial3", "trial9") ~ "0.25",
     ID %in% c("trial4", "trial10") ~ "0.5",
