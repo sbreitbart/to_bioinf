@@ -849,6 +849,10 @@ for (i in seq_along(output_list)) {
     output_list[[i]]$obs_hom, 
     output_list[[i]]$exp_hom)
   
+  cramerV_hom_het <- cramerV(
+    output_list[[i]]$obs_hom, 
+    output_list[[i]]$exp_hom)
+  
   
   chisq_results[[i]] <- data.frame(
     trial = i,
@@ -856,7 +860,8 @@ for (i in seq_along(output_list)) {
     min_maf = output_list[[i]]$min_maf[1],
     statistic = chisq_test_hom_het$statistic,
     df = chisq_test_hom_het$parameter,
-    p = chisq_test_hom_het$p.value
+    p = chisq_test_hom_het$p.value,
+    cramerV = as.numeric(cramerV_hom_het)
     
   )
 }
@@ -872,7 +877,7 @@ all_chisq_results %>%
                      value = as_paragraph("Χ", as_sup("2"))) %>%
   flextable::set_caption("Chi Square Tests") %>%
   flextable::autofit() %>%
-  #flextable::save_as_image("Figures_Tables/comparing_R_minmaf/ChiSq_tests.png") %>%
+  flextable::save_as_image("Figures_Tables/comparing_R_minmaf/ChiSq_tests.png") %>%
   flextable::save_as_docx(path = "Figures_Tables/comparing_R_minmaf/ChiSq_tests.docx")
 ```
 
