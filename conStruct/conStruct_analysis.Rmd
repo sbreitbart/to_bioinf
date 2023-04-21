@@ -762,7 +762,193 @@ nonspatial_mod_run7 <- conStruct(spatial = FALSE,
 
 Output:
 
+checking data.block
 
+	reading 261 samples
+	reading 1362 loci
+
+checking specified model
+
+
+user has specified a purely discrete model with 1 layer(s)
+
+
+SAMPLING FOR MODEL 'oneK' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 0.069 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 690 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 1: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 1: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 1: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 1: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 1: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 1: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 1: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 1: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 1: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 1: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 1: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 1397 seconds (Warm-up)
+Chain 1:                1877.49 seconds (Sampling)
+Chain 1:                3274.5 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'oneK' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 0.02 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 200 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 2: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 2: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 2: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 2: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 2: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 2: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 2: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 2: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 1327.97 seconds (Warm-up)
+Chain 2:                1693.67 seconds (Sampling)
+Chain 2:                3021.64 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'oneK' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 0.021 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 210 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 3: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 3: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 3: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 3: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 3: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 3: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 3: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 3: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 3: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 1424.71 seconds (Warm-up)
+Chain 3:                2255.89 seconds (Sampling)
+Chain 3:                3680.61 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'oneK' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 0.024 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 240 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 4: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 4: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 4: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 4: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 4: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 4: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 4: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 4: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 4: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 4: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 1603.88 seconds (Warm-up)
+Chain 4:                1970.18 seconds (Sampling)
+Chain 4:                3574.06 seconds (Total)
+Chain 4: 
+
+SAMPLING FOR MODEL 'oneK' NOW (CHAIN 5).
+Chain 5: 
+Chain 5: Gradient evaluation took 0.022 seconds
+Chain 5: 1000 transitions using 10 leapfrog steps per transition would take 220 seconds.
+Chain 5: Adjust your expectations accordingly!
+Chain 5: 
+Chain 5: 
+Chain 5: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 5: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 5: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 5: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 5: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 5: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 5: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 5: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 5: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 5: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 5: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 5: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 5: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 5: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 5: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 5: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 5: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 5: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 5: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 5: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 5: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 5: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 5: 
+Chain 5:  Elapsed Time: 1589.94 seconds (Warm-up)
+Chain 5:                1775.87 seconds (Sampling)
+Chain 5:                3365.81 seconds (Total)
+Chain 5: 
+
+No warnings!!!!!!!!!!!!!!!!
 
 # First thoughts on outputs
 
