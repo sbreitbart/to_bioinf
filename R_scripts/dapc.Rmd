@@ -1,0 +1,15 @@
+# Set up notebook
+## Load libraries
+```{r}
+library(here)
+library(tidyverse)
+library(magrittr)
+# install.packages("adegenet")
+library("adegenet")
+```
+
+# Explore data
+```{r}
+adegenet::find.clusters()
+```
+

@@ -69,9 +69,18 @@ ggplot(data = df_combined,
   facet_grid(rows = vars(min_maf),
              cols = vars(R),
              labeller = "label_both",
-             scales = "free_y",
+           #  scales = "free_y",
              switch = "y") +
   theme_bw() 
 
 ggsave(here::here("./Figures_Tables/samples_vs_loci.png"), plot = last_plot(), 
        width = 20, height = 8, units = "cm")
+
+
+# how many loci are associated with each value of -R?
+loci_per_R <- lapply(samples_per_locus, function(df) {
+  df %>% 
+    summarize(total_loci = sum(n_loci),
+              trial = first(ID))
+}) %>%
+  bind_rows()

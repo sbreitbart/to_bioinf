@@ -95,7 +95,7 @@ distances <- fields::rdist.earth(coords,
 ```
 
 # Run spatial model
-## Run 1: 4/20/23 (k = 3)
+## Run 1: 4/20/23 (k = 3)- WARNINGS
 Took about 3-4 hours to run
 ```{r}
 #       the number of layers (K)
@@ -163,7 +163,7 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
 
-## Run 2: 4/20/23 (k = 2)
+## Run 2: (k = 2)- WARNINGS
 Took about 3 hours to run__
 ```{r}
 #       the number of layers (K)
@@ -233,7 +233,7 @@ Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
 
 
-## Run 3: 4/20/23 (k = 1)
+## Run 3: (k = 1)- WARNINGS
 Took about 20 min
 ```{r}
 #       the number of layers (K)
@@ -297,8 +297,103 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
 
+## Run 4: 4/23/23 (k = 1), 5,000 iterations, 3 chains- NO WARNINGS!
+```{r}
+#       the number of layers (K)
+#       the allele frequency data (freqs)
+#       the geographic distance matrix (geoDist)
+#       the sampling coordinates (coords)
+
+spatial_mod_run4 <- conStruct(spatial = TRUE, 
+                    K = 1, 
+                    freqs = allele_frqs,
+                    geoDist = distances, 
+                    coords = coords,
+                    prefix = "spK1_1",
+                    n.chains = 3,
+                    n.iter = 5000)
+```
+
+Output:
+
+SAMPLING FOR MODEL 'space_oneK' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 0.037 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 370 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 5000 [  0%]  (Warmup)
+Chain 1: Iteration:  500 / 5000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1000 / 5000 [ 20%]  (Warmup)
+Chain 1: Iteration: 1500 / 5000 [ 30%]  (Warmup)
+Chain 1: Iteration: 2000 / 5000 [ 40%]  (Warmup)
+Chain 1: Iteration: 2500 / 5000 [ 50%]  (Warmup)
+Chain 1: Iteration: 2501 / 5000 [ 50%]  (Sampling)
+Chain 1: Iteration: 3000 / 5000 [ 60%]  (Sampling)
+Chain 1: Iteration: 3500 / 5000 [ 70%]  (Sampling)
+Chain 1: Iteration: 4000 / 5000 [ 80%]  (Sampling)
+Chain 1: Iteration: 4500 / 5000 [ 90%]  (Sampling)
+Chain 1: Iteration: 5000 / 5000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 1860.2 seconds (Warm-up)
+Chain 1:                1726.06 seconds (Sampling)
+Chain 1:                3586.26 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'space_oneK' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 0.041 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 410 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 5000 [  0%]  (Warmup)
+Chain 2: Iteration:  500 / 5000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1000 / 5000 [ 20%]  (Warmup)
+Chain 2: Iteration: 1500 / 5000 [ 30%]  (Warmup)
+Chain 2: Iteration: 2000 / 5000 [ 40%]  (Warmup)
+Chain 2: Iteration: 2500 / 5000 [ 50%]  (Warmup)
+Chain 2: Iteration: 2501 / 5000 [ 50%]  (Sampling)
+Chain 2: Iteration: 3000 / 5000 [ 60%]  (Sampling)
+Chain 2: Iteration: 3500 / 5000 [ 70%]  (Sampling)
+Chain 2: Iteration: 4000 / 5000 [ 80%]  (Sampling)
+Chain 2: Iteration: 4500 / 5000 [ 90%]  (Sampling)
+Chain 2: Iteration: 5000 / 5000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 3157.86 seconds (Warm-up)
+Chain 2:                1668.02 seconds (Sampling)
+Chain 2:                4825.89 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'space_oneK' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 0.036 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 360 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 5000 [  0%]  (Warmup)
+Chain 3: Iteration:  500 / 5000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1000 / 5000 [ 20%]  (Warmup)
+Chain 3: Iteration: 1500 / 5000 [ 30%]  (Warmup)
+Chain 3: Iteration: 2000 / 5000 [ 40%]  (Warmup)
+Chain 3: Iteration: 2500 / 5000 [ 50%]  (Warmup)
+Chain 3: Iteration: 2501 / 5000 [ 50%]  (Sampling)
+Chain 3: Iteration: 3000 / 5000 [ 60%]  (Sampling)
+Chain 3: Iteration: 3500 / 5000 [ 70%]  (Sampling)
+Chain 3: Iteration: 4000 / 5000 [ 80%]  (Sampling)
+Chain 3: Iteration: 4500 / 5000 [ 90%]  (Sampling)
+Chain 3: Iteration: 5000 / 5000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 2676.28 seconds (Warm-up)
+Chain 3:                1619.59 seconds (Sampling)
+Chain 3:                4295.87 seconds (Total)
+Chain 3: 
+
+
 # Run non-spatial model (like STRUCTURE)
-## Run 1: 4/20/23 (k = 2)
+## Run 1: 4/20/23 (k = 2)- WARNINGS
 Took about 2 hours to run.
 ```{r}
 #       the number of layers (K)
@@ -358,7 +453,7 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess
 
-## Run 2: 4/20/23 (k = 1)
+## Run 2: (k = 1)- WARNINGS
 Took about 15 minutes to run.
 ```{r}
 #       the number of layers (K)
@@ -425,7 +520,7 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
 
-## Run 3: 4/20/23 (k = 1), 2000 iterations
+## Run 3: (k = 1), 2000 iterations- WARNINGS
 Took about 15 minutes to run.
 ```{r}
 #       the number of layers (K)
@@ -494,7 +589,7 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess
 
-## Run 4: 4/20/23 (k = 1), 5000 iterations
+## Run 4: (k = 1), 5000 iterations- WARNINGS
 Took about 30 minutes to run.
 ```{r}
 #       the number of layers (K)
@@ -558,7 +653,7 @@ Tail Effective Samples Size (ESS) is too low, indicating posterior variances and
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
 
-## Run 5: 4/20/23 (k = 1), 10,000 iterations
+## Run 5: (k = 1), 10,000 iterations- WARNINGS
 ```{r}
 #       the number of layers (K)
 #       the allele frequency data (freqs)
@@ -633,7 +728,7 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
 
-## Run 6: 4/21/23 (k = 1), 10,000 iterations, 2 chains
+## Run 6: 4/21/23 (k = 1), 10,000 iterations, 2 chains- WARNINGS
 ```{r}
 #       the number of layers (K)
 #       the allele frequency data (freqs)
@@ -740,7 +835,7 @@ Tail Effective Samples Size (ESS) is too low, indicating posterior variances and
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
 
-## Run 7: 4/21/23 (k = 1), 10,000 iterations, 5 chains
+## Run 7: (k = 1), 10,000 iterations, 5 chains- NO WARNINGS!
 ```{r}
 #       the number of layers (K)
 #       the allele frequency data (freqs)
@@ -950,10 +1045,217 @@ Chain 5:
 
 No warnings!!!!!!!!!!!!!!!!
 
-# First thoughts on outputs
+## Run 8: (k = 2), 10,000 iterations, 5 chains- ERROR
+Didn't complete because the output file was too big. Took about 30 hours...
+```{r}
+#       the number of layers (K)
+#       the allele frequency data (freqs)
+#       the sampling coordinates (coords)
+#
+#   if you're running the nonspatial model, 
+#       you do not have to specify 
+#       the geographic distance matrix (geoDist)
 
-- I can (and should) adjust estimates for K (1,2,3, maybe more?)
-- I can (and should) rerun these analyses with the SAME the number of independent MCMCs, aka chains (n.chains) to verify my results are consistent
-  - "Above, I highlight the importance of evaluating performance of individual MCMC runs, but it’s also a good idea to run multiple, independent analyses and compare results across them. Ideally, multiple independent runs converge on the same stationary distribution, with similar parameter estimates and posterior probabilities.
-If different runs give very different results, you can check whether there’s a mixing problem or a truly multi-modal posterior probability surface by comparing the values of the posterior probability across runs. If two runs have very different parameter estimates but their posterior probability distributions are indistinguishable, that’s an indication of multi-modality. If multiple runs show different parameter estimates, but the posterior probabilities for a subset of the runs that show consistent results are higher than those of a different subset that gives conflicting results, that indicates that some of the runs are not mixing well."
-- 
+nonspatial_mod_run8 <- conStruct(spatial = FALSE, 
+                    K = 2, 
+                    freqs = allele_frqs, 
+                    geoDist = NULL, 
+                    coords = coords,
+                    prefix = "nspK2_1",
+                    n.chains = 5,
+                    n.iter = 10000 )
+```
+
+Output:
+
+checking data.block
+
+	reading 261 samples
+	reading 1362 loci
+
+checking specified model
+
+
+user has specified a purely discrete model with 2 layer(s)
+
+
+SAMPLING FOR MODEL 'multiK' NOW (CHAIN 1).
+Chain 1: 
+Chain 1: Gradient evaluation took 0.292 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 2920 seconds.
+Chain 1: Adjust your expectations accordingly!
+Chain 1: 
+Chain 1: 
+Chain 1: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 1: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 1: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 1: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 1: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 1: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 1: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 1: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 1: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 1: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 1: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 1: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 1: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 1: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 1: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 1: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 1: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 1: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 1: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 1: 
+Chain 1:  Elapsed Time: 10706.2 seconds (Warm-up)
+Chain 1:                9280.21 seconds (Sampling)
+Chain 1:                19986.4 seconds (Total)
+Chain 1: 
+
+SAMPLING FOR MODEL 'multiK' NOW (CHAIN 2).
+Chain 2: 
+Chain 2: Gradient evaluation took 0.037 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 370 seconds.
+Chain 2: Adjust your expectations accordingly!
+Chain 2: 
+Chain 2: 
+Chain 2: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 2: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 2: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 2: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 2: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 2: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 2: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 2: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 2: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 2: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 2: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 2: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 2: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 2: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 2: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 2: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 2: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 2: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 2: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 2: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 2: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 2: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 2: 
+Chain 2:  Elapsed Time: 10139.8 seconds (Warm-up)
+Chain 2:                7844.81 seconds (Sampling)
+Chain 2:                17984.6 seconds (Total)
+Chain 2: 
+
+SAMPLING FOR MODEL 'multiK' NOW (CHAIN 3).
+Chain 3: 
+Chain 3: Gradient evaluation took 0.038 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 380 seconds.
+Chain 3: Adjust your expectations accordingly!
+Chain 3: 
+Chain 3: 
+Chain 3: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 3: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 3: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 3: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 3: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 3: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 3: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 3: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 3: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 3: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 3: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 3: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 3: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 3: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 3: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 3: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 3: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 3: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 3: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 3: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 3: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 3: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 3: 
+Chain 3:  Elapsed Time: 14586.5 seconds (Warm-up)
+Chain 3:                7958.89 seconds (Sampling)
+Chain 3:                22545.4 seconds (Total)
+Chain 3: 
+
+SAMPLING FOR MODEL 'multiK' NOW (CHAIN 4).
+Chain 4: 
+Chain 4: Gradient evaluation took 0.039 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 390 seconds.
+Chain 4: Adjust your expectations accordingly!
+Chain 4: 
+Chain 4: 
+Chain 4: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 4: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 4: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 4: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 4: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 4: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 4: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 4: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 4: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 4: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 4: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 4: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 4: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 4: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 4: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 4: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 4: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 4: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 4: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 4: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 4: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 4: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 4: 
+Chain 4:  Elapsed Time: 10817.5 seconds (Warm-up)
+Chain 4:                13614.1 seconds (Sampling)
+Chain 4:                24431.7 seconds (Total)
+Chain 4: 
+
+SAMPLING FOR MODEL 'multiK' NOW (CHAIN 5).
+Chain 5: 
+Chain 5: Gradient evaluation took 0.034 seconds
+Chain 5: 1000 transitions using 10 leapfrog steps per transition would take 340 seconds.
+Chain 5: Adjust your expectations accordingly!
+Chain 5: 
+Chain 5: 
+Chain 5: Iteration:    1 / 10000 [  0%]  (Warmup)
+Chain 5: Iteration:  500 / 10000 [  5%]  (Warmup)
+Chain 5: Iteration: 1000 / 10000 [ 10%]  (Warmup)
+Chain 5: Iteration: 1500 / 10000 [ 15%]  (Warmup)
+Chain 5: Iteration: 2000 / 10000 [ 20%]  (Warmup)
+Chain 5: Iteration: 2500 / 10000 [ 25%]  (Warmup)
+Chain 5: Iteration: 3000 / 10000 [ 30%]  (Warmup)
+Chain 5: Iteration: 3500 / 10000 [ 35%]  (Warmup)
+Chain 5: Iteration: 4000 / 10000 [ 40%]  (Warmup)
+Chain 5: Iteration: 4500 / 10000 [ 45%]  (Warmup)
+Chain 5: Iteration: 5000 / 10000 [ 50%]  (Warmup)
+Chain 5: Iteration: 5001 / 10000 [ 50%]  (Sampling)
+Chain 5: Iteration: 5500 / 10000 [ 55%]  (Sampling)
+Chain 5: Iteration: 6000 / 10000 [ 60%]  (Sampling)
+Chain 5: Iteration: 6500 / 10000 [ 65%]  (Sampling)
+Chain 5: Iteration: 7000 / 10000 [ 70%]  (Sampling)
+Chain 5: Iteration: 7500 / 10000 [ 75%]  (Sampling)
+Chain 5: Iteration: 8000 / 10000 [ 80%]  (Sampling)
+Chain 5: Iteration: 8500 / 10000 [ 85%]  (Sampling)
+Chain 5: Iteration: 9000 / 10000 [ 90%]  (Sampling)
+Chain 5: Iteration: 9500 / 10000 [ 95%]  (Sampling)
+Chain 5: Iteration: 10000 / 10000 [100%]  (Sampling)
+Chain 5: 
+Chain 5:  Elapsed Time: 10985.4 seconds (Warm-up)
+Chain 5:                10905.2 seconds (Sampling)
+Chain 5:                21890.6 seconds (Total)
+Chain 5: 
+Error: cannot allocate vector of size 662.1 Mb
+In addition: Warning messages:
+1: There were 1181 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them. 
+2: Examine the pairs() plot to diagnose sampling problems
