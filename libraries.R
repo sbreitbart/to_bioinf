@@ -1,6 +1,7 @@
 # install.packages("librarian")
 
-librarian::shelf(broom       ,
+librarian::shelf(adegenet    ,
+                 broom       ,
                  car         ,
                  devtools    ,
                  DHARMa      ,
@@ -19,7 +20,8 @@ librarian::shelf(broom       ,
                  png         ,
                  purrr       ,
                  stringi     ,
-                 tidyverse 
+                 tidyverse   ,
+                 vcfR
                  )
   
 #library("tibble", lib.loc="~/R/win-library/3.5") 

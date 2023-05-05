@@ -1,13 +1,8 @@
 # Set up notebook
-## Load libraries
-```{r}
-library(here)
-library(tidyverse)
-library(magrittr)
-# install.packages("adegenet")
-library("adegenet")
-library(vcfR)
-
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
 ```
 
 ## Import files
@@ -54,39 +49,6 @@ names(pca)[3:ncol(pca)] <- paste0("PC", 1:(ncol(pca)-2))
 
 # create pop column that adds "MW0" or "MW00" to populations in pca data that lists some pops as simply "8" instead of "MW008", for instance
 # take entries with numeric populations and add "MW" as prefix
-add_MW_IDs <- function(div_df) {
-  # Filter out populations that start with "MWI" or "UTSC"
-  MW_pops <- div_df %>%
-    filter(!str_detect(pop_id, "MWI")) %>%
-    filter(!str_detect(pop_id, "UTSC"))
-
-  # Get populations that start with "MWI" or "UTSC"
-  MWI_UTSC_pops <- anti_join(div_df, MW_pops)
-
-  # Split up populations MW001->MW009 vs MW010->MW079
-  MW_pops_singledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) == 1, ]
-  MW_pops_doubledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) != 1, ]
-
-  # Add "MW00" to single-digit populations
-  MW_pops_singledigits %<>%
-    dplyr::mutate(patch_id = paste0("MW00", pop_id))
-
-  # Add "MW0" to double-digit populations
-  MW_pops_doubledigits %<>%
-    dplyr::mutate(patch_id = paste0("MW0", pop_id))
-
-  # Bring all entries together again
-  all_pops <- full_join(MW_pops_singledigits,
-                         MW_pops_doubledigits) %>%
-    dplyr::relocate(patch_id, .before = 1) %>%
-    full_join(.,
-              MWI_UTSC_pops) %>%
-    # If patch_id column is NA (for MWI and UTSC values), replace it with value from pop_id
-    dplyr::mutate(patch_id = coalesce(patch_id, pop_id))
-
-  return(all_pops)
-}
-
 pca <- add_MW_IDs(pca) %>%
   dplyr::select(-"pop_id") %>%
   dplyr::rename("pop_id" = "patch_id")
