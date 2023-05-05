@@ -6,10 +6,165 @@ library(tidyverse)
 library(magrittr)
 # install.packages("adegenet")
 library("adegenet")
+library(vcfR)
+
 ```
 
-# Explore data
+## Import files
 ```{r}
-adegenet::find.clusters()
+# pca data
+pca <- read_table(
+  here::here("./plink_files_pilot/mydata_pca.eigenvec"), 
+  col_names = FALSE)
+
+eigenval <- scan(here::here("./plink_files_pilot/mydata_pca.eigenval"))
+
+
+# vcf
+vcf <- read.vcfR(
+  here::here("./round3_all_vcfs/mmaf0.01_R0.6/mmaf0.01_R0.6.vcf"),
+  verbose = FALSE)
+
+
+# urbanization data
+urb <- read.csv(here("./clean_data/urb_metrics.csv")) %>%
+  dplyr::rename("pop_id" = "patch_id")
+
+
+```
+
+## Convert vcf to genind object
+```{r}
+# convert vcf to genind
+my_genind <- vcfR2genind(vcf)
+
+my_genind
+
+```
+
+# Find number of clusters: PCA
+https://speciationgenomics.github.io/pca/
+```{r}
+# give our pca data.frame proper column names
+pca %<>%
+  dplyr::rename(
+    "pop_id" = 1,
+    "ind" = 2)
+names(pca)[3:ncol(pca)] <- paste0("PC", 1:(ncol(pca)-2))
+
+# create pop column that adds "MW0" or "MW00" to populations in pca data that lists some pops as simply "8" instead of "MW008", for instance
+# take entries with numeric populations and add "MW" as prefix
+add_MW_IDs <- function(div_df) {
+  # Filter out populations that start with "MWI" or "UTSC"
+  MW_pops <- div_df %>%
+    filter(!str_detect(pop_id, "MWI")) %>%
+    filter(!str_detect(pop_id, "UTSC"))
+
+  # Get populations that start with "MWI" or "UTSC"
+  MWI_UTSC_pops <- anti_join(div_df, MW_pops)
+
+  # Split up populations MW001->MW009 vs MW010->MW079
+  MW_pops_singledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) == 1, ]
+  MW_pops_doubledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) != 1, ]
+
+  # Add "MW00" to single-digit populations
+  MW_pops_singledigits %<>%
+    dplyr::mutate(patch_id = paste0("MW00", pop_id))
+
+  # Add "MW0" to double-digit populations
+  MW_pops_doubledigits %<>%
+    dplyr::mutate(patch_id = paste0("MW0", pop_id))
+
+  # Bring all entries together again
+  all_pops <- full_join(MW_pops_singledigits,
+                         MW_pops_doubledigits) %>%
+    dplyr::relocate(patch_id, .before = 1) %>%
+    full_join(.,
+              MWI_UTSC_pops) %>%
+    # If patch_id column is NA (for MWI and UTSC values), replace it with value from pop_id
+    dplyr::mutate(patch_id = coalesce(patch_id, pop_id))
+
+  return(all_pops)
+}
+
+pca <- add_MW_IDs(pca) %>%
+  dplyr::select(-"pop_id") %>%
+  dplyr::rename("pop_id" = "patch_id")
+
+
+
+# first convert to percentage variance explained
+pve <- data.frame(PC = 1:20,
+                  pve = eigenval/sum(eigenval)*100)
+
+# join urbanization data
+pca <- dplyr::left_join(pca,
+                         urb %>%
+                           dplyr::select(
+                             c("pop_id",
+                               "urb_rur",
+                               "urb_score",
+                               "City_dist")),
+                         by = "pop_id" )
+
+# make plot
+ggplot(pve,
+       aes(PC, pve)) +
+  geom_bar(stat = "identity") +
+  ylab("Percentage variance explained") +
+  ggpubr::theme_pubr()
+
+# calculate the cumulative sum of the percentage variance explained
+cumsum(pve$pve)
+
+# plot pca
+ggplot(pca, 
+       aes(PC1,
+           PC2,
+           # col = urb_score
+           fill = City_dist
+       )) + 
+  geom_point(size = 3,
+             shape = 21,
+             color = "black") +
+ # scale_fill_gradientn(colours=rainbow(4)) +
+  scale_fill_gradientn(colours=heat.colors(5)) +
+ # scale_fill_gradientn(colours=cm.colors(5)) +
+  coord_equal() +
+  xlab(paste0("PC1 (", signif(pve$pve[1], 3), "%)")) +
+  ylab(paste0("PC2 (", signif(pve$pve[2], 3), "%)")) +
+  ggpubr::theme_pubr()
+
+
+```
+
+# Find number of clusters: DAPC
+```{r}
+grp <- adegenet::find.clusters(my_genind,
+                        max.n.clust= 10, 
+                        n.pca = 261
+                        )
+
+# number of clusters - here select a sensible lowest BIC.
+# I chose 260 based on lowest BIC in graph
+
+
+head(grp$Kstat)  # BIC scores per k
+grp$stat  # Best k based on BIC
+head(grp$grp, 261)  # Group membership (based on your defined number of clusters)
+grp$size  # Group size per k cluster
+
+
+
+dapc1 <- adegenet::dapc(my_genind, grp$grp)
+
+scatter(dapc1,
+        pch=20,
+        cell=0,
+        cstar=0, 
+        solid=0.4,
+        cex=3,
+        clab=0,
+        scree.pca=TRUE)
 ```
 

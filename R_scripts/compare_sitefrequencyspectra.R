@@ -76,6 +76,8 @@ for (pop in pops) {
   plots_list[[pop]] <- plot
 }
 
+
+
 # arrange the plots in a grid
 grid_arranged_plots <- do.call(gridExtra::grid.arrange,
                                c(plots_list, ncol = 5))
