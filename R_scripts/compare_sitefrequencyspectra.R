@@ -49,7 +49,7 @@ pops <- c("67", "79", "40", "47", "2")
 # Read the VCF file and the popmap file and create a gt object
 
 # get genotype matrix
-mygt <- vcf2gt(here::here("./rounds3_4_all_vcfs/mmaf0.05_R0.3/mmaf0.05_R0.3.vcf"),
+mygt <- vcf2gt(here::here("./populations.snps.vcf"),
                pop_map_file)
 
 
