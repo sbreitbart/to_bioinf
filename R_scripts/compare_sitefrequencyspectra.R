@@ -12,7 +12,7 @@ pop_map_file <- here::here("./genomic_resources/pop_map2.txt")
 
 
 # Set the directory containing the VCF files
-dir <- "./round3_all_vcfs"
+dir <- "./rounds3_4_all_vcfs"
 
 # Get a list of all the VCF files in the directory and its subdirectories
 vcf_files <- list.files(dir,
@@ -32,8 +32,13 @@ for (file in vcf_files) {
   file.rename(file, file.path(dirname(file), new_name))
 }
 
-vcf_files
+# get new names
+vcf_files <- list.files(dir,
+                        pattern = "\\.vcf$",
+                        recursive = TRUE,
+                        full.names = TRUE)
 
+vcf_files
 
 # Pick out 5 with >=2 individuals/pop
 pops <- c("67", "79", "40", "47", "2")
@@ -44,7 +49,7 @@ pops <- c("67", "79", "40", "47", "2")
 # Read the VCF file and the popmap file and create a gt object
 
 # get genotype matrix
-mygt <- vcf2gt(here::here("./round3_all_vcfs/mmaf0.01_R0.6/mmaf0.01_R0.6.vcf"),
+mygt <- vcf2gt(here::here("./rounds3_4_all_vcfs/mmaf0.05_R0.3/mmaf0.05_R0.3.vcf"),
                pop_map_file)
 
 
@@ -63,13 +68,13 @@ for (pop in pops) {
     dplyr::mutate("Freq_perc" = round(Frequency/sum(Frequency), 3)) %>%
     ggplot(
       aes(x = Individuals,
-          y = Freq_perc,
+          y = Frequency,
           fill = Individuals)) + 
     geom_bar(stat = "identity",
              color = "black") +
     xlab("Individuals with\n\ minor allele frequencies") +
-    ylab("% of loci") +
-    ylim(0, 1) +
+   # ylab("% of loci") +
+    #ylim(0, 1) +
     ggpubr::theme_pubr(legend = "none") +
     ggtitle(paste0("Population ", pop)) 
     
@@ -88,7 +93,7 @@ ggsave("my_plots.pdf",
        width = 15, height = 3)
 
 
-# SECOND TRIAL: all vcfs -----
+# SECOND TRIAL: all vcfs: round 3 -----
 
 # Get the parameters for each vcf file (mmaf and R values)
 param_list <- c()
@@ -115,11 +120,9 @@ params <- as.data.frame(param_list) %>%
 # get genotype matrix for each vcf
 output <- lapply(vcf_files, function(x) vcf2gt(x, pop_map_file))
 
-
-
+## PERCENT LOCI on y axis (x axis starts at 0)-----
 # create SFS plots
 plots_list <- list() # for plots with y axis as percent loci
-plots_list2 <- list() # for plots with y axis as number of loci
 
 # Loop through each population. y axis: percent loci
 for (pop in pops) {
@@ -127,7 +130,7 @@ for (pop in pops) {
   plots_list[[pop]] <- list()
   
   # Loop through each input file
-  for (i in 1:30) {
+  for (i in 1:60) {
     # Generate the plot for this file and population
     plot <- gt2sfs.raw(output[[i]], pop) %>%
       as.data.frame() %>%
@@ -153,13 +156,71 @@ for (pop in pops) {
   }
 }
 
+# arrange the plots in a grid and save
+# pop 67
+do.call(gridExtra::grid.arrange,
+        c(plots_list[[1]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop67_perc_loci.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+# pop 79
+do.call(gridExtra::grid.arrange,
+        c(plots_list[[2]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop79_perc_loci.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+# pop 40
+do.call(gridExtra::grid.arrange,
+        c(plots_list[[3]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop40_perc_loci.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+# pop 47
+do.call(gridExtra::grid.arrange,
+        c(plots_list[[4]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop47_perc_loci.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+# pop 2
+do.call(gridExtra::grid.arrange,
+        c(plots_list[[5]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop02_perc_loci.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+## NUMBER OF LOCI on y axis (x axis starts at 0)-----
+# create SFS plots
+plots_list2 <- list() # for plots with y axis as number of loci
+
 # Loop through each population. y axis: number of loci
 for (pop in pops) {
   # Create a list to store the plots for this population
-  plots_list[[pop]] <- list()
+  plots_list2[[pop]] <- list()
   
   # Loop through each input file
-  for (i in 1:30) {
+  for (i in 1:60) {
     # Generate the plot for this file and population
     plot <- gt2sfs.raw(output[[i]], pop) %>%
       as.data.frame() %>%
@@ -179,120 +240,264 @@ for (pop in pops) {
                              ", R ", params$R[[i]])) +
       # make y axis consistent among plots within a pop; 
       # equals maximum frequency (i.e., from first plot)
-      ylim(0, plots_list2[[pop]][[1]][["data"]][["Frequency"]][1]) +
-      ggpubr::theme_pubr(legend = "none") 
+      ylim(0, 
+           if(length(plots_list2[[pop]]) > 0) plots_list2[[pop]][[1]][["data"]][["Frequency"]][1] else NA) +
+      ggpubr::theme_pubr(legend = "none")
     
     # Add the plot to the list for this population
     plots_list2[[pop]][[i]] <- plot
   }
 }
 
-# arrange the plots in a grid and save
-
-# PERCENT LOCI on y axis-----
-# pop 67
-do.call(gridExtra::grid.arrange,
-        c(plots_list[[1]],
-          ncol = 5,
-          nrow = 6 )) %>%
-  ggsave("Figures_Tables/compare_SFS/pop67_perc_loci.pdf",
-         .,
-         width = 15,
-         height = 20)
-
-# pop 79
-do.call(gridExtra::grid.arrange,
-        c(plots_list[[2]],
-          ncol = 5,
-          nrow = 6 )) %>%
-  ggsave("Figures_Tables/compare_SFS/pop79_perc_loci.pdf",
-         .,
-         width = 15,
-         height = 20)
-
-# pop 40
-do.call(gridExtra::grid.arrange,
-        c(plots_list[[3]],
-          ncol = 5,
-          nrow = 6 )) %>%
-  ggsave("Figures_Tables/compare_SFS/pop40_perc_loci.pdf",
-         .,
-         width = 15,
-         height = 20)
-
-
-# pop 47
-do.call(gridExtra::grid.arrange,
-        c(plots_list[[4]],
-          ncol = 5,
-          nrow = 6 )) %>%
-  ggsave("Figures_Tables/compare_SFS/pop47_perc_loci.pdf",
-         .,
-         width = 15,
-         height = 20)
-
-
-# pop 2
-do.call(gridExtra::grid.arrange,
-        c(plots_list[[5]],
-          ncol = 5,
-          nrow = 6 )) %>%
-  ggsave("Figures_Tables/compare_SFS/pop02_perc_loci.pdf",
-         .,
-         width = 15,
-         height = 20)
-
-
-# NUMBER OF LOCI on y axis-----
 # pop 67
 do.call(gridExtra::grid.arrange,
         c(plots_list2[[1]],
-          ncol = 5,
+          ncol = 10,
           nrow = 6 )) %>%
   ggsave("Figures_Tables/compare_SFS/pop67_num_loci.pdf",
          .,
-         width = 15,
+         width = 30,
          height = 20)
 
 # pop 79
 do.call(gridExtra::grid.arrange,
         c(plots_list2[[2]],
-          ncol = 5,
+          ncol = 10,
           nrow = 6 )) %>%
   ggsave("Figures_Tables/compare_SFS/pop79_num_loci.pdf",
          .,
-         width = 15,
+         width = 30,
          height = 20)
 
 # pop 40
 do.call(gridExtra::grid.arrange,
         c(plots_list2[[3]],
-          ncol = 5,
+          ncol = 10,
           nrow = 6 )) %>%
   ggsave("Figures_Tables/compare_SFS/pop40_num_loci.pdf",
          .,
-         width = 15,
+         width = 30,
          height = 20)
 
 
 # pop 47
 do.call(gridExtra::grid.arrange,
         c(plots_list2[[4]],
-          ncol = 5,
+          ncol = 10,
           nrow = 6 )) %>%
   ggsave("Figures_Tables/compare_SFS/pop47_num_loci.pdf",
          .,
-         width = 15,
+         width = 30,
          height = 20)
 
 
 # pop 2
 do.call(gridExtra::grid.arrange,
         c(plots_list2[[5]],
-          ncol = 5,
+          ncol = 10,
           nrow = 6 )) %>%
   ggsave("Figures_Tables/compare_SFS/pop02_num_loci.pdf",
          .,
-         width = 15,
+         width = 30,
          height = 20)
 
+
+
+
+## PERCENT LOCI on y axis (x axis starts at 1)-----
+# create SFS plots
+plots_list_x1 <- list() # for plots with y axis as percent loci
+
+# Loop through each population. y axis: percent loci
+for (pop in pops) {
+  # Create a list to store the plots for this population
+  plots_list_x1[[pop]] <- list()
+  
+  # Loop through each input file
+  for (i in 1:60) {
+    # Generate the plot for this file and population
+    plot <- gt2sfs.raw(output[[i]], pop) %>%
+      as.data.frame() %>%
+      dplyr::rename("Individuals" = 1) %>%
+      dplyr::rename("Frequency" = 2) %>%
+      # THIS IS NEW from other PERCENT OF LOCI loops
+      dplyr::filter(Individuals != "0") %>%
+      dplyr::mutate("Freq_perc" = round(Frequency/sum(Frequency), 3)) %>%
+      ggplot(
+        aes(x = Individuals,
+            y = Freq_perc,
+            fill = Individuals)) + 
+      geom_bar(stat = "identity",
+               color = "black") +
+      labs(x = "Individuals with\n\ minor allele frequencies",
+           y = "% of loci",
+           title = paste0("Population ", pop),
+           subtitle = paste0("mmaf ", params$mmaf[[i]],
+                             ", R ", params$R[[i]])) +
+      ylim(0, 1) +
+      ggpubr::theme_pubr(legend = "none") 
+    
+    # Add the plot to the list for this population
+    plots_list_x1[[pop]][[i]] <- plot
+  }
+}
+
+# arrange the plots in a grid and save
+# pop 67
+do.call(gridExtra::grid.arrange,
+        c(plots_list_x1[[1]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop67_perc_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+# pop 79
+do.call(gridExtra::grid.arrange,
+        c(plots_list_x1[[2]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop79_perc_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+# pop 40
+do.call(gridExtra::grid.arrange,
+        c(plots_list_x1[[3]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop40_perc_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+# pop 47
+do.call(gridExtra::grid.arrange,
+        c(plots_list_x1[[4]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop47_perc_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+# pop 2
+do.call(gridExtra::grid.arrange,
+        c(plots_list_x1[[5]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop02_perc_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+## NUMBER OF LOCI on y axis (x axis starts at 0)-----
+# create SFS plots
+plots_list2_x1 <- list() # for plots with y axis as number of loci
+
+# Loop through each population. y axis: number of loci
+for (pop in pops) {
+  # Create a list to store the plots for this population
+  plots_list2_x1[[pop]] <- list()
+  
+  # find a number that's high enough to be the max y limit
+  # (should be around the max for plot #1 * 2)
+  # equals frequency of x = 1 for first plot * 2 because
+  # sometimes frequency of x = 2 or 3 is higher than x = 1
+  # and then the too-stunted y axis cuts off bars, so this 2x
+  # gives it wider margins
+  max_y <- gt2sfs.raw(output[[1]], pop) %>%
+    as.data.frame() %>%
+    dplyr::rename("Individuals" = 1) %>%
+    dplyr::rename("Frequency" = 2) %>%
+    # THIS IS NEW from other NUMBER OF LOCI loops
+    dplyr::filter(Individuals != "0") %>% 
+    dplyr::summarise(max = max(Frequency)*2) %>%
+    as.numeric()
+  
+  # Loop through each input file
+  for (i in 1:60) {
+    # Generate the plot for this file and population
+    df <- gt2sfs.raw(output[[i]], pop) %>%
+      as.data.frame() %>%
+      dplyr::rename("Individuals" = 1) %>%
+      dplyr::rename("Frequency" = 2) %>%
+      # THIS IS NEW from other NUMBER OF LOCI loops
+      dplyr::filter(Individuals != "0") #%>%
+      # dplyr::mutate("Freq_perc" = round(Frequency/sum(Frequency), 3)) %>%
+    plot <- ggplot(df,
+        aes(x = Individuals,
+            y = Frequency,
+            fill = Individuals)) + 
+      geom_bar(stat = "identity",
+               color = "black") +
+      labs(x = "Individuals with\n\ minor allele frequencies",
+           y = "Number of loci",
+           title = paste0("Population ", pop),
+           subtitle = paste0("mmaf ", params$mmaf[[i]],
+                             ", R ", params$R[[i]])) +
+      # make y axis consistent among plots within a pop:
+      ylim(0, max_y) +
+      ggpubr::theme_pubr(legend = "none")
+    
+    # Add the plot to the list for this population
+    plots_list2_x1[[pop]][[i]] <- plot
+  }
+}
+
+# pop 67
+do.call(gridExtra::grid.arrange,
+        c(plots_list2_x1[[1]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop67_num_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+# pop 79
+do.call(gridExtra::grid.arrange,
+        c(plots_list2_x1[[2]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop79_num_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+# pop 40
+do.call(gridExtra::grid.arrange,
+        c(plots_list2_x1[[3]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop40_num_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+# pop 47
+do.call(gridExtra::grid.arrange,
+        c(plots_list2_x1[[4]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop47_num_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
+
+
+# pop 2
+do.call(gridExtra::grid.arrange,
+        c(plots_list2_x1[[5]],
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/pop02_num_loci_x1.pdf",
+         .,
+         width = 30,
+         height = 20)
