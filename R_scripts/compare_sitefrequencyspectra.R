@@ -10,6 +10,58 @@ source(here::here("./R_scripts/vcf2sfs_code.R"))
 # pop map file
 pop_map_file <- here::here("./genomic_resources/pop_map2.txt")
 
+# Pick out 5 with >=2 individuals/pop
+pops <- c("67", "79", "40", "47", "2")
+
+# FIRST TRIAL: Just one vcf -----
+# Read the VCF file and the popmap file and create a gt object
+
+# get genotype matrix
+mygt <- vcf2gt(here::here("./populations.snps.vcf"),
+               pop_map_file)
+
+
+# look at all unique populations
+all_populations <- as.list(unique(mygt[["popmap"]]))
+
+# create empty plots list
+plots_list <- c()
+
+# create SFS plots
+for (pop in pops) {
+  plot <- gt2sfs.raw(mygt, pop) %>%
+    as.data.frame() %>%
+    dplyr::rename("Individuals" = 1) %>%
+    dplyr::rename("Frequency" = 2) %>%
+   # dplyr::mutate("Freq_perc" = round(Frequency/sum(Frequency), 3)) %>%
+    ggplot(
+      aes(x = Individuals,
+          y = Frequency,
+          fill = Individuals)) + 
+    geom_bar(stat = "identity",
+             color = "black") +
+    xlab("Individuals with\n\ minor allele frequencies") +
+    ylab("Number of loci") +
+    #ylim(0, 1) +
+    ggpubr::theme_pubr(legend = "none") +
+    ggtitle(paste0("Population ", pop)) 
+    
+  plots_list[[pop]] <- plot
+}
+
+
+
+# arrange the plots in a grid
+grid_arranged_plots <- do.call(gridExtra::grid.arrange,
+                               c(plots_list, ncol = 5))
+
+# save the grid arranged plots to a single PDF file
+ggsave("my_plots.pdf",
+       grid_arranged_plots,
+       width = 15, height = 3)
+
+
+# SECOND TRIAL: all vcfs: round 3 -----
 
 # Set the directory containing the VCF files
 dir <- "./rounds3_4_all_vcfs"
@@ -40,60 +92,6 @@ vcf_files <- list.files(dir,
 
 vcf_files
 
-# Pick out 5 with >=2 individuals/pop
-pops <- c("67", "79", "40", "47", "2")
-
-
-
-# FIRST TRIAL: Just one vcf -----
-# Read the VCF file and the popmap file and create a gt object
-
-# get genotype matrix
-mygt <- vcf2gt(here::here("./populations.snps.vcf"),
-               pop_map_file)
-
-
-# look at all unique populations
-all_populations <- as.list(unique(mygt[["popmap"]]))
-
-# create empty plots list
-plots_list <- c()
-
-# create SFS plots
-for (pop in pops) {
-  plot <- gt2sfs.raw(mygt, pop) %>%
-    as.data.frame() %>%
-    dplyr::rename("Individuals" = 1) %>%
-    dplyr::rename("Frequency" = 2) %>%
-    dplyr::mutate("Freq_perc" = round(Frequency/sum(Frequency), 3)) %>%
-    ggplot(
-      aes(x = Individuals,
-          y = Frequency,
-          fill = Individuals)) + 
-    geom_bar(stat = "identity",
-             color = "black") +
-    xlab("Individuals with\n\ minor allele frequencies") +
-   # ylab("% of loci") +
-    #ylim(0, 1) +
-    ggpubr::theme_pubr(legend = "none") +
-    ggtitle(paste0("Population ", pop)) 
-    
-  plots_list[[pop]] <- plot
-}
-
-
-
-# arrange the plots in a grid
-grid_arranged_plots <- do.call(gridExtra::grid.arrange,
-                               c(plots_list, ncol = 5))
-
-# save the grid arranged plots to a single PDF file
-ggsave("my_plots.pdf",
-       grid_arranged_plots,
-       width = 15, height = 3)
-
-
-# SECOND TRIAL: all vcfs: round 3 -----
 
 # Get the parameters for each vcf file (mmaf and R values)
 param_list <- c()

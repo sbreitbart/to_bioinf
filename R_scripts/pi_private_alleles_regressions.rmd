@@ -12,20 +12,12 @@ output:
 TO DO:
 - make sure y axis is transformed for figures
 - export figures
-- copy/paste all data analysis an do with only variants
 
-
-will use narrow genetic dataset
--R = 1
--min_maf = 0.05
+will use narrow genetic dataset: -R = 1 & -min_maf = 0.05
 
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
-
-- looks like there are differences btwn the ch2 and ch3 plants re: pop sizes, which is associated with many effects. What if I removed the ch2 plants? what would I see then?
-
--Compare data from all_data csv w/ variants csv
 
 # Set up notebook
 ## Load libraries & functions
@@ -114,7 +106,7 @@ diversity_all_sites %<>%
 # Does urbanization predict genetic diversity within pops?
 ## Explore data
 ### All sites
-```{r}
+```{r eval=FALSE, include=FALSE}
 str(diversity_all_sites)
 
 head(diversity_all_sites)
@@ -206,7 +198,7 @@ car::Anova(test1) # no
 ```
 
 ### Variant sites
-```{r}
+```{r eval=FALSE, include=FALSE}
 str(diversity_variant_sites)
 
 head(diversity_variant_sites)
@@ -292,9 +284,13 @@ car::Anova(test1) # no
 ## Urbanization is continuous / data = all sites
 ### Fit linear models/diagnostics
 #### Private alleles
+
 This is 0 for each individual.
+
 #### Inbreeding coefficient (FIS)
+
 This is extremely zero-inflated. I've tried fitting models with zero inflation parameters w/glmmTMB but they don't converge and/or diagnostics don't pass tests. I'll fit manual hurdle models instead.
+
 ##### City_dist
 ```{r}
 
@@ -629,9 +625,13 @@ ggplot(diversity_all_sites,
 ## Urbanization is categorical / data = all sites
 ### Fit linear models/diagnostics
 #### Private alleles
+
 This is 0 for all individuals.
+
 #### Inbreeding coefficient (FIS)
+
 This is extremely zero-inflated. I've tried fitting models with zero inflation parameters w/glmmTMB but they don't converge and/or diagnostics don't pass tests. I'll fit manual hurdle models instead.
+
 ##### u_r_dist
 ```{r}
 diversity_all_sites %<>%
@@ -877,3 +877,600 @@ plot(pi_usc_cat_pred,
 ```
 
 ## Urbanization is continuous / data = ONLY VARIANT sites
+### Fit linear models/diagnostics
+#### Private alleles
+
+This is 0 for each individual.
+
+#### Inbreeding coefficient (FIS)
+
+This is extremely zero-inflated. I've tried fitting models with zero inflation parameters w/glmmTMB but they don't converge and/or diagnostics don't pass tests. I'll fit manual hurdle models instead.
+
+##### City_dist
+```{r}
+
+diversity_variant_sites %<>%
+  mutate(fis_bin = case_when(
+    fis == 0 ~ 0,
+    fis > 0 ~ 1,
+    TRUE ~ 1)
+  )
+  
+# binary
+# doesn't converge w/num_indiv as random effect
+fis_dist_bin <- glmmTMB(fis_bin ~ City_dist
+                       # + (1|num_indv)
+                        ,
+           diversity_variant_sites,
+           family = "binomial")
+
+performance::check_model(fis_dist_bin)
+
+# but num_indiv ~ City_dist is significant, so I think num_indivs is a lurking variable and this relationships isn't real
+
+
+# quantitative
+fis_dist_quant <- glmmTMB(fis ~  City_dist
+                           + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_dist_quant)
+```
+
+##### Urb_score
+```{r}
+# binary
+# doesn't converge w/num_indiv as random effect
+fis_usc_bin <- glmmTMB(fis_bin ~ urb_score                          # + (1|num_indv)
+                        ,
+           diversity_variant_sites,
+           family = "binomial")
+
+performance::check_model(fis_usc_bin)
+
+
+# quantitative
+fis_usc_quant <- glmmTMB(fis ~ urb_score                            + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_usc_quant)
+```
+
+#### Pi
+##### City_dist
+```{r}
+pi_dist <- glmmTMB(pi ~ City_dist ,
+           diversity_variant_sites)
+
+performance::check_model(pi_dist)
+```
+
+##### Urb_score
+```{r}
+pi_usc <- glmmTMB(pi ~ urb_score ,
+           diversity_variant_sites)
+
+performance::check_model(pi_usc)
+```
+
+### ANOVA & effect sizes
+```{r}
+
+mod_list <- list(# priv_dist,
+                 # priv_usc,
+                 fis_dist_bin,
+                 fis_dist_quant,
+                 fis_usc_bin,
+                 fis_usc_quant,
+                 pi_dist,
+                 pi_usc)
+
+
+all_anovas <- lapply(mod_list, create_anova_df) %>%
+  do.call(rbind, .) %>%
+  dplyr::mutate("Variable" = case_when(
+      Variable == "fis * 1000" ~ "FIS (quantitative)",
+      Variable == "fis * 10000" ~ "FIS (quantitative)",
+      Variable == "fis" ~ "FIS (quantitative)",
+      Variable == "fis_bin" ~ "FIS (binary)",
+      Variable == "pi" ~ "Pi",
+      Variable == "private" ~ "Private alleles",
+      TRUE ~ "")) %>%
+    dplyr::mutate("Urbanization" = case_when(
+      Urbanization == "City_dist" ~ "Distance",
+      Urbanization == "urb_score" ~ "Urbanization Score",
+      TRUE ~ "")) %>%
+  dplyr::select(1,5,2,3,4,7,6) %T>%
+  view
+
+# create flextable
+all_anovas %>%
+  dplyr::select(-Sig) %>%
+  flextable::flextable() %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("Χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 6, part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%
+  bold(~ p <= 0.05) %>%
+  flextable::autofit()
+```
+
+### Figures
+#### Private alleles
+##### City_dist
+```{r}
+
+ggplot(diversity_variant_sites,
+       aes(x = City_dist,
+           y = private)) +
+  geom_point(aes(x = City_dist,
+           y = private)) +
+  geom_line() +
+  # geom_ribbon(fill = "#66a182",
+  #              alpha = 0.1
+  #             ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+#ggsave(here::here("./Figures_Tables/regressions/private_alleles.png"))
+```
+
+##### Urb_score
+```{r}
+
+ggplot(diversity_variant_sites,
+       aes(x = urb_score,
+           y = private)) +
+  geom_point(aes(x = urb_score,
+           y = private)) +
+  geom_line() +
+  # geom_ribbon(fill = "#66a182",
+  #              alpha = 0.1
+  #             ) +
+  xlab("Urbanization Score") +
+  ylab("Private Alleles")+
+  xlim(4, -4) +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+#### FIS
+##### City_dist
+```{r}
+# binary
+fis_bin_dist_pred <- ggeffects::ggpredict(fis_dist_bin,
+                                   terms = c("City_dist [all]"),
+                                   type = "fe")
+
+plot(fis_bin_dist_pred, 
+     add.data = T,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("FIS (binary)") +
+  ylim(NA, 1) +
+  labs(title = "") +
+  theme_pubr()+
+  labs_pubr() 
+
+
+# quantitative
+fis_quant_dist_pred <- ggeffects::ggpredict(fis_dist_quant,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+plot(fis_quant_dist_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("FIS (quantitative)") +
+ # ylim(NA, 1) +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+# binary
+fis_bin_usc_pred <- ggeffects::ggpredict(fis_usc_bin,
+                                   terms = c("urb_score [all]"),
+                                   type = "fe")
+
+plot(fis_bin_usc_pred, 
+     add.data = T,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("FIS (binary)") +
+  ylim(NA, 1) +
+  labs(title = "") +
+  theme_pubr()+
+  labs_pubr() +
+  xlim(4, -4)
+
+
+# quantitative
+fis_quant_usc_pred <- ggeffects::ggpredict(fis_usc_quant,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+ 
+plot(fis_quant_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("FIS (quantitative)") +
+  labs(title = "") +
+  theme_pubr()+
+  labs_pubr() +
+  xlim(4, -4)
+
+
+```
+
+#### Pi
+##### City_dist
+```{r}
+
+pi_dist_pred <- ggeffects::ggpredict(pi_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+plot(pi_dist_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()
+
+# ggsave(here::here("./Figures_Tables/regressions/pi.png"))
+```
+
+###### Urb_score
+```{r}
+pi_usc_pred <- ggeffects::ggpredict(pi_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(pi_usc_pred, 
+     add.data = F,
+     colors = "bw") +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # ,
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("Pi") +
+  #ylim(NA, 0.04) +
+  labs(title = "") +
+  theme_pubr()+
+  xlim(4, -4)
+
+
+```
+
+#### Number of individuals per pop
+##### City_dist
+```{r}
+ggplot(diversity_variant_sites,
+       aes(x = City_dist,
+           y = num_indv)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Individuals/Population") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_variant_sites,
+       aes(x = urb_score,
+           y = num_indv)) +
+  xlab("Urbanization Score") +
+  ylab("Individuals/Population") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+## Urbanization is categorical / data = ONLY VARIANT sites
+### Fit linear models/diagnostics
+#### Private alleles
+
+This is 0 for all individuals.
+
+#### Inbreeding coefficient (FIS)
+
+This is extremely zero-inflated. I've tried fitting models with zero inflation parameters w/glmmTMB but they don't converge and/or diagnostics don't pass tests. I'll fit manual hurdle models instead.
+
+##### u_r_dist
+```{r}
+diversity_variant_sites %<>%
+  mutate(fis_bin = case_when(
+    fis == 0 ~ 0,
+    fis > 0 ~ 1)
+  )
+  
+# binary
+fis_dist_bin_cat <- glmmTMB(fis_bin ~ u_r_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites,
+           family = "binomial")
+
+performance::check_model(fis_dist_bin_cat)
+
+
+# quantitative
+fis_dist_quant_cat <- glmmTMB(fis ~  u_r_dist 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_dist_quant_cat)
+```
+
+##### u_r_usc
+```{r}
+# binary
+fis_usc_bin_cat <- glmmTMB(fis_bin ~ u_r_usc 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites,
+           family = "binomial")
+
+performance::check_model(fis_usc_bin_cat)
+
+
+# quantitative
+fis_usc_quant_cat <- glmmTMB(fis * 10 ~ u_r_usc 
+                        + (1|num_indv)
+                        ,
+           diversity_variant_sites %>%
+             dplyr::filter(fis != 0))
+
+performance::check_model(fis_usc_quant_cat)
+```
+
+#### Pi
+##### u_r_dist
+```{r}
+pi_dist_cat <- glmmTMB(pi ~ u_r_dist ,
+           diversity_variant_sites)
+
+performance::check_model(pi_dist_cat)
+```
+
+##### u_r_usc
+```{r}
+pi_usc_cat <- glmmTMB(pi ~ u_r_usc,
+           diversity_variant_sites)
+
+performance::check_model(pi_usc_cat)
+```
+
+### ANOVA & effect sizes
+```{r}
+
+mod_list_cat <- list(
+  # priv_dist_cat,
+  #                priv_usc_cat,
+                 fis_dist_bin_cat,
+                 fis_dist_quant_cat,
+                 fis_usc_bin_cat,
+                 fis_usc_quant_cat,
+                 pi_dist_cat,
+                 pi_usc_cat)
+
+all_anovas_cat <- lapply(mod_list_cat, create_anova_df) %>%
+  do.call(rbind, .) %>%
+    dplyr::mutate("Variable" = case_when(
+      Variable == "fis" ~ "FIS (quantitative)",
+      Variable == "fis * 10" ~ "FIS (quantitative)",
+      Variable == "fis_bin" ~ "FIS (binary)",
+      Variable == "pi" ~ "Pi",
+      # Variable == "private" ~ "Private alleles",
+      TRUE ~ "")) %>%
+  dplyr::mutate("Urbanization" = case_when(
+      Urbanization == "u_r_dist" ~ "Distance (categorical)",
+      Urbanization == "u_r_usc" ~ "Urbanization Score (categorical)",
+      TRUE ~ "")) %>%
+  dplyr::select(1,5,2,3,4,7,6) %T>%
+  view
+
+# create flextable
+all_anovas_cat %>%
+  dplyr::select( -Sig) %>%
+  flextable::flextable() %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("Χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 6, part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%
+  bold(~ p <= 0.05) %>%
+  flextable::autofit()
+```
+
+
+### Figures
+#### Private alleles
+##### City_dist
+```{r}
+ggplot(diversity_variant_sites,
+       aes(x = u_r_dist,
+           y = private)) +
+  geom_violin(aes(x = u_r_dist,
+           y = private)) +
+  # geom_ribbon(fill = "#66a182",
+  #              alpha = 0.1
+  #             ) +
+  xlab("Urbanization (based on\nDistance to City Center)") +
+  ylab("Private Alleles") +
+ # ylim(0, 500) +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+##### Urb_score
+```{r}
+ggplot(diversity_variant_sites,
+       aes(x = u_r_usc,
+           y = private)) +
+  geom_violin(aes(x = u_r_usc,
+           y = private)) +
+  # geom_ribbon(fill = "#66a182",
+  #              alpha = 0.1
+  #             ) +
+  xlab("Urbanization (based on\nUrbanization Score)") +
+  ylab("Private Alleles") +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+#### FIS
+##### City_dist
+```{r}
+# binary
+fis_bin_dist_cat_pred <- ggeffects::ggpredict(fis_dist_bin_cat,
+                                   terms = c("u_r_dist"),
+                                   type = "fe")
+
+plot(fis_bin_dist_cat_pred, 
+     add.data = F,
+     colors = "bw") +
+  xlab("Urbanization (based on\nDistance to City Center)") +
+  ylab("FIS (binary)") +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+# quantitative
+fis_quant_dist_cat_pred <- ggeffects::ggpredict(fis_dist_quant_cat,
+                                   terms = c("u_r_dist"),
+                                   type = "fe")
+
+plot(fis_quant_dist_cat_pred, 
+     add.data = F,
+     colors = "bw") +
+  xlab("Urbanization (based on\nDistance to City Center)") +
+  ylab("FIS (quantitative)") +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+##### Urb_score
+```{r}
+# binary
+fis_bin_usc_cat_pred <- ggeffects::ggpredict(fis_usc_bin_cat,
+                                   terms = c("u_r_usc"),
+                                   type = "fe")
+
+plot(fis_bin_usc_cat_pred, 
+     add.data = F,
+     colors = "bw") +
+  xlab("Urbanization (based on\nUrbanization Score)") +
+  ylab("FIS (binary)") +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+# quantitative
+fis_quant_usc_cat_pred <- ggeffects::ggpredict(fis_usc_quant_cat,
+                                   terms = c("u_r_usc"),
+                                   type = "fe")
+
+plot(fis_quant_usc_cat_pred, 
+     add.data = F,
+     colors = "bw") +
+  xlab("Urbanization (based on\nUrbanization Score)") +
+  ylab("FIS (quantitative)") +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+#### Pi
+##### City_dist
+```{r}
+
+pi_dist_cat_pred <- ggeffects::ggpredict(pi_dist_cat,
+                                   terms = c("u_r_dist"),
+                                   type = "fe")
+
+plot(pi_dist_cat_pred, 
+     add.data = F,
+     colors = "bw") +
+  xlab("Urbanization (based on\nDistance to City Center)") +
+  ylab("Pi") +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+```
+
+###### Urb_score
+```{r}
+pi_usc_cat_pred <- ggeffects::ggpredict(pi_usc_cat,
+                                   terms = c("u_r_usc"),
+                                   type = "fe")
+
+plot(pi_usc_cat_pred, 
+     add.data = F,
+     colors = "bw") +
+  xlab("Urbanization (based on\nUrbanization Score)") +
+  ylab("Pi") +
+  labs(title = "") +
+  theme_pubr()  +
+  labs_pubr() 
+```
+
