@@ -5,39 +5,23 @@ source(here::here("libraries.R"))
 source(here::here("functions.R"))
 ```
 
+# PCA
 ## Import files
 ```{r}
 # pca data
 pca <- read_table(
-  here::here("./plink_files_pilot/mydata_pca.eigenvec"), 
+  here::here("./plink_files_mmaf0.05_R1/mmaf0.05_R1.eigenvec"), 
   col_names = FALSE)
 
-eigenval <- scan(here::here("./plink_files_pilot/mydata_pca.eigenval"))
-
-
-# vcf
-vcf <- read.vcfR(
-  here::here("./round3_all_vcfs/mmaf0.01_R0.6/mmaf0.01_R0.6.vcf"),
-  verbose = FALSE)
+eigenval <- scan(here::here("./plink_files_mmaf0.05_R1/mmaf0.05_R1.eigenval"))
 
 
 # urbanization data
 urb <- read.csv(here("./clean_data/urb_metrics.csv")) %>%
   dplyr::rename("pop_id" = "patch_id")
-
-
 ```
 
-## Convert vcf to genind object
-```{r}
-# convert vcf to genind
-my_genind <- vcfR2genind(vcf)
-
-my_genind
-
-```
-
-# Find number of clusters: PCA
+## Find number of clusters
 https://speciationgenomics.github.io/pca/
 ```{r}
 # give our pca data.frame proper column names
@@ -86,7 +70,7 @@ ggplot(pca,
            # col = urb_score
            fill = City_dist
        )) + 
-  geom_point(size = 3,
+  geom_point(size = 2,
              shape = 21,
              color = "black") +
  # scale_fill_gradientn(colours=rainbow(4)) +
@@ -97,36 +81,229 @@ ggplot(pca,
   ylab(paste0("PC2 (", signif(pve$pve[2], 3), "%)")) +
   ggpubr::theme_pubr()
 
-
+ggsave("pca.png",
+       path = "Figures_Tables/pca")
 ```
 
-# Find number of clusters: DAPC
+# DAPC
+## Import files
 ```{r}
+# pop map
+pops <- read.csv(here("./genomic_resources/pop_map2.csv"))
+n_unique_pops <- pops %>%
+  dplyr::select(population) %>%
+  dplyr::summarise(n_pops = unique(population)) %>%
+  dplyr::summarise(n_pops = n()) %>%
+  as.numeric() %T>% print
+
+# vcf
+vcf <- read.vcfR(
+  here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_R1.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+
+# add pops to genind
+pop(my_genind) <- pops$population
+```
+
+## Find number of clusters
+### find.clusters()
+```{r}
+# This function displays a graph of cumulated variance explained by the eigenvalues of the PCA.
+
 grp <- adegenet::find.clusters(my_genind,
-                        max.n.clust= 10, 
-                        n.pca = 261
+                        # max clusters = number of sample site populations = 123
+                        max.n.clust= n_unique_pops, 
+                        var.contrib = TRUE, 
+                        scale = FALSE,
+                        n.da = nPop(my_genind) - 1
                         )
 
-# number of clusters - here select a sensible lowest BIC.
-# I chose 260 based on lowest BIC in graph
+# The adegenet tutorial says: "Apart from computational time, there is no reason for keeping a small number of components." 
+# However, I get error messages about non-convergence if I supply a number higher than the number of components.
+# I see the curve tapering off around 100 PC, so I'll supply that number.
 
-
-head(grp$Kstat)  # BIC scores per k
-grp$stat  # Best k based on BIC
-head(grp$grp, 261)  # Group membership (based on your defined number of clusters)
-grp$size  # Group size per k cluster
-
-
-
-dapc1 <- adegenet::dapc(my_genind, grp$grp)
-
-scatter(dapc1,
-        pch=20,
-        cell=0,
-        cstar=0, 
-        solid=0.4,
-        cex=3,
-        clab=0,
-        scree.pca=TRUE)
+# Next, it asks for the number of clusters - here select the point with the lowest BIC.
+# 2 and 3 look extremely close based on lowest BIC in graph. I'll choose 2.
 ```
 
+In the manual, they provide a U-shaped curve that plateaus for ~30 estimates of x. For cases like this, the authors state:
+
+"Although the most frequently asked when trying to find clusters in genetic data, this question is equally often meaningless. Clustering algorithms help making a caricature of a complex reality, which is most of the time far from following known population genetics models. Therefore, we are rarely looking for actual panmictic populations from which the individuals have been drawn. Genetic clusters can be biologically meaningful structures and reflect interesting biological processes, but they are still models.
+
+A slightly different but probably more meaningful question would be: ”How many clusters are useful to describe the data?”. A fundamental point in this question is that clusters are merely tools used to summarise and understand the data. There is no longer a ”true k”, but some values of k are better, more efficient summaries of the data than others. For instance, in the following case:, the concept of ”true k” is fairly hypothetical. This does not mean that clutering algorithms should necessarily be discarded, but surely the reality is more complex than a few clear-cut, isolated populations. What the BIC decrease says is that 10-20 clusters would provide useful summaries of the data. The actual number retained is merely a question of personnal taste."
+
+### Clusters = 2
+#### Examine clusters
+```{r}
+head(grp$Kstat)  # BIC scores per k
+# k = (1,2,3,4) all have BIC within 2 BIC from the lowest (k = 2)
+#    K=1      K=2      K=3      K=4     
+# 848.0387 846.5077 846.9920 848.2155
+
+grp$stat  # Best k based on BIC
+grp$grp  # Group membership (based on your defined number of clusters)
+grp$size  # Group size per k cluster
+```
+
+#### Plot clusters
+```{r}
+dapc1 <- adegenet::dapc(my_genind, grp$grp)
+# The method displays the same graph of cumulated variance as in find.cluster. However, unlike k-means, DAPC can benefit from not using too many PCs. Indeed, retaining too many components with respect to the number of individuals can lead to over-fitting and unstability in the membership probabilities returned by the method.
+# 
+# I'll choose 60.
+
+
+# Then, the method displays a barplot of eigenvalues for the discriminant analysis, asking for a number of discriminant functions to retain (unless argument n.da is provided).
+# 
+# Looks like there's only one eigenvalue. In this case:
+# 
+# "Scatter can also represent a single discriminant function, which is especially useful when only one of these has been retained (e.g. in the case k = 2). This is achieved by plotting the densities of individuals on a given discriminant function with different colors for different groups."
+
+png(filename = "Figures_Tables/dapc/dapc_clusters_2.png")
+
+scatter(dapc1,
+        scree.da=FALSE,
+        bg="white",
+        solid=0.4,
+        legend = TRUE
+      ) 
+
+dev.off()
+```
+
+
+### Clusters = 1- didn't work
+#### find.clusters()
+```{r}
+
+grp2 <- adegenet::find.clusters(my_genind,
+                        # max clusters = number of sample site populations = 123
+                        max.n.clust= n_unique_pops, 
+                        var.contrib = TRUE, 
+                        scale = FALSE,
+                        n.da = nPop(my_genind) - 1
+                        )
+
+# PC = 100
+
+# num clusters = 1
+# HOWEVER, then this line appears:
+# "Choose the number of clusters (>=2): "
+# So if I choose 1, then the following code doesn't work:
+# adegenet::dapc(my_genind, grp2$grp)
+# So I don't think I can move forward with n = 1.
+```
+
+#### Examine clusters
+```{r}
+head(grp2$Kstat)  # BIC scores per k
+grp2$stat  # Best k based on BIC
+grp2$grp  # Group membership (based on your defined number of clusters)
+grp2$size  # Group size per k cluster
+```
+
+#### Plot clusters
+```{r}
+# dapc2 <- adegenet::dapc(my_genind, grp2$grp)
+# The method displays the same graph of cumulated variance as in find.cluster. However, unlike k-means, DAPC can benefit from not using too many PCs. Indeed, retaining too many components with respect to the number of individuals can lead to over-fitting and unstability in the membership probabilities returned by the method.
+# 
+# I'll choose 60.
+# I keep getting this error, regardless of n: "Error in svd(X, nu = 0L) : infinite or missing values in 'x'"
+
+```
+
+### Clusters = 3
+#### find.clusters()
+```{r}
+grp3 <- adegenet::find.clusters(my_genind,
+                        # max clusters = number of sample site populations = 123
+                        max.n.clust= n_unique_pops, 
+                        var.contrib = TRUE, 
+                        scale = FALSE,
+                        n.da = nPop(my_genind) - 1
+                        )
+
+# PC = 100
+
+# n(clusters) = 3
+```
+
+#### Examine clusters
+```{r}
+head(grp3$Kstat)  # BIC scores per k
+grp3$stat  # Best k based on BIC
+grp3$grp  # Group membership (based on your defined number of clusters)
+grp3$size  # Group size per k cluster
+```
+
+#### Plot clusters
+```{r}
+dapc3 <- adegenet::dapc(my_genind, grp3$grp)
+# The method displays the same graph of cumulated variance as in find.cluster. However, unlike k-means, DAPC can benefit from not using too many PCs. Indeed, retaining too many components with respect to the number of individuals can lead to over-fitting and unstability in the membership probabilities returned by the method.
+# 
+# I'll choose 60.
+
+
+# Then, the method displays a barplot of eigenvalues for the discriminant analysis, asking for a number of discriminant functions to retain (unless argument n.da is provided).
+# I'll choose 2/2.
+
+png(filename = "Figures_Tables/dapc/dapc_clusters_3.png")
+
+scatter(dapc3,
+        scree.da=FALSE,
+        bg="white",
+        solid=0.4
+      )
+
+dev.off()
+```
+
+### Clusters = 4
+#### find.clusters()
+```{r}
+grp4 <- adegenet::find.clusters(my_genind,
+                        # max clusters = number of sample site populations = 123
+                        max.n.clust= n_unique_pops, 
+                        var.contrib = TRUE, 
+                        scale = FALSE,
+                        n.da = nPop(my_genind) - 1
+                        )
+
+# PC = 100
+
+# n(clusters) = 4
+```
+
+#### Examine clusters
+```{r}
+head(grp4$Kstat)  # BIC scores per k
+grp4$stat  # Best k based on BIC
+grp4$grp  # Group membership (based on your defined number of clusters)
+grp4$size  # Group size per k cluster
+```
+
+#### Plot clusters
+```{r}
+dapc4 <- adegenet::dapc(my_genind, grp4$grp)
+# The method displays the same graph of cumulated variance as in find.cluster. However, unlike k-means, DAPC can benefit from not using too many PCs. Indeed, retaining too many components with respect to the number of individuals can lead to over-fitting and unstability in the membership probabilities returned by the method.
+# 
+# I'll choose 60.
+
+
+# Then, the method displays a barplot of eigenvalues for the discriminant analysis, asking for a number of discriminant functions to retain (unless argument n.da is provided).
+# I'll choose 3/3.
+
+png(filename = "Figures_Tables/dapc/dapc_clusters_4.png")
+
+scatter(dapc4,
+        scree.da=FALSE,
+        bg="white",
+        solid=0.4
+      )
+
+dev.off()
+```
