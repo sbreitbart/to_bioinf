@@ -3,9 +3,7 @@ library(tidyverse)
 library(here)
 library(magrittr)
 
-# can't install this package so copied the R code into my own file, load it
-source(here::here("./R_scripts/vcf2sfs_code.R"))
-
+# RUN THIS for multiple-vcf pipelines-----
 
 # pop map file
 pop_map_file <- here::here("./genomic_resources/pop_map2.txt")
@@ -13,55 +11,7 @@ pop_map_file <- here::here("./genomic_resources/pop_map2.txt")
 # Pick out 5 with >=2 individuals/pop
 pops <- c("67", "79", "40", "47", "2")
 
-# FIRST TRIAL: Just one vcf -----
-# Read the VCF file and the popmap file and create a gt object
 
-# get genotype matrix
-mygt <- vcf2gt(here::here("./populations.snps.vcf"),
-               pop_map_file)
-
-
-# look at all unique populations
-all_populations <- as.list(unique(mygt[["popmap"]]))
-
-# create empty plots list
-plots_list <- c()
-
-# create SFS plots
-for (pop in pops) {
-  plot <- gt2sfs.raw(mygt, pop) %>%
-    as.data.frame() %>%
-    dplyr::rename("Individuals" = 1) %>%
-    dplyr::rename("Frequency" = 2) %>%
-   # dplyr::mutate("Freq_perc" = round(Frequency/sum(Frequency), 3)) %>%
-    ggplot(
-      aes(x = Individuals,
-          y = Frequency,
-          fill = Individuals)) + 
-    geom_bar(stat = "identity",
-             color = "black") +
-    xlab("Individuals with\n\ minor allele frequencies") +
-    ylab("Number of loci") +
-    #ylim(0, 1) +
-    ggpubr::theme_pubr(legend = "none") +
-    ggtitle(paste0("Population ", pop)) 
-    
-  plots_list[[pop]] <- plot
-}
-
-
-
-# arrange the plots in a grid
-grid_arranged_plots <- do.call(gridExtra::grid.arrange,
-                               c(plots_list, ncol = 5))
-
-# save the grid arranged plots to a single PDF file
-ggsave("my_plots.pdf",
-       grid_arranged_plots,
-       width = 15, height = 3)
-
-
-# SECOND TRIAL: all vcfs: round 3 -----
 
 # Set the directory containing the VCF files
 dir <- "./rounds3_4_all_vcfs"
@@ -103,7 +53,7 @@ for (file in vcf_files) {
   
   # make new list of parameters
   param_list <- c(param_list, folder_name)
-
+  
 }
 
 # make param_list a df and extract parameters into new columns
@@ -114,6 +64,74 @@ params <- as.data.frame(param_list) %>%
                   sep = "_") %>%
   dplyr::mutate(mmaf = gsub("[^0-9.-]", "", mmaf)) %>%
   dplyr::mutate(R = gsub("[^0-9.-]", "", R))
+
+
+# FIRST TRIAL: Just one vcf, vcf2sfs pkg -----
+
+# can't install this package so copied the R code into my own file, load it
+source(here::here("./R_scripts/vcf2sfs_code.R"))
+
+# Read the VCF file and the popmap file and create a gt object
+my_vcf <- vcfR::read.vcfR(here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_R1.vcf"))
+
+# get genotype matrix
+mygt <- vcf2gt(here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_R1.vcf"),
+               pop_map_file)
+
+plot <- gt2sfs.raw(mygt, "2")
+
+#viewMissing(mygt)
+plot.sfs(plot)
+ 
+ggplot(plot,
+       aes(x = Freq,
+           y = X2)) +
+  geom_bar(stat = "identity")
+ 
+ 
+ 
+
+# look at all unique populations
+all_populations <- as.list(unique(mygt[["popmap"]]))
+
+# create empty plots list
+plots_list <- c()
+
+# create SFS plots
+for (pop in pops) {
+  plot <- gt2sfs.raw(mygt, pop) %>%
+    as.data.frame() %>%
+    dplyr::rename("Individuals" = 1) %>%
+    dplyr::rename("Frequency" = 2) %>%
+   # dplyr::mutate("Freq_perc" = round(Frequency/sum(Frequency), 3)) %>%
+    ggplot(
+      aes(x = Individuals,
+          y = Frequency,
+          fill = Individuals)) + 
+    geom_bar(stat = "identity",
+             color = "black") +
+    xlab("Individuals with\n\ minor allele frequencies") +
+    ylab("Number of loci") +
+    #ylim(0, 1) +
+    ggpubr::theme_pubr(legend = "none") +
+    ggtitle(paste0("Population ", pop)) 
+    
+  plots_list[[pop]] <- plot
+}
+
+
+
+# arrange the plots in a grid
+grid_arranged_plots <- do.call(gridExtra::grid.arrange,
+                               c(plots_list, ncol = 5))
+
+# save the grid arranged plots to a single PDF file
+ggsave("my_plots.pdf",
+       grid_arranged_plots,
+       width = 15, height = 3)
+
+
+# SECOND TRIAL: all vcfs: rounds 3-4, vcf2sfs pkg  -----
 
 # get genotype matrix for each vcf
 output <- lapply(vcf_files, function(x) vcf2gt(x, pop_map_file))
@@ -499,3 +517,120 @@ do.call(gridExtra::grid.arrange,
          .,
          width = 30,
          height = 20)
+
+# THIRD TRIAL: Just one vcf using adegenet/vcfR pkgs-----
+# Read the VCF file and the popmap file and create a gt object
+my_vcf <- vcfR::read.vcfR(here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_R1.vcf"))
+
+test <- vcfR2tidy(my_vcf)
+vcf_pop2 <- subset(my_vcf, na.rm = TRUE,  subsetString = "pop=='2'")
+
+
+
+# look at minor allele frequencies
+# Each shows mmaf is actually 0.05, so vcf should be accurate
+# method 1
+# row represents one allele
+min_alleles <- vcfR::maf(my_vcf, 2) %>%
+  as.data.frame()
+
+# method 2
+# test <- vcfR2genind(my_vcf) %>%
+#   adegenet::minorAllele() %>%
+#   as.data.frame()
+
+
+# find the number of minor alleles seen (count) times
+min_alleles_counted <- min_alleles %>%
+  dplyr::group_by(Frequency) %>%
+  dplyr::summarise(Alleles = n(),
+                   Count = first(Count))
+
+# PLOT
+# Bin the data by Frequency with bin width
+min_alleles_counted_bins <- min_alleles_counted %>%
+  dplyr::mutate(bin = cut(Frequency,
+                          breaks = seq(0, max(Frequency) + bin_width, 
+                                       by = 0.05),
+                          right = FALSE)) %>%
+  group_by(bin) %>%
+  summarise(count = n())
+
+# Create a barplot of the binned data
+ggplot(min_alleles_counted_bins,
+       aes(x = bin, y = count)) +
+  geom_bar(stat = "identity") +
+  xlab("Frequency of each minor allele") +
+  ylab("Number of minor alleles at each frequency") +
+  theme_pubr()
+
+
+
+# FOURTH TRIAL: All 60 vcfs using adegenet/vcfR pkgs-----
+
+# Read the VCF
+my_vcfs <- lapply(vcf_files, vcfR::read.vcfR)
+
+# create SFS plots
+plots_list_trial4 <- list() 
+
+# # Loop through each population
+# for (pop in pops[1]) {
+  
+  # Create a list to store the plots for this population
+  # plots_list_trial4[[pop]] <- list()
+  
+  # Loop through each input file
+  for (i in 1:60) {
+    # Generate the plot for this file and population
+    plot <- vcfR::maf(my_vcfs[[i]], 2) %>%
+      as.data.frame() %>%
+      
+      # find the number of minor alleles seen (count) times
+      dplyr::group_by(Frequency) %>%
+      dplyr::summarise(Alleles = n(),
+                       Count = first(Count)) %>%
+      
+      # PLOT
+      # Bin the data by Frequency with bin width
+      dplyr::mutate(bin = cut(Frequency,
+                              breaks = c(seq(0, 0.5, by = 0.05)),
+                              right = FALSE)) %>%
+      group_by(bin) %>%
+      summarise(count = n()) %>%
+      as.data.frame() %>% 
+      dplyr::add_row(bin = "[0,0.05)", count = 0) %>%
+      group_by(bin) %>%
+      summarise(bin = unique(bin), count = sum(count)) %>%
+      as.data.frame() %>%  
+      drop_na() %>% 
+      # Create a barplot of the binned data
+      ggplot(
+        aes(x = bin, y = count)) +
+      geom_bar(aes(fill = bin),
+               stat = "identity") +
+      ylim(NA, 1000) +
+      labs(x = "Frequency of each minor allele",
+           y = "Number of minor alleles at each frequency",
+      #     title = paste0("Population ", pop),
+           subtitle = paste0("mmaf ", params$mmaf[[i]],
+                             ", R ", params$R[[i]])) +
+      theme_pubr(legend = "none")
+
+    # Add the plot to the list for this population
+     # plots_list_trial4[[pop]][[i]] <- plot
+      plots_list_trial4[[i]] <- plot
+  }
+#}
+
+# arrange the plots in a grid and save
+do.call(gridExtra::grid.arrange,
+        c(plots_list_trial4,
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/trial2/all_pops.pdf",
+         .,
+         limitsize = FALSE,
+         width = 90,
+         height = 40)
+
