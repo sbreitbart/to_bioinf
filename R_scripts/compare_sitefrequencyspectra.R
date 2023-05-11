@@ -634,3 +634,67 @@ do.call(gridExtra::grid.arrange,
          width = 90,
          height = 40)
 
+
+
+# FIFTH TRIAL: All 70 vcfs using adegenet/vcfR pkgs-----
+
+# ADD LAST 10 VCFS with mmaf=0###
+######################################
+
+# Read the VCF
+my_vcfs <- lapply(vcf_files, vcfR::read.vcfR)
+
+# create SFS plots
+plots_list_trial4 <- list() 
+
+# Loop through each input file
+for (i in 1:60) {
+  # Generate the plot for this file and population
+  plot <- vcfR::maf(my_vcfs[[i]], 2) %>%
+    as.data.frame() %>%
+    dplyr::group_by(Frequency) %>%
+    dplyr::summarise(n_loci = n(),
+                     allele_count = first(Count)) %>%
+    # Create a barplot of the binned data
+    ggplot(
+      aes(x = allele_count, y = n_loci)) +
+    geom_bar(fill = "black",
+             stat = "identity") +
+    scale_x_continuous(n.breaks = 8,
+                       limits = c(0, 261)) +
+    ylim(NA, 1000) +
+    labs(x = "Individuals",
+         y = "Minor alleles",
+         #     title = paste0("Population ", pop),
+         subtitle = paste0("mmaf ", params$mmaf[[i]],
+                           ", R ", params$R[[i]])) +
+    theme_pubr(legend = "none")
+  
+  # Add the plot to the list for this population
+  # plots_list_trial4[[pop]][[i]] <- plot
+  plots_list_trial4[[i]] <- plot
+}
+#}
+
+# arrange the plots in a grid and save
+do.call(gridExtra::grid.arrange,
+        c(plots_list_trial4,
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/trial3/all_pops.pdf",
+         .,
+         limitsize = FALSE,
+         width = 30,
+         height = 15)
+
+
+# arrange the plots in a grid and save- SMALLER VERSION
+do.call(gridExtra::grid.arrange,
+        c(plots_list_trial4,
+          ncol = 10,
+          nrow = 6 )) %>%
+  ggsave("Figures_Tables/compare_SFS/trial3/all_pops_smaller.pdf",
+         .,
+         limitsize = FALSE,
+         width = 30,
+         height = 12)
