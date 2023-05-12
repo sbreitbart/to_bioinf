@@ -1,12 +1,11 @@
 # load libraries
-library(tidyverse)
-library(here)
-library(magrittr)
+source("libraries.R")
 
 # RUN THIS for multiple-vcf pipelines-----
 
 # pop map file
 pop_map_file <- here::here("./genomic_resources/pop_map2.txt")
+pop_map_all1pop <- here::here("./genomic_resources/pop_map_allonepop.txt")
 
 # Pick out 5 with >=2 individuals/pop
 pops <- c("67", "79", "40", "47", "2")
@@ -77,8 +76,11 @@ my_vcf <- vcfR::read.vcfR(here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_
 # get genotype matrix
 mygt <- vcf2gt(here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_R1.vcf"),
                pop_map_file)
+mygt_all1pop <- vcf2gt(here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_R1.vcf"),
+                       pop_map_all1pop)
 
 plot <- gt2sfs.raw(mygt, "2")
+plot <- gt2sfs.raw(mygt_all1pop, "1")
 
 #viewMissing(mygt)
 plot.sfs(plot)
@@ -638,17 +640,16 @@ do.call(gridExtra::grid.arrange,
 
 # FIFTH TRIAL: All 70 vcfs using adegenet/vcfR pkgs-----
 
-# ADD LAST 10 VCFS with mmaf=0###
-######################################
+# ADDED LAST 10 VCFS with mmaf=0###
 
-# Read the VCF
+# Read the VCFs
 my_vcfs <- lapply(vcf_files, vcfR::read.vcfR)
 
 # create SFS plots
-plots_list_trial4 <- list() 
+plots_list_trial5 <- list() 
 
 # Loop through each input file
-for (i in 1:60) {
+for (i in 1:70) {
   # Generate the plot for this file and population
   plot <- vcfR::maf(my_vcfs[[i]], 2) %>%
     as.data.frame() %>%
@@ -660,9 +661,10 @@ for (i in 1:60) {
       aes(x = allele_count, y = n_loci)) +
     geom_bar(fill = "black",
              stat = "identity") +
-    scale_x_continuous(n.breaks = 8,
-                       limits = c(0, 261)) +
-    ylim(NA, 1000) +
+    scale_x_continuous(n.breaks = 6,
+                       # setting limit to n/2 alleles
+                       limits = c(0, 130)) +
+    ylim(NA, 1600) +
     labs(x = "Individuals",
          y = "Minor alleles",
          #     title = paste0("Population ", pop),
@@ -672,29 +674,43 @@ for (i in 1:60) {
   
   # Add the plot to the list for this population
   # plots_list_trial4[[pop]][[i]] <- plot
-  plots_list_trial4[[i]] <- plot
+  plots_list_trial5[[i]] <- plot
 }
 #}
 
 # arrange the plots in a grid and save
 do.call(gridExtra::grid.arrange,
-        c(plots_list_trial4,
+        c(plots_list_trial5,
           ncol = 10,
-          nrow = 6 )) %>%
+          nrow = 7 )) %>%
   ggsave("Figures_Tables/compare_SFS/trial3/all_pops.pdf",
          .,
          limitsize = FALSE,
-         width = 30,
+         width = 26,
          height = 15)
 
 
-# arrange the plots in a grid and save- SMALLER VERSION
-do.call(gridExtra::grid.arrange,
-        c(plots_list_trial4,
-          ncol = 10,
-          nrow = 6 )) %>%
-  ggsave("Figures_Tables/compare_SFS/trial3/all_pops_smaller.pdf",
-         .,
-         limitsize = FALSE,
-         width = 30,
-         height = 12)
+# notes for understanding vcfR::maf()'s output-----
+# *Each row is a locus.
+# *nAllele = the number of different alleles sequenced at this
+#  locus. At most, it's 2n = 261*2=522 because it's a diploid-
+#  so there's at most 2 alleles per locus for each individual. 
+#  It can drop to numbers like 50 if only, for example, 
+#  50/2n=50/2*261=50/522=~10% of the loci were sequenced.
+# *Count = the number of times a specific allele was seen at
+#  this locus.
+# *Frequency = Count/nAlleles to give the total frequency of
+#  that specific allele.
+# 
+# There can be bars in the 1 bins on the x axis because of
+#  missing values. Some loci were only sequenced in a few of
+#  the individuals (depending on R), so if an allele was seen
+#  only once but its locus was sequenced in only ~25% of 
+#  individuals, it could still have a frequency >0.05 and 
+#  wind up in the "1 individual" bin.
+#  
+# This holds up because the mmaf = 0.05, R = 1 plot should
+#  have no missing data and a min minor allele frequency of 
+#  5%, so the first individual should show up at 
+#  0.05*2n=0.05*2*261=26 individuals. It does.
+#  
