@@ -1,5 +1,5 @@
 ---
-title: Comparing continuous/categorical urbanization data AND all/variant only genetic data
+title: How does urbanization predict pi and FIS?
 output: 
   html_document:
     toc: true
@@ -13,7 +13,8 @@ TO DO:
 - make sure y axis is transformed for figures
 - export figures
 
-will use narrow genetic dataset: -R = 1 & -min_maf = 0.05
+These analyses use the narrow, conservative genetic dataset:
+-R = 1 & -min_maf = 0.05
 
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 

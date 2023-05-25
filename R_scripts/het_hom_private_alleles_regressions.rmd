@@ -1,5 +1,5 @@
 ---
-title: Comparing continuous/categorical urbanization data with variant only genetic data
+title: How does urbanization predict private alleles, and expected/observed heterozygosity/homozygosity?
 output: 
   html_document:
     toc: true
@@ -10,7 +10,7 @@ output:
     theme: lumen
 ---
 
-will use broadest genetic dataset possible
+These analyses use the broadest genetic dataset which aims to include rare variants:
 -R = 0.5 & -min_maf = 0.0078
 
 ```{r setup, include=FALSE} 
