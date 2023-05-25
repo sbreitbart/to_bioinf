@@ -145,12 +145,54 @@ diversity_variant_sites %>%
 # this value anyway.
 ```
 
+### Does the number of individuals per populations correlate with pop gen stats?
+#### obs_het & obs_hom
+```{r}
+ggplot(diversity_variant_sites, 
+       aes(x = num_indv,
+           y = obs_het)) + 
+  geom_point(aes(color = City_dist)) +
+  geom_smooth(stat = "smooth") +
+  scale_color_continuous(type = "viridis")
+
+
+test1 <- glmmTMB(obs_het ~ num_indv,
+                 diversity_variant_sites)
+performance::check_model(test1)
+car::Anova(test1) # yes
+r.squaredGLMM(test1) # ~8% variance explained
+# SO I will add num_indivs as a random effect to these models
+
+# I'll also add it to the obs_hom models because they are the inverse
+```
+
+#### exp_het & exp_hom
+```{r}
+ggplot(diversity_variant_sites, 
+       aes(x = num_indv,
+           y = exp_het)) + 
+  geom_point(aes(color = City_dist)) +
+  geom_smooth(stat = "smooth") +
+  scale_color_continuous(type = "viridis")
+
+
+test1 <- glmmTMB(exp_het ~ num_indv,
+                 diversity_variant_sites)
+performance::check_model(test1)
+car::Anova(test1) # yes
+r.squaredGLMM(test1) # ~90% variance explained
+# SO I will add num_indivs as a random effect to these models
+
+# I'll also add it to the exp_hom models because they are the inverse
+```
+
 ## Urbanization is continuous
 ### Fit linear models/diagnostics
 #### Expected heterozygosity (Het_exp)
 ##### City_dist
 ```{r}
-Het_exp_dist <- glmmTMB(exp_het ~ City_dist,
+Het_exp_dist <- glmmTMB(exp_het ~ City_dist
+                        + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Het_exp_dist)
@@ -158,7 +200,8 @@ performance::check_model(Het_exp_dist)
 
 ##### Urb_score
 ```{r}
-Het_exp_usc <- glmmTMB(exp_het ~ urb_score,
+Het_exp_usc <- glmmTMB(exp_het ~ urb_score
+                       + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Het_exp_usc)
@@ -167,7 +210,8 @@ performance::check_model(Het_exp_usc)
 #### Observed heterozygosity (Het_obs)
 ##### City_dist
 ```{r}
-Het_obs_dist <- glmmTMB(obs_het ~ City_dist,
+Het_obs_dist <- glmmTMB(obs_het ~ City_dist
+                       + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Het_obs_dist)
@@ -175,7 +219,8 @@ performance::check_model(Het_obs_dist)
 
 ##### Urb_score
 ```{r}
-Het_obs_usc <- glmmTMB(obs_het ~ urb_score,
+Het_obs_usc <- glmmTMB(obs_het ~ urb_score
+                       + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Het_obs_usc)
@@ -184,7 +229,8 @@ performance::check_model(Het_obs_usc)
 #### Expected homozygosity (Hom_exp)
 ##### City_dist
 ```{r}
-Hom_exp_dist <- glmmTMB(exp_hom ~ City_dist,
+Hom_exp_dist <- glmmTMB(exp_hom ~ City_dist
+                       + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Hom_exp_dist)
@@ -192,7 +238,8 @@ performance::check_model(Hom_exp_dist)
 
 ##### Urb_score
 ```{r}
-Hom_exp_usc <- glmmTMB(exp_hom ~ urb_score,
+Hom_exp_usc <- glmmTMB(exp_hom ~ urb_score
+                       + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Hom_exp_usc)
@@ -202,7 +249,8 @@ performance::check_model(Hom_exp_usc)
 #### Observed homozygosity (Hom_obs)
 ##### City_dist
 ```{r}
-Hom_obs_dist <- glmmTMB(obs_hom ~ City_dist,
+Hom_obs_dist <- glmmTMB(obs_hom ~ City_dist
+                       + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Hom_obs_dist)
@@ -210,7 +258,8 @@ performance::check_model(Hom_obs_dist)
 
 ##### Urb_score
 ```{r}
-Hom_obs_usc <- glmmTMB(obs_hom ~ urb_score,
+Hom_obs_usc <- glmmTMB(obs_hom ~ urb_score
+                       + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(Hom_obs_usc)
@@ -219,8 +268,8 @@ performance::check_model(Hom_obs_usc)
 ### ANOVA & effect sizes
 ```{r}
 
-mod_list <- list(Het_obs_dist,
-                 Het_obs_usc,
+mod_list <- list(Het_exp_dist,
+                 Het_exp_usc,
                  Hom_obs_dist,
                  Hom_obs_usc)
 
@@ -233,8 +282,6 @@ create_anova_df <- lapply(mod_list, function(model) {
   Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
   round(digits = 3) %>%
   format(nsmall = 3)
-  
-  # ADD EFFECT SIZES
   
   anova_tidy <- broom::tidy(anova_result) %>%
     dplyr::mutate("Variable" = as.character(formula),
@@ -255,6 +302,10 @@ create_anova_df <- lapply(mod_list, function(model) {
       Variable == "obs_het" ~ "Observed heterozygosity",
       Variable == "exp_hom" ~ "Expected homozygosity",
       Variable == "obs_hom" ~ "Observed homozygosity",
+      TRUE ~ "")) %>%
+  dplyr::mutate("Urbanization" = case_when(
+      Urbanization == "City_dist" ~ "Distance",
+      Urbanization == "urb_score" ~ "Urbanization Score",
       TRUE ~ ""))
   })
 
@@ -266,9 +317,9 @@ all_anovas <- do.call(rbind, create_anova_df) %>%
 all_anovas %>%
   dplyr::select(-Sig) %>%
   flextable::flextable() %>%
-  flextable::compose(i = 1, j = 2, part = "header",
+  flextable::compose(i = 1, j = 3, part = "header",
                      value = as_paragraph("Χ", as_sup("2"))) %>%
-  flextable::compose(i = 1, j = 5, part = "header",
+  flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
   bold(~ p <= 0.05) %>%
   flextable::autofit()
@@ -278,12 +329,22 @@ all_anovas %>%
 #### Expected heterozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = City_dist,
-           y = exp_het)) +
+Het_exp_dist_pred <- ggeffects::ggpredict(Het_exp_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+Het_exp_dist_plot <- plot(Het_exp_dist_pred, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+            #   fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Distance to City Center (km)") +
   ylab("Expected Heterozygosity") +
-  plot_aesthetics +
+  ylim(0.07, 0.095) +
+  labs(title = "") +
   theme_pubr() +
   labs_pubr() 
 
@@ -291,13 +352,23 @@ ggplot(diversity_variant_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = urb_score,
-           y = exp_het)) +
+Het_exp_usc_pred <- ggeffects::ggpredict(Het_exp_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+ 
+Het_exp_usc_plot <- plot(Het_exp_usc_pred, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Urbanization Score") +
   ylab("Expected Heterozygosity") +
-  plot_aesthetics +
-  theme_pubr() +
+  labs(title = "") +
+    ylim(0.07, 0.095) +
+  theme_pubr()+
   labs_pubr() +
   xlim(4, -4)
 ```
@@ -305,12 +376,23 @@ ggplot(diversity_variant_sites,
 #### Obs heterozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = City_dist,
-           y = obs_het)) +
+Het_obs_dist_pred <- ggeffects::ggpredict(Het_obs_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+Het_obs_dist_plot <- plot(Het_obs_dist_pred, 
+     add.data = F,
+     alpha = 0) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+               fill = "#66a182",
+               alpha = 0.5
+              ) +
   xlab("Distance to City Center (km)") +
   ylab("Observed Heterozygosity") +
-  plot_aesthetics +
+    ylim(0.07, 0.095) +
+  labs(title = "") +
   theme_pubr() +
   labs_pubr() 
 
@@ -318,27 +400,47 @@ ggplot(diversity_variant_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = urb_score,
-           y = obs_het)) +
+Het_obs_usc_pred <- ggeffects::ggpredict(Het_obs_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+ 
+Het_obs_usc_plot <- plot(Het_obs_usc_pred, 
+     add.data = F,
+     alpha = 0) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+               fill = "#66a182",
+               alpha = 0.5
+              ) +
   xlab("Urbanization Score") +
   ylab("Observed Heterozygosity") +
-  plot_aesthetics +
-  theme_pubr() +
+  labs(title = "") +
+      ylim(0.07, 0.095) +
+  theme_pubr()+
   labs_pubr() +
   xlim(4, -4)
-
 ```
 
 #### Expected homozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = City_dist,
-           y = exp_hom)) +
+Hom_exp_dist_pred <- ggeffects::ggpredict(Hom_exp_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+Hom_exp_dist_plot <- plot(Hom_exp_dist_pred, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Distance to City Center (km)") +
   ylab("Expected Homozygosity") +
-  plot_aesthetics +
+    ylim(0.9, 0.93) +
+  labs(title = "") +
   theme_pubr() +
   labs_pubr() 
 
@@ -346,13 +448,23 @@ ggplot(diversity_variant_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = urb_score,
-           y = exp_hom)) +
+Hom_exp_usc_pred <- ggeffects::ggpredict(Hom_exp_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+ 
+Hom_exp_usc_plot <- plot(Hom_exp_usc_pred, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
   xlab("Urbanization Score") +
   ylab("Expected Homozygosity") +
-  plot_aesthetics +
-  theme_pubr() +
+      ylim(0.9, 0.93) +
+  labs(title = "") +
+  theme_pubr()+
   labs_pubr() +
   xlim(4, -4)
 ```
@@ -360,12 +472,23 @@ ggplot(diversity_variant_sites,
 #### Obs homozygosity
 ##### City_dist
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = City_dist,
-           y = obs_hom)) +
+Hom_obs_dist_pred <- ggeffects::ggpredict(Hom_obs_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+Hom_obs_dist_plot <- plot(Hom_obs_dist_pred, 
+     add.data = F,
+     alpha = 0) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+               fill = "#66a182",
+               alpha = 0.5
+              ) +
   xlab("Distance to City Center (km)") +
   ylab("Observed Homozygosity") +
-  plot_aesthetics +
+    ylim(0.9, 0.93) +
+  labs(title = "") +
   theme_pubr() +
   labs_pubr() 
 
@@ -373,16 +496,26 @@ ggplot(diversity_variant_sites,
 
 ##### Urb_score
 ```{r}
-ggplot(diversity_variant_sites,
-       aes(x = urb_score,
-           y = obs_hom)) +
+Hom_obs_usc_pred <- ggeffects::ggpredict(Hom_obs_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+ 
+Hom_obs_usc_plot <- plot(Hom_obs_usc_pred, 
+     add.data = F,
+     alpha = 0) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+               fill = "#66a182",
+               alpha = 0.5
+              ) +
   xlab("Urbanization Score") +
   ylab("Observed Homozygosity") +
-  plot_aesthetics +
-  theme_pubr() +
+  ylim(0.9, 0.93) +
+  labs(title = "") +
+  theme_pubr()+
   labs_pubr() +
   xlim(4, -4)
-
 ```
 
 #### Number of individuals per pop
@@ -411,6 +544,28 @@ ggplot(diversity_variant_sites,
   labs_pubr() +
   xlim(4, -4)
 
+```
+
+#### Export all in one pdf
+```{r}
+# City distance plots
+(Het_exp_dist_plot | Het_obs_dist_plot) /
+(Hom_exp_dist_plot | Hom_obs_dist_plot )
+
+ggsave(here::here("./Figures_Tables/regressions/het_hom_dist.png"),
+       width = 10,
+       height = 7,
+       units = "in")
+
+
+# Urbanization score plots
+(Het_exp_usc_plot | Het_obs_usc_plot) / 
+(Hom_exp_usc_plot | Hom_obs_usc_plot )
+  
+ggsave(here::here("./Figures_Tables/regressions/het_hom_usc.png"),
+       width = 10,
+       height = 7,
+       units = "in")
 ```
 
 ## Urbanization is categorical
