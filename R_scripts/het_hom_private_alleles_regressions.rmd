@@ -11,7 +11,7 @@ output:
 ---
 
 will use broadest genetic dataset possible
--R < 1 & -min_maf < 0.05
+-R = 0.5 & -min_maf = 0.0078
 
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
@@ -38,21 +38,18 @@ urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
 
 ### Genetic data
 ```{r}
-# replace this file after I finalize -R and -min_maf
-# input_file <- here::here("./summary_stats/trial_02/output_refmap_run2/populations.sumstats_summary.tsv")
-
-
-div <- extract_variant_position_summary(input_file) %>%
+diversity_variant_sites <-  here::here("./summary_stats/mmaf0.007662_R0.5_populations_output/populations.sumstats_summary.tsv") %>%
+  extract_variant_position_summary() %>%
+  
 # if population doesn't start with "MWI", it should start with "MW"
   # clean names
   janitor::clean_names() %>%
   # rename col 1
   dplyr::rename(pop_id = 1) %>%
-  dplyr::mutate(pop_id = as.factor(pop_id))
-
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
 
 # take entries with numeric populations and add "MW" as prefix
-diversity_variant_sites <- add_MW_IDs(div)
+  add_MW_IDs()
 
 ```
 
@@ -85,7 +82,7 @@ str(diversity_variant_sites)
 head(diversity_variant_sites)
 
 diversity_variant_sites %>%
-  dplyr::select(1, 3, 4, "exp_het", "obs_het", "exp_hom", "obs_hom", "City_dist", "urb_score") %>%
+  dplyr::select(1, 3, 4, "private", "exp_het", "obs_het", "exp_hom", "obs_hom", "City_dist", "urb_score") %>%
   view
 
 # quick boxplots
@@ -93,6 +90,7 @@ boxplot(diversity_variant_sites$obs_het)
 boxplot(diversity_variant_sites$exp_het)
 boxplot(diversity_variant_sites$obs_hom)
 boxplot(diversity_variant_sites$exp_hom)
+boxplot(diversity_variant_sites$private)
 
 # quick regressions of genetic vars against distance from cc
 
@@ -116,7 +114,7 @@ qplot(data = diversity_variant_sites,
 
 # regress all selected variables against one another
 diversity_variant_sites %>%
-  dplyr::select( exp_het, obs_het, exp_hom, obs_hom, num_indv, urb_score, City_dist) %>%
+  dplyr::select( private, exp_het, obs_het, exp_hom, obs_hom, num_indv, urb_score, City_dist) %>%
   pairs()
 
 
@@ -126,7 +124,25 @@ diversity_variant_sites %>%
 test1 <- glmmTMB(City_dist ~ num_indv, diversity_variant_sites)
 performance::check_model(test1)
 car::Anova(test1) # yes
-r.squaredGLMM(test1) # ~4% variance explained
+r.squaredGLMM(test1) # ~3% variance explained
+
+
+
+# private alleles
+
+# how many different values of private alleles are there?
+unique(diversity_variant_sites$private)
+# 3: 0, 1, and 2.
+
+# how many populations have at least 1 private allele?
+diversity_variant_sites %>%
+  dplyr::select(private) %>%
+  dplyr::filter(private != 0) %>%
+  tally()
+# there are only 14 populations. That's too small a sample size
+# for regressions so I won't analyze this variable.
+# In the R = 1, mmaf = 0.05 dataset, there are only zeroes for
+# this value anyway.
 ```
 
 ## Urbanization is continuous
