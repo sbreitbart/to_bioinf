@@ -301,7 +301,7 @@ Het_exp_dist_pred <- ggeffects::ggpredict(Het_exp_dist,
                                    terms = c("City_dist"),
                                    type = "fe")
 
-Het_exp_dist_plot <- plot(Het_exp_dist_pred, 
+Het_exp_dist_pred_plot <- plot(Het_exp_dist_pred, 
      add.data = F) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
@@ -324,7 +324,7 @@ Het_exp_usc_pred <- ggeffects::ggpredict(Het_exp_usc,
                                    terms = c("urb_score"),
                                    type = "fe")
  
-Het_exp_usc_plot <- plot(Het_exp_usc_pred, 
+Het_exp_usc_pred_plot <- plot(Het_exp_usc_pred, 
      add.data = F) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
@@ -348,7 +348,7 @@ Het_obs_dist_pred <- ggeffects::ggpredict(Het_obs_dist,
                                    terms = c("City_dist"),
                                    type = "fe")
 
-Het_obs_dist_plot <- plot(Het_obs_dist_pred, 
+Het_obs_dist_pred_plot <- plot(Het_obs_dist_pred, 
      add.data = F,
      alpha = 0) +
   geom_ribbon(aes(x = x,
@@ -372,7 +372,7 @@ Het_obs_usc_pred <- ggeffects::ggpredict(Het_obs_usc,
                                    terms = c("urb_score"),
                                    type = "fe")
  
-Het_obs_usc_plot <- plot(Het_obs_usc_pred, 
+Het_obs_usc_pred_plot <- plot(Het_obs_usc_pred, 
      add.data = F,
      alpha = 0) +
   geom_ribbon(aes(x = x,
@@ -397,7 +397,7 @@ Hom_exp_dist_pred <- ggeffects::ggpredict(Hom_exp_dist,
                                    terms = c("City_dist"),
                                    type = "fe")
 
-Hom_exp_dist_plot <- plot(Hom_exp_dist_pred, 
+Hom_exp_dist_pred_plot <- plot(Hom_exp_dist_pred, 
      add.data = F) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
@@ -420,7 +420,7 @@ Hom_exp_usc_pred <- ggeffects::ggpredict(Hom_exp_usc,
                                    terms = c("urb_score"),
                                    type = "fe")
  
-Hom_exp_usc_plot <- plot(Hom_exp_usc_pred, 
+Hom_exp_usc_pred_plot <- plot(Hom_exp_usc_pred, 
      add.data = F) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
@@ -444,7 +444,7 @@ Hom_obs_dist_pred <- ggeffects::ggpredict(Hom_obs_dist,
                                    terms = c("City_dist"),
                                    type = "fe")
 
-Hom_obs_dist_plot <- plot(Hom_obs_dist_pred, 
+Hom_obs_dist_pred_plot <- plot(Hom_obs_dist_pred, 
      add.data = F,
      alpha = 0) +
   geom_ribbon(aes(x = x,
@@ -468,7 +468,7 @@ Hom_obs_usc_pred <- ggeffects::ggpredict(Hom_obs_usc,
                                    terms = c("urb_score"),
                                    type = "fe")
  
-Hom_obs_usc_plot <- plot(Hom_obs_usc_pred, 
+Hom_obs_usc_pred_plot <- plot(Hom_obs_usc_pred, 
      add.data = F,
      alpha = 0) +
   geom_ribbon(aes(x = x,
@@ -517,8 +517,8 @@ ggplot(diversity_variant_sites,
 #### Export all in one pdf
 ```{r}
 # City distance plots
-(Het_exp_dist_plot | Het_obs_dist_plot) /
-(Hom_exp_dist_plot | Hom_obs_dist_plot )
+(Het_exp_dist_pred_plot | Het_obs_dist_pred_plot) /
+(Hom_exp_dist_pred_plot | Hom_obs_dist_pred_plot )
 
 ggsave(here::here("./Figures_Tables/regressions/het_hom_dist.png"),
        width = 10,
@@ -527,8 +527,8 @@ ggsave(here::here("./Figures_Tables/regressions/het_hom_dist.png"),
 
 
 # Urbanization score plots
-(Het_exp_usc_plot | Het_obs_usc_plot) / 
-(Hom_exp_usc_plot | Hom_obs_usc_plot )
+(Het_exp_usc_pred_plot | Het_obs_usc_pred_plot) / 
+(Hom_exp_usc_pred_plot | Hom_obs_usc_pred_plot )
   
 ggsave(here::here("./Figures_Tables/regressions/het_hom_usc.png"),
        width = 10,
@@ -624,44 +624,7 @@ mod_list_cat <- list(
                  Het_obs_dist_cat,
                  Het_obs_usc_cat)
 
-create_anova_df_cat <- lapply(mod_list_cat, function(model) {
-  anova_result <- car::Anova(model)
-  
-  formula <- formula(model)[2] %>%
-    unlist()
-  
-  Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
-  round(digits = 3) %>%
-  format(nsmall = 3)
-  
-  anova_tidy <- broom::tidy(anova_result) %>%
-    dplyr::mutate("Variable" = as.character(formula),
-                  "Rsq" = as.numeric(Rsq)) %>%
-    dplyr::rename("Chi_sq" = statistic,
-                  "p" = p.value,
-                  "Urbanization" = term) %>%
-    dplyr::mutate("Sig" = case_when(
-      p <= 0.05 & p > 0.01 ~ "*",
-      p <= 0.01 & p > 0.001 ~ "**",
-      p <= 0.001 ~ "***",
-      TRUE ~ "")) %>%
-    dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
-                  p = format(round(p, digits = 3), nsmall = 3)) %>%
-  dplyr::arrange(Urbanization, Variable) %>%
-  dplyr::mutate("Variable" = case_when(
-      Variable == "exp_het" ~ "Expected heterozygosity",
-      Variable == "obs_het" ~ "Observed heterozygosity",
-      Variable == "exp_hom" ~ "Expected homozygosity",
-      Variable == "obs_hom" ~ "Observed homozygosity",
-      TRUE ~ "")) %>%
-  dplyr::mutate("Urbanization" = case_when(
-      Urbanization == "u_r_dist" ~ "Distance (categorical)",
-      Urbanization == "u_r_usc" ~ "Urbanization Score (categorical)",
-      TRUE ~ ""))
-  })
-
 all_anovas_cat <- do.call(rbind, create_anova_df_cat) %>%
-  dplyr::select(1,5,2,3,4,7,6) %T>%
   view
 
 # create flextable
@@ -679,13 +642,13 @@ all_anovas_cat %>%
 
 ### Figures
 #### Expected heterozygosity
-##### u_r_dist
+##### Distance
 ```{r}
 Het_exp_dist_pred_cat <- ggeffects::ggpredict(Het_exp_dist_cat,
                                    terms = c("u_r_dist"),
                                    type = "fe")
 
-Het_exp_dist_plot2 <- ggplot(data = Het_exp_dist_pred_cat,
+Het_exp_dist_pred_cat_plot <- ggplot(data = Het_exp_dist_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "black",
                    size = 2) + 
@@ -702,13 +665,13 @@ Het_exp_dist_plot2 <- ggplot(data = Het_exp_dist_pred_cat,
 
 ```
 
-##### u_r_usc
+##### Urb_score
 ```{r}
 Het_exp_usc_pred_cat <- ggeffects::ggpredict(Het_exp_usc_cat,
                                    terms = c("u_r_usc"),
                                    type = "fe")
  
-Het_exp_usc_plot2 <- ggplot(data = Het_exp_usc_pred_cat,
+Het_exp_usc_pred_cat_plot <- ggplot(data = Het_exp_usc_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "black",
                    size = 2) + 
@@ -725,13 +688,13 @@ Het_exp_usc_plot2 <- ggplot(data = Het_exp_usc_pred_cat,
 ```
 
 #### Obs heterozygosity
-##### u_r_dist
+##### Distance
 ```{r}
 Het_obs_dist_pred_cat <- ggeffects::ggpredict(Het_obs_dist_cat,
                                    terms = c("u_r_dist"),
                                    type = "fe") 
 
-Het_obs_dist_plot2 <- 
+Het_obs_dist_pred_cat_plot <- 
   ggplot(data = Het_obs_dist_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "forestgreen",
@@ -749,13 +712,13 @@ Het_obs_dist_plot2 <-
 
 ```
 
-##### u_r_usc
+##### Urb_score
 ```{r}
 Het_obs_usc_pred_cat <- ggeffects::ggpredict(Het_obs_usc_cat,
                                    terms = c("u_r_usc"),
                                    type = "fe")
  
-Het_obs_usc_plot2 <-
+Het_obs_usc_pred_cat_plot <-
   ggplot(data = Het_obs_usc_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "forestgreen",
@@ -773,13 +736,13 @@ Het_obs_usc_plot2 <-
 ```
 
 #### Expected homozygosity
-##### u_r_dist
+##### Distance
 ```{r}
 Hom_exp_dist_pred_cat <- ggeffects::ggpredict(Hom_exp_dist_cat,
                                    terms = c("u_r_dist"),
                                    type = "fe")
 
-Hom_exp_dist_plot2 <- ggplot(data = Hom_exp_dist_pred_cat,
+Hom_exp_dist_pred_cat_plot <- ggplot(data = Hom_exp_dist_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "black",
                    size = 2) + 
@@ -796,13 +759,13 @@ Hom_exp_dist_plot2 <- ggplot(data = Hom_exp_dist_pred_cat,
 
 ```
 
-##### u_r_usc
+##### Urb_score
 ```{r}
 Hom_exp_usc_pred_cat <- ggeffects::ggpredict(Hom_exp_usc_cat,
                                    terms = c("u_r_usc"),
                                    type = "fe")
  
-Hom_exp_usc_plot2 <- ggplot(data = Hom_exp_usc_pred_cat,
+Hom_exp_usc_pred_cat_plot <- ggplot(data = Hom_exp_usc_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "black",
                    size = 2) + 
@@ -819,13 +782,13 @@ Hom_exp_usc_plot2 <- ggplot(data = Hom_exp_usc_pred_cat,
 ```
 
 #### Obs homozygosity
-##### u_r_dist
+##### Distance
 ```{r}
 Hom_obs_dist_pred_cat <- ggeffects::ggpredict(Hom_obs_dist_cat,
                                    terms = c("u_r_dist"),
                                    type = "fe")
 
-Hom_obs_dist_plot2 <- ggplot(data = Hom_obs_dist_pred_cat,
+Hom_obs_dist_pred_cat_plot <- ggplot(data = Hom_obs_dist_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "forestgreen",
                    size = 2) + 
@@ -848,7 +811,7 @@ Hom_obs_usc_pred_cat <- ggeffects::ggpredict(Hom_obs_usc_cat,
                                    terms = c("u_r_usc"),
                                    type = "fe")
  
-Hom_obs_usc_plot2 <- ggplot(data = Hom_obs_usc_pred_cat,
+Hom_obs_usc_pred_cat_plot <- ggplot(data = Hom_obs_usc_pred_cat,
          aes(x = x, y = predicted)) +
         geom_point(color = "forestgreen",
                    size = 2) + 
@@ -868,8 +831,8 @@ Hom_obs_usc_plot2 <- ggplot(data = Hom_obs_usc_pred_cat,
 #### Export all in one pdf
 ```{r}
 # City distance plots
-(Het_exp_dist_plot2 | Het_obs_dist_plot2) /
-(Hom_exp_dist_plot2 | Hom_obs_dist_plot2 )
+(Het_exp_dist_pred_cat_plot | Het_obs_dist_pred_cat_plot) /
+(Hom_exp_dist_pred_cat_plot | Hom_obs_dist_pred_cat_plot )
 
 ggsave(here::here("./Figures_Tables/regressions/het_hom_dist_categorical.png"),
        width = 7,
@@ -878,8 +841,8 @@ ggsave(here::here("./Figures_Tables/regressions/het_hom_dist_categorical.png"),
 
 
 # Urbanization score plots
-(Het_exp_usc_plot2 | Het_obs_usc_plot2) / 
-(Hom_exp_usc_plot2 | Hom_obs_usc_plot2 )
+(Het_exp_usc_pred_cat_plot | Het_obs_usc_pred_cat_plot) / 
+(Hom_exp_usc_pred_cat_plot | Hom_obs_usc_pred_cat_plot )
   
 ggsave(here::here("./Figures_Tables/regressions/het_hom_usc_categorical.png"),
        width = 7,

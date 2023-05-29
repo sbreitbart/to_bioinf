@@ -393,7 +393,7 @@ ggsave(here::here("./Figures_Tables/regressions/pi_fis.png"),
 ## Urbanization is categorical
 ### Fit linear models/diagnostics
 #### Inbreeding coefficient (FIS)
-##### u_r_dist
+##### Distance
 ```{r}
 fis_dist_cat <- glmmTMB(fis ~ u_r_dist,
            diversity_variant_sites %>%
@@ -402,7 +402,7 @@ fis_dist_cat <- glmmTMB(fis ~ u_r_dist,
 performance::check_model(fis_dist_cat)
 ```
 
-##### u_r_usc
+##### Urb score
 ```{r}
 fis_usc_cat <- glmmTMB(fis ~ u_r_usc,
            diversity_variant_sites %>%
@@ -412,7 +412,7 @@ performance::check_model(fis_usc_cat)
 ```
 
 #### Pi
-##### u_r_dist
+##### Distance
 ```{r}
 pi_dist_cat <- glmmTMB(pi ~ u_r_dist ,
            diversity_variant_sites)
@@ -420,7 +420,7 @@ pi_dist_cat <- glmmTMB(pi ~ u_r_dist ,
 performance::check_model(pi_dist_cat)
 ```
 
-##### u_r_usc
+##### Urb score
 ```{r}
 pi_usc_cat <- glmmTMB(pi ~ u_r_usc,
            diversity_variant_sites)
@@ -437,17 +437,7 @@ mod_list_cat <- list(
                  pi_dist_cat,
                  pi_usc_cat)
 
-all_anovas_cat <- lapply(mod_list_cat, create_anova_df) %>%
-  do.call(rbind, .) %>%
-    dplyr::mutate("Variable" = case_when(
-      Variable == "fis" ~ "FIS",
-      Variable == "pi" ~ "Pi",
-      TRUE ~ "")) %>%
-  dplyr::mutate("Urbanization" = case_when(
-      Urbanization == "u_r_dist" ~ "Distance (categorical)",
-      Urbanization == "u_r_usc" ~ "Urbanization Score (categorical)",
-      TRUE ~ "")) %>%
-  dplyr::select(1,5,2,3,4,7,6) %T>%
+all_anovas_cat <- do.call(rbind, create_anova_df_cat) %>%
   view
 
 # create flextable
@@ -462,7 +452,6 @@ all_anovas_cat %>%
   flextable::autofit()
 ```
 
-
 ### Figures
 #### FIS
 ##### City_dist
@@ -472,14 +461,22 @@ fis_dist_cat_pred <- ggeffects::ggpredict(fis_dist_cat,
                                    terms = c("u_r_dist"),
                                    type = "fe")
 
-plot(fis_dist_cat_pred, 
-     add.data = F,
-     colors = "bw") +
+fis_dist_cat_pred_plot <- ggplot(data = fis_dist_cat_pred,
+         aes(x = x, y = predicted)) +
+        geom_point(color = "black",
+                   size = 2) + 
+    geom_errorbar(aes(ymin = conf.low,
+                      ymax = conf.high),
+                  width = 0.2,
+                  color = "black") +
+  ylim(-0.06, 0) +
   xlab("Urbanization (based on\nDistance to City Center)") +
   ylab("FIS") +
   labs(title = "") +
   theme_pubr() +
-  labs_pubr() 
+  labs_pubr()
+
+fis_dist_cat_pred_plot
 ```
 
 ##### Urb_score
@@ -489,14 +486,22 @@ fis_usc_cat_pred <- ggeffects::ggpredict(fis_usc_cat,
                                    terms = c("u_r_usc"),
                                    type = "fe")
 
-plot(fis_usc_cat_pred, 
-     add.data = F,
-     colors = "bw") +
+fis_usc_cat_pred_plot <- ggplot(data = fis_usc_cat_pred,
+         aes(x = x, y = predicted)) +
+        geom_point(color = "black",
+                   size = 2) + 
+    geom_errorbar(aes(ymin = conf.low,
+                      ymax = conf.high),
+                  width = 0.2,
+                  color = "black") +
+  ylim(-0.06, 0) +
   xlab("Urbanization (based on\nUrbanization Score)") +
   ylab("FIS") +
   labs(title = "") +
   theme_pubr() +
   labs_pubr() 
+
+fis_usc_cat_pred_plot
 ```
 
 #### Pi
@@ -507,15 +512,22 @@ pi_dist_cat_pred <- ggeffects::ggpredict(pi_dist_cat,
                                    terms = c("u_r_dist"),
                                    type = "fe")
 
-plot(pi_dist_cat_pred, 
-     add.data = F,
-     colors = "bw") +
+pi_dist_cat_pred_plot <- ggplot(data = pi_dist_cat_pred,
+         aes(x = x, y = predicted)) +
+        geom_point(color = "black",
+                   size = 2) + 
+    geom_errorbar(aes(ymin = conf.low,
+                      ymax = conf.high),
+                  width = 0.2,
+                  color = "black") +
+  ylim(0.25, 0.3) +
   xlab("Urbanization (based on\nDistance to City Center)") +
   ylab("Pi") +
   labs(title = "") +
   theme_pubr() +
   labs_pubr() 
 
+pi_dist_cat_pred_plot
 ```
 
 ###### Urb_score
@@ -524,13 +536,32 @@ pi_usc_cat_pred <- ggeffects::ggpredict(pi_usc_cat,
                                    terms = c("u_r_usc"),
                                    type = "fe")
 
-plot(pi_usc_cat_pred, 
-     add.data = F,
-     colors = "bw") +
+pi_usc_cat_pred_plot <- ggplot(data = pi_usc_cat_pred,
+         aes(x = x, y = predicted)) +
+        geom_point(color = "black",
+                   size = 2) + 
+    geom_errorbar(aes(ymin = conf.low,
+                      ymax = conf.high),
+                  width = 0.2,
+                  color = "black") +
+  ylim(0.25, 0.3) +
   xlab("Urbanization (based on\nUrbanization Score)") +
   ylab("Pi") +
   labs(title = "") +
   theme_pubr()  +
   labs_pubr() 
+
+pi_usc_cat_pred_plot
 ```
 
+#### Export all in one pdf
+```{r}
+(fis_dist_cat_pred_plot | fis_usc_cat_pred_plot) /
+(pi_dist_cat_pred_plot | pi_usc_cat_pred_plot )
+
+ggsave(here::here("./Figures_Tables/regressions/fis_pi_categorical.png"),
+       width = 10,
+       height = 7,
+       units = "in")
+
+```
