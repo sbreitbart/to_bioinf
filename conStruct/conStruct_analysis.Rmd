@@ -1,5 +1,5 @@
 # Set up notebook
-## Load libraries
+## Load libraries & functions
 ```{r}
 # install.packages("conStruct")
 library(here)
@@ -8,6 +8,8 @@ library(magrittr)
 library(conStruct)
 # install.packages("fields")
 library(fields)
+
+source("functions.R")
 ```
 
 ## Convert allele data in STRUCTURE format to ConStruct format
@@ -15,17 +17,34 @@ library(fields)
 Following this guide: https://cran.r-project.org/web/packages/conStruct/vignettes/format-data.html#other-formats-to-construct
 
 - copied populations.structure (structure file) to populations_structure.txt, as recommended
-- then deleted first line from .txt file: "# Stacks v2.62;  Structure v2.3; April 13, 2023"
+- then deleted first line from .txt file: "# Stacks v2.62;  Structure v2.3; May 05, 2023"
 
 This is the "Allele frequency data".
 ```{r}
 allele_frqs <- conStruct::structure2conStruct(
-  infile = here::here("./summary_stats/trial_02/output_filtering_fstats_trial06/populations_structure.txt"),
+  infile = here::here("./summary_stats/mmaf0.05_R1_populations_output/populations_structure.txt"),
   onerowperind = FALSE,
   start.loci = 3,
   start.samples = 2,
   missing.datum = -9,
-  outfile = here("./clean_data/construct_data_trial06"))
+  outfile = here("./clean_data/construct_data_20230529"))
+
+# check dimensions
+dim(allele_frqs)
+# there are more rows (samples) than columns (loci). This won't do, seeing as I get this error message when I try to use this dataset as-is with the conStruct() function:
+# 
+# Error in validate.data.block(data.block) : 
+# your data must have a greater number of loci than there are samples
+
+# check for rows that are identical
+allele_frqs %>%
+  as.data.frame() %>%
+  duplicated() %>%
+  any()
+# no rows are identical.
+# I'll have to remove 261-183=78 samples to get an equal number of 
+# loci and samples... so I'll remove 79 samples to get loci > samples.
+
 ```
 
 ## Load in other data
@@ -35,49 +54,18 @@ allele_frqs <- conStruct::structure2conStruct(
 all_coords <- read.csv(here::here("./clean_data/urb_metrics.csv"))
 
 # the populations of this project, in order
-pop_map2 <- read.csv(here::here("./genomic_resources/pop_map2.csv")) %>%
-  dplyr::rename("sample" = 1)
+pop_map2_IDs <- read.csv(here::here("./genomic_resources/pop_map2.csv")) %>%
+  dplyr::rename("sample" = 1,
+                "pop_id" = 2) %>%
 
 # add MW IDs to populations that are currently numbers
-add_MW_IDs <- function(div_df) {
-  # Filter out populations that start with "MWI" or "UTSC"
-  MW_pops <- div_df %>%
-    filter(!str_detect(population, "MWI")) %>%
-    filter(!str_detect(population, "UTSC"))
-
-  # Get populations that start with "MWI" or "UTSC"
-  MWI_UTSC_pops <- anti_join(div_df, MW_pops)
-
-  # Split up populations MW001->MW009 vs MW010->MW079
-  MW_pops_singledigits <- MW_pops[nchar(as.character(MW_pops$population)) == 1, ]
-  MW_pops_doubledigits <- MW_pops[nchar(as.character(MW_pops$population)) != 1, ]
-
-  # Add "MW00" to single-digit populations
-  MW_pops_singledigits %<>%
-    dplyr::mutate(patch_id = paste0("MW00", population))
-
-  # Add "MW0" to double-digit populations
-  MW_pops_doubledigits %<>%
-    dplyr::mutate(patch_id = paste0("MW0", population))
-
-  # Bring all entries together again
-  all_pops <- full_join(MW_pops_singledigits,
-                         MW_pops_doubledigits) %>%
-    dplyr::relocate(patch_id, .before = 1) %>%
-    full_join(.,
-              MWI_UTSC_pops) %>%
-    # If patch_id column is NA (for MWI and UTSC values), replace it with value from population
-    dplyr::mutate(patch_id = coalesce(patch_id, population))
-
-  return(all_pops)
-}
-pop_map2_IDs <- add_MW_IDs(pop_map2)
+  add_MW_IDs()
 
 # join coordinates w/current populations
-coords <- right_join(coordinates %>%
+coords <- right_join(all_coords %>%
                       dplyr::select(patch_id, lat, long),
                     pop_map2_IDs %>%
-                      dplyr::select(-population),
+                      dplyr::select(-pop_id),
                     by = "patch_id") %>%
   arrange(sample) %>%
   dplyr::select(long, lat) %>%
@@ -95,221 +83,19 @@ distances <- fields::rdist.earth(coords,
 ```
 
 # Run spatial model
-## Run 1: 4/20/23 (k = 3)- WARNINGS
-Took about 3-4 hours to run
+## Run 1: k = 1, 5,000 iterations, 3 chains- NO WARNINGS!
 ```{r}
 #       the number of layers (K)
 #       the allele frequency data (freqs)
 #       the geographic distance matrix (geoDist)
 #       the sampling coordinates (coords)
 
-spatial_mod_run <- conStruct(spatial = TRUE, 
-                    K = 3, 
-                    freqs = allele_frqs,
-                    geoDist = distances, 
-                    coords = coords,
-                    prefix = "spK3")
-```
-
-Output:
-
-checking data.block
-
-	reading 261 samples
-	reading 1362 loci
-
-checking specified model
-
-
-user has specified a spatial model with 3 layer(s)
-
-
-SAMPLING FOR MODEL 'space_multiK' NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 0.198 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1980 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 1: Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 1: Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 1: Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 1: Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 1: Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 1: Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 1: Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 1: Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 1: Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 1: Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 6583.45 seconds (Warm-up)
-Chain 1:                3706.35 seconds (Sampling)
-Chain 1:                10289.8 seconds (Total)
-Chain 1: 
-Warning messages:
-1: There were 249 divergent transitions after warmup. See
-https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-to find out why this is a problem and how to eliminate them. 
-2: Examine the pairs() plot to diagnose sampling problems
-3: The largest R-hat is 2.02, indicating chains have not mixed.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#r-hat 
-4: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#bulk-ess 
-5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#tail-ess 
-
-## Run 2: (k = 2)- WARNINGS
-Took about 3 hours to run__
-```{r}
-#       the number of layers (K)
-#       the allele frequency data (freqs)
-#       the geographic distance matrix (geoDist)
-#       the sampling coordinates (coords)
-
-spatial_mod_run2 <- conStruct(spatial = TRUE, 
-                    K = 2, 
-                    freqs = allele_frqs,
-                    geoDist = distances, 
-                    coords = coords,
-                    prefix = "spK2")
-```
-
-Output:
-
-checking data.block
-
-	reading 261 samples
-	reading 1362 loci
-
-checking specified model
-
-
-user has specified a spatial model with 2 layer(s)
-
-
-SAMPLING FOR MODEL 'space_multiK' NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 0.331 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 3310 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 1: Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 1: Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 1: Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 1: Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 1: Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 1: Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 1: Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 1: Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 1: Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 1: Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 5022.06 seconds (Warm-up)
-Chain 1:                1736.5 seconds (Sampling)
-Chain 1:                6758.56 seconds (Total)
-Chain 1: 
-Warning messages:
-1: There were 242 divergent transitions after warmup. See
-https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-to find out why this is a problem and how to eliminate them. 
-2: Examine the pairs() plot to diagnose sampling problems
- 
-3: The largest R-hat is 2.12, indicating chains have not mixed.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#r-hat 
-4: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#bulk-ess 
-5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#tail-ess 
-
-
-## Run 3: (k = 1)- WARNINGS
-Took about 20 min
-```{r}
-#       the number of layers (K)
-#       the allele frequency data (freqs)
-#       the geographic distance matrix (geoDist)
-#       the sampling coordinates (coords)
-
-spatial_mod_run3 <- conStruct(spatial = TRUE, 
+spatial_mod_run1 <- conStruct(spatial = TRUE, 
                     K = 1, 
                     freqs = allele_frqs,
                     geoDist = distances, 
                     coords = coords,
-                    prefix = "spK1")
-```
-
-Output:
-
-checking data.block
-
-	reading 261 samples
-	reading 1362 loci
-
-checking specified model
-
-
-user has specified a spatial model with 1 layer(s)
-
-
-SAMPLING FOR MODEL 'space_oneK' NOW (CHAIN 1).
-Chain 1: 
-Chain 1: Gradient evaluation took 0.205 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 2050 seconds.
-Chain 1: Adjust your expectations accordingly!
-Chain 1: 
-Chain 1: 
-Chain 1: Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 1: Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 1: Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 1: Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 1: Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 1: Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 1: Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 1: Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 1: Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 1: Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 1: Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
-Chain 1: 
-Chain 1:  Elapsed Time: 430.624 seconds (Warm-up)
-Chain 1:                331.916 seconds (Sampling)
-Chain 1:                762.54 seconds (Total)
-Chain 1: 
-Warning messages:
-1: The largest R-hat is 1.09, indicating chains have not mixed.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#r-hat 
-2: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#bulk-ess 
-3: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#tail-ess 
-
-## Run 4: 4/23/23 (k = 1), 5,000 iterations, 3 chains- NO WARNINGS!
-```{r}
-#       the number of layers (K)
-#       the allele frequency data (freqs)
-#       the geographic distance matrix (geoDist)
-#       the sampling coordinates (coords)
-
-spatial_mod_run4 <- conStruct(spatial = TRUE, 
-                    K = 1, 
-                    freqs = allele_frqs,
-                    geoDist = distances, 
-                    coords = coords,
-                    prefix = "spK1_1",
+                    prefix = "sp_K1_iter5000_chains3",
                     n.chains = 3,
                     n.iter = 5000)
 ```

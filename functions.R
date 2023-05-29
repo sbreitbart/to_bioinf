@@ -88,6 +88,14 @@ rep_geoms <- c(geom_smooth(aes(x = x,
 
 # create tidy anova table from list of models
 ## urbanization is continuous
+
+### first, create a dummy mod_list object so that these functions
+### are saved. Before they are called in the scripts, mod_list is
+### saved as another object that will overwrite this dummy mod_list.
+data(cars)
+mod_list <- list(glmmTMB(speed ~ dist, data = cars))
+mod_list_cat <- list(glmmTMB(speed ~ dist, data = cars))
+
 create_anova_df <- lapply(mod_list, function(model) {
   
   anova_result <- car::Anova(model)
