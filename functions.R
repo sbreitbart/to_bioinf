@@ -86,8 +86,9 @@ rep_geoms <- c(geom_smooth(aes(x = x,
                            fill = "#66a182",
                            alpha = 0.3))
 
-# create tidy ANOVA for each variable in a list, get Rsq
-create_anova_df <- function(model) {
+# create tidy anova table from list of models
+create_anova_df <- lapply(mod_list, function(model) {
+  
   anova_result <- car::Anova(model)
   
   formula <- formula(model)[2] %>%
@@ -108,7 +109,23 @@ create_anova_df <- function(model) {
       p <= 0.01 & p > 0.001 ~ "**",
       p <= 0.001 ~ "***",
       TRUE ~ "")) %>%
-    dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
-                  p = format(round(p, digits = 3), nsmall = 3)) %>%
-    dplyr::arrange(Urbanization, Variable)
-}
+    dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3),
+                                  nsmall = 3),
+                  p = format(round(p, digits = 3),
+                             nsmall = 3)) %>%
+    dplyr::arrange(Urbanization, Variable) %>%
+    dplyr::mutate("Variable" = case_when(
+      Variable == "exp_het" ~ "Expected heterozygosity",
+      Variable == "obs_het" ~ "Observed heterozygosity",
+      Variable == "exp_hom" ~ "Expected homozygosity",
+      Variable == "obs_hom" ~ "Observed homozygosity",
+      Variable == "fis" ~ "FIS",
+      Variable == "pi" ~ "Pi",
+      TRUE ~ "")) %>%
+    dplyr::mutate("Urbanization" = case_when(
+      Urbanization == "City_dist" ~ "Distance",
+      Urbanization == "urb_score" ~ "Urbanization Score",
+      TRUE ~ "")) %>%
+    dplyr::select(1,5,2,3,4,7,6)
+    
+})
