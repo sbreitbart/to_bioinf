@@ -71,14 +71,14 @@ plot_aesthetics <- c(geom_point(size = 1.5,
                      
                      geom_smooth(method = lm,
                                  color = "black",
-                                 size = 0.5,
+                                 linewidth = 0.5,
                                  se = TRUE))
 
 # for ggpredict objects
 rep_geoms <- c(geom_smooth(aes(x = x,
                                y = predicted),
                            color = "#66a182",
-                           size = 1,
+                           linewidth = 1,
                            se = F),
                geom_ribbon(aes(x = x,
                                ymin = conf.low,
@@ -88,93 +88,102 @@ rep_geoms <- c(geom_smooth(aes(x = x,
 
 # create tidy anova table from list of models
 ## urbanization is continuous
-
-### first, create a dummy mod_list object so that these functions
-### are saved. Before they are called in the scripts, mod_list is
-### saved as another object that will overwrite this dummy mod_list.
-data(cars)
-mod_list <- list(glmmTMB(speed ~ dist, data = cars))
-mod_list_cat <- list(glmmTMB(speed ~ dist, data = cars))
-
-create_anova_df <- lapply(mod_list, function(model) {
-  
-  anova_result <- car::Anova(model)
-  
-  formula <- formula(model)[2] %>%
-    unlist()
-  
-  Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
-    round(digits = 3) %>%
-    format(nsmall = 3)
-  
-  anova_tidy <- broom::tidy(anova_result) %>%
-    dplyr::mutate("Variable" = as.character(formula),
-                  "Rsq" = as.numeric(Rsq)) %>%
-    dplyr::rename("Chi_sq" = statistic,
-                  "p" = p.value,
-                  "Urbanization" = term) %>%
-    dplyr::mutate("Sig" = case_when(
-      p <= 0.05 & p > 0.01 ~ "*",
-      p <= 0.01 & p > 0.001 ~ "**",
-      p <= 0.001 ~ "***",
-      TRUE ~ "")) %>%
-    dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3),
-                                  nsmall = 3),
-                  p = format(round(p, digits = 3),
-                             nsmall = 3)) %>%
-    dplyr::arrange(Urbanization, Variable) %>%
-    dplyr::mutate("Variable" = case_when(
-      Variable == "exp_het" ~ "Expected heterozygosity",
-      Variable == "obs_het" ~ "Observed heterozygosity",
-      Variable == "exp_hom" ~ "Expected homozygosity",
-      Variable == "obs_hom" ~ "Observed homozygosity",
-      Variable == "fis" ~ "FIS",
-      Variable == "pi" ~ "Pi",
-      TRUE ~ "")) %>%
-    dplyr::mutate("Urbanization" = case_when(
-      Urbanization == "City_dist" ~ "Distance",
-      Urbanization == "urb_score" ~ "Urbanization Score",
-      TRUE ~ "")) %>%
-    dplyr::select(1,5,2,3,4,7,6)
+create_anova_df <- function(mod_list) {
+  lapply(mod_list, function(model) {
+    anova_result <- car::Anova(model)
     
-})
+    formula <- formula(model)[2] %>% unlist()
+    
+    Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
+      round(digits = 3) %>%
+      format(nsmall = 3)
+    
+    anova_tidy <- broom::tidy(anova_result) %>%
+      dplyr::mutate(
+        "Variable" = as.character(formula),
+        "Rsq" = as.numeric(Rsq)
+      ) %>%
+      dplyr::rename(
+        "Chi_sq" = statistic,
+        "p" = p.value,
+        "Urbanization" = term
+      ) %>%
+      dplyr::mutate(
+        "Sig" = case_when(
+          p <= 0.05 & p > 0.01 ~ "*",
+          p <= 0.01 & p > 0.001 ~ "**",
+          p <= 0.001 ~ "***",
+          TRUE ~ ""
+        )
+      ) %>%
+      dplyr::mutate(
+        Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
+        p = format(round(p, digits = 3), nsmall = 3)
+      ) %>%
+      dplyr::arrange(Urbanization, Variable) %>%
+      dplyr::mutate(
+        "Variable" = case_when(
+          Variable == "exp_het" ~ "Expected heterozygosity",
+          Variable == "obs_het" ~ "Observed heterozygosity",
+          Variable == "exp_hom" ~ "Expected homozygosity",
+          Variable == "obs_hom" ~ "Observed homozygosity",
+          Variable == "fis" ~ "FIS",
+          Variable == "pi" ~ "Pi",
+          TRUE ~ ""
+        )
+      ) %>%
+      dplyr::mutate(
+        "Urbanization" = case_when(
+          Urbanization == "City_dist" ~ "Distance",
+          Urbanization == "urb_score" ~ "Urbanization Score",
+          TRUE ~ ""
+        )
+      ) %>%
+      dplyr::select(1, 5, 2, 3, 4, 7, 6)
+    
+    return(anova_tidy)
+  })
+}
+
 
 ## urbanization is categorical
-create_anova_df_cat <- lapply(mod_list_cat, function(model) {
-  anova_result <- car::Anova(model)
-  
-  formula <- formula(model)[2] %>%
-    unlist()
-  
-  Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
-    round(digits = 3) %>%
-    format(nsmall = 3)
-  
-  anova_tidy <- broom::tidy(anova_result) %>%
-    dplyr::mutate("Variable" = as.character(formula),
-                  "Rsq" = as.numeric(Rsq)) %>%
-    dplyr::rename("Chi_sq" = statistic,
-                  "p" = p.value,
-                  "Urbanization" = term) %>%
-    dplyr::mutate("Sig" = case_when(
-      p <= 0.05 & p > 0.01 ~ "*",
-      p <= 0.01 & p > 0.001 ~ "**",
-      p <= 0.001 ~ "***",
-      TRUE ~ "")) %>%
-    dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
-                  p = format(round(p, digits = 3), nsmall = 3)) %>%
-    dplyr::arrange(Urbanization, Variable) %>%
-    dplyr::mutate("Variable" = case_when(
-      Variable == "exp_het" ~ "Expected heterozygosity",
-      Variable == "obs_het" ~ "Observed heterozygosity",
-      Variable == "exp_hom" ~ "Expected homozygosity",
-      Variable == "obs_hom" ~ "Observed homozygosity",
-      Variable == "fis" ~ "FIS",
-      Variable == "pi" ~ "Pi",
-      TRUE ~ "")) %>%
-    dplyr::mutate("Urbanization" = case_when(
-      Urbanization == "u_r_dist" ~ "Distance (categorical)",
-      Urbanization == "u_r_usc" ~ "Urbanization Score (categorical)",
-      TRUE ~ "")) %>%
-    dplyr::select(1,5,2,3,4,7,6)
-})
+create_anova_df_cat <- function(mod_list) {
+  lapply(mod_list, function(model) {
+    anova_result <- car::Anova(model)
+    
+    formula <- formula(model)[2] %>%
+      unlist()
+    
+    Rsq <- MuMIn::r.squaredGLMM(model)[1] %>%
+      round(digits = 3) %>%
+      format(nsmall = 3)
+    
+    anova_tidy <- broom::tidy(anova_result) %>%
+      dplyr::mutate("Variable" = as.character(formula),
+                    "Rsq" = as.numeric(Rsq)) %>%
+      dplyr::rename("Chi_sq" = statistic,
+                    "p" = p.value,
+                    "Urbanization" = term) %>%
+      dplyr::mutate("Sig" = case_when(
+        p <= 0.05 & p > 0.01 ~ "*",
+        p <= 0.01 & p > 0.001 ~ "**",
+        p <= 0.001 ~ "***",
+        TRUE ~ "")) %>%
+      dplyr::mutate(Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
+                    p = format(round(p, digits = 3), nsmall = 3)) %>%
+      dplyr::arrange(Urbanization, Variable) %>%
+      dplyr::mutate("Variable" = case_when(
+        Variable == "exp_het" ~ "Expected heterozygosity",
+        Variable == "obs_het" ~ "Observed heterozygosity",
+        Variable == "exp_hom" ~ "Expected homozygosity",
+        Variable == "obs_hom" ~ "Observed homozygosity",
+        Variable == "fis" ~ "FIS",
+        Variable == "pi" ~ "Pi",
+        TRUE ~ "")) %>%
+      dplyr::mutate("Urbanization" = case_when(
+        Urbanization == "u_r_dist" ~ "Distance (categorical)",
+        Urbanization == "u_r_usc" ~ "Urbanization Score (categorical)",
+        TRUE ~ "")) %>%
+      dplyr::select(1,5,2,3,4,7,6)
+  })
+}

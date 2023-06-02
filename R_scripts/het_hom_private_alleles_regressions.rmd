@@ -278,7 +278,7 @@ mod_list <- list(Het_exp_dist,
                  # Hom_obs_usc
                  )
 
-all_anovas <- do.call(rbind, create_anova_df) %>%
+all_anovas <- do.call(rbind, create_anova_df(mod_list)) %>%
   view
 
 # create flextable
@@ -290,7 +290,8 @@ all_anovas %>%
   flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
   bold(~ p <= 0.05) %>%
-  flextable::autofit()
+  flextable::autofit() %T>%
+  flextable::save_as_image(here::here("./Figures_Tables/regressions/het_hom_anova.png"))
 ```
 
 ### Figures
@@ -624,7 +625,7 @@ mod_list_cat <- list(
                  Het_obs_dist_cat,
                  Het_obs_usc_cat)
 
-all_anovas_cat <- do.call(rbind, create_anova_df_cat) %>%
+all_anovas_cat <- do.call(rbind, create_anova_df_cat(mod_list_cat)) %>%
   view
 
 # create flextable
@@ -636,7 +637,8 @@ all_anovas_cat %>%
   flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
   bold(~ p <= 0.05) %>%
-  flextable::autofit()
+  flextable::autofit() %T>%
+  flextable::save_as_image(here::here("./Figures_Tables/regressions/het_hom_cat_anova.png"))
 ```
 
 

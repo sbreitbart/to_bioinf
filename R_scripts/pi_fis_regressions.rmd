@@ -9,9 +9,6 @@ output:
     number_sections: true
     theme: lumen
 ---
-TO DO:
-- make sure y axis is transformed for figures
-- export figures
 
 These analyses use the narrow, conservative genetic dataset:
 -R = 1 & -min_maf = 0.05
@@ -232,7 +229,7 @@ mod_list <- list(fis_dist,
                  pi_usc)
 
 
-all_anovas <- do.call(rbind, create_anova_df) %>%
+all_anovas <- do.call(rbind, create_anova_df(mod_list)) %>%
   view
 
 # create flextable
@@ -244,7 +241,8 @@ all_anovas %>%
   flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
   bold(~ p <= 0.05) %>%
-  flextable::autofit()
+  flextable::autofit()%T>%
+  flextable::save_as_image(here::here("./Figures_Tables/regressions/pi_fis_anova.png"))
 ```
 
 ### Figures
@@ -437,7 +435,7 @@ mod_list_cat <- list(
                  pi_dist_cat,
                  pi_usc_cat)
 
-all_anovas_cat <- do.call(rbind, create_anova_df_cat) %>%
+all_anovas_cat <- do.call(rbind, create_anova_df_cat(mod_list_cat)) %>%
   view
 
 # create flextable
@@ -449,7 +447,8 @@ all_anovas_cat %>%
   flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
   bold(~ p <= 0.05) %>%
-  flextable::autofit()
+  flextable::autofit() %T>%
+  flextable::save_as_image(here::here("./Figures_Tables/regressions/pi_fis_cat_anova.png"))
 ```
 
 ### Figures
