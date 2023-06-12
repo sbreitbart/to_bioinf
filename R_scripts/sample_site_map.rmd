@@ -1,63 +1,118 @@
 # Set up notebook
 ## Load packages
 ```{r}
+source(here::here("libraries.R"))
+
+# a few map-related packages
 library(ggmap)
 library(ggsn)
-library(here)
+
 ```
 
 ## Import data
 ```{r}
-sites <- read.csv(here("./raw_data/102_Sites_updatedASlatlongs.csv"), sep = ",", header = TRUE)
-
-sites$Urb_Rur <- factor(sites$Urb_Rur , levels = c("Urban", "Rural"))
+sites <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
+  dplyr::mutate(site_id = as.factor(site_id),
+                patch_id = as.factor(patch_id),
+                urb_rur = as.factor(urb_rur),
+                quadrant = as.factor(quadrant),
+                river_valley = as.factor(river_valley)
+                ) 
 
 # Number of rural vs urban sites
-sum(sites$Urb_Rur == "Urban") # 54 sites
-sum(sites$Urb_Rur == "Rural") # 48 sites
+# This is from the original 100 scattershot survey.
+# I added sites sampled in a prior study, too, so there are >100 sites.
 
-
-
-urb_scores <- read.csv(here("./clean_data/urb_metrics.csv"), sep = ",", header = TRUE)
-
+max(sites$City_dist)
+sum(sites$u_r_dist == "Urban")
+sum(sites$u_r_dist == "Rural")
+sum(sites$u_r_usc == "Urban")
+sum(sites$u_r_usc == "Rural")
 
 ```
 
-# Methods
-## Sampling site maps
-### Main map: Urban/rural symbols
+# Sampling site maps
+## Main map: Urban/rural symbols
+### Based on distance to CC
 ```{r}
 mylocation <- c(-80.5, 43.2, -78.5, 44.2)
 base_map <- ggmap(get_map(location = mylocation, maptype = 'terrain', source = 'stamen'))
 
  map1 <- base_map +
-  geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
-  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
-scale_shape_manual(name = "Site Classification",
+  geom_point(data = sites, 
+             mapping = aes(x = long, 
+                           y = lat,
+                           fill=u_r_dist,
+                           shape=u_r_dist),
+             size=3) +
+  labs(x = 'Longitude', 
+       y = 'Latitude',
+       fill = "Site Classification") +
+   scale_shape_manual(name = "Site Classification",
                      values = c(24,21)) +
-  scale_fill_manual(name = "Site Classification",
+   scale_fill_manual(name = "Site Classification",
                     values = c('red', 'cyan')) +
-  scalebar(x.min = -80.5, x.max = -78.6,
+   scalebar(x.min = -80.5, x.max = -78.6,
             y.min = 43.25, y.max = 44.2,
             dist = 20, dist_unit = "km",
             st.bottom = FALSE, st.color = "black",
             transform = TRUE, model = 'WGS84',
            st.dist=.04) +
   theme(legend.position = c(0.85, 0.25),
-        legend.background = element_rect(fill = "white",colour = "black"),
-        legend.box.margin = margin(6, 6, 6, 6)
-        ) 
+        legend.background = element_rect(fill = "white",
+                                         colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)) 
+ 
 north2(map1, x = .679, y = .3, scale = 0.11, symbol = 1)
 
 
 # Export
-dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_urbrursymbols.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/pops_urb_rur_based-on-city_dist.pdf"),
              width = 7.5, height = 5)
 ```
 
-### Main map: Distance to CC
+### Based on urb score
 ```{r}
+map2 <- base_map +
+  geom_point(data = sites,
+             mapping = aes(x = long, 
+                           y = lat, 
+                           fill=u_r_usc, 
+                           shape=u_r_usc), 
+             size=3) +
+  labs(x = 'Longitude',
+       y = 'Latitude',
+       fill = "Site Classification") +
+  scale_shape_manual(name = "Site Classification",
+                     values = c(24,21)) +
+  scale_fill_manual(name = "Site Classification",
+                    values = c('red', 'cyan')) +
+  scalebar(x.min = -80.5,
+           x.max = -78.6,
+           y.min = 43.25,
+           y.max = 44.2,
+           dist = 20, 
+           dist_unit = "km",
+           st.bottom = FALSE,
+           st.color = "black",
+           transform = TRUE,
+           model = 'WGS84',
+           st.dist=.04) +
+  theme(legend.position = c(0.85, 0.25),
+        legend.background = element_rect(fill = "white",
+                                         colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6)        ) 
 
+north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/pops_urb_rur_based-on-urb_score.pdf"),
+             width = 7.5, height = 5)
+```
+
+## Main map: Distance to CC
+```{r}
 map1_dist <- base_map +
   geom_point(data = urb_scores,
              mapping = aes(x = long,
@@ -101,7 +156,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_ci
 ```
 
 
-### Main map: urbanization score
+## Main map: urbanization score
 ```{r}
 
 map1_usc <- base_map +
@@ -146,86 +201,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_ur
              width = 7.5, height = 5)
 ```
 
-### Watercolor map
-```{r}
-# Watercolor background (trying to show rivers)
-base_map2 <- ggmap(get_stamenmap(location = c(-80.5, 43.2, -78.5, 44.2), maptype = 'watercolor', source = 'stamen'))
-
-watercolor1 <- get_stamenmap( bbox = c(-80.5, 43.2, -78.5, 44.2), zoom = 11, maptype = "watercolor")
-
-map3 <- ggmap(watercolor1) +
-  geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
-  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") + scale_shape_manual(name = "Site Classification",
-                     values = c(24,21)) +
-  scale_fill_manual(name = "Site Classification",
-                    values = c('red', 'cyan')) +
-  scalebar(x.min = -80.5, x.max = -78.6,
-            y.min = 43.25, y.max = 44.2,
-            dist = 20, dist_unit = "km",
-            st.bottom = FALSE, st.color = "black",
-            transform = TRUE, model = 'WGS84',
-           st.dist=.04) +
-  theme(legend.position = c(0.85, 0.25),
-        legend.background = element_rect(fill = "white",colour = "black"),
-        legend.box.margin = margin(6, 6, 6, 6))
-
-north2(map3, x = .679, y = .3, scale = 0.11, symbol = 1)
-
-
-
-
-#  map2 <- base_map2 +
-#   geom_point(data = sites, mapping = aes(x = long, y = lat, fill=Urb_Rur, shape=Urb_Rur), size=3) +
-#   labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
-# scale_shape_manual(name = "Site Classification",
-#                      values = c(24,21)) +
-#   scale_fill_manual(name = "Site Classification",
-#                     values = c('red', 'cyan')) +
-#   scalebar(x.min = -80.5, x.max = -78.6,
-#             y.min = 43.25, y.max = 44.2,
-#             dist = 20, dist_unit = "km",
-#             st.bottom = FALSE, st.color = "black",
-#             transform = TRUE, model = 'WGS84',
-#            st.dist=.04) +
-#   theme(legend.position = c(0.85, 0.25),
-#         legend.background = element_rect(fill = "white",colour = "black"),
-#         legend.box.margin = margin(6, 6, 6, 6)
-#         ) 
-# north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
-
-```
-
-## INCORRECT original classifications as urban and rural
-```{r}
-sites$Incorrect_outdated_Urb_Rur <- factor(sites$Incorrect_outdated_Urb_Rur , levels = c("Urban", "Rural"))
-
-
- map2 <- base_map +
-  geom_point(data = sites, mapping = aes(x = long, y = lat, fill = Incorrect_outdated_Urb_Rur, shape = Incorrect_outdated_Urb_Rur), size=3) + 
-  labs(x = 'Longitude', y = 'Latitude', fill = "Site Classification") +
-  scale_shape_manual(name = "Site Classification",
-                     values = c(21,24)) +
-  scale_fill_manual(name = "Site Classification",
-                    values = c('red', 'cyan')) +
-  scalebar(x.min = -80.5, x.max = -78.6,
-            y.min = 43.25, y.max = 44.2,
-            dist = 20, dist_unit = "km",
-            st.bottom = FALSE, st.color = "black",
-            transform = TRUE, model = 'WGS84',
-           st.dist=.04) +
-  theme(legend.position = c(0.85, 0.25),
-        legend.background = element_rect(fill = "white",colour = "black"),
-        legend.box.margin = margin(6, 6, 6, 6)
-        ) 
- 
-north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
-
-
-
-```
-
-
-## Adding river valley markers
+# Adding river valley markers
 ```{r}
 # first need to find out which sites are characterized as being near a river valley...
 # need the greenbelt planning map

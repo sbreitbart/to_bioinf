@@ -61,17 +61,6 @@ diversity_variant_sites %<>%
   dplyr::mutate(patch_id = as.factor(patch_id),
                 pop_id = as.factor(pop_id))
 
-
-# make new columns: u_r_dist & u_r_usc (urban or rural)
-# this column is different from urb_rur, which I made when scouting sites for the 100 populations. I don't have those types of designations for the sites I imported from my previous observational study (note the NAs). So I'll calculate two new columns that assign a population an "urban" or "rural" status based on its distance from city center (u_r_dist) or urbanization score (u_r_usc)
-diversity_variant_sites %<>%
-  dplyr::mutate(u_r_dist = case_when(
-    City_dist <= 40 ~ "Urban",
-    TRUE ~ "Rural")) %>%
-  dplyr::mutate(u_r_usc = case_when(
-    urb_score > 0 ~ "Urban",
-    TRUE ~ "Rural"))
-
 ```
 
 # Does urbanization predict genetic diversity within pops?
