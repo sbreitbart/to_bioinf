@@ -20,6 +20,7 @@ Following this guide: https://cran.r-project.org/web/packages/conStruct/vignette
 - then deleted first line from .txt file: "# Stacks v2.62;  Structure v2.3; May 05, 2023"
 
 This is the "Allele frequency data".
+### (don't have to run)- Create new allele frequency dataset with fewer samples
 ```{r}
 allele_frqs <- conStruct::structure2conStruct(
   infile = here::here("./summary_stats/mmaf0.05_R1_populations_output/populations_structure.txt"),
@@ -27,7 +28,7 @@ allele_frqs <- conStruct::structure2conStruct(
   start.loci = 3,
   start.samples = 2,
   missing.datum = -9,
-  outfile = here("./clean_data/construct_data_20230529"))
+  outfile = here("./clean_data/construct_data_20230605"))
 
 
 
@@ -55,15 +56,18 @@ length(unique(pop_map2_IDs$pop_id))
 # there are 123 unique populations, so since 123<183, I'll be able to keep at least 1 replicate from each population in the dataset.
 
 # Identify samples to remove (which are represented a lot)
-replicates_per_pop <- pop_map2_IDs %>%
+pop_map2_IDs %>%
   dplyr::group_by(pop_id) %>%
   dplyr::summarise(n = n())
 # I can remove samples so that each population has at least 2 replicates and decrease the sample size below 123 (but I'll retain
 # enough samples so that some are represented 3x to maximize samples)
 
 # first, remove samples so that each pop is represented up to 3x
-subsample <- pop_map2_IDs %>% 
+subsample <- read.csv(here::here("./genomic_resources/pop_map2.csv")) %>%
+  dplyr::rename("sample" = 1,
+                "pop_id" = 2)  %>% 
     dplyr::group_by(pop_id) %>% 
+    add_MW_IDs() %>%
     dplyr::mutate(count = row_number(),
                   patch_id = as.factor(patch_id),
                   pop_id = as.factor(pop_id)) %>% 
@@ -82,7 +86,8 @@ last_samples_to_remove <- subsample %>%
   head(25)
 
 # anti-join to remove those 25 samples from final subset
-final_subset <- anti_join(subsample, last_samples_to_remove,
+final_subset <- anti_join(subsample,
+                          last_samples_to_remove,
                           by = "sample")
 
 
@@ -125,8 +130,10 @@ filtered_structure_file <- structure_file[sapply(strsplit(structure_file, "\t"),
 
 # Write the filtered structure file to a new file
 writeLines(c(structure_file[1], filtered_structure_file), here::here("./summary_stats/mmaf0.05_R1_populations_output/filtered_populations.structure"))
+```
 
-
+### Usable allele frq dataset
+```{r}
 # now, try this again with the subset:
 allele_frqs <- conStruct::structure2conStruct(
   infile = here::here("./summary_stats/mmaf0.05_R1_populations_output/filtered_populations.txt"),
@@ -134,11 +141,13 @@ allele_frqs <- conStruct::structure2conStruct(
   start.loci = 3,
   start.samples = 2,
   missing.datum = -9,
-  outfile = here("./clean_data/construct_data_20230529_2"))
+  outfile = here("./clean_data/construct_data_20230608"))
+
 ```
 
 ## Load in other data
 ### Geographic sampling coordinates
+#### (don't have to run)- Create coordinates csv
 ```{r}
 # coordinates of all populations
 all_coords <- read.csv(here::here("./clean_data/urb_metrics.csv"))
@@ -165,6 +174,14 @@ coords <- right_join(all_coords %>%
   dplyr::select(long, lat) %>%
   dplyr::rename("Lon" = 1,
                 "Lat" = 2) %>%
+  as.matrix() %T>%
+  write.csv(here::here("./clean_data/conStruct_coords.csv"))
+```
+
+#### Load coordinates matrix
+```{r}
+coords <- read.csv(here::here("./clean_data/conStruct_coords.csv")) %>%
+  dplyr::select(-X) %>%
   as.matrix()
 ```
 
@@ -913,6 +930,78 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess
 
+## Run 6: k = 3, 5,000 iterations, 3 chains- WARNINGS
+```{r}
+conStruct(spatial = TRUE, 
+                    K = 3, 
+                    freqs = allele_frqs,
+                    geoDist = distances, 
+                    coords = coords,
+                    prefix = "sp_K3_iter5000_chains3",
+                    n.chains = 3,
+                    n.iter = 5000)
+```
+
+Warning messages:
+1: There were 744 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them. 
+2: Examine the pairs() plot to diagnose sampling problems
+ 
+3: The largest R-hat is 1.69, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat 
+4: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess 
+5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess 
+
+
+## Run 7: k = 4, 5,000 iterations, 3 chains- WARNINGS
+```{r}
+conStruct(spatial = TRUE, 
+                    K = 4, 
+                    freqs = allele_frqs,
+                    geoDist = distances, 
+                    coords = coords,
+                    prefix = "sp_K4_iter5000_chains3",
+                    n.chains = 3,
+                    n.iter = 5000)
+```
+
+Warning messages:
+1: There were 740 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them. 
+2: Examine the pairs() plot to diagnose sampling problems
+ 
+3: The largest R-hat is 1.69, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat 
+4: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess 
+5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess
+
+
+## Run 8: k = 5, 5,000 iterations, 3 chains- would've taken days to run so I stopped it mid-way through
+```{r}
+conStruct(spatial = TRUE, 
+                    K =5, 
+                    freqs = allele_frqs,
+                    geoDist = distances, 
+                    coords = coords,
+                    prefix = "sp_K5_iter5000_chains3",
+                    n.chains = 3,
+                    n.iter = 5000)
+```
+
+
+
 # Run non-spatial model (like STRUCTURE)
 ## Run 1: k = 1, 5,000 iterations, 3 chains- NO WARNINGS!
 ```{r}
@@ -1275,3 +1364,151 @@ https://mc-stan.org/misc/warnings.html#bulk-ess
 5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#tail-ess 
+## Run 4: k = 3, 5,000 iterations, 3 chains- WARNINGS
+```{r}
+conStruct(spatial = FALSE, 
+                    K = 3, 
+                    freqs = allele_frqs, 
+                    geoDist = NULL, 
+                    coords = coords,
+                    prefix = "nsp_K3_iter5000_chains3",
+                    n.chains = 3,
+                    n.iter = 5000)
+```
+
+Warning messages:
+1: There were 748 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them. 
+2: Examine the pairs() plot to diagnose sampling problems
+ 
+3: The largest R-hat is 1.24, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat 
+4: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess 
+5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess 
+
+## Run 5: k = 4, 5,000 iterations, 3 chains- WARNINGS
+```{r}
+conStruct(spatial = FALSE, 
+                    K = 4, 
+                    freqs = allele_frqs, 
+                    geoDist = NULL, 
+                    coords = coords,
+                    prefix = "nsp_K4_iter5000_chains3",
+                    n.chains = 3,
+                    n.iter = 5000)
+```
+
+Warning messages:
+1: There were 749 divergent transitions after warmup. See
+https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+to find out why this is a problem and how to eliminate them. 
+2: Examine the pairs() plot to diagnose sampling problems
+ 
+3: The largest R-hat is 1.54, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat 
+4: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#bulk-ess 
+5: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#tail-ess 
+
+## Run 6: k = 5, 5,000 iterations, 3 chains- WARNINGS
+```{r}
+conStruct(spatial = FALSE, 
+                    K = 5, 
+                    freqs = allele_frqs, 
+                    geoDist = NULL, 
+                    coords = coords,
+                    prefix = "nsp_K5_iter5000_chains3",
+                    n.chains = 3,
+                    n.iter = 5000)
+```
+
+
+
+# Compare models
+## Calculate layer contributions
+### spatial
+```{r}
+
+# Create an empty matrix to store layer contributions
+layer.contributions <- matrix(NA, nrow = 5, ncol = 5)
+
+# Load the conStruct.results.Robj and data.block.Robj files for K=1
+load( here::here("./conStruct/spatial_rObjs/sp_K1_iter5000_chains3_conStruct.results.Robj"))
+load( here::here("./conStruct/spatial_rObjs/sp_K1_iter5000_chains3_data.block.Robj"))
+
+# Calculate layer contributions for K=1
+layer.contributions[, 1] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0, 4))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+
+
+
+
+# Load the conStruct.results.Robj and data.block.Robj files for K=1
+load( here::here("./conStruct/spatial_rObjs/sp_K2_iter5000_chains3_conStruct.results.Robj"))
+load( here::here("./conStruct/spatial_rObjs/sp_K2_iter5000_chains3_data.block.Robj"))
+
+# Calculate layer contributions for K=2
+layer.contributions[, 2] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0,3))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+
+
+
+
+# Load the conStruct.results.Robj and data.block.Robj files for K=1
+load( here::here("./conStruct/spatial_rObjs/sp_K3_iter5000_chains3_conStruct.results.Robj"))
+load( here::here("./conStruct/spatial_rObjs/sp_K3_iter5000_chains3_data.block.Robj"))
+
+# Calculate layer contributions for K=3
+layer.contributions[, 3] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0, 2))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+
+```
+
+### non-spatial
+```{r}
+
+# Create an empty matrix to store layer contributions
+layer.contributions_nsp <- matrix(NA, nrow = 5, ncol = 5)
+
+# Load the conStruct.results.Robj and data.block.Robj files for K=1
+load( here::here("./conStruct/nspatial_rObjs/nsp_K1_iter5000_chains3_conStruct.results.Robj"))
+load( here::here("./conStruct/nspatial_rObjs/nsp_K1_iter5000_chains3_data.block.Robj"))
+
+# Calculate layer contributions for K=1
+layer.contributions_nsp[, 1] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0, 4))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+
+
+
+
+# Load the conStruct.results.Robj and data.block.Robj files for K=1
+load( here::here("./conStruct/nspatial_rObjs/nsp_K2_iter5000_chains3_conStruct.results.Robj"))
+load( here::here("./conStruct/nspatial_rObjs/nsp_K2_iter5000_chains3_data.block.Robj"))
+
+# Calculate layer contributions for K=2
+layer.contributions_nsp[, 2] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0,3))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+
+
+
+
+# Load the conStruct.results.Robj and data.block.Robj files for K=1
+load( here::here("./conStruct/nspatial_rObjs/nsp_K3_iter5000_chains3_conStruct.results.Robj"))
+load( here::here("./conStruct/nspatial_rObjs/nsp_K3_iter5000_chains3_data.block.Robj"))
+
+# Calculate layer contributions for K=3
+layer.contributions_nsp[, 3] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0, 2))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+
+```
+
