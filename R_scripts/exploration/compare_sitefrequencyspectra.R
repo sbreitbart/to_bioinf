@@ -137,3 +137,26 @@ do.call(gridExtra::grid.arrange,
 #  5%, so the first individual should show up at 
 #  0.05*2n=0.05*2*261=26 individuals. It does.
 #  
+
+
+
+
+# Find number of loci per vcf
+# create SFS plots
+loci_count_list <- list() 
+
+# Loop through each input file
+for (i in 1:70) {
+  # Generate the plot for this file and population
+  loci_count <- vcfR::maf(my_vcfs[[i]], 2) %>%
+    as.data.frame() %>%
+    dplyr::group_by(Frequency) %>%
+    dplyr::summarise(n_loci = n(),
+                     allele_count = first(Count)) %>%
+    summarise(n_loci = sum(n_loci))
+  
+  # Add the plot to the list for this population
+  loci_count_list[[i]] <- loci_count
+}
+
+
