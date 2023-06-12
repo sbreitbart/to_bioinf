@@ -69,6 +69,16 @@ north2(map1, x = .679, y = .3, scale = 0.11, symbol = 1)
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/pops_urb_rur_based-on-city_dist.pdf"),
              width = 7.5, height = 5)
+
+# export as png too
+png(here::here("./Figures_Tables/sample_site_map/pops_urb_rur_based-on-city_dist.png"),
+             width = 20, height = 12.5,
+    units = "cm",
+    res = 720)
+
+north2(map1, x = .679, y = .3, scale = 0.11, symbol = 1)
+
+dev.off()
 ```
 
 ### Based on urb score
