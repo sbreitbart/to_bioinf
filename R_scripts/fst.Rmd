@@ -1,0 +1,48 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+
+```
+
+## Import files
+```{r}
+# urbanization data
+urb <- read.csv(here("./clean_data/urb_metrics.csv")) %>%
+  dplyr::rename("pop_id" = "patch_id")
+
+
+# pop map
+pops <- read.csv(here("./genomic_resources/pop_map2.csv")) %>%
+  dplyr::rename("sample" = 1)
+
+n_unique_pops <- pops %>%
+  dplyr::select(population) %>%
+  dplyr::summarise(n_pops = unique(population)) %>%
+  dplyr::summarise(n_pops = n()) %>%
+  as.numeric() %T>% print
+
+# vcf
+vcf <- read.vcfR(
+  here::here("./rounds3_4_all_vcfs/mmaf0.05_R1/mmaf0.05_R1.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+
+# add pops to genind
+pop(my_genind) <- pops$population
+```
+
+# Fst
+```{r}
+fst <- genetic_diff(vcf, as.factor(pops$population), method = "nei")
+
+colMeans(fst[,c(3:8,11)], na.rm = TRUE)
+hist(fst$Gprimest, xlab = expression(italic("G'"["ST"])), 
+     col='skyblue', breaks = seq(0, 1, by = 0.01))
+
+```
+
