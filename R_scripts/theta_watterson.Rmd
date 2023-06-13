@@ -1,0 +1,31 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+library(pegas)
+```
+
+# Calculate Watterson's theta
+
+R = 0.5
+mmaf = 0.007662
+
+## One global population (i.e., all sites are in the same population)
+```{r}
+pegas::theta.s(
+  x = (2839/352769), # segregating sites
+  
+  # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+
+  n = 256,  # sequences
+  
+  # (in the global_pi_vcf-all/populations.log file, this is the number of samples)
+  
+  variance = TRUE
+)
+
+
+# output: 
+# theta = 0.001314899
+# variance = 0.0002149131
+```

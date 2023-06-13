@@ -1,0 +1,70 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+```
+
+# Visualize Tajima's D across the genome
+## Import files
+### Global population (all sites in one large population)
+```{r}
+global_taj <- read.csv(
+  here::here("./global_TajD/global_TajD.csv")) %>%
+  dplyr::rename("CHROM" = 1) %>%
+  
+  # remove windows with 0 SNPs
+  dplyr::filter(N_SNPS != 0) 
+
+```
+
+## Visualize
+### Global population (all sites in one large population)
+```{r}
+global_taj_plot <- ggplot(global_taj,
+       aes(x = paste(CHROM,BIN_START),
+           y = TajimaD,
+       group = 1)) +
+  geom_point(shape = 21) +
+  xlab("Nucleotide Position") +
+  ylab("Tajima's D") +
+  geom_smooth(method = "lm", 
+              se = T,
+              linetype = "longdash",
+              color = "black") +
+  scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(color = "white")) +
+  annotate("text",
+           x=50, 
+           y=3,
+           size = 4.5,
+           label = paste("Mean Tajima's D:",
+                         round(mean(global_taj$TajimaD),3)))
+
+global_taj_plot
+
+# add "0" x axis mark
+global_taj_plot <- cowplot::ggdraw(
+  cowplot::add_sub(global_taj_plot, 
+                   x = 0,  y = 1.9, "0",
+                   size = 13))
+
+# add ending x axis mark
+global_taj_plot <- cowplot::ggdraw(
+  cowplot::add_sub(global_taj_plot, 
+                   x = 0.95,  y = 3.2, as.numeric(sum(global_taj$BIN_START)),
+                   size = 12))
+
+
+global_taj_plot
+
+ggsave(here::here("./Figures_Tables/tajimas_d/global_taj_d.png"), 
+       plot = global_taj_plot,
+       width = 20,
+       height = 10,
+       units = "cm")
+
+mean(global_taj$TajimaD)
+sum(global_taj$BIN_START) 
+```
+
