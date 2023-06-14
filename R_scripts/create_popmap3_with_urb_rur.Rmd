@@ -1,0 +1,42 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+```
+
+## Import files
+```{r}
+# pop map 3 (compared to #1 has all individuals; #2 removed 2 low-quality individuals; #3 removed 5 individuals that were related to 5 others)
+pop_map3 <- read.csv(
+  here::here("./genomic_resources/pop_map3.csv"))  %>%
+  dplyr::rename("pop_id" = "population") %>%
+  tibble::rowid_to_column( "ID") %>%
+  add_MW_IDs()
+
+# urbanization data
+urb <- read.csv(here("./clean_data/urb_metrics.csv")) 
+```
+
+# Join two datasets
+```{r}
+full_popmap <- dplyr::left_join(pop_map3,
+                         urb,
+                         by = "patch_id" ) %>%
+  dplyr::select(1:3, lat, long, 12:15) %>%
+  arrange(ID) %>%
+  dplyr::select(sample, u_r_dist)
+```
+
+# Export for fst and pi analyses
+```{r}
+# urban vs. rural, determined by dist to CC
+
+write.table(full_popmap, 
+            file = here::here("./clean_data/pop_map3_UR_dist.txt"),
+            stdout(),
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+```
+
