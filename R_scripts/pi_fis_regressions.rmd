@@ -39,7 +39,7 @@ urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
 ### Genetic data
 ```{r}
 
-diversity_variant_sites <- here::here("./summary_stats/mmaf0.05_R1_populations_output/populations.sumstats_summary.tsv") %>%
+diversity_variant_sites <- here::here("./summary_stats/old/mmaf0.05_R1_populations_output/populations.sumstats_summary.tsv") %>%
   extract_variant_position_summary() %>%
 # if population doesn't start with "MWI", it should start with "MW"
   # clean names

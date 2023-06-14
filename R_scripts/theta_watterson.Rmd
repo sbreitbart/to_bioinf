@@ -10,7 +10,7 @@ library(pegas)
 R = 0.5
 mmaf = 0.007662
 
-## One global population (i.e., all sites are in the same population)
+## Global (all sites in one large population)
 ```{r}
 pegas::theta.s(
   x = (2839/352769), # segregating sites
