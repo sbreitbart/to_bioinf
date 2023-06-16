@@ -1,0 +1,19 @@
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf ../../step08_no-IBD/UR_dist_fst_vcf-all/populations.all.vcf
+	--weir-fst-pop pop_map3_UR_dist_URBAN.txt
+	--weir-fst-pop pop_map3_UR_dist_RURAL.txt
+	--keep pop_map3_UR_dist_URBAN.txt
+	--keep pop_map3_UR_dist_RURAL.txt
+	--out urb_vs_rur
+
+Keeping individuals in 'keep' list
+After filtering, kept 256 out of 256 Individuals
+Outputting Weir and Cockerham Fst estimates.
+Weir and Cockerham mean Fst estimate: 0.0018391
+Weir and Cockerham weighted Fst estimate: 0.0018909
+After filtering, kept 259484 out of a possible 259484 Sites
+Run Time = 6.00 seconds
