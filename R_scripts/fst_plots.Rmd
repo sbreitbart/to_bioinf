@@ -1,0 +1,79 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+```
+
+## Import data
+```{r}
+
+# Urban pop vs. Rural pop
+snp_fst_UvsR <- read.table(here::here("./fst_mmaf0.05_R0.75_no-IBD_vcf-all/urb_vs_rur.weir.fst")) %>%
+  janitor::row_to_names(row_number = 1) %>%
+  janitor::clean_names() %>%
+  dplyr::rename(fst = 3) %>%
+    dplyr::filter(fst != "-nan") 
+
+# Urban subpopulations
+snp_fst_U <- read.table(here::here("./fst_mmaf0.05_R0.75_no-IBD_vcf-all/urb_.weir.fst")) %>%
+  janitor::row_to_names(row_number = 1) %>%
+  janitor::clean_names() %>%
+  dplyr::rename(fst = 3) %>%
+    dplyr::filter(fst != "-nan") 
+
+# Rural subpopulations
+snp_fst_R <- read.table(here::here("./fst_mmaf0.05_R0.75_no-IBD_vcf-all/rur_.weir.fst")) %>%
+  janitor::row_to_names(row_number = 1) %>%
+  janitor::clean_names() %>%
+  dplyr::rename(fst = 3) %>%
+    dplyr::filter(fst != "-nan") 
+```
+
+# Visualize fst
+```{r}
+
+# Create the data
+fst <- data.frame(
+  fst = c(
+    mean(as.numeric(as.character(snp_fst_UvsR$fst)), na.rm = T),
+    mean(as.numeric(as.character(snp_fst_U$fst)), na.rm = T),
+    mean(as.numeric(as.character(snp_fst_R$fst)), na.rm = T)), 
+  category = c(
+    "Urb vs. Rural",
+    "Within Urban",
+    "Within Rural"),
+ SE = c(
+   sd(snp_fst_UvsR$fst) / sqrt(length(snp_fst_UvsR$fst)),
+   sd(snp_fst_U$fst) / sqrt(length(snp_fst_U$fst)),
+   sd(snp_fst_R$fst) / sqrt(length(snp_fst_R$fst))
+ ))
+
+
+# Create the barplot with points using ggplot
+ggplot(fst, 
+       aes(x = category, y = fst)) +
+  geom_errorbar(aes(ymin = fst - SE,
+                    ymax = fst + SE),
+                color = "black",
+                width = 0.2) +
+    geom_point(aes(color = category),
+             size = 4) +
+  ylab("FST") +
+  theme_pubr() +
+  xlab("") +
+  theme(legend.position = "none") +
+  scale_color_manual(
+        values = c("#6633CC", "#FF3333", "#00CCFF")
+    # values = c("Urb vs. Rural", "Within Rural", "Within Urban",
+                                )
+
+
+ggsave(here::here("./Figures_Tables/fst/fst.png"), 
+       plot = last_plot(),
+       width = 12,
+       height = 8,
+       units = "cm")
+
+```
+
+
