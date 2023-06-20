@@ -29,3 +29,44 @@ pegas::theta.s(
 # theta = 0.001314899
 # variance = 0.0002149131
 ```
+
+## Urban vs. Rural (based on dist to cc < 35 km)
+### Urban
+```{r}
+pegas::theta.s(
+  x = (2839/352769), # segregating sites
+  
+  # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+
+  n = 150,  # sequences
+  
+  # (counted number of urban samples in the pop_map3 file, in clean_data)
+  
+  variance = TRUE
+)
+
+
+# output: 
+# theta = 0.0014410850 
+# variance = 0.0002581593
+```
+
+### Rural
+```{r}
+pegas::theta.s(
+  x = (2839/352769), # segregating sites
+  
+  # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+
+  n = 106,  # sequences
+  
+  # (counted number of rural samples in the pop_map3 file, in clean_data)
+  
+  variance = TRUE
+)
+
+
+# output: 
+# theta = 0.0015370257  
+# variance = 0.0002936944
+```

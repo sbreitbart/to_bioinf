@@ -3,7 +3,7 @@
 ```{r warning=F}
 source(here::here("libraries.R"))
 source(here::here("functions.R"))
-
+library(viridis)
 ```
 
 # PCA
@@ -74,7 +74,7 @@ ggplot(pca,
              shape = 21,
              color = "black") +
  # scale_fill_gradientn(colours=rainbow(4)) +
-  scale_fill_gradientn(colours=heat.colors(5)) +
+  scale_fill_viridis(option="plasma") +
  # scale_fill_gradientn(colours=cm.colors(5)) +
   coord_equal() +
   xlab(paste0("PC1 (", signif(pve$pve[1], 3), "%)")) +

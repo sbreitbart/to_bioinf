@@ -68,3 +68,21 @@ mean(global_taj$TajimaD)
 sum(global_taj$BIN_START) 
 ```
 
+
+## Test significance
+### Global
+```{r}
+# import vcf
+library(vcfR)
+vcf <- read.vcfR(
+  here::here("./global_pi_vcf-all/populations.all.vcf"),
+  verbose = FALSE)
+
+# this doesn't work... says 0 segregating sites
+# convert to dnabin format
+dnabin <- vcfR2DNAbin(vcf)
+
+rm(vcf)
+pegas::tajima.test(dnabin)
+```
+
