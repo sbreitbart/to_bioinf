@@ -22,7 +22,8 @@ librarian::shelf(adegenet    ,
                  purrr       ,
                  stringi     ,
                  tidyverse   ,
-                 vcfR
+                 vcfR        ,
+                 viridis
                  )
   
 #library("tibble", lib.loc="~/R/win-library/3.5") 

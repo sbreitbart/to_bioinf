@@ -3,7 +3,6 @@
 ```{r warning=F}
 source(here::here("libraries.R"))
 source(here::here("functions.R"))
-library(viridis)
 ```
 
 # PCA
@@ -442,5 +441,21 @@ scatter(xval[7]$DAPC,
 
 # this looks like a mess. I'm concerned that so many populations couldn't be included in the cross-validation because there was only 1 individual for 77 populations. So I don't trust this very much.
 # And again, as stated earlier in the tutorial, "Apart from computational time, there is no reason for keeping a small number of components". So I'll keep doing what I was doing earlier and using all the PCs.
+```
+
+
+# sPCA- holding off on this for now
+```{r}
+# install.packages("spdep")
+# install.packages("adespatial")
+
+
+# load coordinates
+coords <- read.csv(here::here("./clean_data/conStruct_coords.csv")) %>%
+  dplyr::select(-X) %>%
+  as.matrix()
+
+my_spca <- adegenet::spca(my_genind,
+               xy = coords)
 ```
 
