@@ -8,6 +8,7 @@ library(magrittr)
 library(conStruct)
 # install.packages("fields")
 library(fields)
+library(parallel)
 
 source("functions.R")
 ```
@@ -27,7 +28,7 @@ allele_frqs <- conStruct::structure2conStruct(
   start.loci = 3,
   start.samples = 2,
   missing.datum = -9,
-  outfile = here("./clean_data/construct_data_20230612"))
+  outfile = here("./clean_data/construct_data_20230613"))
 
 ```
 
@@ -114,6 +115,38 @@ conStruct(spatial = FALSE,
                     prefix = "nsp_K1_iter5000_chains3",
                     n.chains = 3,
                     n.iter = 5000)
+```
+
+## Try parallelizing
+### Non-spatial, k = 2
+```{r}
+library(foreach)
+library(doParallel)
+
+# Set the number of cores to be used
+num_cores <- 6
+
+# Initialize parallel backend using doParallel
+cl <- makeCluster(num_cores)
+registerDoParallel(cl)
+
+# Run non-spatial model in parallel
+nonspatial_mod_run2 <- foreach(i = 1:num_cores, .packages = "conStruct") %dopar% {
+  conStruct(spatial = FALSE,
+            K = 2,
+            freqs = allele_frqs,
+            geoDist = NULL,
+            coords = coords,
+            prefix = paste0("nsp_K2_iter10000_chains5_", i),
+            n.chains = 5,
+            n.iter = 10000)
+}
+
+print("nonspatial mod run complete")
+
+# Stop the parallel backend
+stopCluster(cl)
+
 ```
 
 # Compare models
