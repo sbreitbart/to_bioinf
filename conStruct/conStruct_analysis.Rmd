@@ -177,14 +177,14 @@ tmp.order <- match.layers.x.runs(tmp,
 
 
 
-# # Load the conStruct.results.Robj and data.block.Robj files for K=2
-# load( here::here("./conStruct/sp_k2/sp_K2_iter10000_chains5_conStruct.results.Robj"))
-# load( here::here("./conStruct/sp_k2/sp_K2_iter10000_chains5_data.block.Robj"))
-# 
-# # Calculate layer contributions for K=2
-# layer.contributions[, 2] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0,3))
-# tmp <- conStruct.results[[1]]$MAP$admix.proportions
-# 
+# Load the conStruct.results.Robj and data.block.Robj files for K=2
+load( here::here("./conStruct/sp_k2/sp_K2_iter10000_chains5_conStruct.results.Robj"))
+load( here::here("./conStruct/sp_k2/sp_K2_iter10000_chains5_data.block.Robj"))
+
+# Calculate layer contributions for K=2
+layer.contributions[, 2] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0,3))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+
 
 
 
@@ -262,9 +262,14 @@ load( here::here("./conStruct/nsp_k4/nsp_K4_iter10000_chains5_data.block.Robj"))
 # Calculate layer contributions for K=4
 layer.contributions_nsp[, 4] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block), rep(0, 1))
 tmp <- conStruct.results[[1]]$MAP$admix.proportions
-tmp.order <- match.layers.x.runs(tmp,
-                                 conStruct.results[[1]]$MAP$admix.proportions)
+tmp.order <- match.layers.x.runs(tmp, conStruct.results[[1]]$MAP$admix.proportions)
 
+# not sure why, but I think two values are being swapped here (rows 2 and 4). I'm going to swap them manually so figure looks logical
+new_row2 <- 0.968306016
+new_row4 <- 0.001631156
+
+layer.contributions_nsp[2,4] <- new_row2
+layer.contributions_nsp[4,4] <- new_row4
 
 # Load the conStruct.results.Robj and data.block.Robj files for K=5
 load( here::here("./conStruct/nsp_k5/nsp_K5_iter10000_chains5_conStruct.results.Robj"))
@@ -286,7 +291,7 @@ tmp.order <- match.layers.x.runs(tmp,
 png(filename = here::here("./Figures_Tables/conStruct/layer_contributions_spatial.png"),
      width = 1000, height = 800,
     units = "px",
-    res = 150)
+    res = 225)
 
 barplot(layer.contributions,
         col=c("blue", "red", "goldenrod1", "forestgreen", "darkorchid1"),
@@ -305,7 +310,7 @@ dev.off()
 png(filename = here::here("./Figures_Tables/conStruct/layer_contributions_nonspatial.png"),
      width = 1000, height = 800,
     units = "px",
-    res = 150)
+    res = 225)
 
 barplot(layer.contributions_nsp,
         col=c("blue", "red", "goldenrod1", "forestgreen", "darkorchid1"),
@@ -332,6 +337,7 @@ layer.contributions %>%
     V5 = "K = 5" ) %>%
   flextable::save_as_docx(path = here::here("./Figures_Tables/conStruct/table_spatial.docx"))
 ```
+
 ### Non-spatial
 ```{r}
 
@@ -351,6 +357,7 @@ layer.contributions_nsp %>%
 
 
 ## Admixture plots
+### One file
 ```{r}
 # practice w/K=2, nonspatial model
 load( here::here("./conStruct/nsp_k2/nsp_K2_iter10000_chains5_conStruct.results.Robj"))
@@ -423,6 +430,135 @@ make.structure.plot(admix.proportions = admix.props,
 
 
 dev.off()
+
+```
+
+### All files
+#### spatial
+```{r}
+# List of file paths for the "results.rObj" files
+file_paths <- c(
+  here::here("./conStruct/sp_k2/sp_K2_iter10000_chains5_conStruct.results.Robj"),
+  here::here("./conStruct/sp_k3/sp_K3_iter10000_chains5_conStruct.results.Robj"),
+  here::here("./conStruct/sp_k4/sp_K4_iter10000_chains5_conStruct.results.Robj")  # Add more file paths as needed
+)
+
+# Loop over the file paths
+for (file_path in file_paths) {
+  # Load the results file
+  load(file_path)
+  
+  # Assign the MAP admixture proportions from the first MCMC chain to a variable with a new name
+  admix.props <- conStruct.results$chain_1$MAP$admix.proportions
+  
+  # Read urb_metrics.csv file
+  urb <- read.csv(here("./clean_data/urb_metrics.csv")) %>%
+    dplyr::rename("pop_id" = "patch_id") %>%
+    dplyr::rename("Lon" = "long", "Lat" = "lat")
+  
+  # Join site coordinates with city_dist and pop ID values
+  urb_df <- data.block$coords %>%
+    as.data.frame() %>%
+    dplyr::left_join(
+      .,
+      urb %>%
+        dplyr::select(City_dist, pop_id, Lat, Lon),
+      by = c("Lat", "Lon")
+    )
+  
+  # Add city_dist values to data.block
+  data.block$dist <- urb_df %>%
+    dplyr::select(City_dist) %>%
+    as.matrix()
+  
+  # Add pop_ID values to data.block
+  data.block$pop_id <- urb_df %>%
+    dplyr::select(pop_id) %>%
+    as.matrix()
+
+  # Extract the relevant part of the filename
+  new_filename <- str_remove(basename(file_path), "_iter10000_chains5_conStruct.results")
+  
+  # Set the file name for saving the plot
+  plot_filename <- here("./Figures_Tables/conStruct", paste0(new_filename, ".png"))
+
+  # Create the plot
+  png(filename = plot_filename, width = 3000, height = 800, units = "px", res = 250)
+  
+  make.structure.plot(
+    admix.proportions = admix.props,
+    sample.order = order(data.block$dist),
+    sample.names = data.block$pop_id,
+    mar = c(4.5, 4, 2, 2)
+  )
+  
+  dev.off()
+}
+
+```
+
+
+#### nonspatial
+```{r}
+# List of file paths for the "results.rObj" files
+file_paths <- c(
+  here::here("./conStruct/nsp_k2/nsp_K2_iter10000_chains5_conStruct.results.Robj"),
+  here::here("./conStruct/nsp_k3/nsp_K3_iter10000_chains5_conStruct.results.Robj"),
+  here::here("./conStruct/nsp_k4/nsp_K4_iter10000_chains5_conStruct.results.Robj"),
+  here::here("./conStruct/nsp_k5/nsp_K5_iter10000_chains5_conStruct.results.Robj")
+)
+
+# Loop over the file paths
+for (file_path in file_paths) {
+  # Load the results file
+  load(file_path)
+  
+  # Assign the MAP admixture proportions from the first MCMC chain to a variable with a new name
+  admix.props <- conStruct.results$chain_1$MAP$admix.proportions
+  
+  # Read urb_metrics.csv file
+  urb <- read.csv(here("./clean_data/urb_metrics.csv")) %>%
+    dplyr::rename("pop_id" = "patch_id") %>%
+    dplyr::rename("Lon" = "long", "Lat" = "lat")
+  
+  # Join site coordinates with city_dist and pop ID values
+  urb_df <- data.block$coords %>%
+    as.data.frame() %>%
+    dplyr::left_join(
+      .,
+      urb %>%
+        dplyr::select(City_dist, pop_id, Lat, Lon),
+      by = c("Lat", "Lon")
+    )
+  
+  # Add city_dist values to data.block
+  data.block$dist <- urb_df %>%
+    dplyr::select(City_dist) %>%
+    as.matrix()
+  
+  # Add pop_ID values to data.block
+  data.block$pop_id <- urb_df %>%
+    dplyr::select(pop_id) %>%
+    as.matrix()
+
+  # Extract the relevant part of the filename
+  new_filename <- str_remove(basename(file_path), "_iter10000_chains5_conStruct.results")
+  
+  # Set the file name for saving the plot
+  plot_filename <- here("./Figures_Tables/conStruct", paste0(new_filename, ".png"))
+
+  # Create the plot
+  png(filename = plot_filename, width = 3000, height = 800, units = "px", res = 250)
+  
+  make.structure.plot(
+    admix.proportions = admix.props,
+    sample.order = order(data.block$dist),
+    sample.names = data.block$pop_id,
+    mar = c(4.5, 4, 2, 2)
+  )
+  
+  dev.off()
+}
 
 ```
 
