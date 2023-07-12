@@ -81,6 +81,8 @@ ggplot(fis,
                  color = City_dist)) +
   scale_color_continuous(type = "viridis") +
   ggpubr::theme_pubr()
+
+range(fis$fis)
 ```
 
 # Compute means per group, w/o accounting for diffs in pop size

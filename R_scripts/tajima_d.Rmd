@@ -16,6 +16,7 @@ global_taj <- read.csv(
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
+range(global_taj$TajimaD)
 ```
 
 #### Window size: 100,000 bp

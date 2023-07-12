@@ -51,7 +51,7 @@ fst <- data.frame(
 
 # Create the barplot with points using ggplot
 ggplot(fst, 
-       aes(x = category, y = fst)) +
+       aes(x = category, y = fst, label = round(fst, 3))) +
   geom_errorbar(aes(ymin = fst - SE,
                     ymax = fst + SE),
                 color = "black",
@@ -59,13 +59,15 @@ ggplot(fst,
     geom_point(aes(color = category),
              size = 4) +
   ylab("FST") +
+  ylim(NA, 0.1) +
   theme_pubr() +
   xlab("") +
   theme(legend.position = "none") +
   scale_color_manual(
         values = c("#6633CC", "#FF3333", "#00CCFF")
     # values = c("Urb vs. Rural", "Within Rural", "Within Urban",
-                                )
+                                ) +
+  geom_text(hjust = 0.5, vjust = -1.75)
 
 
 ggsave(here::here("./Figures_Tables/fst/fst.png"), 
@@ -75,5 +77,3 @@ ggsave(here::here("./Figures_Tables/fst/fst.png"),
        units = "cm")
 
 ```
-
-# 

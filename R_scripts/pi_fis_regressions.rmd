@@ -11,7 +11,7 @@ output:
 ---
 
 These analyses use the narrow, conservative genetic dataset:
--R = 1 & -min_maf = 0.05
+-R = 0.75 & -min_maf = 0.05
 
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
@@ -39,7 +39,7 @@ urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
 ### Genetic data
 ```{r}
 
-diversity_variant_sites <- here::here("./summary_stats/old/mmaf0.05_R1_populations_output/populations.sumstats_summary.tsv") %>%
+diversity_variant_sites <- here::here("./populations_no-IBD_vcf-all_mainfiles/mmaf0.05_R0.75/populations.sumstats_summary.tsv") %>%
   extract_variant_position_summary() %>%
 # if population doesn't start with "MWI", it should start with "MW"
   # clean names
@@ -99,6 +99,11 @@ ggplot(diversity_variant_sites,
            y = pi)) + 
   geom_point()
 
+ggplot(diversity_variant_sites, 
+       aes(x = urb_score,
+           y = pi)) + 
+  geom_point() 
+
 qplot(data = diversity_variant_sites,
       City_dist, num_indv)
 
@@ -129,7 +134,12 @@ qplot(data = diversity_variant_sites,
 test1 <- glmmTMB(City_dist ~ num_indv, diversity_variant_sites)
 performance::check_model(test1)
 car::Anova(test1) # yes
-r.squaredGLMM(test1) # only ~3% variance explained
+r.squaredGLMM(test1) # only ~4% variance explained
+
+
+test1 <- glmmTMB(urb_score ~ num_indv, diversity_variant_sites)
+performance::check_model(test1)
+car::Anova(test1) # no
 ```
 
 ### Does the number of individuals per populations correlate with pop gen stats?
@@ -151,9 +161,9 @@ test1 <- glmmTMB(fis ~ num_indv,
                  diversity_variant_sites %>%
                    dplyr::filter(fis != 0))
 performance::check_model(test1)
-car::Anova(test1) # no
-r.squaredGLMM(test1) # ~1% variance explained
-# SO I won't add num_indivs as a random effect to these models
+car::Anova(test1) # yes
+r.squaredGLMM(test1) # ~28% variance explained
+# SO I WILL add num_indivs as a random effect to these models
 
 ```
 
@@ -166,8 +176,9 @@ qplot(diversity_variant_sites$num_indv,
 test1 <- glmmTMB(pi ~ num_indv,
                  diversity_variant_sites)
 performance::check_model(test1)
-car::Anova(test1) # no
-# SO I WON'T add num_indivs as a random effect to these models
+car::Anova(test1) # yes
+r.squaredGLMM(test1) # ~7% variance explained
+# SO I WILL add num_indivs as a random effect to these models
 ```
 
 ## Urbanization is continuous
@@ -176,7 +187,7 @@ car::Anova(test1) # no
 ##### City_dist
 ```{r}
 
-fis_dist <- glmmTMB(fis ~ City_dist,
+fis_dist <- glmmTMB(fis ~ City_dist + (1|num_indv),
            diversity_variant_sites %>%
              dplyr::filter(fis != 0))
 
@@ -185,7 +196,7 @@ performance::check_model(fis_dist)
 
 ##### Urb_score
 ```{r}
-fis_usc <- glmmTMB(fis ~ urb_score ,
+fis_usc <- glmmTMB(fis ~ urb_score  + (1|num_indv),
            diversity_variant_sites %>%
              dplyr::filter(fis != 0))
 
@@ -195,7 +206,7 @@ performance::check_model(fis_usc)
 #### Pi
 ##### City_dist
 ```{r}
-pi_dist <- glmmTMB(pi ~ City_dist ,
+pi_dist <- glmmTMB(pi ~ City_dist  + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(pi_dist)
@@ -203,7 +214,7 @@ performance::check_model(pi_dist)
 
 ##### Urb_score
 ```{r}
-pi_usc <- glmmTMB(pi ~ urb_score ,
+pi_usc <- glmmTMB(pi ~ urb_score  + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(pi_usc)
@@ -230,7 +241,7 @@ all_anovas %>%
   flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
   bold(~ p <= 0.05) %>%
-  flextable::autofit()%T>%
+  flextable::autofit() %T>%
   flextable::save_as_image(here::here("./Figures_Tables/regressions/pi_fis_anova.png"))
 ```
 
@@ -252,7 +263,7 @@ fis_dist_pred_plot <- plot(fis_dist_pred,
               ) +
   xlab("Distance to City Center (km)") +
   ylab("FIS") +
-  ylim(-0.06, 0) +
+  ylim(0, 0.06) +
   labs(title = "") +
   theme_pubr() +
   labs_pubr() 
@@ -276,7 +287,7 @@ fis_usc_pred_plot <- plot(fis_usc_pred,
               ) +
   xlab("Urbanization Score") +
   ylab("FIS") +
-  ylim(-0.06, 0) +
+  ylim(0, 0.06) +
   labs(title = "") +
   theme_pubr() +
   labs_pubr() +
@@ -302,7 +313,7 @@ pi_dist_pred_plot <- plot(pi_dist_pred,
               ) +
   xlab("Distance to City Center (km)") +
   ylab("Pi") +
-  ylim(0.22, 0.32) +
+  ylim(0.2, 0.26) +
   labs(title = "") +
   theme_pubr() +
   labs_pubr() 
@@ -326,7 +337,7 @@ pi_usc_pred_plot <- plot(pi_usc_pred,
               ) +
   xlab("Urbanization Score") +
   ylab("Pi") +
-  ylim(0.22, 0.32) +
+  ylim(0.2, 0.26) +
   labs(title = "") +
   xlim(4, -4) +
   theme_pubr() +
@@ -378,11 +389,12 @@ ggsave(here::here("./Figures_Tables/regressions/pi_fis.png"),
 ```
 
 ## Urbanization is categorical
+### Does the number of individuals per populations correlate with pop gen stats?
 ### Fit linear models/diagnostics
 #### Inbreeding coefficient (FIS)
 ##### Distance
 ```{r}
-fis_dist_cat <- glmmTMB(fis ~ u_r_dist,
+fis_dist_cat <- glmmTMB(fis ~ u_r_dist + (1|num_indv),
            diversity_variant_sites %>%
              dplyr::filter(fis != 0))
 
@@ -391,7 +403,7 @@ performance::check_model(fis_dist_cat)
 
 ##### Urb score
 ```{r}
-fis_usc_cat <- glmmTMB(fis ~ u_r_usc,
+fis_usc_cat <- glmmTMB(fis ~ u_r_usc + (1|num_indv),
            diversity_variant_sites %>%
              dplyr::filter(fis != 0))
 
@@ -401,7 +413,7 @@ performance::check_model(fis_usc_cat)
 #### Pi
 ##### Distance
 ```{r}
-pi_dist_cat <- glmmTMB(pi ~ u_r_dist ,
+pi_dist_cat <- glmmTMB(pi ~ u_r_dist + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(pi_dist_cat)
@@ -409,7 +421,7 @@ performance::check_model(pi_dist_cat)
 
 ##### Urb score
 ```{r}
-pi_usc_cat <- glmmTMB(pi ~ u_r_usc,
+pi_usc_cat <- glmmTMB(pi ~ u_r_usc + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(pi_usc_cat)
@@ -457,7 +469,7 @@ fis_dist_cat_pred_plot <- ggplot(data = fis_dist_cat_pred,
                       ymax = conf.high),
                   width = 0.2,
                   color = "black") +
-  ylim(-0.06, 0) +
+  ylim(0, 0.06) +
   xlab("Urbanization (based on\nDistance to City Center)") +
   ylab("FIS") +
   labs(title = "") +
@@ -482,7 +494,7 @@ fis_usc_cat_pred_plot <- ggplot(data = fis_usc_cat_pred,
                       ymax = conf.high),
                   width = 0.2,
                   color = "black") +
-  ylim(-0.06, 0) +
+  ylim(0, 0.06) +
   xlab("Urbanization (based on\nUrbanization Score)") +
   ylab("FIS") +
   labs(title = "") +
@@ -508,7 +520,7 @@ pi_dist_cat_pred_plot <- ggplot(data = pi_dist_cat_pred,
                       ymax = conf.high),
                   width = 0.2,
                   color = "black") +
-  ylim(0.25, 0.3) +
+  ylim(0.2, 0.25) +
   xlab("Urbanization (based on\nDistance to City Center)") +
   ylab("Pi") +
   labs(title = "") +
@@ -532,7 +544,7 @@ pi_usc_cat_pred_plot <- ggplot(data = pi_usc_cat_pred,
                       ymax = conf.high),
                   width = 0.2,
                   color = "black") +
-  ylim(0.25, 0.3) +
+  ylim(0.2, 0.25) +
   xlab("Urbanization (based on\nUrbanization Score)") +
   ylab("Pi") +
   labs(title = "") +
