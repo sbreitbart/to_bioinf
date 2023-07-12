@@ -1,0 +1,146 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+
+# install.packages("memgene")
+library(memgene)
+```
+
+# MEMgene tutorial
+```{r}
+## Load the caribou genetic data
+caribouData <- read.csv(system.file("extdata/caribou.csv",
+package="memgene"))
+
+## Create objects for positional information and genotypes
+caribouXY <- caribouData[ ,1:2]
+caribouGen <- caribouData[, 3:ncol(caribouData)]
+
+## Produce a proportion of shared alleles genetic distance matrix using the convenience wrapper function provided with the package
+caribouDM <- codomToPropShared(caribouGen)
+
+## Run the MEMGENE analysis
+## May take several minutes
+if (!exists("caribouAnalysis"))
+caribouAnalysis <- mgQuick(caribouDM, caribouXY)
+
+# Visualize results
+plot(caribouXY, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(caribouXY, caribouAnalysis$memgene[, 1], add.plot=TRUE,
+legend=TRUE)
+box()
+
+# Adj R2
+caribouAnalysis$RsqAdj
+
+## Find the proportional variation explained by each MEMGENE variable
+caribouMEMGENEProp <- caribouAnalysis$sdev/sum(caribouAnalysis$sdev)
+## Neatly print proportions for the first three MEMGENE variables
+format(signif(caribouMEMGENEProp, 3)[1:3], scientific=FALSE)
+```
+
+# Milkweed data
+## Import files
+### Genetic data
+```{r}
+# vcf
+vcf <- read.vcfR(
+  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+# tidy up colnames (remove periods)
+inputdata1 <- my_genind$tab
+colnames(inputdata1) <- gsub("\\.", "_", colnames(inputdata1))
+
+## Produce a proportion of shared alleles genetic distance matrix using the convenience wrapper function provided with the package
+gen_data <- codomToPropShared(as.data.frame(inputdata1), missingData = NA)
+```
+
+### Coordinates
+```{r}
+# lat/longs of sampling sites
+urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
+
+# sampling site IDs and genetic sample names
+coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
+
+# if population doesn't start with "MWI", it should start with "MW"
+  # rename col 1
+  dplyr::rename(pop_id = 2) %>%
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+
+# take entries with numeric populations and add "MW" as prefix
+  add_MW_IDs() %>%
+
+# left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+  left_join(., urb, by = "patch_id") %>%
+  dplyr::mutate(patch_id = as.factor(patch_id),
+                pop_id = as.factor(pop_id)) %>%
+  dplyr::select(c(1,2,6,7)) %>%
+  dplyr::rename("x" = 3,
+                "y" = 4) %>%
+  dplyr::select(3,4)
+```
+
+## Run analysis
+```{r}
+## Run the MEMGENE analysis
+## May take several minutes
+milkweed_analysis <- mgQuick(gen_data, coords)
+```
+
+## Visualize results
+```{r}
+# with legend
+png(here::here("./Figures_Tables/memgene/memgene_legend.png"),
+    width = 20,
+    height = 20,
+    units = "cm",
+    res = 1000)
+
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords,
+      milkweed_analysis$memgene[, 1], 
+      add.plot=TRUE,
+      legend=TRUE)
+box()
+
+# Close device
+dev.off()
+
+
+# without legend
+png(here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
+    width = 20,
+    height = 20,
+    units = "cm",
+    res = 1000)
+
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords,
+      milkweed_analysis$memgene[, 1], 
+      add.plot=TRUE,
+      legend=FALSE)
+box()
+
+# Close device
+dev.off()
+```
+
+## Stats
+```{r}
+# Adj R2
+milkweed_analysis$RsqAdj
+
+## Find the proportional variation explained by each MEMGENE variable
+prop_var_expl <- milkweed_analysis$sdev/sum(milkweed_analysis$sdev)
+
+## Neatly print proportions for the first three MEMGENE variables
+format(signif(prop_var_expl, 3)[1:3], scientific=FALSE)
+```
+
