@@ -30,6 +30,8 @@ allele_frqs <- conStruct::structure2conStruct(
   missing.datum = -9,
   outfile = here("./clean_data/construct_data_20230613"))
 
+head(allele_frqs)
+
 ```
 
 ## Load in other data
@@ -156,6 +158,24 @@ stopCluster(cl)
 
 ```
 
+# Cross-validation (didn't actually run in RStudio)
+```{r}
+##  k = 1:5, 10,000 iterations, 5 chains
+x.validation(train.prop = 0.9,
+                         n.reps = 10,
+                         K = 1:5,
+                         freqs = allele_frqs,
+                         data.partitions = NULL,
+                         geoDist = distances,
+                         coords = coords,
+                         prefix = "pilot",
+                         n.iter = 10000,
+                         make.figs = TRUE,
+                         save.files = TRUE,
+                         parallel = FALSE, #TRUE,
+                         n.nodes = NULL) #5)
+```
+
 # Compare models
 ## Calculate layer contributions
 ### spatial
@@ -211,6 +231,16 @@ tmp.order <- match.layers.x.runs(tmp,
                                  conStruct.results[[1]]$MAP$admix.proportions)
 
 
+
+# Load the conStruct.results.Robj and data.block.Robj files for K=5
+load( here::here("./conStruct/sp_k5/sp_K5_iter10000_chains5_conStruct.results.Robj"))
+load( here::here("./conStruct/sp_k5/sp_K5_iter10000_chains5_data.block.Robj"))
+
+# Calculate layer contributions for K=5
+layer.contributions[, 5] <- c(calculate.layer.contribution(conStruct.results[[1]], data.block))
+tmp <- conStruct.results[[1]]$MAP$admix.proportions
+tmp.order <- match.layers.x.runs(tmp,
+                                 conStruct.results[[1]]$MAP$admix.proportions)
 ```
 
 ### non-spatial
@@ -440,7 +470,8 @@ dev.off()
 file_paths <- c(
   here::here("./conStruct/sp_k2/sp_K2_iter10000_chains5_conStruct.results.Robj"),
   here::here("./conStruct/sp_k3/sp_K3_iter10000_chains5_conStruct.results.Robj"),
-  here::here("./conStruct/sp_k4/sp_K4_iter10000_chains5_conStruct.results.Robj")  # Add more file paths as needed
+  here::here("./conStruct/sp_k4/sp_K4_iter10000_chains5_conStruct.results.Robj") ,
+  here::here("./conStruct/sp_k5/sp_K5_iter10000_chains5_conStruct.results.Robj")
 )
 
 # Loop over the file paths
