@@ -6,6 +6,7 @@ source(here::here("functions.R"))
 
 # install.packages("memgene")
 library(memgene)
+library(officer)
 ```
 
 # MEMgene tutorial
@@ -82,28 +83,32 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
   dplyr::mutate(patch_id = as.factor(patch_id),
                 pop_id = as.factor(pop_id)) %>%
   dplyr::select(c(1,2,6,7)) %>%
-  dplyr::rename("x" = 3,
-                "y" = 4) %>%
-  dplyr::select(3,4)
+  dplyr::rename("y" = 3,
+                "x" = 4) %>%
+  dplyr::arrange(sample) %>%
+  dplyr::select("x", "y")
 ```
 
 ## Run analysis
 ```{r}
 ## Run the MEMGENE analysis
-## May take several minutes
+if (!exists("milkweed_analysis"))
 milkweed_analysis <- mgQuick(gen_data, coords)
 ```
 
 ## Visualize results
+### Basic plots
 ```{r}
 # with legend
-png(here::here("./Figures_Tables/memgene/memgene_legend.png"),
+png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
+    paste0("./Figures_Tables/memgene/memgene_legend_", today(), ".png"),
     width = 20,
     height = 20,
     units = "cm",
     res = 1000)
 
 plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+#base_map
 mgMap(coords,
       milkweed_analysis$memgene[, 1], 
       add.plot=TRUE,
@@ -115,8 +120,9 @@ dev.off()
 
 
 # without legend
-png(here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
-    width = 20,
+png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
+        paste0("./Figures_Tables/memgene/memgene_nolegend_", today(), ".png"),
+        width = 20,
     height = 20,
     units = "cm",
     res = 1000)
@@ -132,15 +138,212 @@ box()
 dev.off()
 ```
 
+### Plots with terrain basemap
+```{r}
+# with legend
+
+mem1 <- milkweed_analysis$memgene[, 1] %>%
+  as.data.frame() %>%
+  dplyr::rename("var" = 1) %>%
+  cbind(coords) %>%
+  dplyr::mutate("negative" = ifelse(var < 0, "negative", "positive")) %>%
+  dplyr::mutate("abs_val" = abs(var))
+
+
+
+png(paste0("./Figures_Tables/memgene/memgene_terrain_bw_", today(), ".png"),
+    width = 15,
+    height = 15,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem1,
+             mapping = aes(x = x,
+                           y = y, 
+                           fill = negative,
+                       #    size = abs(var)),
+                           size = abs_val),
+             shape = 21) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMgene\nvariable 1",
+       size = "MEMgene\nvariable 1") +
+  scale_fill_manual(values = c("#333333", "white")) +
+  scale_size_continuous(limits = c(0, 0.15))
+
+# Close device
+dev.off()
+
+
+
+
+# black/white gradient, instead of discrete
+png(paste0("./Figures_Tables/memgene/memgene_terrain_greyscale_", today(), ".png"),
+    width = 15,
+    height = 15,
+    units = "cm",
+    res = 1000)
+
+# basemap_terrain +
+#   geom_point(data = mem1,
+#              mapping = aes(x = x,
+#                            y = y, 
+#                            fill = var,
+#                            size = var),
+#              shape = 21) +
+#   labs(x = 'Longitude', y = 'Latitude',
+#        fill = "MEMgene\nvariable 1",
+#        size = "MEMgene\nvariable 1") +
+#   scale_fill_viridis(option = "viridis") +
+#   scale_size_continuous(breaks = c(min(mem1$var), max(mem1$var)*50)) +
+#   guides(size = FALSE)
+
+
+basemap_terrain +
+  geom_point(data = mem1,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = var,
+                           size = abs_val),
+             shape = 21) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMgene\nvariable 1",
+       size = "MEMgene\nvariable 1") +
+  scale_fill_gradient(high = "white", low = "black",
+                      limits = c(-0.15, 0.1),
+                      breaks = c(-0.15, 0, 0.1)) +
+  scale_size_continuous(limits = c(0, 0.14)) +
+  guides(size = FALSE)
+
+# Close device
+dev.off()
+```
+
+
+### map ALL combined significant memgene variables
+```{r}
+library(sf)
+library(tmap)
+
+total_var <- apply(milkweed_analysis$memSelected, 1, sum) %>%
+  as.data.frame() %>%
+  dplyr::rename("var" = 1)
+
+# sum all SGS explained by all significant memgene variables
+# Combine 'var' from 'total_var' with 'coords'
+spatial_data <- data.frame(var = total_var$var, coords)
+
+# Convert the combined data frame to an 'sf' object
+sf_object <- st_as_sf(spatial_data, coords = c("y", "x"))
+
+base::plot(sf_object, type = "p", cex = 2) 
+
+# colors: plasma, unidirectional size scale
+basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
+              zoom = 11,
+                          maptype = 'terrain',
+                          source = 'stamen'),
+        darken = c(0.3, "white"))
+
+basemap_terrain +
+  geom_point(data = spatial_data,
+             mapping = aes(x = x,
+                           y = y, 
+                           fill = var,
+                           size = var),
+             shape = 21,
+             color = "black",
+             ) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "Variation") +
+  scale_fill_viridis(option="plasma") + 
+  guides(size = FALSE) 
+
+ggsave(last_plot(),
+       file =  paste0("./Figures_Tables/memgene/memgene_allMEMs_", today(), ".png"),
+       width = 19,
+       height = 19,
+       units = "cm")
+
+
+# colors: black/white, big to little (0) to big circles
+# Assuming you have the required libraries loaded:
+# library(ggplot2)
+
+basemap_terrain +
+  geom_point(data = spatial_data,
+             mapping = aes(x = x,
+                           y = y, 
+                           fill = ifelse(var < 0, "negative", "positive"),
+                           size = abs(var)),  # Use abs(var) to get the absolute value for size
+             shape = 21#,
+            # color = "black"
+            ) +
+  labs(x = 'Longitude', y = 'Latitude',
+       size = "Variation",
+       fill = "Variation") +
+  scale_fill_manual(values = c("negative" = "darkgrey",
+                               "positive" = "white")) +
+  scale_size_continuous(
+    range = c(1.5, 12 * max(abs(spatial_data$var))), 
+    limits = c(0, max(abs(spatial_data$var)))) 
+
+
+
+ggsave(last_plot(),
+       file =  paste0("./Figures_Tables/memgene/memgene_allMEMs_BW_", today(), ".png"),
+       width = 19,
+       height = 19,
+       units = "cm")
+```
+
+
 ## Stats
+### Generate
 ```{r}
 # Adj R2
-milkweed_analysis$RsqAdj
+print(paste0("Adjusted R2: ", round(milkweed_analysis$RsqAdj, 3)))
 
 ## Find the proportional variation explained by each MEMGENE variable
 prop_var_expl <- milkweed_analysis$sdev/sum(milkweed_analysis$sdev)
 
 ## Neatly print proportions for the first three MEMGENE variables
-format(signif(prop_var_expl, 3)[1:3], scientific=FALSE)
+print(paste0("Proportion of variation explained by first 3 MEMgene variables: ", toString(format(signif(prop_var_expl, 3)[1:3], scientific=FALSE))))
+```
+
+### Export
+```{r}
+# Create a new Word document
+doc <- read_docx() %>%
+
+# Add content to the document
+  body_add_par(
+    print(
+      paste0(
+        "Adjusted R2: ", 
+        round(milkweed_analysis$RsqAdj, 3)
+        )
+      )
+    ) %>%
+  
+  body_add_par("") %>%
+  
+  body_add_par("Proportion of variation explained by ")
+
+for (i in 1:3) {
+  doc <- doc %>%
+    body_add_par(
+      paste0(
+        c("first", "second", "third")[i],
+        " MEMgene variable: ",
+        format(signif(prop_var_expl[i], 3), scientific = FALSE)
+        )
+    )
+  }
+
+# Save the Word document
+print(doc,
+      target = paste0("./Figures_Tables/memgene/memgene_stats_", today(), ".docx"))
+
 ```
 
