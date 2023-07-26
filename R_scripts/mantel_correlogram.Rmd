@@ -85,6 +85,8 @@ correlogram <- vegan::mantel.correlog(D.eco = genetic_distance_matrix,
 
 plot(correlogram)
 
+
+# export plot
 png(here::here("./Figures_Tables/correlogram/mantel_correlogram.png"), 
     width = 1200, height = 800,
     res = 200) 
@@ -92,5 +94,24 @@ png(here::here("./Figures_Tables/correlogram/mantel_correlogram.png"),
 plot(correlogram)  
 
 dev.off()
-```
 
+
+# export table
+correlogram$mantel.res %>%
+  as.data.frame() %>%
+  dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
+  drop_na() %>%
+  round(3) %>%
+  dplyr::rename("Distance Class" = 1,
+                "N" = 2,
+                "Mantel r" = 3,
+                "p" = 4) %>%
+  flextable() %>%
+  align(align = "center",
+        part = "all") %>%
+  flextable::bold(i = ~ p <= 0.05, j = 4) %>%
+  flextable::italic(i = 1, j = 4, part = "header") %>%
+  flextable::autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table.docx"))
+
+```
