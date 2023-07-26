@@ -1,0 +1,96 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+library("poppr")
+library(vegan)
+```
+
+## Import files
+### Genetic data
+```{r}
+# vcf
+vcf <- read.vcfR(
+  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+# tidy up colnames (remove periods)
+inputdata1 <- my_genind$tab
+colnames(inputdata1) <- gsub("\\.", "_", colnames(inputdata1))
+
+```
+
+### Coordinates
+```{r}
+# lat/longs of sampling sites
+urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
+
+# sampling site IDs and genetic sample names
+coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
+
+# if population doesn't start with "MWI", it should start with "MW"
+  # rename col 1
+  dplyr::rename(pop_id = 2) %>%
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+
+# take entries with numeric populations and add "MW" as prefix
+  add_MW_IDs() %>%
+
+# left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+  left_join(., urb, by = "patch_id") %>%
+  dplyr::mutate(patch_id = as.factor(patch_id),
+                pop_id = as.factor(pop_id)) %>%
+  dplyr::select(c(1,2,6,7)) %>%
+  dplyr::rename("y" = 3,
+                "x" = 4) %>%
+  dplyr::arrange(sample) %>%
+  dplyr::select("x", "y")
+
+
+```
+
+# Create distance matrices
+```{r}
+# create genetic distance matrix
+
+# these end up generating this error for the mantel correlog:
+# 
+# Error in cor(as.vector(xdis), ydis, method = method, use = use) : 
+#  missing observations in cov/cor
+# genetic_distance_matrix <- poppr::nei.dist(my_genind)
+# genetic_distance_matrix <- poppr::edwards.dist(my_genind)
+# genetic_distance_matrix <- poppr::rogers.dist(my_genind)
+# genetic_distance_matrix <- poppr::reynolds.dist(my_genind)
+
+# these don't return the error:
+genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
+
+
+# "Prevosti’s distance coefficient: a measurement over all loci of the proportion of unshared alleles. The variance of this sample distance is related to the genetic diversities used in calculating F-statistics... [accurate] at small distances compared with other coefficients...", from this paper: https://journals.ashs.org/hortsci/view/journals/hortsci/41/4/article-p967E.xml?tab_body=pdf
+
+# Calculate the geographical distance matrix (Euclidean distance)
+geographical_distance_matrix <- dist(coords)
+```
+
+# Mantel correlogram
+```{r}
+correlogram <- vegan::mantel.correlog(D.eco = genetic_distance_matrix,
+                        D.geo = geographical_distance_matrix,
+                nperm = 10000)
+
+
+plot(correlogram)
+
+png(here::here("./Figures_Tables/correlogram/mantel_correlogram.png"), 
+    width = 1200, height = 800,
+    res = 200) 
+
+plot(correlogram)  
+
+dev.off()
+```
+
