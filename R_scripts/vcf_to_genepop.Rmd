@@ -1,0 +1,31 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+library(graph4lg)
+```
+
+## Import files
+```{r}
+# pop map
+pops <- read.csv(here("./genomic_resources/pop_map3.csv"))
+
+
+# vcf
+# this dataset should be pretty liberal re: parameters- a relatively low R and mmaf
+vcf <- read.vcfR(
+  here::here("./summary_stats/output_populations_no-IBD/mmaf0.007662_R0.5/populations.snps.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+
+# add pops to genind
+pop(my_genind) <- pops$population
+
+# convert to genepop and export
+my_genepop <- graph4lg::genind_to_genepop(my_genind,
+                                          output = here::here("./clean_data/genepop_for_Ne.txt")) 
+
+```
