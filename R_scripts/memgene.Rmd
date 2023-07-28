@@ -299,52 +299,6 @@ ggsave(last_plot(),
 ```
 
 
-#### Rescaling eigenvalues from 0-1
-```{r}
-scaled_eigenvalues <- milkweed_analysis$memSelected %>%
-  as.data.frame()
-
-scaled_eigenvalues %<>%
-    mutate(across(everything(), ~ (.-min(.))/(max(.)-min(.))))
-
-total_var_scaled <- apply(scaled_eigenvalues, 1, sum) %>%
-  as.data.frame() %>%
-  dplyr::rename("var" = 1)
-
-# sum all SGS explained by all significant memgene variables
-# Combine 'var' from 'total_var' with 'coords'
-spatial_data2 <- data.frame(var = total_var_scaled$var, coords)
-
-# colors: plasma, unidirectional size scale
-basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
-              zoom = 11,
-                          maptype = 'terrain',
-                          source = 'stamen'),
-        darken = c(0.3, "white"))
-
-basemap_terrain +
-  geom_point(data = spatial_data2,
-             mapping = aes(x = x,
-                           y = y, 
-                           fill = var,
-                           size = var),
-             shape = 21,
-             color = "black",
-             ) +
-  labs(x = 'Longitude', y = 'Latitude',
-       fill = "Summed MEMs") +
-  scale_fill_viridis(option="rocket") +
-  guides(size = FALSE)
-
-ggsave(last_plot(),
-       file =  paste0("./Figures_Tables/memgene/memgene_allMEMs_normalized_", today(), ".png"),
-       width = 19,
-       height = 12,
-       units = "cm")
-
-```
-
-
 ## Stats
 ### Generate
 ```{r}
