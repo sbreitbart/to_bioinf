@@ -172,6 +172,12 @@ r.squaredGLMM(test1) # ~28% variance explained
 qplot(diversity_variant_sites$num_indv,
       diversity_variant_sites$pi)
 
+ggplot(diversity_variant_sites,
+       aes(x = num_indv,
+           y = pi)) +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
 
 test1 <- glmmTMB(pi ~ num_indv,
                  diversity_variant_sites)
@@ -179,6 +185,11 @@ performance::check_model(test1)
 car::Anova(test1) # yes
 r.squaredGLMM(test1) # ~7% variance explained
 # SO I WILL add num_indivs as a random effect to these models
+# 
+
+diversity_variant_sites %>%
+  dplyr::group_by(round(num_indv, 0)) %>%
+  dplyr::summarise(pi_per_groupsize <- mean(pi))
 ```
 
 ## Urbanization is continuous
