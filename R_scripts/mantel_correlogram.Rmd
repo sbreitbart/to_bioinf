@@ -5,6 +5,9 @@ source(here::here("libraries.R"))
 source(here::here("functions.R"))
 library("poppr")
 library(vegan)
+library(sp)
+library(rgdal)
+
 ```
 
 ## Import files
@@ -50,10 +53,19 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
   dplyr::arrange(sample) %>%
   dplyr::select("x", "y")
 
+# convert lat/longs to UTM
+coords2 <- coords
+coordinates(coords2) <- c("x", "y")
+proj4string(coords2) <- CRS("+proj=longlat +datum=WGS84")
 
+res <- spTransform(coords2,
+                   CRS("+proj=utm +zone=17 ellps=WGS84"))
+coords_utm <- res@coords %>%
+  as.data.frame()
 ```
 
 # Create distance matrices
+## Genetic distances
 ```{r}
 # create genetic distance matrix
 
@@ -71,21 +83,49 @@ genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
 
 
 # "Prevosti’s distance coefficient: a measurement over all loci of the proportion of unshared alleles. The variance of this sample distance is related to the genetic diversities used in calculating F-statistics... [accurate] at small distances compared with other coefficients...", from this paper: https://journals.ashs.org/hortsci/view/journals/hortsci/41/4/article-p967E.xml?tab_body=pdf
+```
 
+## Geographic distances
+### lat/long
+```{r}
 # Calculate the geographical distance matrix (Euclidean distance)
 geographical_distance_matrix <- dist(coords)
 ```
 
-# Mantel correlogram
+### UTM
 ```{r}
-correlogram <- vegan::mantel.correlog(D.eco = genetic_distance_matrix,
-                        D.geo = geographical_distance_matrix,
-                nperm = 10000)
+geographical_distance_matrix_utm <- dist(coords_utm)
+```
+
+# Mantel correlogram
+## Create
+### lat/longs
+```{r}
+correlogram <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix,
+  D.geo = geographical_distance_matrix,
+  nperm = 10000)
 
 
 plot(correlogram)
 
+```
 
+### UTM
+```{r}
+correlogram_utm <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix,
+  D.geo = geographical_distance_matrix_utm,
+  nperm = 10000)
+
+
+plot(correlogram_utm)
+
+```
+
+## Export
+### lat/long
+```{r}
 # export plot
 png(here::here("./Figures_Tables/correlogram/mantel_correlogram.png"), 
     width = 1200, height = 800,
@@ -113,5 +153,38 @@ correlogram$mantel.res %>%
   flextable::italic(i = 1, j = 4, part = "header") %>%
   flextable::autofit() %>%
   save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table.docx"))
+
+```
+
+### UTM
+```{r}
+# export plot
+png(here::here("./Figures_Tables/correlogram/mantel_correlogram_UTM.png"), 
+    width = 1200, height = 800,
+    res = 200) 
+
+plot(correlogram_utm)  
+
+dev.off()
+
+
+# export table
+correlogram_utm$mantel.res %>%
+  as.data.frame() %>%
+  dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
+  drop_na() %>%
+  round(3) %>%
+  dplyr::mutate(class.index = round(class.index, 0)) %>%
+  dplyr::rename("Distance Class (m)" = 1,
+                "N" = 2,
+                "Mantel r" = 3,
+                "p" = 4) %>%
+  flextable() %>%
+  align(align = "center",
+        part = "all") %>%
+  flextable::bold(i = ~ p <= 0.05, j = 4) %>%
+  flextable::italic(i = 1, j = 4, part = "header") %>%
+  flextable::autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table_utm.docx"))
 
 ```
