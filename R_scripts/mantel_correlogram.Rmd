@@ -23,7 +23,7 @@ my_genind <- vcfR2genind(vcf)
 
 # tidy up colnames (remove periods)
 inputdata1 <- my_genind$tab
-colnames(inputdata1) <- gsub("\\.", "_", colnames(inputdata1))
+colnames(inputdata1) <- gsub("\\.", "_", "") colnames(inputdata1)
 
 ```
 

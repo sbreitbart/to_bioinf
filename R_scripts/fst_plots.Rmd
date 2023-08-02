@@ -58,7 +58,7 @@ ggplot(fst,
                 width = 0.2) +
     geom_point(aes(color = category),
              size = 4) +
-  ylab("FST") +
+  ylab(expression(F[ST])) +
   ylim(NA, 0.1) +
   theme_pubr() +
   xlab("") +

@@ -324,6 +324,14 @@ nsp_k2 <- read.table(here::here("./conStruct/xval_k2_2/xval_nsp_xval_results.txt
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 2)
 
+nsp_k3 <- read.table(here::here("./conStruct/xval_k3/xval_nsp_xval_results.txt"),
+                     header=T, sep="\ ") %>%
+  dplyr::mutate("k" = 3)
+
+nsp_k4 <- read.table(here::here("./conStruct/xval_k4/xval_nsp_xval_results.txt"),
+                     header=T, sep="\ ") %>%
+  dplyr::mutate("k" = 4)
+
 nsp_k5 <- read.table(here::here("./conStruct/xval_k5/xval_nsp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 5)
@@ -331,6 +339,8 @@ nsp_k5 <- read.table(here::here("./conStruct/xval_k5/xval_nsp_xval_results.txt")
 
 nsp <- rbind(nsp_k1,
              nsp_k2,
+             nsp_k3,
+             nsp_k4,
              nsp_k5) %>%
   dplyr::mutate(type = "nsp") %>%
   rename_with(
@@ -352,12 +362,24 @@ sp_k2 <- read.table(here::here("./conStruct/xval_k2_2/xval_sp_xval_results.txt")
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 2)
 
+
+sp_k3 <- read.table(here::here("./conStruct/xval_k3/xval_sp_xval_results.txt"),
+                     header=T, sep="\ ") %>%
+  dplyr::mutate("k" = 3)
+
+
+sp_k4 <- read.table(here::here("./conStruct/xval_k4/xval_sp_xval_results.txt"),
+                     header=T, sep="\ ") %>%
+  dplyr::mutate("k" = 4)
+
 sp_k5 <- read.table(here::here("./conStruct/xval_k5/xval_sp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 5)
 
 sp <- rbind(sp_k1,
             sp_k2,
+            sp_k3,
+            sp_k4,
             sp_k5) %>%
   dplyr::mutate(type = "sp") %>%
   rename_with(
