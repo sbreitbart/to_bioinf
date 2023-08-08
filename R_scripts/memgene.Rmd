@@ -98,10 +98,13 @@ milkweed_analysis <- mgQuick(gen_data, coords)
 
 ## Visualize results
 ### Basic plots
+#### MEMGENE variable 1 (Moran's Eigenvector 12)
 ```{r}
 # with legend
 png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
-    paste0("./Figures_Tables/memgene/memgene_legend_", today(), ".png"),
+    paste0("./Figures_Tables/memgene/memgene_legend_",
+           "var1_",
+           today(), ".png"),
     width = 20,
     height = 20,
     units = "cm",
@@ -121,7 +124,9 @@ dev.off()
 
 # without legend
 png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
-        paste0("./Figures_Tables/memgene/memgene_nolegend_", today(), ".png"),
+        paste0("./Figures_Tables/memgene/memgene_nolegend_",           "var1_",
+               today(),
+               ".png"),
         width = 20,
     height = 20,
     units = "cm",
@@ -138,7 +143,114 @@ box()
 dev.off()
 ```
 
+#### MEMGENE variable 2 (Moran's Eigenvector 20)
+```{r}
+# with legend
+png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
+    paste0("./Figures_Tables/memgene/memgene_legend_",           "var2_",
+ today(),
+ ".png"),
+    width = 20,
+    height = 20,
+    units = "cm",
+    res = 1000)
+
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+#base_map
+mgMap(coords,
+      milkweed_analysis$memgene[, 2], 
+      add.plot=TRUE,
+      legend=TRUE)
+box()
+
+# Close device
+dev.off()
+
+
+# without legend
+png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
+        paste0("./Figures_Tables/memgene/memgene_nolegend_",
+               "var2_",
+               today(),
+               ".png"),
+        width = 20,
+    height = 20,
+    units = "cm",
+    res = 1000)
+
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords,
+      milkweed_analysis$memgene[, 2], 
+      add.plot=TRUE,
+      legend=FALSE)
+box()
+
+# Close device
+dev.off()
+```
+
+
+#### MEMGENE variable 3 (Moran's Eigenvector 5)
+```{r}
+# with legend
+png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
+    paste0("./Figures_Tables/memgene/memgene_legend_",       "var3_",
+ today(),
+ ".png"),
+    width = 20,
+    height = 20,
+    units = "cm",
+    res = 1000)
+
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+#base_map
+mgMap(coords,
+      milkweed_analysis$memgene[, 3], 
+      add.plot=TRUE,
+      legend=TRUE)
+box()
+
+# Close device
+dev.off()
+
+
+# without legend
+png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
+        paste0("./Figures_Tables/memgene/memgene_nolegend_",
+               "var3_",
+               today(),
+               ".png"),
+        width = 20,
+    height = 20,
+    units = "cm",
+    res = 1000)
+
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords,
+      milkweed_analysis$memgene[, 3], 
+      add.plot=TRUE,
+      legend=FALSE)
+box()
+
+# Close device
+dev.off()
+```
+
+
 ### Plots with terrain basemap
+#### Code for each var
+```{r}
+basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
+              zoom = 11,
+                          maptype = 'terrain',
+                          source = 'stamen'),
+        darken = c(0.3, "white"))
+
+## Find the proportional variation explained by each MEMGENE variable
+prop_var_expl <- milkweed_analysis$sdev/sum(milkweed_analysis$sdev)
+```
+
+#### MEMGENE variable 1 (Moran's Eigenvector 12)
 ```{r}
 # with legend
 
@@ -149,14 +261,15 @@ mem1 <- milkweed_analysis$memgene[, 1] %>%
   dplyr::mutate("negative" = ifelse(var < 0, "negative", "positive")) %>%
   dplyr::mutate("abs_val" = abs(var))
 
-# black/white discrete
-basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
-              zoom = 11,
-                          maptype = 'terrain',
-                          source = 'stamen'),
-        darken = c(0.3, "white"))
 
-png(paste0("./Figures_Tables/memgene/memgene_terrain_bw_", today(), ".png"),
+## Find the proportional variation explained by each MEMGENE variable
+prop_var1 <- prop_var_expl[1] %>% round(3) %>% toString() 
+
+# black/white discrete
+png(paste0("./Figures_Tables/memgene/memgene_terrain_bw_", 
+           "var1_",
+           today(),
+           ".png"),
     width = 15,
     height = 15,
     units = "cm",
@@ -173,8 +286,21 @@ basemap_terrain +
   labs(x = 'Longitude', y = 'Latitude',
        fill = "MEMgene\nvariable 1",
        size = "MEMgene\nvariable 1") +
+  # cannot figure out how to get annotations !
+  # annotate(geom = 'text', 
+  #          label = "paste(italic(R) ^ 2, \" = .75\")",
+  #          #parse = TRUE)
+  #          # label = paste0("Moran's Eigenvector ",
+  #          #         milkweed_analysis[["whichSelectedPos"]][1],
+  #          #         "R^2==", 
+  #          #         prop_var1
+  #          #         ), 
+           # x = -79, y = 44, 
+           # hjust = 1.5, vjust = 2,
+           # parse=TRUE) +
   scale_fill_manual(values = c("#333333", "white")) +
   scale_size_continuous(limits = c(0, 0.15))
+
 
 # Close device
 dev.off()
@@ -183,7 +309,10 @@ dev.off()
 
 
 # black/white gradient, instead of discrete
-png(paste0("./Figures_Tables/memgene/memgene_terrain_greyscale_", today(), ".png"),
+png(paste0("./Figures_Tables/memgene/memgene_terrain_greyscale_",
+                     "var1_",
+           today(), 
+           ".png"),
     width = 15,
     height = 15,
     units = "cm",
@@ -211,7 +340,10 @@ dev.off()
 
 
 # colors: plasma, unidirectional size scale
-png(paste0("./Figures_Tables/memgene/memgene_terrain_color_", today(), ".png"),
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_",
+                      "var1_",
+           today(),
+           ".png"),
     width = 15,
     height = 10,
     units = "cm",
@@ -226,6 +358,212 @@ basemap_terrain +
              size = 3) +
   labs(x = 'Longitude', y = 'Latitude',
        fill = "MEMGENE\nvariable 1") +
+  scale_fill_viridis(option = "plasma")
+
+# Close device
+dev.off()
+
+```
+
+#### MEMGENE variable 2 (Moran's Eigenvector 20)
+```{r}
+# with legend
+
+mem2 <- milkweed_analysis$memgene[, 2] %>%
+  as.data.frame() %>%
+  dplyr::rename("var" = 1) %>%
+  cbind(coords) %>%
+  dplyr::mutate("negative" = ifelse(var < 0, "negative", "positive")) %>%
+  dplyr::mutate("abs_val" = abs(var))
+
+
+## Find the proportional variation explained by each MEMGENE variable
+prop_var2 <- prop_var_expl[2] %>% round(3) %>% toString() 
+
+# black/white discrete
+png(paste0("./Figures_Tables/memgene/memgene_terrain_bw_", 
+           "var2_",
+           today(),
+           ".png"),
+    width = 15,
+    height = 15,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem2,
+             mapping = aes(x = x,
+                           y = y, 
+                           fill = negative,
+                       #    size = abs(var)),
+                           size = abs_val),
+             shape = 21) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMgene\nvariable 2",
+       size = "MEMgene\nvariable 2") +
+  scale_fill_manual(values = c("#333333", "white")) +
+  scale_size_continuous(limits = c(0, 0.15))
+
+
+# Close device
+dev.off()
+
+
+
+
+# black/white gradient, instead of discrete
+png(paste0("./Figures_Tables/memgene/memgene_terrain_greyscale_",
+                     "var2_",
+           today(), 
+           ".png"),
+    width = 15,
+    height = 15,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem2,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = var,
+                           size = abs_val),
+             shape = 21) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMgene\nvariable 2",
+       size = "MEMgene\nvariable 2") +
+  scale_fill_gradient(high = "white", low = "black",
+                      limits = c(-0.15, 0.1),
+                      breaks = c(-0.15, 0, 0.1)) +
+  scale_size_continuous(limits = c(0, 0.14)) +
+  guides(size = FALSE)
+
+# Close device
+dev.off()
+
+
+
+# colors: plasma, unidirectional size scale
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_",
+                      "var2_",
+           today(),
+           ".png"),
+    width = 15,
+    height = 10,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem2,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = var),
+             shape = 21,
+             size = 3) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMGENE\nvariable 2") +
+  scale_fill_viridis(option = "plasma")
+
+# Close device
+dev.off()
+
+```
+
+#### MEMGENE variable 3 (Moran's Eigenvector 5)
+```{r}
+# with legend
+
+mem3 <- milkweed_analysis$memgene[, 3] %>%
+  as.data.frame() %>%
+  dplyr::rename("var" = 1) %>%
+  cbind(coords) %>%
+  dplyr::mutate("negative" = ifelse(var < 0, "negative", "positive")) %>%
+  dplyr::mutate("abs_val" = abs(var))
+
+
+## Find the proportional variation explained by each MEMGENE variable
+prop_var3 <- prop_var_expl[3] %>% round(3) %>% toString() 
+
+# black/white discrete
+png(paste0("./Figures_Tables/memgene/memgene_terrain_bw_", 
+           "var3_",
+           today(),
+           ".png"),
+    width = 15,
+    height = 15,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem3,
+             mapping = aes(x = x,
+                           y = y, 
+                           fill = negative,
+                       #    size = abs(var)),
+                           size = abs_val),
+             shape = 21) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMgene\nvariable 3",
+       size = "MEMgene\nvariable 3") +
+  scale_fill_manual(values = c("#333333", "white")) +
+  scale_size_continuous(limits = c(0, 0.15))
+
+
+# Close device
+dev.off()
+
+
+
+
+# black/white gradient, instead of discrete
+png(paste0("./Figures_Tables/memgene/memgene_terrain_greyscale_",
+                     "var3_",
+           today(), 
+           ".png"),
+    width = 15,
+    height = 15,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem3,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = var,
+                           size = abs_val),
+             shape = 21) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMgene\nvariable 3",
+       size = "MEMgene\nvariable 3") +
+  scale_fill_gradient(high = "white", low = "black",
+                      limits = c(-0.15, 0.1),
+                      breaks = c(-0.15, 0, 0.1)) +
+  scale_size_continuous(limits = c(0, 0.14)) +
+  guides(size = FALSE)
+
+# Close device
+dev.off()
+
+
+
+# colors: plasma, unidirectional size scale
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_",
+                      "var3_",
+           today(),
+           ".png"),
+    width = 15,
+    height = 10,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem3,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = var),
+             shape = 21,
+             size = 3) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMGENE\nvariable 3") +
   scale_fill_viridis(option = "plasma")
 
 # Close device
@@ -312,13 +650,61 @@ ggsave(last_plot(),
 print(paste0("Adjusted R2: ", round(milkweed_analysis$RsqAdj, 3)))
 
 ## Find the proportional variation explained by each MEMGENE variable
-prop_var_expl <- milkweed_analysis$sdev/sum(milkweed_analysis$sdev)
+prop_var_expl # computed above for figures
 
 ## Neatly print proportions for the first three MEMGENE variables
 print(paste0("Proportion of variation explained by first 3 MEMgene variables: ", toString(format(signif(prop_var_expl, 3)[1:3], scientific=FALSE))))
 ```
 
-### Export
+### Export stats
+#### Create table
+```{r}
+# Extracting relevant data from the milkweed_analysis object
+whichSelectedPos <- milkweed_analysis$whichSelectedPos
+memgene_values <- milkweed_analysis$mem$valuesMEM
+sdev_values <- milkweed_analysis$sdev
+
+# Calculating R-squared values per MEMGENE variable
+r_squared_list <- milkweed_analysis$sdev/sum(milkweed_analysis$sdev)
+
+r2_df <- as.data.frame(r_squared_list) %>%
+  rownames_to_column("MEMGENE_var") %>%
+  slice(1:length(whichSelectedPos)) %>%
+  dplyr::rename(R_squared = r_squared_list)
+
+
+# Creating the dataframe
+mg_table <- data.frame(
+  MEMGENE_variable = 1:length(whichSelectedPos),
+  Moran_Eigenvector = whichSelectedPos,
+  R_squared = r2_df$R_squared) %>%
+  dplyr::mutate(R_squared = round(R_squared, 3)) %>%
+  dplyr::mutate(R_squared = ifelse(
+    R_squared < 0.001, 
+    "<0.001",
+    R_squared)) %>%
+    rownames_to_column(var = "Row") %>%
+  dplyr::select(-Row) %>%
+  dplyr::rename("MEMGENE Variable" = 1,
+                "Moran's Eigenvector" = 2,
+                "R2" = 3)
+
+mg_table %>%
+  flextable() %>%
+  flextable::align(., align = "center", part = "all") %>%
+  flextable::compose(i = 1,
+                     j = 3,
+                     part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(.,
+                          path = paste0("./Figures_Tables/memgene/memgene_stats_",
+                                        today(), 
+                                        ".docx"))
+
+```
+
+#### Export table
 ```{r}
 # Create a new Word document
 doc <- read_docx() %>%
