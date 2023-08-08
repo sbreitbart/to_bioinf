@@ -149,7 +149,7 @@ mem1 <- milkweed_analysis$memgene[, 1] %>%
   dplyr::mutate("negative" = ifelse(var < 0, "negative", "positive")) %>%
   dplyr::mutate("abs_val" = abs(var))
 
-# colors: plasma, unidirectional size scale
+# black/white discrete
 basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
               zoom = 11,
                           maptype = 'terrain',
@@ -189,21 +189,6 @@ png(paste0("./Figures_Tables/memgene/memgene_terrain_greyscale_", today(), ".png
     units = "cm",
     res = 1000)
 
-# basemap_terrain +
-#   geom_point(data = mem1,
-#              mapping = aes(x = x,
-#                            y = y, 
-#                            fill = var,
-#                            size = var),
-#              shape = 21) +
-#   labs(x = 'Longitude', y = 'Latitude',
-#        fill = "MEMgene\nvariable 1",
-#        size = "MEMgene\nvariable 1") +
-#   scale_fill_viridis(option = "viridis") +
-#   scale_size_continuous(breaks = c(min(mem1$var), max(mem1$var)*50)) +
-#   guides(size = FALSE)
-
-
 basemap_terrain +
   geom_point(data = mem1,
              mapping = aes(x = x,
@@ -222,6 +207,30 @@ basemap_terrain +
 
 # Close device
 dev.off()
+
+
+
+# colors: plasma, unidirectional size scale
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_", today(), ".png"),
+    width = 15,
+    height = 10,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem1,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = var),
+             shape = 21,
+             size = 3) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMGENE\nvariable 1") +
+  scale_fill_viridis(option = "plasma")
+
+# Close device
+dev.off()
+
 ```
 
 ### map ALL combined significant memgene variables
@@ -239,7 +248,7 @@ total_var <- apply(milkweed_analysis$memSelected, 1, sum) %>%
 spatial_data <- data.frame(var = total_var$var, coords)
 
 # Convert the combined data frame to an 'sf' object
-sf_object <- st_as_sf(spatial_data, coords = c("y", "x"))
+sf_object <- sf::st_as_sf(spatial_data, coords = c("y", "x"))
 
 base::plot(sf_object, type = "p", cex = 2) 
 
