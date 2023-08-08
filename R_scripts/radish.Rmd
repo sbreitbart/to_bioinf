@@ -12,54 +12,22 @@ library(radish)
 library(raster)
 library(igraph)
 
-# install package with tutorial data
-if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
-
-# tutorial data
-data(ralu.site, package="GeNetIt")
+# # install package with tutorial data
+# if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
+# 
+# # tutorial data
+# data(ralu.site, package="GeNetIt")
 ```
 
 ## Load data
 ### Raster data (LULC)
-#### Ontario Land Cover compilation
-```{r}
-ontario_raster <- raster::raster(here::here("./raw_data/OntarioLandCoverComp-v2/OntarioLandCoverComp-v2/OLCC_V2_TIFF/OLCC_V2_TIFF.tif"))
-
-
-# inspect
-print(ontario_raster)
-plot(ontario_raster)
-
-# crop raster
-gta <- raster::crop(ontario_raster,
-                    extent(1285000, # xmin
-                           1450000, # xmax
-                           11840000, # ymin
-                           11970000)) # ymax
-
-# remove large ontario raster
-rm(ontario_raster)
-
-
-# Define the target CRS (UTM Zone 17N)
-target_crs <- CRS("+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
-
-# Reproject the raster to UTM (meters)
-gta_utm <- projectRaster(gta, crs = target_crs)
-
-# convert into raster stack
-gta_stack <- raster::stack(gta_utm)
-
-```
-
-#### SOLRIS
 ```{r}
 solris_raster <- raster::raster(here::here("./raw_data/SOLRIS_Version_3_0/SOLRIS_Version_3_0_LAMBERT.tif"))
 
 
 # inspect
-print(solris_raster)
-plot(solris_raster)
+# print(solris_raster)
+# plot(solris_raster)
 
 # crop raster
 gta_solris <- raster::crop(solris_raster,
@@ -68,18 +36,54 @@ gta_solris <- raster::crop(solris_raster,
                            11840000, # ymin
                            11970000)) # ymax
 
-# remove large ontario raster
+
+# check classes not warped
+unique(gta_solris)
+
 rm(solris_raster)
 
 
-# Define the target CRS (UTM Zone 17N)
-target_crs <- CRS("+proj=utm +zone=17 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
-
-# Reproject the raster to UTM (meters)
-solris_utm <- projectRaster(gta_solris, crs = target_crs)
-
-# convert into raster stack
-solris_gta_stack <- raster::stack(solris_utm)
+# Add LULC classes to raster- PAUSING THIS FOR NOW. MAY NOT BE NECESSARY
+# gta_classes <- unique(gta_solris)
+# 
+# print(gta_classes)
+# 
+# # took these labels from 'Southern Ontario Land Resource Information System Version 3.0 Data Specifications.pdf'
+# factor_labels <- c("Open Beach",
+#                    "Treed Sand Dune",
+#                    "Open Cliff and Talus",
+#                    "Treed Cliff and Talus",
+#                    "Shrub Alvar",
+#                    "Open Tallgrass Prairie",
+#                    "Tallgrass Savannah",
+#                    "Tallgrass Woodland",
+#                    "Forest",
+#                    "Coniferous Forest",
+#                    "Mixed Forest",
+#                    "Deciduous Forest",
+#                    "Treed Swamp",
+#                    "Thicket Swamp",
+#                    "Fen",
+#                    "Bog",
+#                    "Marsh",
+#                    "Open Water",
+#                    "Plantation",
+#                    "Hedge Rows",
+#                    "Tilled",
+#                    "Transportation",
+#                    "Built Up Area- Pervious",
+#                    "Built Up Area- Impervious",
+#                    "Extraction- Aggregate",
+#                    "Extraction- Peat/Topsoil",
+#                    "Undifferentiated")
+# 
+# reclass_matrix <- cbind(gta_classes,
+#                         factor_labels) 
+# 
+# 
+# # Use 'reclassify' to convert numeric values into factor classes
+# gta_solris_factor <- raster::reclassify(gta_solris,
+#                                         reclass_matrix)
 
 ```
 
@@ -105,6 +109,7 @@ genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
 
 
 ### Geographic sampling coordinates
+#### import coords
 ```{r}
 # lat/longs of sampling sites
 urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
@@ -130,36 +135,42 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
   dplyr::arrange(sample) %>%
   dplyr::select("x", "y")
 
+```
 
-# import UTM coordinates
-coords2 <- coords
-coordinates(coords2) <- c("x", "y")
-proj4string(coords2) <- CRS("+proj=longlat +datum=WGS84 +units=m")
-res <- spTransform(coords2,
-                   CRS("+proj=utm +zone=17 ellps=WGS84 +units=m"))
-coords_utm <- res@coords %>%
-  as.data.frame()
+#### convert to correct proj/cs
+```{r}
 
-# convert to sp SpatialPoints object
-coords_utm_sp <- sp::SpatialPoints(coords = coords_utm,
-                               proj4string = CRS("+proj=utm +zone=17 ellps=WGS84 +units=m"))
+# Convert the dataframe to a SpatialPoints object
+sp_points <- SpatialPoints(coords, 
+                           proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
 
-# verify points align with raster by overlaying the SpatialPoints on the raster
-plot(solris_utm)
+# Project the SpatialPoints object to match the raster's CRS
+sp_points_proj <- spTransform(sp_points, crs(gta_solris))
 
-points(coords_utm_sp, col = "red", pch = 16)
+# convert to spatialpoints obj
+sp_points_proj <- SpatialPoints(sp_points_proj, 
+                           proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
+
+# Plot the raster
+plot(gta_solris)
+
+# Overlay the projected SpatialPoints on the raster
+points(sp_points_proj, col = "red", pch = 20)
 ```
 
 # Model fitting
 ## Scale covariates
 ```{r}
-scale_covs <- stack(scale(solris_gta_stack)) ## Must be a raster stack
+
+# convert into raster stack and scale
+scale_covs <- stack(scale(gta_solris)) ## Must be a raster stack
+
+# started 10:30am 8/3/2023
+# error at 12pm: Error: cannot allocate vector of size 10.0 Gb
 
 surface <- conductance_surface(covariates = scale_covs,
-                               coords = coords_utm_sp,
+                               coords = sp_points_proj,
                                directions = 8)
-
-
 ```
 
 ## Fit radish models
