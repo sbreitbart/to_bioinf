@@ -1,0 +1,42 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+```
+
+## Import data
+### Urbanization data
+```{r}
+dat <- read.csv(here::here("./genomic_resources/pop_map2.csv"))
+
+dat_sum <- dat %>%
+  dplyr::group_by(population) %>%
+  dplyr::summarise(n = n())
+```
+
+# Plot
+```{r}
+
+ggplot(dat_sum,
+       aes(x = n)) +
+  geom_histogram(binwidth = 1,
+                 fill = "grey",
+                 color = "black") +
+  ylab("Count") +
+  xlab("Individuals/Population") +
+  theme_pubr() +
+  labs_pubr() +
+  stat_bin(binwidth=1,
+           geom='text',
+           color='black',
+           aes(label=..count..),
+           position=position_stack(vjust = 0.5))
+
+ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site.png", 
+       plot = last_plot(),
+       height = 12,
+       width = 20,
+       units = "cm")
+```
+
