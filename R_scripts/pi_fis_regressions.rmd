@@ -369,6 +369,13 @@ ggplot(diversity_variant_sites,
   theme_pubr() +
   labs_pubr() 
 
+ggplot(diversity_variant_sites,
+       aes(x = num_indv)) +
+  geom_histogram() +
+  xlab("Individuals/Population") +
+#  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
 ```
 
 ##### Urb_score
