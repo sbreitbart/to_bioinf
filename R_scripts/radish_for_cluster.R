@@ -1,23 +1,62 @@
 # Set up notebook
 ## Load libraries & functions
-```{r}
-source("libraries.R")
-source("functions.R")
+
 
 # if(!requireNamespace("corMLPE", quietly = TRUE)) remotes::install_github("nspope/corMLPE")
 # 
 # if(!requireNamespace("radish", quietly = TRUE)) remotes::install_github("nspope/radish")
 
+library(tidyverse)
+library(corMLPE)
+library(magrittr)
 library(radish)
 library(raster)
 library(igraph)
+library(poppr)
+library(vcfR)
+library(dplyr)
+library(sp)
+library(sf)
 
-```
+
+add_MW_IDs <- function(div_df) {
+  # Filter out populations that start with "MWI" or "UTSC"
+  MW_pops <- div_df %>%
+    filter(!str_detect(pop_id, "MWI")) %>%
+    filter(!str_detect(pop_id, "UTSC"))
+  
+  # Get populations that start with "MWI" or "UTSC"
+  MWI_UTSC_pops <- anti_join(div_df, MW_pops)
+  
+  # Split up populations MW001->MW009 vs MW010->MW079
+  MW_pops_singledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) == 1, ]
+  MW_pops_doubledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) != 1, ]
+  
+  # Add "MW00" to single-digit populations
+  MW_pops_singledigits %<>%
+    dplyr::mutate(patch_id = paste0("MW00", pop_id))
+  
+  # Add "MW0" to double-digit populations
+  MW_pops_doubledigits %<>%
+    dplyr::mutate(patch_id = paste0("MW0", pop_id))
+  
+  # Bring all entries together again
+  all_pops <- full_join(MW_pops_singledigits,
+                        MW_pops_doubledigits) %>%
+    dplyr::relocate(patch_id, .before = 1) %>%
+    full_join(.,
+              MWI_UTSC_pops) %>%
+    # If patch_id column is NA (for MWI and UTSC values), replace it with value from pop_id
+    dplyr::mutate(patch_id = coalesce(patch_id, pop_id))
+  
+  return(all_pops)
+}
+
 
 ## Load data
 ### Raster data (LULC)
-```{r}
-solris_raster <- raster::raster(here::here("./raw_data/SOLRIS_Version_3_0/SOLRIS_Version_3_0_LAMBERT.tif"))
+
+solris_raster <- raster::raster("raw_data/SOLRIS_Version_3_0/SOLRIS_Version_3_0_LAMBERT.tif")
 
 
 # inspect
@@ -97,16 +136,16 @@ gta_solris@data@attributes[[1]] <- attr_df
 # Print the updated raster
 print(gta_solris)
 
-```
+
 
 
 ### Genetic data
-```{r}
+
 # format required: genetic distances
 
 # vcf
 vcf <- read.vcfR(
-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  "populations.snps.vcf",
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -117,17 +156,17 @@ inputdata1 <- my_genind$tab
 
 genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
 
-```
+
 
 
 ### Geographic sampling coordinates
 #### import coords
-```{r}
+
 # lat/longs of sampling sites
-urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
+urb <- read.csv("urb_metrics.csv")
 
 # sampling site IDs and genetic sample names
-coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
+coords <- read.csv("pop_map3.csv") %>%
 
 # if population doesn't start with "MWI", it should start with "MW"
   # rename col 1
@@ -138,7 +177,7 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
   add_MW_IDs() %>%
 
 # left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
-  left_join(., urb, by = "patch_id") %>%
+  dplyr::left_join(., urb, by = "patch_id") %>%
   dplyr::mutate(patch_id = as.factor(patch_id),
                 pop_id = as.factor(pop_id)) %>%
   dplyr::select(c(1,2,6,7)) %>%
@@ -147,10 +186,10 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
   dplyr::arrange(sample) %>%
   dplyr::select("x", "y")
 
-```
+
 
 #### convert to correct proj/cs
-```{r}
+
 
 # Convert the dataframe to a SpatialPoints object
 sp_points <- SpatialPoints(coords, 
@@ -168,11 +207,11 @@ plot(gta_solris)
 
 # Overlay the projected SpatialPoints on the raster
 points(sp_points_proj, col = "red", pch = 20)
-```
+
 
 # Model fitting
 ## Scale covariates
-```{r}
+
 
 # convert into raster stack and scale
 scale_covs <- stack(scale(gta_solris)) ## Must be a raster stack
@@ -189,10 +228,10 @@ rm(inputdata1)
 surface <- conductance_surface(covariates = scale_covs,
                                coords = sp_points_proj,
                                directions = 8)
-```
+
 
 ## Fit radish models
-```{r}
+
 fit_mlpe <- radish(genetic_distance_matrix ~ solris_utm,
                    data = surface, 
                    conductance_model = radish::loglinear_conductance, 
@@ -212,10 +251,10 @@ fitted_conductance <- conductance(surface,
 plot(log(fitted_conductance[["est"]]), 
      main = "Fitted conductance surface")
 
-```
+
 
 # Export conductance surface
-```{r}
+
 
 pdf("conductance_surface.pdf",         # File name
     width = 8, height = 7, # Width and height in inches
@@ -229,4 +268,4 @@ plot(log(fitted_conductance[["est"]]),
 
 # Closing the graphical device
 dev.off() 
-```
+
