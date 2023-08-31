@@ -12,11 +12,6 @@ library(radish)
 library(raster)
 library(igraph)
 
-# # install package with tutorial data
-# if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
-# 
-# # tutorial data
-# data(ralu.site, package="GeNetIt")
 ```
 
 ## Load data
@@ -43,47 +38,64 @@ unique(gta_solris)
 rm(solris_raster)
 
 
-# Add LULC classes to raster- PAUSING THIS FOR NOW. MAY NOT BE NECESSARY
-# gta_classes <- unique(gta_solris)
-# 
-# print(gta_classes)
-# 
-# # took these labels from 'Southern Ontario Land Resource Information System Version 3.0 Data Specifications.pdf'
-# factor_labels <- c("Open Beach",
-#                    "Treed Sand Dune",
-#                    "Open Cliff and Talus",
-#                    "Treed Cliff and Talus",
-#                    "Shrub Alvar",
-#                    "Open Tallgrass Prairie",
-#                    "Tallgrass Savannah",
-#                    "Tallgrass Woodland",
-#                    "Forest",
-#                    "Coniferous Forest",
-#                    "Mixed Forest",
-#                    "Deciduous Forest",
-#                    "Treed Swamp",
-#                    "Thicket Swamp",
-#                    "Fen",
-#                    "Bog",
-#                    "Marsh",
-#                    "Open Water",
-#                    "Plantation",
-#                    "Hedge Rows",
-#                    "Tilled",
-#                    "Transportation",
-#                    "Built Up Area- Pervious",
-#                    "Built Up Area- Impervious",
-#                    "Extraction- Aggregate",
-#                    "Extraction- Peat/Topsoil",
-#                    "Undifferentiated")
-# 
-# reclass_matrix <- cbind(gta_classes,
-#                         factor_labels) 
-# 
-# 
-# # Use 'reclassify' to convert numeric values into factor classes
-# gta_solris_factor <- raster::reclassify(gta_solris,
-#                                         reclass_matrix)
+# Add LULC classes to raster
+gta_classes <- unique(gta_solris)
+
+print(gta_classes)
+
+# took these labels from 'Southern Ontario Land Resource Information System Version 3.0 Data Specifications.pdf'
+lulc_labels <- c("Open Beach",
+                   "Treed Sand Dune",
+                   "Open Cliff and Talus",
+                   "Treed Cliff and Talus",
+                   "Shrub Alvar",
+                   "Open Tallgrass Prairie",
+                   "Tallgrass Savannah",
+                   "Tallgrass Woodland",
+                   "Forest",
+                   "Coniferous Forest",
+                   "Mixed Forest",
+                   "Deciduous Forest",
+                   "Treed Swamp",
+                   "Thicket Swamp",
+                   "Fen",
+                   "Bog",
+                   "Marsh",
+                   "Open Water",
+                   "Plantation",
+                   "Hedge Rows",
+                   "Tilled",
+                   "Transportation",
+                   "Built Up Area- Pervious",
+                   "Built Up Area- Impervious",
+                   "Extraction- Aggregate",
+                   "Extraction- Peat/Topsoil",
+                   "Undifferentiated")
+
+reclass_matrix <- cbind(gta_classes,
+                        factor_labels)
+
+
+# convert numeric values into factor classes
+gta_solris <- as.factor(gta_solris)
+
+# get data class IDs for LULCs
+gta_solris@data@attributes # same as: levels(gta_solris)
+
+
+# Convert the attribute table to a data frame
+attr_df <- as.data.frame(gta_solris@data@attributes)
+
+
+# Join the attribute data frame with the land_cover_id_list
+attr_df <- cbind(.,
+                 as.data.frame(lulc_labels))
+
+
+gta_solris@data@attributes[[1]] <- attr_df
+
+# Print the updated raster
+print(gta_solris)
 
 ```
 
@@ -168,6 +180,12 @@ scale_covs <- stack(scale(gta_solris)) ## Must be a raster stack
 # started 10:30am 8/3/2023
 # error at 12pm: Error: cannot allocate vector of size 10.0 Gb
 
+# first, remove all unnecessary objects to boost memory
+gc()
+rm(my_genind)
+rm(vcf)
+rm(inputdata1)
+
 surface <- conductance_surface(covariates = scale_covs,
                                coords = sp_points_proj,
                                directions = 8)
@@ -181,8 +199,34 @@ fit_mlpe <- radish(genetic_distance_matrix ~ solris_utm,
                    measurement_model = radish::mlpe)
 
 # examine model
-summary(fit_mlpe)
+print(summary(fit_mlpe))
 
-## we are modeling conductances --> positive coefficient estimates indicate increasing conductance (e.g. rates of movement/gene flow) at higher values of the covariate, while negative coefficients indicate lower conductance at higher values of the covariate. 
+## we are modeling conductances --> positive coefficient estimates indicate increasing conductance (e.g. rates of movement/gene flow) at higher values of the covariate, while negative coefficients indicate lower conductance at higher values of the covariate.
+
+
+## Plot fitted conductance surface
+fitted_conductance <- conductance(surface,
+                                  fit_mlpe,
+                                  quantile = 0.95)
+
+plot(log(fitted_conductance[["est"]]), 
+     main = "Fitted conductance surface")
+
 ```
 
+# Export conductance surface
+```{r}
+
+pdf("conductance_surface.pdf",         # File name
+    width = 8, height = 7, # Width and height in inches
+    bg = "white",          # Background color
+    colormodel = "cmyk" ,   # Color model (cmyk is required for most publications)
+    paper = "A4")          # Paper size
+
+# Creating a plot
+plot(log(fitted_conductance[["est"]]), 
+     main = "Fitted conductance surface")
+
+# Closing the graphical device
+dev.off() 
+```
