@@ -192,15 +192,13 @@ coords <- read.csv("pop_map3.csv") %>%
 
 
 # Convert the dataframe to a SpatialPoints object
-sp_points <- SpatialPoints(coords, 
-                           proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
+sp_points <- SpatialPoints(coords, proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
 
 # Project the SpatialPoints object to match the raster's CRS
 sp_points_proj <- spTransform(sp_points, crs(gta_solris))
 
 # convert to spatialpoints obj
-sp_points_proj <- SpatialPoints(sp_points_proj, 
-                           proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
+sp_points_proj <- SpatialPoints(sp_points_proj, proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
 
 # Plot the raster
 plot(gta_solris)

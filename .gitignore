@@ -15,3 +15,5 @@ global_fst_vcf-all
 global_pi_vcf-all
 populations_no-IBD_vcf-all_mainfiles
 R_dist_fst_vcf-all
+surface1.rds
+surface2.RData

@@ -1,60 +1,23 @@
 # Set up notebook
 ## Load libraries & functions
-```{r warning = FALSE}
-# source("libraries.R")
-# source("functions.R")
-
-# if(!requireNamespace("corMLPE", quietly = TRUE)) remotes::install_github("nspope/corMLPE")
-# 
-# if(!requireNamespace("radish", quietly = TRUE)) remotes::install_github("nspope/radish")
+```{r}
+source("libraries.R")
+source("functions.R")
 
 library(radish)
 library(raster)
 library(igraph)
-library(tidyverse)
-library(magrittr)
-library(vcfR)
-library(sp)
-library(sf)
-library(here)
 
-add_MW_IDs <- function(div_df) {
-  # Filter out populations that start with "MWI" or "UTSC"
-  MW_pops <- div_df %>%
-    filter(!str_detect(pop_id, "MWI")) %>%
-    filter(!str_detect(pop_id, "UTSC"))
-  
-  # Get populations that start with "MWI" or "UTSC"
-  MWI_UTSC_pops <- anti_join(div_df, MW_pops)
-  
-  # Split up populations MW001->MW009 vs MW010->MW079
-  MW_pops_singledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) == 1, ]
-  MW_pops_doubledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) != 1, ]
-  
-  # Add "MW00" to single-digit populations
-  MW_pops_singledigits %<>%
-    dplyr::mutate(patch_id = paste0("MW00", pop_id))
-  
-  # Add "MW0" to double-digit populations
-  MW_pops_doubledigits %<>%
-    dplyr::mutate(patch_id = paste0("MW0", pop_id))
-  
-  # Bring all entries together again
-  all_pops <- full_join(MW_pops_singledigits,
-                        MW_pops_doubledigits) %>%
-    dplyr::relocate(patch_id, .before = 1) %>%
-    full_join(.,
-              MWI_UTSC_pops) %>%
-    # If patch_id column is NA (for MWI and UTSC values), replace it with value from pop_id
-    dplyr::mutate(patch_id = coalesce(patch_id, pop_id))
-  
-  return(all_pops)
-}
 ```
 
 ## Load data
+### surface created on the cluster
+```{r}
+load("~/R_Projects/chapter_three/surface2.RData")
+```
+
 ### Raster data (LULC)
-```{r warning = FALSE}
+```{r}
 solris_raster <- raster::raster(here::here("./raw_data/SOLRIS_Version_3_0/SOLRIS_Version_3_0_LAMBERT.tif"))
 
 
@@ -167,7 +130,7 @@ res(gta_solris)
 
 
 ### Genetic data
-```{r warning = FALSE}
+```{r}
 # format required: genetic distances
 
 # vcf
@@ -188,7 +151,7 @@ genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
 
 ### Geographic sampling coordinates
 #### import coords
-```{r warning = FALSE}
+```{r}
 # lat/longs of sampling sites
 urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
 
@@ -216,7 +179,7 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
 ```
 
 #### convert to correct proj/cs
-```{r warning = FALSE}
+```{r}
 
 # Convert the dataframe to a SpatialPoints object
 sp_points <- SpatialPoints(coords, 
@@ -236,38 +199,9 @@ plot(gta_solris)
 points(sp_points_proj, col = "red", pch = 20)
 ```
 
-# Model fitting
-## Scale covariates
-```{r}
-# convert into raster stack and scale
-# scale_covs <- stack(scale(gta_solris)) ## Must be a raster stack
-
-# suggestion from Nate Pope
-scale_covs <- stack(list("gta_solris"=scale(gta_solris)))
-
-
-print(scale_covs)
-```
-
-## Create surface
-```{r eval=FALSE}
-
-
-# started 10:30am 8/3/2023
-# error at 12pm: Error: cannot allocate vector of size 10.0 Gb
-
-# first, remove all unnecessary objects to boost memory
-gc()
-rm(my_genind)
-rm(vcf)
-rm(inputdata1)
-surface <- conductance_surface(covariates = scale_covs,
-                               coords = sp_points_proj,
-                               directions = 8)
-```
 
 ## Fit radish models
-```{r eval=FALSE}
+```{r}
 fit_mlpe <- radish(genetic_distance_matrix ~ gta_solris,
                    data = surface, 
                    conductance_model = radish::loglinear_conductance, 
@@ -290,7 +224,7 @@ plot(log(fitted_conductance[["est"]]),
 ```
 
 # Export conductance surface
-```{r eval=FALSE}
+```{r}
 
 pdf("conductance_surface.pdf",         # File name
     width = 8, height = 7, # Width and height in inches
