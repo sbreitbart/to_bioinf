@@ -27,6 +27,7 @@ full_popmap <- dplyr::left_join(pop_map3,
 
 # Export
 ## for global fst and pi analyses
+### urb = dist to CC
 ```{r}
 full_popmap %>%
   dplyr::select(1:3, lat, long, 12:15) %>%
@@ -44,6 +45,27 @@ full_popmap %>%
             col.names = FALSE)
 
 ```
+
+
+### urb = urb score
+```{r}
+full_popmap %>%
+  dplyr::select(1:3, lat, long, 12:15) %>%
+  arrange(ID) %>%
+  dplyr::select(sample, u_r_usc) %>%
+
+# urban vs. rural, determined by dist to CC
+
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_UR_usc.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+```
+
 
 
 ## for URBAN fst analyses
