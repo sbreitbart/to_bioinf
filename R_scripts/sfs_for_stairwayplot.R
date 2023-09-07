@@ -5,15 +5,65 @@ source("libraries.R")
 my_vcf <- vcfR::read.vcfR(
   here::here("./global_pi_vcf-all/populations.all.vcf"))
 
-# create SFS
-sfs <- vcfR::maf(my_vcf, 2) %>%
-    as.data.frame() %>%
-    dplyr::group_by(Frequency) %>%
-    dplyr::summarise(n_loci = n(),
-                     allele_count = first(Count)) 
+# with vcf2sfs-----
+# can't install this package so copied the R code into my own file, load it
+source(here::here("./R_scripts/exploration/vcf2sfs_code.R"))
+
+
+# Read the VCF file and the popmap file and create a gt object
+mygt <- vcf2gt(here::here("./global_pi_vcf-all/populations.all.vcf"),
+               here::here("./genomic_resources/pop_map3_all1pop_for_sfs.txt"))
+  
+  
+# look at all unique populations
+unique(mygt$popmap)
+
+# sfs
+sfs <- gt2sfs.raw(mygt,
+           "1") %>%
+        as.data.frame() %>%
+  dplyr::filter(X1 != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs.txt"))
+
+
+freqs_for_stairwayplot <- sfs %>%
+                   dplyr::select(Freq) %>%
+  pull()
+
+
+freqs_string <- paste(freqs_for_stairwayplot,
+                      collapse = " ")
+
+# Write the string to a txt file
+writeLines(freqs_string,
+           here::here("./StairwayPlot/sfs_freqs.txt"))
+
+
+
+# with my own SFS code: NOT USING------ NOT
 
 sfs2 <- vcfR::maf(my_vcf, 2) %>%
-  as.data.frame() 
+  as.data.frame() %>%
+  dplyr::filter(Frequency > 0)
+
+sfs2.1 <- sfs2 %>%
+  dplyr::group_by(Count) %>%
+  dplyr::summarise(allele_count = n()) #%>%
+  
+  # get ready to fold: add rows 1 and 211, row 2 and 210, etc.
+  mutate(Group = ifelse(row_number() <= n() / 2,
+                        row_number(),
+                        n() - row_number() + 1))
+
+# Group by the grouping variable and summarize to get
+#  the sum of columns you want
+sfs2.1_folded <- sfs2.1 %>%
+  group_by(Group) %>%
+  summarise(Count = min(Count), 
+            allele_count = sum(allele_count)) %>%
+  ungroup() %>%
+  select(-Group)
+
 
 # notes for understanding vcfR::maf()'s output-----
 # *Each row is a locus.
