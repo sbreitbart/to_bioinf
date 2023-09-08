@@ -38,7 +38,7 @@ freqs_string <- paste(freqs_for_stairwayplot,
 writeLines(freqs_string,
            here::here("./StairwayPlot/sfs_freqs.txt"))
 
-
+length(freqs_for_stairwayplot)
 
 # with my own SFS code: NOT USING------ NOT
 

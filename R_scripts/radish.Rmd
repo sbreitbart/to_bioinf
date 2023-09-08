@@ -250,24 +250,26 @@ print(scale_covs)
 ```
 
 ## Create surface
-```{r eval=FALSE}
+```{r}
 
-
-# started 10:30am 8/3/2023
-# error at 12pm: Error: cannot allocate vector of size 10.0 Gb
-
-# first, remove all unnecessary objects to boost memory
+# remove all unnecessary objects to boost memory
 gc()
 rm(my_genind)
 rm(vcf)
 rm(inputdata1)
-surface <- conductance_surface(covariates = scale_covs,
-                               coords = sp_points_proj,
-                               directions = 8)
+
+
+# surface <- conductance_surface(covariates = scale_covs,
+#                                coords = sp_points_proj,
+#                                directions = 8)
+
+
+# created this surface in the cluster because it required a lot of memory. Now, I just import it and then use it:
+load(here::here("./clean_data/radish/surface2.RData"))
 ```
 
 ## Fit radish models
-```{r eval=FALSE}
+```{r}
 fit_mlpe <- radish(genetic_distance_matrix ~ gta_solris,
                    data = surface, 
                    conductance_model = radish::loglinear_conductance, 

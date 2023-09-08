@@ -8,33 +8,33 @@ library(pegas)
 # Calculate Watterson's theta
 
 R = 0.5
-mmaf = 0.007662
+mmaf = 0.007968
 
 ## Global (all sites in one large population)
 ```{r}
-pegas::theta.s(
-  x = (2839/352769), # segregating sites
+theta_w <- pegas::theta.s(
+  x = (2804/352769), # segregating sites
   
   # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
-  n = 256,  # sequences
+  n = 251,  # sequences
   
   # (in the global_pi_vcf-all/populations.log file, this is the number of samples)
   
   variance = TRUE
 )
 
-
+theta_w
 # output: 
-# theta = 0.001314899
-# variance = 0.0002149131
+# theta = 0.0013028958 
+# variance = 0.0002136407
 ```
 
 ## Urban vs. Rural (based on dist to cc < 35 km)
 ### Urban
 ```{r}
-pegas::theta.s(
-  x = (2839/352769), # segregating sites
+theta_w_urb <- pegas::theta.s(
+  x = (2804/352769), # segregating sites
   
   # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
@@ -45,16 +45,16 @@ pegas::theta.s(
   variance = TRUE
 )
 
-
+theta_w_urb
 # output: 
-# theta = 0.0014410850 
-# variance = 0.0002581593
+# theta = 0.0014233189  
+# variance = 0.0002549753
 ```
 
 ### Rural
 ```{r}
-pegas::theta.s(
-  x = (2839/352769), # segregating sites
+theta_w_rur <- pegas::theta.s(
+  x = (2804/352769), # segregating sites
   
   # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
@@ -65,8 +65,49 @@ pegas::theta.s(
   variance = TRUE
 )
 
-
+theta_w_rur
 # output: 
-# theta = 0.0015370257  
-# variance = 0.0002936944
+# theta = 0.001518077   
+# variance = 0.000290072
 ```
+
+# Export
+```{r}
+
+neaten_df <- function(theta_w_output){
+  theta_w_output %<>%
+    as.data.frame() %>%
+  dplyr::rename("estimate" = 1) %>%
+  dplyr::mutate(value = c("Watterson's theta", 
+                          "Variance"),
+                ID = NA)
+}
+
+theta_w <- neaten_df(theta_w) %>%
+  dplyr::mutate(ID = "Global")
+
+theta_w_urb <- neaten_df(theta_w_urb) %>%
+  dplyr::mutate(ID = "Urban")
+
+theta_w_rur <- neaten_df(theta_w_rur) %>%
+  dplyr::mutate(ID = "Rural")
+
+thetas <- rbind(theta_w,
+                theta_w_urb,
+                theta_w_rur) %>%
+  dplyr::select(ID, value, estimate) %>%
+  dplyr::mutate(estimate = round(estimate, 5)) %>%
+  tidyr::pivot_wider(names_from = value,
+                     values_from = estimate)
+
+
+thetas %>%
+  flextable::flextable() %>%
+  flextable::align(align = "center", i = c(1:3), part = "body") %>%
+  flextable::align(align = "left", j = 1) %>%
+  flextable::align(align = "center", i = 1, part = "header") %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/gen_diversity/wattersons_theta.docx"))
+```
+
