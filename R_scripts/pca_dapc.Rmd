@@ -256,7 +256,7 @@ get_stamenmap(c(left = -80.5, bottom = 43.2, right = -78.5, top = 44.15),
   xlab("Longitude") +
   ylab("Latitude") +
   scale_fill_manual(values = c("blue", "red")) +
-  scale_color_manual(values = c("blue", "red")) +
+  scale_color_manual(values = c( "blue", "red")) +
   labs(fill = "Cluster",
        color = "Cluster")
 
@@ -283,6 +283,10 @@ ggplot(group_membership_k2,
                dotsize = 0.5,
              binwidth = 4) +
   ylab("Distance to City Center") +
+  scale_fill_manual(values = c("1" = "blue",
+                      "2" = "red")) +
+  scale_color_manual(values = c("1" = "blue",
+                      "2" = "red")) +
   ggpubr::theme_pubr()
 
 ggsave(here::here("./Figures_Tables/dapc/k2_dotplot.png"),
@@ -442,20 +446,3 @@ scatter(xval[7]$DAPC,
 # this looks like a mess. I'm concerned that so many populations couldn't be included in the cross-validation because there was only 1 individual for 77 populations. So I don't trust this very much.
 # And again, as stated earlier in the tutorial, "Apart from computational time, there is no reason for keeping a small number of components". So I'll keep doing what I was doing earlier and using all the PCs.
 ```
-
-
-# sPCA- holding off on this for now
-```{r}
-# install.packages("spdep")
-# install.packages("adespatial")
-
-
-# load coordinates
-coords <- read.csv(here::here("./clean_data/conStruct_coords.csv")) %>%
-  dplyr::select(-X) %>%
-  as.matrix()
-
-my_spca <- adegenet::spca(my_genind,
-               xy = coords)
-```
-
