@@ -1,9 +1,10 @@
 # load libraries
 source("libraries.R")
 
+vcf_address <- here::here("./pi_fst_TajD_estimates/pi/global_pi_vcf-all/populations.all.vcf")
+
 # Read the VCF
-my_vcf <- vcfR::read.vcfR(
-  here::here("./global_pi_vcf-all/populations.all.vcf"))
+# my_vcf <- vcfR::read.vcfR(vcf_address)
 
 # with vcf2sfs-----
 # can't install this package so copied the R code into my own file, load it
@@ -11,7 +12,7 @@ source(here::here("./R_scripts/exploration/vcf2sfs_code.R"))
 
 
 # Read the VCF file and the popmap file and create a gt object
-mygt <- vcf2gt(here::here("./global_pi_vcf-all/populations.all.vcf"),
+mygt <- vcf2gt(vcf_address,
                here::here("./genomic_resources/pop_map3_all1pop_for_sfs.txt"))
   
   
