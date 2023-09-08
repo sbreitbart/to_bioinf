@@ -36,11 +36,11 @@ theta_w
 theta_w_urb <- pegas::theta.s(
   x = (2804/352769), # segregating sites
   
-  # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+  # (in the UR_dist_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
   n = 150,  # sequences
   
-  # (counted number of urban samples in the pop_map3 file, in clean_data)
+  # (counted number of urban samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
   
   variance = TRUE
 )
@@ -56,11 +56,11 @@ theta_w_urb
 theta_w_rur <- pegas::theta.s(
   x = (2804/352769), # segregating sites
   
-  # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+  # (in the UR_dist_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
   n = 106,  # sequences
   
-  # (counted number of rural samples in the pop_map3 file, in clean_data)
+  # (counted number of rural samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
   
   variance = TRUE
 )
@@ -71,41 +71,98 @@ theta_w_rur
 # variance = 0.000290072
 ```
 
+## Urban vs. Rural (based on urbanization score)
+### Urban
+```{r}
+theta_w_urb2 <- pegas::theta.s(
+  x = (2804/352769), # segregating sites
+  
+  # (in the UR_usc_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+
+  n = 141,  # sequences
+  
+  # (counted number of urban samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
+  
+  variance = TRUE
+)
+
+theta_w_urb2
+# output: 
+# theta = 0.0014393213   
+# variance = 0.0002607434
+```
+
+### Rural
+```{r}
+theta_w_rur2 <- pegas::theta.s(
+  x = (2804/352769), # segregating sites
+  
+  # (in the UR_usc_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+
+  n = 115,  # sequences
+  
+  # (counted number of rural samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
+  
+  variance = TRUE
+)
+
+theta_w_rur2
+# output: 
+# theta = 0.0014947072    
+# variance = 0.0002812058
+```
+
 # Export
 ```{r}
 
-neaten_df <- function(theta_w_output){
+neaten_df <- function(theta_w_output, scale, urbanization){
   theta_w_output %<>%
     as.data.frame() %>%
   dplyr::rename("estimate" = 1) %>%
   dplyr::mutate(value = c("Watterson's theta", 
                           "Variance"),
-                ID = NA)
+                Group = scale,
+                Urbanization = urbanization)
 }
 
-theta_w <- neaten_df(theta_w) %>%
-  dplyr::mutate(ID = "Global")
+theta_w <- neaten_df(theta_w,
+                     "Global",
+                     "-")
 
-theta_w_urb <- neaten_df(theta_w_urb) %>%
-  dplyr::mutate(ID = "Urban")
+theta_w_urb <- neaten_df(theta_w_urb,
+                         "Urban",
+                         "Distance to City Center") 
 
-theta_w_rur <- neaten_df(theta_w_rur) %>%
-  dplyr::mutate(ID = "Rural")
+theta_w_rur <- neaten_df(theta_w_rur,
+                         "Rural",
+                         "Distance to City Center")
+
+theta_w_urb2 <- neaten_df(theta_w_urb2,
+                         "Urban",
+                         "Urbanization Score") 
+
+theta_w_rur2 <- neaten_df(theta_w_rur2,
+                         "Rural",
+                         "Urbanization Score")
 
 thetas <- rbind(theta_w,
                 theta_w_urb,
-                theta_w_rur) %>%
-  dplyr::select(ID, value, estimate) %>%
+                theta_w_rur,
+                theta_w_urb2,
+                theta_w_rur2) %>%
+  dplyr::select(Group, Urbanization, value, estimate) %>%
   dplyr::mutate(estimate = round(estimate, 5)) %>%
   tidyr::pivot_wider(names_from = value,
-                     values_from = estimate)
+                     values_from = estimate) %>%
+  slice(c(1,2,4,3,5))
 
 
 thetas %>%
   flextable::flextable() %>%
-  flextable::align(align = "center", i = c(1:3), part = "body") %>%
-  flextable::align(align = "left", j = 1) %>%
-  flextable::align(align = "center", i = 1, part = "header") %>%
+  flextable::align(align = "center", i = c(1:5), part = "body") %>%
+  flextable::align(align = "left", j = 1:2, part = "all") %>%
+  flextable::align(align = "center", i = 1, j = c(3,4), part = "header") %>%
+  hline(i = c(1,3)) %>%
   flextable::autofit() %>%
   flextable::save_as_docx(path = here::here(
     "./Figures_Tables/gen_diversity/wattersons_theta.docx"))
