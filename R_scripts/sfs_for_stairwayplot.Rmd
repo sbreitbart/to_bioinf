@@ -1,0 +1,158 @@
+# Set up notebook
+## load libraries
+```{r}
+source("libraries.R")
+```
+
+## Load vcf2sfs code
+```{r}
+# can't install this package so copied the R code into my own file, load it
+
+source(here::here("./R_scripts/exploration/vcf2sfs_code.R"))
+```
+
+## get path to vcf
+```{r}
+vcf_address <- here::here("./pi_fst_TajD_estimates/pi/global_pi_vcf-all/populations.all.vcf")
+
+```
+
+## Notes for understanding vcfR::maf()'s output
+
+*Each row is a locus.
+*nAllele = the number of different alleles sequenced at this
+ locus. At most, it's 2n = 261*2=522 because it's a diploid-
+ so there's at most 2 alleles per locus for each individual.
+ It can drop to numbers like 50 if only, for example,
+ 50/2n=50/2*261=50/522=~10% of the loci were sequenced.
+*Count = the number of times a specific allele was seen at
+ this locus.
+*Frequency = Count/nAlleles to give the total frequency of
+ that specific allele.
+
+There can be bars in the 1 bins on the x axis because of
+ missing values. Some loci were only sequenced in a few of
+ the individuals (depending on R), so if an allele was seen
+ only once but its locus was sequenced in only ~25% of
+ individuals, it could still have a frequency >0.05 and
+ wind up in the "1 individual" bin.
+
+This holds up because the mmaf = 0.05, R = 1 plot should
+ have no missing data and a min minor allele frequency of
+ 5%, so the first individual should show up at
+ 0.05*2n=0.05*2*261=26 individuals. It does.
+ 
+# Read the VCF file and the popmap file and create a gt object
+## SFS for all individuals in 1 population
+```{r}
+mygt <- vcf2gt(vcf_address,
+               here::here("./genomic_resources/pop_map3_all1pop_for_sfs.txt"))
+
+# look at all unique populations
+unique(mygt$popmap)
+```
+
+## SFS for URBAN or RURAL individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+mygt_urb <- vcf2gt(vcf_address,
+               here::here("./clean_data/pop_map3_UR_dist.txt"))
+
+# look at all unique populations
+unique(mygt_urb$popmap)
+```
+
+# Create sfs
+## SFS for all individuals in 1 population
+```{r}
+sfs <- gt2sfs.raw(mygt,
+           "1") %>%
+        as.data.frame() %>%
+  dplyr::filter(X1 != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs.txt"))
+
+```
+
+## SFS for URBAN individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+sfs_urb <- gt2sfs.raw(mygt_urb,
+           "Urban") %>%
+        as.data.frame() %>%
+  dplyr::filter(Urban != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs_urban.txt"))
+
+```
+
+## SFS for RURAL individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+sfs_rur <- gt2sfs.raw(mygt_urb,
+           "Rural") %>%
+        as.data.frame() %>%
+  dplyr::filter(Rural != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs_rural.txt"))
+
+```
+
+# Prepare to export sfs
+## SFS for all individuals in 1 population
+```{r}
+# get freqs for SFS
+freqs_for_stairwayplot <- sfs %>%
+                   dplyr::select(Freq) %>%
+  pull()
+
+
+freqs_string <- paste(freqs_for_stairwayplot,
+                      collapse = " ")
+
+# Write the string to a txt file
+writeLines(freqs_string,
+           here::here("./StairwayPlot/sfs_freqs.txt"))
+
+# length of SFS
+length(freqs_for_stairwayplot)
+```
+
+## SFS for URBAN individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+# get freqs for SFS
+sfs_urb %>%
+  dplyr::select(Freq) %>%
+  pull() %>%
+  paste(collapse = " ") %T>%
+# Write the string to a txt file
+  writeLines(here::here("./StairwayPlot/sfs_freqs_urb.txt"))
+
+# length of SFS
+length(sfs_urb %>%
+  dplyr::select(Freq) %>%
+  pull())
+```
+
+## SFS for RURAL individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+# get freqs for SFS
+sfs_rur %>%
+  dplyr::select(Freq) %>%
+  pull() %>%
+  paste(freqs_for_stairwayplot_rur,
+                      collapse = " ") %T>%
+# Write the string to a txt file
+  writeLines(here::here("./StairwayPlot/sfs_freqs_rur.txt"))
+
+# length of SFS
+length(sfs_rur %>%
+  dplyr::select(Freq) %>%
+  pull())
+```
+
+# Find number of loci per vcf
+## SFS for all individuals in 1 population
+```{r}
+sfs %>%
+    summarise(n_loci = sum(n_loci))
+```
