@@ -1,0 +1,326 @@
+# Set up notebook
+## load libraries
+```{r}
+source("libraries.R")
+```
+
+## Load vcf2sfs code
+```{r}
+# can't install this package so copied the R code into my own file, load it
+
+source(here::here("./R_scripts/exploration/vcf2sfs_code.R"))
+```
+
+## get path to vcf
+```{r}
+vcf_address <- here::here("./pi_fst_TajD_estimates/pi/global_pi_vcf-all/populations.all.vcf")
+
+```
+
+## Notes for understanding vcfR::maf()'s output
+
+*Each row is a locus.
+*nAllele = the number of different alleles sequenced at this
+ locus. At most, it's 2n = 261*2=522 because it's a diploid-
+ so there's at most 2 alleles per locus for each individual.
+ It can drop to numbers like 50 if only, for example,
+ 50/2n=50/2*261=50/522=~10% of the loci were sequenced.
+*Count = the number of times a specific allele was seen at
+ this locus.
+*Frequency = Count/nAlleles to give the total frequency of
+ that specific allele.
+
+There can be bars in the 1 bins on the x axis because of
+ missing values. Some loci were only sequenced in a few of
+ the individuals (depending on R), so if an allele was seen
+ only once but its locus was sequenced in only ~25% of
+ individuals, it could still have a frequency >0.05 and
+ wind up in the "1 individual" bin.
+
+This holds up because the mmaf = 0.05, R = 1 plot should
+ have no missing data and a min minor allele frequency of
+ 5%, so the first individual should show up at
+ 0.05*2n=0.05*2*261=26 individuals. It does.
+ 
+# Read the VCF file and the popmap file and create a gt object
+## SFS for all individuals in 1 population
+```{r}
+mygt <- vcf2gt(vcf_address,
+               here::here("./genomic_resources/pop_map3_all1pop_for_sfs.txt"))
+
+# look at all unique populations
+unique(mygt$popmap)
+```
+
+## SFS for URBAN or RURAL individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+mygt_urb <- vcf2gt(vcf_address,
+               here::here("./clean_data/pop_map3_UR_dist.txt"))
+
+# look at all unique populations
+unique(mygt_urb$popmap)
+```
+
+# Create sfs
+## SFS for all individuals in 1 population
+```{r}
+sfs <- gt2sfs.raw(mygt,
+           "1") %>%
+        as.data.frame() %>%
+  dplyr::filter(X1 != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs.txt"))
+
+```
+
+## SFS for URBAN individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+sfs_urb <- gt2sfs.raw(mygt_urb,
+           "Urban") %>%
+        as.data.frame() %>%
+  dplyr::filter(Urban != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs_urban.txt"))
+
+```
+
+## SFS for RURAL individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+sfs_rur <- gt2sfs.raw(mygt_urb,
+           "Rural") %>%
+        as.data.frame() %>%
+  dplyr::filter(Rural != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs_rural.txt"))
+
+```
+
+# Prepare to export sfs
+## SFS for all individuals in 1 population
+```{r}
+# get freqs for SFS
+freqs_for_stairwayplot <- sfs %>%
+                   dplyr::select(Freq) %>%
+  pull()
+
+
+freqs_string <- paste(freqs_for_stairwayplot,
+                      collapse = " ")
+
+# Write the string to a txt file
+writeLines(freqs_string,
+           here::here("./StairwayPlot/sfs_freqs.txt"))
+
+# length of SFS
+length(freqs_for_stairwayplot)
+```
+
+## SFS for URBAN individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+# get freqs for SFS
+sfs_urb %>%
+  dplyr::select(Freq) %>%
+  pull() %>%
+  paste(collapse = " ") %T>%
+# Write the string to a txt file
+  writeLines(here::here("./StairwayPlot/sfs_freqs_urb.txt"))
+
+# length of SFS
+length(sfs_urb %>%
+  dplyr::select(Freq) %>%
+  pull())
+```
+
+## SFS for RURAL individuals in 1 population
+### Urbanization = dist to CC
+```{r}
+# get freqs for SFS
+sfs_rur %>%
+  dplyr::select(Freq) %>%
+  pull() %>%
+  paste(collapse = " ") %T>%
+# Write the string to a txt file
+  writeLines(here::here("./StairwayPlot/sfs_freqs_rur.txt"))
+
+# length of SFS
+length(sfs_rur %>%
+  dplyr::select(Freq) %>%
+  pull())
+```
+# Stairway Plot figures
+## All sites in 1 population
+### Plot entire figure
+```{r}
+full_fig <- read.delim(here::here("./StairwayPlot/run_urban_500yr_mark/milkweed_urban_dist.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site))
+
+head(full_fig)
+
+# full plot without red horizontal line at 500 years ago
+full_plot <- ggplot(
+  full_fig,
+       aes(
+         x = year,
+         y = Ne_median))  +
+    geom_segment( # add red vertical line at 500 yrs
+    aes(
+      x = 500,
+      xend = 500,
+      y = 0,
+      yend = max(full_fig$Ne_median*1.1)),
+    color = "red") +
+  geom_point() +
+  scale_x_continuous(labels = scales::comma) +
+  scale_y_log10(breaks=c(0, 1, 10, 100, 1000, 10000, 100000),
+                labels = scales::comma) +
+  xlab("Years before present") +
+  ylab("Median Ne") +
+  theme_bw() +
+  labs_pubr()
+
+```
+
+### Plot inset (past 500 years)
+```{r}
+full_inset <- full_plot +
+  scale_x_continuous(limits = c(NA, 500),
+                     labels = scales::comma) +
+  theme(axis.title = element_blank() )
+```
+
+### Overlay inset in full figure
+```{r}
+library(cowplot)
+
+cowplot::ggdraw() +
+  draw_plot(full_plot) +
+  draw_plot(full_inset,
+            x = 0.16,
+            y = 0.1, 
+            width = 0.5,
+            height = 0.5)
+```
+
+#### Export
+```{r}
+ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_with_inset.png"),
+       height = 5,
+       width = 10)
+```
+
+## Urban & Rural
+### Urb = distance to city center
+#### Plot entire figure
+```{r}
+urb_fig <- read.delim(here::here("./StairwayPlot/run_urban_500yr_mark/milkweed_urban_dist.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site))
+
+head(urb_fig)
+
+# urb plot without red horizontal line at 500 years ago
+urb_plot <- ggplot(
+  urb_fig,
+       aes(
+         x = year,
+         y = Ne_median)) +
+  geom_point() +
+  scale_x_continuous(labels = scales::comma) +
+  scale_y_log10(breaks=c(0, 1, 10, 100, 1000, 10000, 100000),
+                labels = scales::comma) +
+  xlab("Years before present") +
+  ylab("Median Ne") +
+  theme_bw() +
+  labs_pubr()
+
+# urb plot WITH red horizontal line at 500 years ago
+urb_plot_500yr_mark <- urb_plot +
+    geom_segment(
+    aes(
+      x = 500,
+      xend = 500,
+      y = 0,
+      yend = max(urb_fig$Ne_median*1.1)),
+    color = "red")
+```
+
+#### Plot inset (past 500 years)
+```{r}
+urb_inset <- urb_plot +
+  scale_x_continuous(limits = c(NA, 500),
+                     labels = scales::comma)
+```
+
+#### Overlay inset in full figure
+```{r}
+
+```
+
+#### Export
+```{r}
+
+```
+
+### Urb = urbanization score
+#### Plot entire figure
+```{r}
+rur_fig <- read.delim(here::here("./StairwayPlot/run_rural_500yr_mark/milkweed_rural_dist.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site))
+
+head(rur_fig)
+
+# rur plot without red horizontal line at 500 years ago
+rur_plot <- ggplot(
+  rur_fig,
+       aes(
+         x = year,
+         y = Ne_median)) +
+  geom_point() +
+  scale_x_continuous(labels = scales::comma) +
+  scale_y_log10(breaks=c(0, 1, 10, 100, 1000, 10000, 100000),
+                labels = scales::comma) +
+  xlab("Years before present") +
+  ylab("Median Ne") +
+  theme_bw() +
+  labs_pubr()
+
+# rur plot WITH red horizontal line at 500 years ago
+rur_plot_500yr_mark <- rur_plot +
+    geom_segment(
+    aes(
+      x = 500,
+      xend = 500,
+      y = 0,
+      yend = max(rur_fig$Ne_median*1.1)),
+    color = "red")
+```
+
+#### Plot inset (past 500 years)
+```{r}
+rur_inset <- rur_plot +
+  scale_x_continuous(limits = c(NA, 500),
+                     labels = scales::comma)
+```
+
+#### Overlay inset in full figure
+```{r}
+
+```
+
+#### Export
+```{r}
+
+```
+
