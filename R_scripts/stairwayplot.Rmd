@@ -173,16 +173,19 @@ full_plot <- ggplot(
       xend = 500,
       y = 0,
       yend = max(full_fig$Ne_median*1.1)),
-    color = "red") +
-  geom_point() +
+    color = "red",
+    linetype = 2 ) +
+  geom_point(size = 0.75) +
   scale_x_continuous(labels = scales::comma) +
-  scale_y_log10(breaks=c(0, 1, 10, 100, 1000, 10000, 100000),
-                labels = scales::comma) +
+  scale_y_log10(breaks=c(1, 10, 100, 1000, 10000, 100000),
+                labels = scales::comma,
+                limits = c(1, NA)) +
   xlab("Years before present") +
   ylab("Median Ne") +
   theme_bw() +
-  labs_pubr()
-
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+full_plot
 ```
 
 ### Plot inset (past 500 years)
@@ -190,7 +193,9 @@ full_plot <- ggplot(
 full_inset <- full_plot +
   scale_x_continuous(limits = c(NA, 500),
                      labels = scales::comma) +
-  theme(axis.title = element_blank() )
+  theme(axis.title = element_blank(),
+        plot.background = element_rect(
+          colour = "black", fill = "white", size = 1))
 ```
 
 ### Overlay inset in full figure
@@ -200,9 +205,9 @@ library(cowplot)
 cowplot::ggdraw() +
   draw_plot(full_plot) +
   draw_plot(full_inset,
-            x = 0.16,
-            y = 0.1, 
-            width = 0.5,
+            x = 0.45,
+            y = 0.15, 
+            width = 0.45,
             height = 0.5)
 ```
 
@@ -210,8 +215,16 @@ cowplot::ggdraw() +
 ```{r}
 ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_with_inset.png"),
        height = 5,
-       width = 10)
+       width = 7,
+       dpi = 200)
 ```
+
+### Convert the above into a function
+```{r}
+
+```
+
+
 
 ## Urban & Rural
 ### Urb = distance to city center
