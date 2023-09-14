@@ -63,6 +63,15 @@ mygt_urb <- vcf2gt(vcf_address,
 unique(mygt_urb$popmap)
 ```
 
+### Urbanization = urbanization score
+```{r}
+mygt_urb2 <- vcf2gt(vcf_address,
+               here::here("./clean_data/pop_map3_UR_usc.txt"))
+
+# look at all unique populations
+unique(mygt_urb2$popmap)
+```
+
 # Create sfs
 ## SFS for all individuals in 1 population
 ```{r}
@@ -85,6 +94,16 @@ sfs_urb <- gt2sfs.raw(mygt_urb,
 
 ```
 
+### Urbanization = urbanization score
+```{r}
+sfs_urb2 <- gt2sfs.raw(mygt_urb2,
+           "Urban") %>%
+        as.data.frame() %>%
+  dplyr::filter(Urban != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs_urban_urbscore.txt"))
+
+```
+
 ## SFS for RURAL individuals in 1 population
 ### Urbanization = dist to CC
 ```{r}
@@ -93,6 +112,16 @@ sfs_rur <- gt2sfs.raw(mygt_urb,
         as.data.frame() %>%
   dplyr::filter(Rural != 0) %T>%
   write_delim(here::here("./StairwayPlot/sfs_rural.txt"))
+
+```
+
+### Urbanization = urbanization score
+```{r}
+sfs_rur2 <- gt2sfs.raw(mygt_urb2,
+           "Rural") %>%
+        as.data.frame() %>%
+  dplyr::filter(Rural != 0) %T>%
+  write_delim(here::here("./StairwayPlot/sfs_rural_urbscore.txt"))
 
 ```
 
@@ -133,6 +162,22 @@ length(sfs_urb %>%
   pull())
 ```
 
+### Urbanization = urbanization score
+```{r}
+# get freqs for SFS
+sfs_urb2 %>%
+  dplyr::select(Freq) %>%
+  pull() %>%
+  paste(collapse = " ") %T>%
+# Write the string to a txt file
+  writeLines(here::here("./StairwayPlot/sfs_freqs_urb_urbscore.txt"))
+
+# length of SFS
+length(sfs_urb2 %>%
+  dplyr::select(Freq) %>%
+  pull())
+```
+
 ## SFS for RURAL individuals in 1 population
 ### Urbanization = dist to CC
 ```{r}
@@ -149,6 +194,23 @@ length(sfs_rur %>%
   dplyr::select(Freq) %>%
   pull())
 ```
+
+### Urbanization = urbanization score
+```{r}
+# get freqs for SFS
+sfs_rur2 %>%
+  dplyr::select(Freq) %>%
+  pull() %>%
+  paste(collapse = " ") %T>%
+# Write the string to a txt file
+  writeLines(here::here("./StairwayPlot/sfs_freqs_rur_urbscore.txt"))
+
+# length of SFS
+length(sfs_rur2 %>%
+  dplyr::select(Freq) %>%
+  pull())
+```
+
 # Stairway Plot figures
 ## Create plot-exporting function
 ```{r}
@@ -165,7 +227,7 @@ make_ne_plot <- function(df, exported_filepath){
         x = 500,
         xend = 500,
         y = 0,
-        yend = max(full_fig$Ne_median*1.1)),
+        yend = max(df$Ne_median*1.1)),
       color = "red",
       linetype = 2 ) +
     geom_point(size = 0.75) +
@@ -262,7 +324,17 @@ make_ne_plot(rur_fig,
 
 ### Urb = urbanization score
 ```{r}
+rur_fig2 <- read.delim(here::here("./StairwayPlot/run_rural_usc/milkweed_rural_urbscore.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site))
 
+head(rur_fig2)
+
+
+make_ne_plot(rur_fig2,
+             "./Figures_Tables/Stairway_plot/rural_with_inset_urbscore.png")
 
 ```
-
