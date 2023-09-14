@@ -302,7 +302,18 @@ make_ne_plot(urb_fig,
 
 ### Urb = urbanization score
 ```{r}
+urb_fig2 <- read.delim(here::here("./StairwayPlot/run_urban_usc/milkweed_urban_urbscore.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site))
 
+head(urb_fig2)
+
+
+make_ne_plot(urb_fig2,
+             "./Figures_Tables/Stairway_plot/urban_with_inset_urbscore.png")
 ```
 
 ## Rural
