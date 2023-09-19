@@ -92,6 +92,7 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
 ## Run analysis
 ```{r}
 ## Run the MEMGENE analysis
+set.seed(1)
 if (!exists("milkweed_analysis"))
 milkweed_analysis <- mgQuick(gen_data, coords)
 ```
@@ -253,7 +254,6 @@ prop_var_expl <- milkweed_analysis$sdev/sum(milkweed_analysis$sdev)
 #### MEMGENE variable 1 (Moran's Eigenvector 12)
 ```{r}
 # with legend
-
 mem1 <- milkweed_analysis$memgene[, 1] %>%
   as.data.frame() %>%
   dplyr::rename("var" = 1) %>%
@@ -471,7 +471,6 @@ dev.off()
 #### MEMGENE variable 3 (Moran's Eigenvector 5)
 ```{r}
 # with legend
-
 mem3 <- milkweed_analysis$memgene[, 3] %>%
   as.data.frame() %>%
   dplyr::rename("var" = 1) %>%
@@ -643,6 +642,180 @@ ggsave(last_plot(),
 ```
 
 
+### Rescaling MEMs from 0-255, then combining
+#### Rescale
+```{r}
+# get mem1, mem2, and mem3 objects from '### Plots with terrain basemap' chunk above
+
+# rescale mems from 0-255
+mem1 %<>%
+  dplyr::mutate(mem_255 = scales::rescale(var,
+                                  to = c(0,255)))
+
+mem2 %<>%
+  dplyr::mutate(mem_255 = scales::rescale(var,
+                                  to = c(0,255)))
+
+mem3 %<>%
+  dplyr::mutate(mem_255 = scales::rescale(var,
+                                  to = c(0,255)))
+```
+
+#### Create individual maps for top 3 MEMs
+##### MEM1
+```{r}
+# plot with colors: plasma, unidirectional size scale
+## MEM1
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_255_",
+                      "var1_",
+           today(),
+           ".png"),
+    width = 15,
+    height = 10,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem1,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = mem_255),
+             shape = 21,
+             size = 3) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMGENE\nvariable 1",
+       caption = paste0("Moran's Eigenvector: ",
+         milkweed_analysis$whichSelectedPos[1])) +
+  scale_fill_gradient(low = "white",
+                      high = "red") 
+
+# Close device
+dev.off()
+```
+
+##### MEM2
+```{r}
+## MEM2
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_255_",
+                      "var2_",
+           today(),
+           ".png"),
+    width = 15,
+    height = 10,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem2,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = mem_255),
+             shape = 21,
+             size = 3) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMGENE\nvariable 2",
+       caption = paste0("Moran's Eigenvector: ",
+         milkweed_analysis$whichSelectedPos[2])) +
+  scale_fill_gradient(low = "white",
+                      high = "green") 
+
+# Close device
+dev.off()
+```
+
+##### MEM3
+```{r}
+## MEM3
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_255_",
+                      "var3_",
+           today(),
+           ".png"),
+    width = 15,
+    height = 10,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = mem3,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = mem_255),
+             shape = 21,
+             size = 3) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMGENE\nvariable 3",
+       caption = paste0("Moran's Eigenvector: ",
+         milkweed_analysis$whichSelectedPos[3])) +
+  scale_fill_gradient(low = "white",
+                      high = "blue") 
+
+# Close device
+dev.off()
+```
+
+#### Combine top 3 MEMs into one figure
+```{r}
+make_color_df <- function(df, color){
+  df %>%
+  dplyr::select(x,y,mem_255) %>%
+  dplyr::rename_with(~color, mem_255) %>%
+  dplyr::mutate(ID = row_number())
+}
+
+red_data <- make_color_df(mem1, "red")
+green_data <- make_color_df(mem2, "green")
+blue_data <- make_color_df(mem3, "blue")
+
+color_data <- inner_join(red_data,
+                        green_data,
+                        by = c("x","y","ID")) %>%
+  inner_join(.,
+             blue_data,
+             by = c("x","y","ID")) %>%
+  dplyr::select(ID, x, y, red, green, blue)
+
+color_data$color <- rgb(color_data$red,
+                        color_data$green, 
+                        color_data$blue,
+                        maxColorValue = 255)
+
+
+
+png(paste0("./Figures_Tables/memgene/memgene_terrain_color_255_",
+                      "vars1_to_3",
+           today(),
+           ".png"),
+    width = 15,
+    height = 10,
+    units = "cm",
+    res = 1000)
+
+basemap_terrain +
+  geom_point(data = color_data,
+             mapping = aes(x = x,
+                           y = y,
+                           fill = color),
+             shape = 21,
+             size = 3) +
+  labs(x = 'Longitude', y = 'Latitude',
+       fill = "MEMGENE\nvariables 1-3",
+       caption = paste0("Moran's Eigenvectors: ",
+         milkweed_analysis$whichSelectedPos[1],
+         ", ",
+         milkweed_analysis$whichSelectedPos[2],
+         ", ",
+         milkweed_analysis$whichSelectedPos[3]
+         ))  +
+    scale_fill_identity()
+
+# Close device
+dev.off()
+
+
+# good visualization of color space in 3D: https://www.whydomath.org/node/wavlets/images/rgbcube.jpg
+```
+
+
 ## Stats
 ### Generate
 ```{r}
@@ -702,4 +875,32 @@ mg_table %>%
                                         today(), 
                                         ".docx"))
 
+
+# plot variance explained per memgene variable
+plot(mg_table$`MEMGENE Variable`,
+     mg_table$R2)
+
+ggplot(data = mg_table,
+       aes(x = as.factor(`MEMGENE Variable`),
+           y = R2)) +
+  geom_bar(aes(fill = `Moran's Eigenvector`),
+           stat = "identity",
+           color = "black") +
+  xlab("MEMGENE Variable") +
+  ylab(expression(R^2)) +
+  ylim(NA, 0.3) +
+  geom_text(aes(
+    label = `Moran's Eigenvector`),
+    nudge_y = 0.01,
+    color = "darkblue",
+    size = 3.5) +
+  scale_fill_continuous(type = "viridis") +
+  ggpubr::theme_pubr()
+
+ggsave(plot = last_plot(),
+       paste0("./Figures_Tables/memgene/memgene_scree_",
+                                        today(), 
+                                        ".png"),
+       height = 5,
+       width = 8)
 ```

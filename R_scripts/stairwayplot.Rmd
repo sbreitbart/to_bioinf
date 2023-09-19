@@ -231,7 +231,8 @@ make_ne_plot <- function(df, exported_filepath){
       color = "red",
       linetype = 2 ) +
     geom_point(size = 0.75) +
-    scale_x_continuous(labels = scales::comma) +
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
     scale_y_log10(breaks=c(1, 10, 100, 1000, 10000, 100000),
                   labels = scales::comma,
                   limits = c(1, NA)) +
