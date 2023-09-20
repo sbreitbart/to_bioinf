@@ -1,0 +1,11 @@
+- Downloaded on 9/19/2023 from https://www150.statcan.gc.ca/n1/pub/98-187-x/4151287-eng.htm
+- Title: "Estimated population of Canada, 1605 to present"
+
+1605-1865
+Source: Censuses of Canada. 1665-1871 (persons)
+
+1867-1970
+Source: CANSIM, table 075-0001 (persons)
+
+1971 to present
+Source: CANSIM, table 051-0001 (persons)
