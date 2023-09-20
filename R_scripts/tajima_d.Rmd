@@ -9,10 +9,8 @@ source(here::here("libraries.R"))
 ### Global (all sites in one large population)
 #### Window size: 1 million bp
 ```{r}
-global_taj <- read.csv(
-  here::here("./global_TajD/global_TajD.csv")) %>%
-  dplyr::rename("CHROM" = 1) %>%
-  
+global_taj <- read.delim(
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/global_TajD_window_1mil/global_TajD.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
@@ -21,13 +19,54 @@ range(global_taj$TajimaD)
 
 #### Window size: 100,000 bp
 ```{r}
-global_taj_100k <- read.csv(
-  here::here("./global_TajD/global_TajD_window100k.csv")) %>%
-  dplyr::rename("CHROM" = 1) %>%
-  
+global_taj_100k <- read.delim(
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/global_TajD_window_100k/global_TajD_window_100k.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
+range(global_taj_100k$TajimaD)
+```
+
+### Urban (based on distance to CC)
+#### Window size: 1 million bp
+```{r}
+urb_taj <- read.delim(
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Urban_dist_TajD_window_1mil/Urban_dist_TajD_window_1mil.Tajima.D")) %>%
+  # remove windows with 0 SNPs
+  dplyr::filter(N_SNPS != 0) 
+
+range(urb_taj$TajimaD)
+```
+
+#### Window size: 100,000 bp
+```{r}
+urb_taj_100k <- read.delim(
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Urban_dist_TajD_window_100k/Urban_dist_TajD_window_100k.Tajima.D")) %>%
+  # remove windows with 0 SNPs
+  dplyr::filter(N_SNPS != 0) 
+
+range(urb_taj_100k$TajimaD)
+```
+
+### Rural (based on distance to CC)
+#### Window size: 1 million bp
+```{r}
+rur_taj <- read.delim(
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Rural_dist_TajD_window_1mil/Rural_dist_TajD_window_1mil.Tajima.D")) %>%
+  # remove windows with 0 SNPs
+  dplyr::filter(N_SNPS != 0) 
+
+range(rur_taj$TajimaD)
+```
+
+#### Window size: 100,000 bp
+```{r}
+rur_taj_100k <- read.delim(
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Rural_dist_TajD_window_100k/Rural_dist_TajD_window_100k.Tajima.D")) %>%
+  # remove windows with 0 SNPs
+  dplyr::filter(N_SNPS != 0) 
+
+range(rur_taj_100k$TajimaD)
 ```
 
 ## Visualize
@@ -133,6 +172,210 @@ mean(global_taj_100k$TajimaD)
 sum(global_taj_100k$BIN_START) 
 ```
 
+### Urban (based on distance to CC)
+#### Window size: 1 million bp
+```{r}
+urb_taj_plot <- ggplot(urb_taj,
+       aes(x = paste(CHROM,BIN_START),
+           y = TajimaD,
+       group = 1)) +
+  geom_point(shape = 21) +
+  xlab("Nucleotide Position") +
+  ylab("Tajima's D") +
+  geom_hline(yintercept = mean(urb_taj$TajimaD),
+              linetype = "longdash",
+              color = "black",
+             linewidth = 1.1) +
+  scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(color = "white")) +
+  annotate("text",
+           x=50, 
+           y=3,
+           size = 4.5,
+           label = paste("Mean Tajima's D:",
+                         round(mean(urb_taj$TajimaD),3)))
+
+urb_taj_plot
+
+# add "0" x axis mark
+urb_taj_plot <- cowplot::ggdraw(
+  cowplot::add_sub(urb_taj_plot, 
+                   x = 0,  y = 1.9, "0",
+                   size = 13))
+
+# add ending x axis mark
+urb_taj_plot <- cowplot::ggdraw(
+  cowplot::add_sub(urb_taj_plot, 
+                   x = 0.95,  y = 3.2, as.numeric(sum(urb_taj$BIN_START)),
+                   size = 12))
+
+
+urb_taj_plot
+
+ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d.png"), 
+       plot = urb_taj_plot,
+       width = 20,
+       height = 10,
+       units = "cm")
+
+mean(urb_taj$TajimaD)
+sum(urb_taj$BIN_START) 
+```
+
+
+#### Window size: 100,000 bp
+```{r}
+urb_taj_plot2 <- ggplot(urb_taj_100k,
+       aes(x = paste(CHROM,BIN_START),
+           y = TajimaD,
+       group = 1)) +
+  geom_point(shape = 21) +
+  xlab("Nucleotide Position") +
+  ylab("Tajima's D") +
+  geom_hline(yintercept = mean(urb_taj_100k$TajimaD),
+              linetype = "longdash",
+              color = "black",
+             linewidth = 1.1) +
+  scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(color = "white")) +
+  annotate("text",
+           x=120, 
+           y=3.5,
+           size = 4.5,
+           label = paste("Mean Tajima's D:",
+                         round(mean(urb_taj_100k$TajimaD),3)))
+
+urb_taj_plot2
+
+# add "0" x axis mark
+urb_taj_plot2 <- cowplot::ggdraw(
+  cowplot::add_sub(urb_taj_plot2, 
+                   x = 0,  y = 1.9, "0",
+                   size = 13))
+
+# add ending x axis mark
+urb_taj_plot2 <- cowplot::ggdraw(
+  cowplot::add_sub(urb_taj_plot2, 
+                   x = 0.93,  y = 3.2, as.numeric(sum(urb_taj_100k$BIN_START)),
+                   size = 12))
+
+
+urb_taj_plot2
+
+ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d_window100k.png"), 
+       plot = urb_taj_plot2,
+       width = 20,
+       height = 10,
+       units = "cm")
+
+mean(urb_taj_100k$TajimaD)
+sum(urb_taj_100k$BIN_START) 
+```
+
+
+### Rural (based on distance to CC)
+#### Window size: 1 million bp
+```{r}
+rur_taj_plot <- ggplot(rur_taj,
+       aes(x = paste(CHROM,BIN_START),
+           y = TajimaD,
+       group = 1)) +
+  geom_point(shape = 21) +
+  xlab("Nucleotide Position") +
+  ylab("Tajima's D") +
+  geom_hline(yintercept = mean(rur_taj$TajimaD),
+              linetype = "longdash",
+              color = "black",
+             linewidth = 1.1) +
+  scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(color = "white")) +
+  annotate("text",
+           x=50, 
+           y=3,
+           size = 4.5,
+           label = paste("Mean Tajima's D:",
+                         round(mean(rur_taj$TajimaD),3)))
+
+rur_taj_plot
+
+# add "0" x axis mark
+rur_taj_plot <- cowplot::ggdraw(
+  cowplot::add_sub(rur_taj_plot, 
+                   x = 0,  y = 1.9, "0",
+                   size = 13))
+
+# add ending x axis mark
+rur_taj_plot <- cowplot::ggdraw(
+  cowplot::add_sub(rur_taj_plot, 
+                   x = 0.95,  y = 3.2, as.numeric(sum(rur_taj$BIN_START)),
+                   size = 12))
+
+
+rur_taj_plot
+
+ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d.png"), 
+       plot = rur_taj_plot,
+       width = 20,
+       height = 10,
+       units = "cm")
+
+mean(rur_taj$TajimaD)
+sum(rur_taj$BIN_START) 
+```
+
+
+#### Window size: 100,000 bp
+```{r}
+rur_taj_plot2 <- ggplot(rur_taj_100k,
+       aes(x = paste(CHROM,BIN_START),
+           y = TajimaD,
+       group = 1)) +
+  geom_point(shape = 21) +
+  xlab("Nucleotide Position") +
+  ylab("Tajima's D") +
+  geom_hline(yintercept = mean(rur_taj_100k$TajimaD),
+              linetype = "longdash",
+              color = "black",
+             linewidth = 1.1) +
+  scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(color = "white")) +
+  annotate("text",
+           x=120, 
+           y=3.5,
+           size = 4.5,
+           label = paste("Mean Tajima's D:",
+                         round(mean(rur_taj_100k$TajimaD),3)))
+
+rur_taj_plot2
+
+# add "0" x axis mark
+rur_taj_plot2 <- cowplot::ggdraw(
+  cowplot::add_sub(rur_taj_plot2, 
+                   x = 0,  y = 1.9, "0",
+                   size = 13))
+
+# add ending x axis mark
+rur_taj_plot2 <- cowplot::ggdraw(
+  cowplot::add_sub(rur_taj_plot2, 
+                   x = 0.93,  y = 3.2, as.numeric(sum(rur_taj_100k$BIN_START)),
+                   size = 12))
+
+
+rur_taj_plot2
+
+ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_window100k.png"), 
+       plot = rur_taj_plot2,
+       width = 20,
+       height = 10,
+       units = "cm")
+
+mean(rur_taj_100k$TajimaD)
+sum(rur_taj_100k$BIN_START) 
+```
 
 
 ## Test significance
