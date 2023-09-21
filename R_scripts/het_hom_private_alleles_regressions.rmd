@@ -1,22 +1,5 @@
----
-title: How does urbanization predict private alleles, and expected/observed heterozygosity/homozygosity?
-output: 
-  html_document:
-    toc: true
-    toc_float: true
-    toc_collapsed: true
-    toc_depth: 3
-    number_sections: true
-    theme: lumen
----
-
 These analyses use the broadest genetic dataset which aims to include rare variants:
 -R = 0.5 & -min_maf = 0.0078
-
-```{r setup, include=FALSE} 
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
-```
-
 # Set up notebook
 ## Load libraries & functions
 ```{r warning=F}
@@ -38,7 +21,7 @@ urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
 
 ### Genetic data
 ```{r}
-diversity_variant_sites <-  here::here("./summary_stats/mmaf0.007662_R0.5_populations_output/populations.sumstats_summary.tsv") %>%
+diversity_variant_sites <-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.007968_R0.5/populations.sumstats_summary.tsv") %>%
   extract_variant_position_summary() %>%
   
 # if population doesn't start with "MWI", it should start with "MW"
@@ -113,7 +96,7 @@ diversity_variant_sites %>%
 test1 <- glmmTMB(City_dist ~ num_indv, diversity_variant_sites)
 performance::check_model(test1)
 car::Anova(test1) # yes
-r.squaredGLMM(test1) # ~3% variance explained
+r.squaredGLMM(test1) # ~4% variance explained
 
 
 
@@ -128,10 +111,9 @@ diversity_variant_sites %>%
   dplyr::select(private) %>%
   dplyr::filter(private != 0) %>%
   tally()
-# there are only 14 populations. That's too small a sample size
+# there are only 10 populations. That's too small a sample size
 # for regressions so I won't analyze this variable.
-# In the R = 1, mmaf = 0.05 dataset, there are only zeroes for
-# this value anyway.
+# In the R = 0.75, mmaf = 0.05 dataset, there are only zeroes for this value anyway.
 ```
 
 ### Does the number of individuals per populations correlate with pop gen stats?
@@ -149,7 +131,7 @@ test1 <- glmmTMB(obs_het ~ num_indv,
                  diversity_variant_sites)
 performance::check_model(test1)
 car::Anova(test1) # yes
-r.squaredGLMM(test1) # ~8% variance explained
+r.squaredGLMM(test1) # ~9% variance explained
 # SO I will add num_indivs as a random effect to these models
 
 # I'll also add it to the obs_hom models because they are the inverse
@@ -169,7 +151,7 @@ test1 <- glmmTMB(exp_het ~ num_indv,
                  diversity_variant_sites)
 performance::check_model(test1)
 car::Anova(test1) # yes
-r.squaredGLMM(test1) # ~90% variance explained
+r.squaredGLMM(test1) # ~91% variance explained
 # SO I will add num_indivs as a random effect to these models
 
 # I'll also add it to the exp_hom models because they are the inverse
