@@ -1,0 +1,191 @@
+Using this tutorial as guidance: https://bookdown.org/hhwagner1/LandGenCourse_book/WE_4.html
+
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+```
+
+## Import files
+```{r}
+# pop map with populations
+pops <- read.csv(here("./genomic_resources/pop_map3.csv"))
+
+n_unique_pops <- pops %>%
+  dplyr::select(population) %>%
+  dplyr::summarise(n_pops = unique(population)) %>%
+  dplyr::summarise(n_pops = n()) %>%
+  as.numeric() %T>% print
+
+# pop map with urban/rural designations
+pops_UR <- read.delim(here("./clean_data/pop_map3_UR_dist.txt"),
+                      header = F) %>%
+  dplyr::rename("sample" = 1,
+                "urban_rural" = 2)
+
+# join pop maps
+pops <- full_join(pops,
+                  pops_UR,
+                  by = "sample")
+
+# vcf
+vcf <- read.vcfR(
+  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+
+# add pops to genind
+strata(my_genind) <- pops
+```
+
+# AMOVA- Analysis of Molecular Variance
+```{r}
+# estimate the percent of molecular variance at each hierarchical level
+amova.result <- poppr::poppr.amova(my_genind,
+                hier = ~ urban_rural/population, 
+                within=FALSE, # specifies that within-individual variance (i.e., observed heterozygosity) should not be tested. Setting this to ‘TRUE’ can lead to problems with missing values.
+                method = "ade4")
+
+amova.result
+
+# test whether each variance component is statistically significant (i.e., significantly larger than zero)
+amova.test <- ade4::randtest(amova.result, nrepet = 999)
+
+amova.test
+
+# plot
+plot(amova.test)
+```
+
+# Export
+## General AMOVA
+```{r}
+amova.result$results %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Group" = 1,
+                "df" = 2,
+                "SS" = 3,
+                "MS" = 4) %>%
+  dplyr::mutate(across("SS": "MS",
+                       ~ round(., 3))) %>%
+  dplyr::mutate(Group = case_when(
+         Group == "Between urban_rural  " ~ "Among urban/rural groups",
+         Group == "Between samples Within urban_rural" ~ "Among populations within urban/rural groups",
+         Group == "Within samples" ~ "Within populations",
+         TRUE ~ Group
+     )) %>%
+  flextable() %>%
+  flextable::align(j = c(2:4), align = "center", part = "all") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova.docx"))
+```
+
+## Components of covariance
+```{r}
+amova.result$componentsofcovariance %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Variation" = 1) %>%
+  dplyr::mutate(Variation = str_replace(Variation,
+                                        "Variations ", ""),
+                Variation = str_replace(Variation,
+                                        " variations", "")) %>%
+  dplyr::mutate(across(Sigma:`%`,
+                       ~ round(., 3))) %>%
+  dplyr::mutate(Variation = case_when(
+         Variation == " Between urban_rural  " ~ "Among urban/rural groups",
+         Variation == " Between samples Within urban_rural" ~ "Among populations within urban/rural groups",
+         Variation == " Within samples" ~ "Within populations",
+         TRUE ~ Variation
+     )) %>%
+  flextable() %>%
+  flextable::align(j = c(2:3), align = "center", part = "all") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_covariance.docx"))
+```
+
+## Phi
+```{r}
+amova.result$statphi %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Group" = 1) %>%
+  dplyr::mutate(across(Phi, ~ round(., 3))) %>%
+  dplyr::mutate(Group = case_when(
+         Group == "Phi-samples-total" ~ "Populations:Total",
+         Group == "Phi-samples-urban_rural" ~ "Populations:Urban/rural Groups",
+         Group == "Phi-urban_rural-total" ~ "Urban/rural groups:Total",
+         TRUE ~ Group
+     )) %>%
+  flextable() %>%
+  flextable::align(j = 2, align = "center", part = "all") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_phi.docx"))
+```
+
+## P-values
+```{r}
+# have to recreate amova table to export it as a table
+amova_list <- list(
+  amova.test$obs,
+  amova.test$alter,
+  amova.test$names,
+  amova.test$expvar$Std.Obs,
+  amova.test$pvalue
+  )
+
+list_a <- purrr::map(amova_list,
+                     tibble::as_tibble)
+
+names(list_a) <- c("obs", "alter", "names", "Std.obs", "p")
+
+list2env(list_a, envir = .GlobalEnv)
+
+cbind(names, obs, Std.obs, alter, p) %>%
+  dplyr::rename(Test = 1,
+                Obs = 2,
+                Std.Obs = 3,
+                Alternative = 4,
+                p = 5) %>%
+  dplyr::mutate(Test = case_when(
+         Test == "Variations within samples" ~ "Variation within populations",
+         Test == "Variations between samples" ~ "Variation between populations",
+         Test == "Variations between urban_rural" ~ "Variation between urban/rural groups",
+         TRUE ~ Test
+     )) %>%
+    dplyr::mutate(across(c(Obs:Std.Obs, p),
+                       ~ round(., 3))) %>%
+  flextable() %>%
+  flextable::align(j = c(2:5), align = "center", part = "all") %>%
+  flextable::italic(j = 5, part = "header") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_significance.docx"))
+  
+
+```
+
+
+## Plot
+```{r}
+png(here::here("./Figures_Tables/amova/test.png"),
+    width = 12,
+    height = 12,
+    units = "cm",
+    res = 200)
+
+plot(amova.test)
+
+dev.off()
+
+
+```
+
