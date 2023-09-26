@@ -93,19 +93,21 @@ amova_general %>%
 amova_cov <- amova.result$componentsofcovariance %>%
   as.data.frame() %>%
   rownames_to_column() %>%
-  dplyr::rename("Variation" = 1) %>%
-  dplyr::mutate(Variation = str_replace(Variation,
+  dplyr::rename("Group" = 1,
+                "Variation" = 3) %>%
+  dplyr::mutate(Group = str_replace(Group,
                                         "Variations ", ""),
-                Variation = str_replace(Variation,
+                Group = str_replace(Group,
                                         " variations", "")) %>%
-  dplyr::mutate(across(Sigma:`%`,
+  dplyr::mutate(across(Sigma:Variation,
                        ~ round(., 3))) %>%
-  dplyr::mutate(Variation = case_when(
-         Variation == " Between urban_rural  " ~ "Among urban/rural groups",
-         Variation == " Between samples Within urban_rural" ~ "Among populations within urban/rural groups",
-         Variation == " Within samples" ~ "Within populations",
-         TRUE ~ Variation
-     ))
+  dplyr::mutate(Variation = paste0(Variation, "%")) %>%
+  dplyr::mutate(Group = case_when(
+         Group == " Between urban_rural  " ~ "Among urban/rural groups",
+         Group == " Between samples Within urban_rural" ~ "Among populations within urban/rural groups",
+         Group == " Within samples" ~ "Within populations",
+         TRUE ~ Group
+     )) 
 
 amova_cov %>%
   flextable() %>%
@@ -199,12 +201,10 @@ amova_p %>%
 ```
 
 
-## Combine the above tables into one table
+## Combine the above tables (except phi) into one table
 ```{r}
 amova_all <- amova_cov %>%
-  dplyr::rename("Group" = 1) %>%
   dplyr::full_join(amova_general, .) %>%
-  dplyr::rename("Percentage of Variation" = `%`) %>%
   dplyr::full_join(.,
                    amova_p %>%
                      dplyr::select(Test, p) %>%
@@ -214,10 +214,16 @@ amova_all <- amova_cov %>%
          Group == "Variation between populations" ~ "Among populations within urban/rural groups",
          Group == "Variation between urban/rural groups" ~ "Among urban/rural groups",
          TRUE ~ Group
-     ))) %>%
-  dplyr::full_join(.,
-                   amova_phi %>%
-                     dplyr::)
+     )))
+
+amova_all %>%
+  flextable() %>%
+  flextable::align(j = 2:7, align = "center", part = "all") %>%
+  flextable::italic(j = 7, part = "header") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_combined_table.docx"))
+  
 ```
 
 ## Plot

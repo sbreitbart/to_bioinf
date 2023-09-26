@@ -23,8 +23,10 @@ librarian::shelf(adegenet    ,
                  poppr       ,
                  purrr       ,
                  rvest       ,
+                 sf          ,
                  stringi     ,
                  tidyverse   ,
+                 tmap        ,
                  vcfR        ,
                  viridis
                  )
