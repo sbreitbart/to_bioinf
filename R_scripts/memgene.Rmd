@@ -830,32 +830,4 @@ mg_table %>%
                                         today(), 
                                         ".docx"))
 
-
-# plot variance explained per memgene variable
-plot(mg_table$`MEMGENE Variable`,
-     mg_table$R2)
-
-ggplot(data = mg_table,
-       aes(x = as.factor(`MEMGENE Variable`),
-           y = R2)) +
-  geom_bar(aes(fill = `Moran's Eigenvector`),
-           stat = "identity",
-           color = "black") +
-  xlab("MEMGENE Variable") +
-  ylab(expression(R^2)) +
-  ylim(NA, 0.3) +
-  geom_text(aes(
-    label = `Moran's Eigenvector`),
-    nudge_y = 0.01,
-    color = "darkblue",
-    size = 3.5) +
-  scale_fill_continuous(type = "viridis") +
-  ggpubr::theme_pubr()
-
-ggsave(plot = last_plot(),
-       paste0("./Figures_Tables/memgene/memgene_scree_",
-                                        today(), 
-                                        ".png"),
-       height = 5,
-       width = 8)
 ```
