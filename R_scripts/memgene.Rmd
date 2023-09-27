@@ -44,10 +44,8 @@ gen_data_urban <- process_vcf_data(
 
 #### 1 individual/population
 ```{r}
-# ADD CORRECT VCF
-
 gen_data_subsamp <- process_vcf_data(
-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf")
+  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
@@ -103,10 +101,9 @@ coords_urban <- process_location_data(
 
 #### 1 individual/population
 ```{r}
-# REDO WITH REAL INPUTS
 coords_subsamp <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
-  here::here("./genomic_resources/pop_map3.csv"))
+  here::here("./clean_data/pop_map3_1indiv_per_pop.csv"))
 
 ```
 
@@ -124,14 +121,65 @@ milkweed_analysis <- mgQuick(gen_data, coords)
 set.seed(1)
 if (!exists("milkweed_analysis_urban"))
 milkweed_analysis_urban <- mgQuick(gen_data_urban, coords_urban)
+
+# No significant MEMs detected
 ```
 
 ### 1 individual per population
 ```{r}
-## Run the MEMGENE analysis
 set.seed(1)
 if (!exists("milkweed_analysis_subsamp"))
 milkweed_analysis_subsamp <- mgQuick(gen_data_subsamp, coords_subsamp)
+# No significant MEMs detected
+
+
+# I checked multiple ways that this null result is not from a mis-ordering of samples (that the genetic and geographic data align perfectly). One example:
+# 
+# 
+#  my_genind <- vcfR2genind(read.vcfR(  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE))
+# 
+# my_genind@tab %>% rownames
+#   [1] "1.2_1A10_sorted" "1.2_1A11_sorted" "1.2_1A1_sorted" 
+#   [4] "1.2_1A2_sorted"  "1.2_1A3_sorted"  "1.2_1A4_sorted" 
+#   [7] "1.2_1A5_sorted"  "1.2_1A7_sorted"  "1.2_1A8_sorted" 
+#  [10] "1.2_1A9_sorted"  "1.2_1B10_sorted" "1.2_1B1_sorted" 
+#  [13] "1.2_1B2_sorted"  "1.2_1B4_sorted"  "1.2_1B5_sorted" 
+#  [16] "1.2_1B6_sorted"  "1.2_1B7_sorted"  "1.2_1B8_sorted" 
+#  [19] "1.2_1B9_sorted"  "1.2_1C10_sorted" "1.2_1C2_sorted" 
+#  [22] "1.2_1C3_sorted"  "1.2_1C5_sorted"  "1.2_1C6_sorted" 
+#  [25] "1.2_1D1_sorted"  "1.2_1D3_sorted"  "1.2_1D4_sorted" 
+#  [28] "1.2_1D5_sorted"  "1.2_1D6_sorted"  "1.2_1E11_sorted"
+#  [31] "1.2_1E8_sorted"  "1.2_1F1_sorted"  "1.2_1F5_sorted" 
+#  [34] "1.2_1F7_sorted"  "1.2_1F8_sorted"  "1.2_1G2_sorted" 
+#  [37] "1.2_1G6_sorted"  "1.2_1H10_sorted" "1.2_1H1_sorted" 
+#  [40] "1.2_1H2_sorted"  "1.2_1H4_sorted"  "1.2_1H8_sorted" 
+#  [43] "1.2_1H9_sorted"  "1.2_2A2_sorted"  "1.2_2A3_sorted" 
+#  [46] "1.2_2A5_sorted"  "1.2_2A8_sorted"  "1.2_2B7_sorted" 
+#  [49] "1.2_2C8_sorted"  "3A_A11_sorted"   "3A_A12_sorted"  
+#  [52] "3A_A4_sorted"    "3A_A5_sorted"    "3A_A6_sorted"   
+#  [55] "3A_A7_sorted"    "3A_A8_sorted"    "3A_A9_sorted"   
+#  [58] "3A_B10_sorted"   "3A_B11_sorted"   "3A_B12_sorted"  
+#  [61] "3A_B1_sorted"    "3A_B4_sorted"    "3A_B5_sorted"   
+#  [64] "3A_B6_sorted"    "3A_B7_sorted"    "3A_B8_sorted"   
+#  [67] "3A_B9_sorted"    "3A_C10_sorted"   "3A_C11_sorted"  
+#  [70] "3A_C12_sorted"   "3A_C4_sorted"    "3A_C5_sorted"   
+#  [73] "3A_C6_sorted"    "3A_C7_sorted"    "3A_C8_sorted"   
+#  [76] "3A_C9_sorted"    "3A_D10_sorted"   "3A_D11_sorted"  
+#  [79] "3A_D12_sorted"   "3A_D4_sorted"    "3A_D5_sorted"   
+#  [82] "3A_D6_sorted"    "3A_D7_sorted"    "3A_D8_sorted"   
+#  [85] "3A_D9_sorted"    "3A_E10_sorted"   "3A_E11_sorted"  
+#  [88] "3A_E12_sorted"   "3A_E3_sorted"    "3A_E4_sorted"   
+#  [91] "3A_E5_sorted"    "3A_E6_sorted"    "3A_E8_sorted"   
+#  [94] "3A_E9_sorted"    "3A_F10_sorted"   "3A_F11_sorted"  
+#  [97] "3A_F12_sorted"   "3A_F3_sorted"    "3A_F4_sorted"   
+# [100] "3A_F5_sorted"    "3A_F6_sorted"    "3A_F7_sorted"   
+# [103] "3A_F8_sorted"    "3A_F9_sorted"    "3A_G10_sorted"  
+# [106] "3A_G11_sorted"   "3A_G12_sorted"   "3A_G3_sorted"   
+# [109] "3A_G4_sorted"    "3A_G5_sorted"    "3A_G6_sorted"   
+# [112] "3A_G7_sorted"    "3A_G8_sorted"    "3A_G9_sorted"   
+# [115] "3A_H10_sorted"   "3A_H11_sorted"   "3A_H3_sorted"   
+# [118] "3A_H5_sorted"    "3A_H6_sorted"    "3A_H7_sorted"   
+# [121] "3A_H8_sorted"    "3A_H9_sorted"
 ```
 
 ## Visualize results
