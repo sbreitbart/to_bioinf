@@ -296,14 +296,6 @@ basic_plot_mems("all_indiv",
                 milkweed_analysis)
 ```
 
-#### All URBAN individuals
-```{r}
-# NO significant Moran's Eigenvectors
-basic_plot_mems("urban",
-                coords_urban,
-                milkweed_analysis_urban)
-```
-
 #### 1 individual/population
 ```{r}
 # FILL IN CORRECTLY
@@ -470,25 +462,6 @@ terrain_plot_mems("all_indiv",
                             mem3)
 ```
 
-#### All URBAN individuals
-```{r}
-# create MEM dfs
-mem1_urban <- create_mem(milkweed_analysis_urban,
-                         coords_urban, 1)
-mem2_urban <- create_mem(milkweed_analysis_urban,
-                         coords_urban, 2)
-mem3_urban <- create_mem(milkweed_analysis_urban,
-                         coords_urban, 3)
-
-# create maps
-terrain_plot_mems("urban",
-                            coords_urban, 
-                            milkweed_analysis_urban,
-                            mem1_urban,
-                            mem2_urban,
-                            mem3_urban)
-```
-
 #### 1 individual/population
 ```{r}
 # create MEM dfs
@@ -585,13 +558,6 @@ ggsave(last_plot(),
 sig_combined_mem_plot("all_indiv",
                             coords, 
                             milkweed_analysis)
-```
-
-#### All URBAN individuals
-```{r}
-sig_combined_mem_plot("urban",
-                            coords_urban, 
-                            milkweed_analysis_urban)
 ```
 
 #### 1 individual/population
@@ -725,15 +691,6 @@ rescale_mems("all_indiv",
              mem1,
              mem2,
              mem3)
-```
-
-##### Urban individuals
-```{r}
-rescale_mems("urban",
-             milkweed_analysis_urban,
-             mem1_urban,
-             mem2_urban,
-             mem3_urban)
 ```
 
 ##### 1 individual/population
