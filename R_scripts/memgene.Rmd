@@ -3,43 +3,6 @@
 ```{r warning=F}
 source(here::here("libraries.R"))
 source(here::here("functions.R"))
-
-# install.packages("memgene")
-library(memgene)
-library(officer)
-```
-
-# MEMgene tutorial
-```{r}
-## Load the caribou genetic data
-caribouData <- read.csv(system.file("extdata/caribou.csv",
-package="memgene"))
-
-## Create objects for positional information and genotypes
-caribouXY <- caribouData[ ,1:2]
-caribouGen <- caribouData[, 3:ncol(caribouData)]
-
-## Produce a proportion of shared alleles genetic distance matrix using the convenience wrapper function provided with the package
-caribouDM <- codomToPropShared(caribouGen)
-
-## Run the MEMGENE analysis
-## May take several minutes
-if (!exists("caribouAnalysis"))
-caribouAnalysis <- mgQuick(caribouDM, caribouXY)
-
-# Visualize results
-plot(caribouXY, type="n", xlab="", ylab="", axes=FALSE)
-mgMap(caribouXY, caribouAnalysis$memgene[, 1], add.plot=TRUE,
-legend=TRUE)
-box()
-
-# Adj R2
-caribouAnalysis$RsqAdj
-
-## Find the proportional variation explained by each MEMGENE variable
-caribouMEMGENEProp <- caribouAnalysis$sdev/sum(caribouAnalysis$sdev)
-## Neatly print proportions for the first three MEMGENE variables
-format(signif(caribouMEMGENEProp, 3)[1:3], scientific=FALSE)
 ```
 
 # Milkweed data
@@ -74,10 +37,8 @@ gen_data <- process_vcf_data(here::here("./summary_stats/output_populations_no-I
 
 #### JUST URBAN individuals
 ```{r}
-# ADD CORRECT VCF
-
 gen_data_urban <- process_vcf_data(
-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf")
+  here::here("./filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
@@ -133,11 +94,11 @@ coords <- process_location_data(
 
 #### All URBAN individuals
 ```{r}
-# REDO WITH REAL INPUTS
 coords_urban <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
-  here::here("./genomic_resources/pop_map3.csv"))
+  here::here("./clean_data/pop_map3_U_dist.csv"))
 
+# I converted the pop_map3_U_dist.txt into csv, then removed the "MW" prefixes so that the function would work
 ```
 
 #### 1 individual/population
@@ -186,9 +147,9 @@ basic_plot_mems <- function(group, # e.g., all_indiv
   
   # with legend
 png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
-    paste0("./Figures_Tables/memgene/memgene_legend_",
-           "var1_",
-           group,
+    paste0("./Figures_Tables/memgene/",
+          group,
+          "/memgene_legend_var1_",
            today(),
            ".png"),
     width = 20,
@@ -210,9 +171,10 @@ dev.off()
 
 # without legend
 png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
-        paste0("./Figures_Tables/memgene/memgene_nolegend_",           "var1_",
-               group,
-               today(),
+    paste0("./Figures_Tables/memgene/",
+          group,
+          "/memgene_nolegend_var1_",
+           today(),
                ".png"),
         width = 20,
     height = 20,
@@ -228,13 +190,14 @@ box()
 
 # Close device
 dev.off()
+
   # MEM2-----
   
   # with legend
 png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
-    paste0("./Figures_Tables/memgene/memgene_legend_",
-           "var2_",
-           group,
+    paste0("./Figures_Tables/memgene/",
+          group,
+          "/memgene_legend_var2_",
            today(),
            ".png"),
     width = 20,
@@ -256,9 +219,10 @@ dev.off()
 
 # without legend
 png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
-        paste0("./Figures_Tables/memgene/memgene_nolegend_",           "var2_",
-               group,
-               today(),
+    paste0("./Figures_Tables/memgene/",
+          group,
+          "/memgene_nolegend_var2_",
+           today(),
                ".png"),
         width = 20,
     height = 20,
@@ -278,9 +242,9 @@ dev.off()
   
   # with legend
 png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
-    paste0("./Figures_Tables/memgene/memgene_legend_",
-           "var3_",
-           group,
+    paste0("./Figures_Tables/memgene/",
+          group,
+          "/memgene_legend_var3_",
            today(),
            ".png"),
     width = 20,
@@ -302,9 +266,10 @@ dev.off()
 
 # without legend
 png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
-        paste0("./Figures_Tables/memgene/memgene_nolegend_",           "var3_",
-               group,
-               today(),
+    paste0("./Figures_Tables/memgene/",
+          group,
+          "/memgene_nolegend_var3_",
+           today(),
                ".png"),
         width = 20,
     height = 20,
@@ -333,20 +298,19 @@ basic_plot_mems("all_indiv",
 
 #### All URBAN individuals
 ```{r}
-# fill in correctly
-# Moran's Eigenvectors 12,20,5
-basic_plot_mems("all_indiv",
-                coords,
-                milkweed_analysis)
+# NO significant Moran's Eigenvectors
+basic_plot_mems("urban",
+                coords_urban,
+                milkweed_analysis_urban)
 ```
 
 #### 1 individual/population
 ```{r}
 # FILL IN CORRECTLY
 # Moran's Eigenvectors 12,20,5
-basic_plot_mems("all_indiv",
-                coords,
-                milkweed_analysis)
+basic_plot_mems("subsamp",
+                coords_subsamp,
+                milkweed_analysis_subsamp)
 ```
 
 ### Plots with terrain basemap
@@ -418,11 +382,11 @@ terrain_plot_mems <- function(group, # e.g., all_indiv
       scale_size_continuous(limits = c(0, 0.15))
     
     ggsave(filename =
-             paste0("./Figures_Tables/memgene/memgene_terrain_bw_", 
-               "var",
+             paste0("./Figures_Tables/memgene/",
+                    group,
+                    "/memgene_terrain_bw_var",
                i,
                "_",
-               group,
                today(),
                ".png"),
            plot = last_plot(),
@@ -449,11 +413,11 @@ terrain_plot_mems <- function(group, # e.g., all_indiv
       guides(size = FALSE)
 
       ggsave(filename =
-               paste0("./Figures_Tables/memgene/memgene_terrain_greyscale_",
-               "var",
+               paste0("./Figures_Tables/memgene/",
+                    group,
+               "/memgene_terrain_greyscale_var",
                i,
                "_",
-               group,
                today(),
                ".png"),
            plot = last_plot(),
@@ -473,8 +437,9 @@ terrain_plot_mems <- function(group, # e.g., all_indiv
            fill = paste0("MEMgene\nvariable ", i)) +  scale_fill_viridis(option = "plasma")
 
     ggsave(filename =
-paste0("./Figures_Tables/memgene/memgene_terrain_color_",
-               "var",
+             paste0("./Figures_Tables/memgene/",
+                    group,
+                    "/memgene_terrain_color_var",
                i,
                "_",
                group,
@@ -545,24 +510,23 @@ terrain_plot_mems("subsamp",
 
 
 ### map ALL combined significant memgene variables
-#### Without rescaling eigenvalues from 0-1
+#### Function
 ```{r}
-library(sf)
-library(tmap)
-
-total_var <- apply(milkweed_analysis$memSelected, 1, sum) %>%
+sig_combined_mem_plot <- function(group,
+                                  coords_df,
+                                  milkweed_analysis_list
+                                  ){
+  
+  total_var <- apply(milkweed_analysis_list$memSelected, 1, sum) %>%
   as.data.frame() %>%
   dplyr::rename("var" = 1)
 
 # sum all SGS explained by all significant memgene variables
 # Combine 'var' from 'total_var' with 'coords'
-spatial_data <- data.frame(var = total_var$var, coords)
+spatial_data <- data.frame(var = total_var$var,
+                           coords_df)
 
-# Convert the combined data frame to an 'sf' object
-sf_object <- sf::st_as_sf(spatial_data, coords = c("y", "x"))
-
-base::plot(sf_object, type = "p", cex = 2) 
-
+# map with colors-----
 basemap_terrain +
   geom_point(data = spatial_data,
              mapping = aes(x = x,
@@ -578,22 +542,21 @@ basemap_terrain +
   guides(size = FALSE) 
 
 ggsave(last_plot(),
-       file =  paste0("./Figures_Tables/memgene/memgene_allMEMs_", today(), ".png"),
+       file =  paste0("./Figures_Tables/memgene/",
+                      group,
+                      "/memgene_allMEMs_", today(), ".png"),
        width = 19,
        height = 19,
        units = "cm")
 
-
-# colors: black/white, big to little (0) to big circles
-# Assuming you have the required libraries loaded:
-# library(ggplot2)
+# colors: black/white, big to little (0) to big circles-----
 
 basemap_terrain +
   geom_point(data = spatial_data,
              mapping = aes(x = x,
                            y = y, 
                            fill = ifelse(var < 0, "negative", "positive"),
-                           size = abs(var)),  # Use abs(var) to get the absolute value for size
+                           size = abs(var)),
              shape = 21#,
             # color = "black"
             ) +
@@ -606,128 +569,190 @@ basemap_terrain +
     range = c(1.5, 12 * max(abs(spatial_data$var))), 
     limits = c(0, max(abs(spatial_data$var)))) 
 
-
-
 ggsave(last_plot(),
-       file =  paste0("./Figures_Tables/memgene/memgene_allMEMs_BW_", today(), ".png"),
+       file =  paste0("./Figures_Tables/memgene/",
+                      group,
+                      "/memgene_allMEMs_BW_", today(), ".png"),
        width = 19,
        height = 19,
        units = "cm")
+
+}
+```
+
+#### All individuals
+```{r}
+sig_combined_mem_plot("all_indiv",
+                            coords, 
+                            milkweed_analysis)
+```
+
+#### All URBAN individuals
+```{r}
+sig_combined_mem_plot("urban",
+                            coords_urban, 
+                            milkweed_analysis_urban)
+```
+
+#### 1 individual/population
+```{r}
+sig_combined_mem_plot("subsamp",
+                            coords_subsamp, 
+                            milkweed_analysis_subsamp)
 ```
 
 
-### Rescaling MEMs from 0-255, then combining
+### Rescaling, then combine MEMs from 0-255
 #### Rescale
 ```{r}
-# get mem1, mem2, and mem3 objects from '### Plots with terrain basemap' chunk above
+mems <- list(mem1, mem2, mem3,
+             mem1_urban, mem2_urban, mem3_urban,
+             mem1_subsamp, mem2_subsamp, mem3_subsamp
+             )
 
 # rescale mems from 0-255
-mem1 %<>%
-  dplyr::mutate(mem_255 = scales::rescale(var,
-                                  to = c(0,255)))
+rescale_var_to_255 <- function(df) {
+  df %>%
+    mutate(mem_255 = scales::rescale(var, to = c(0, 255)))
+}
 
-mem2 %<>%
-  dplyr::mutate(mem_255 = scales::rescale(var,
-                                  to = c(0,255)))
+# map the function to each element of the list
+mems <- purrr::map(mems, rescale_var_to_255)
 
-mem3 %<>%
-  dplyr::mutate(mem_255 = scales::rescale(var,
-                                  to = c(0,255)))
+names(mems) <- list("mem1", "mem2", "mem3",
+             "mem1_urban", "mem2_urban", "mem3_urban",
+             "mem1_subsamp", "mem2_subsamp", "mem3_subsamp")
+
+list2env(mems, globalenv())
 ```
 
 #### Create individual maps for top 3 MEMs
-##### MEM1
+##### Function
 ```{r}
-# plot with colors: plasma, unidirectional size scale
-## MEM1
-png(paste0("./Figures_Tables/memgene/memgene_terrain_color_255_",
-                      "var1_",
-           today(),
-           ".png"),
-    width = 15,
-    height = 10,
-    units = "cm",
-    res = 1000)
-
-basemap_terrain +
-  geom_point(data = mem1,
+rescale_mems <- function(group,
+                         milkweed_analysis_list,
+                         mem1_df,
+                         mem2_df,
+                         mem3_df){
+  
+  # plot with colors: plasma, unidirectional size scale
+  
+      # MEM1-----
+    basemap_terrain +
+    geom_point(data = mem1_df,
              mapping = aes(x = x,
                            y = y,
                            fill = mem_255),
              shape = 21,
              size = 3) +
   labs(x = 'Longitude', y = 'Latitude',
-       fill = "MEMGENE\nvariable 1",
+       fill = paste0("MEMGENE\nvariable 1"),
        caption = paste0("Moran's Eigenvector: ",
-         milkweed_analysis$whichSelectedPos[1])) +
+         milkweed_analysis_list$whichSelectedPos[1])) +
   scale_fill_gradient(low = "white",
                       high = "red") 
+    
 
-# Close device
-dev.off()
-```
-
-##### MEM2
-```{r}
-## MEM2
-png(paste0("./Figures_Tables/memgene/memgene_terrain_color_255_",
-                      "var2_",
+    ggsave(filename = paste0("./Figures_Tables/memgene/",
+                             group,
+"/memgene_terrain_color_255_var1_",
            today(),
            ".png"),
+           plot = last_plot(),
     width = 15,
     height = 10,
-    units = "cm",
-    res = 1000)
-
-basemap_terrain +
-  geom_point(data = mem2,
+    units = "cm")
+    
+      # MEM2-----
+    basemap_terrain +
+    geom_point(data = mem2_df,
              mapping = aes(x = x,
                            y = y,
                            fill = mem_255),
              shape = 21,
              size = 3) +
   labs(x = 'Longitude', y = 'Latitude',
-       fill = "MEMGENE\nvariable 2",
+       fill = paste0("MEMGENE\nvariable 2"),
        caption = paste0("Moran's Eigenvector: ",
-         milkweed_analysis$whichSelectedPos[2])) +
+         milkweed_analysis_list$whichSelectedPos[2])) +
   scale_fill_gradient(low = "white",
                       high = "green") 
+    
 
-# Close device
-dev.off()
-```
-
-##### MEM3
-```{r}
-## MEM3
-png(paste0("./Figures_Tables/memgene/memgene_terrain_color_255_",
-                      "var3_",
+    ggsave(filename = paste0("./Figures_Tables/memgene/",
+                             group,
+"/memgene_terrain_color_255_var2_",
            today(),
            ".png"),
+           plot = last_plot(),
     width = 15,
     height = 10,
-    units = "cm",
-    res = 1000)
-
-basemap_terrain +
-  geom_point(data = mem3,
+    units = "cm")
+    
+      # MEM3-----
+    basemap_terrain +
+    geom_point(data = mem3_df,
              mapping = aes(x = x,
                            y = y,
                            fill = mem_255),
              shape = 21,
              size = 3) +
   labs(x = 'Longitude', y = 'Latitude',
-       fill = "MEMGENE\nvariable 3",
+       fill = paste0("MEMGENE\nvariable 3"),
        caption = paste0("Moran's Eigenvector: ",
-         milkweed_analysis$whichSelectedPos[3])) +
+         milkweed_analysis_list$whichSelectedPos[3])) +
   scale_fill_gradient(low = "white",
                       high = "blue") 
+    
 
-# Close device
-dev.off()
+    ggsave(filename = paste0("./Figures_Tables/memgene/",
+                             group,
+"/memgene_terrain_color_255_var3_",
+           today(),
+           ".png"),
+           plot = last_plot(),
+    width = 15,
+    height = 10,
+    units = "cm")
+
+}
+```
+
+##### All individuals
+```{r}
+rescale_mems("all_indiv",
+             milkweed_analysis,
+             mem1,
+             mem2,
+             mem3)
+```
+
+##### Urban individuals
+```{r}
+rescale_mems("urban",
+             milkweed_analysis_urban,
+             mem1_urban,
+             mem2_urban,
+             mem3_urban)
+```
+
+##### 1 individual/population
+```{r}
+rescale_mems("subsamp",
+             milkweed_analysis_subsamp,
+             mem1_subsamp,
+             mem2_subsamp,
+             mem3_subsamp)
+
 ```
 
 #### Combine top 3 MEMs into one figure
+##### Function
+```{r}
+
+```
+
+##### All individuals
 ```{r}
 make_color_df <- function(df, color){
   df %>%
@@ -804,7 +829,6 @@ print(paste0("Proportion of variation explained by first 3 MEMgene variables: ",
 ```
 
 ### Export stats
-#### Create table
 ```{r}
 # Extracting relevant data from the milkweed_analysis object
 whichSelectedPos <- milkweed_analysis$whichSelectedPos
