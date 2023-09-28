@@ -191,6 +191,7 @@ paste("--weir-fst-pop", paste(file_names, collapse = " --weir-fst-pop "), sep = 
 
 
 ## for 1 individual/population memgene analyses
+### Urban & Rural both included
 ```{r}
 # 122 unique populations
 unique(pop_map3$pop_id) %>% length()
@@ -215,5 +216,30 @@ uniques %>%
 uniques %>%
   write_csv(., 
             file = here::here("./clean_data/pop_map3_1indiv_per_pop.csv"))
+```
+
+### Rural only
+```{r}
+uniques_rur <- full_popmap %>%
+  arrange(ID) %>%
+  group_by(pop_id) %>%
+  slice(1) %>%
+  ungroup() %>% 
+  dplyr::filter(u_r_dist == "Rural") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, pop_id)
+
+uniques_rur %>%
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_1indiv_per_pop_RURAL.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+uniques_rur %>%
+  write_csv(., 
+            file = here::here("./clean_data/pop_map3_1indiv_per_pop_RURAL.csv"))
 ```
 
