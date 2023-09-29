@@ -2,22 +2,21 @@
 ## Load libraries & functions
 ```{r warning=F}
 source(here::here("libraries.R"))
-library(pegas)
 ```
 
 # Calculate Watterson's theta
 
 R = 0.5
-mmaf = 0.007968
+mmaf = 0.0078125 (2/256)
 
 ## Global (all sites in one large population)
 ```{r}
 theta_w <- pegas::theta.s(
-  x = (2804/352769), # segregating sites
+  x = (2835/352769), # segregating sites
   
-  # (in the global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
+  # (in the pi_fst_TajD_estimates/pi/global_pi/global_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
-  n = 251,  # sequences
+  n = 256,  # sequences
   
   # (in the global_pi_vcf-all/populations.log file, this is the number of samples)
   
@@ -26,90 +25,90 @@ theta_w <- pegas::theta.s(
 
 theta_w
 # output: 
-# theta = 0.0013028958 
-# variance = 0.0002136407
+# theta = 0.0013130465  
+# variance = 0.0002146102
 ```
 
 ## Urban vs. Rural (based on dist to cc < 35 km)
 ### Urban
 ```{r}
 theta_w_urb <- pegas::theta.s(
-  x = (2804/352769), # segregating sites
+  x = (2835/352769), # segregating sites
   
   # (in the UR_dist_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
   n = 150,  # sequences
   
-  # (counted number of urban samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
+  # (counted number of urban samples in the pop_map3 file with create_popmaps.Rmd)
   
   variance = TRUE
 )
 
 theta_w_urb
 # output: 
-# theta = 0.0014233189  
-# variance = 0.0002549753
+# theta = 0.0014390546   
+# variance = 0.0002577954
 ```
 
 ### Rural
 ```{r}
 theta_w_rur <- pegas::theta.s(
-  x = (2804/352769), # segregating sites
+  x = (2835/352769), # segregating sites
   
   # (in the UR_dist_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
   n = 106,  # sequences
   
-  # (counted number of rural samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
+  # (counted number of rural samples in the pop_map3 file with create_popmaps.Rmd)
   
   variance = TRUE
 )
 
 theta_w_rur
 # output: 
-# theta = 0.001518077   
-# variance = 0.000290072
+# theta = 0.0015348601    
+# variance = 0.0002932804
 ```
 
 ## Urban vs. Rural (based on urbanization score)
 ### Urban
 ```{r}
 theta_w_urb2 <- pegas::theta.s(
-  x = (2804/352769), # segregating sites
+  x = (2835/352769), # segregating sites
   
   # (in the UR_usc_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
   n = 141,  # sequences
   
-  # (counted number of urban samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
+  # (counted number of urban samples in the pop_map3 file with create_popmaps.Rmd)
   
   variance = TRUE
 )
 
 theta_w_urb2
 # output: 
-# theta = 0.0014393213   
-# variance = 0.0002607434
+# theta = 0.0014552339    
+# variance = 0.0002636273
 ```
 
 ### Rural
 ```{r}
 theta_w_rur2 <- pegas::theta.s(
-  x = (2804/352769), # segregating sites
+  x = (2835/352769), # segregating sites
   
   # (in the UR_usc_pi_vcf-all/populations.sumstats_summary.tsv file, this is variant sites/all sites)
 
   n = 115,  # sequences
   
-  # (counted number of rural samples in the pop_map3 file with create_popmap3_with_urb_rur.Rmd)
+  # (counted number of rural samples in the pop_map3 file with create_popmaps.Rmd)
   
   variance = TRUE
 )
 
 theta_w_rur2
 # output: 
-# theta = 0.0014947072    
-# variance = 0.0002812058
+# theta = 0.0015112321     
+# variance = 0.0002843162
 ```
 
 # Export
