@@ -2,7 +2,6 @@
 ## load libraries
 ```{r}
 source("libraries.R")
-library(cowplot)
 ```
 
 ## Load vcf2sfs code
@@ -212,7 +211,7 @@ length(sfs_rur2 %>%
 ```
 
 # Stairway Plot figures
-## Import Toronto human population data
+## Import Canada human population data
 ### Past-2007
 ```{r}
 # this data doesn't have human population info- more about dwellings-----
@@ -321,6 +320,20 @@ all_pop <- read.csv(here::here("./raw_data/human_population/human_population_Can
           file =
             here::here("./clean_data/human_population_Canada_clean.csv"))
 
+```
+
+## Import Ontario human population data
+```{r}
+ontario_pop <- read.csv(here::here("./raw_data/human_population/Ontario_human_population/ontario_pop.csv")) %>%
+  dplyr::mutate(Population = gsub(",", "", Population)) %>%
+  dplyr::mutate(Year = as.numeric(Year),
+                Population = as.numeric(Population),
+                years_before_present = 2023 - Year) %T>%
+  # export
+  write.csv(.,
+          file =
+            here::here("./clean_data/human_population_Ontario_clean.csv"))
+    
 ```
 
 ## Create plot-exporting function
@@ -479,6 +492,7 @@ ggplot(
     #   color = "blue",
     #   linetype = 4 ) +
     geom_point(size = 0.75) +
+      geom_line() +
     scale_y_continuous(labels = scales::comma,
                        limits = c(0, NA)) +
     xlab("Years before present") +
@@ -494,6 +508,44 @@ ggplot(
 
 ggsave(last_plot(),
        file = here::here("./Figures_Tables/Stairway_plot/Canada_population.png"),
+       height = 5,
+         width = 7,
+         dpi = 200)
+  
+```
+
+## Ontario population figure
+```{r}
+
+ggplot(
+    ontario_pop,
+    aes(
+      x = years_before_present,
+      y = Population/1000000))  +
+    # geom_segment( # add vertical line at 1867
+    #   aes(
+    #     x = 156,
+    #     xend = 156,
+    #     y = 0,
+    #     yend = 40),
+    #   color = "blue",
+    #   linetype = 4 ) +
+    geom_point(size = 0.75) +
+    geom_line() +
+    scale_y_continuous(limits = c(0, 15)) +
+    xlab("Years before present") +
+    ylab("Human population in\n Ontario (millions)") +
+    theme_bw() +
+    labs_pubr() +
+    scale_x_continuous(limits = c(0, 200),
+                       sec.axis = sec_axis(~ 2023 - .,
+                                 name = "Year",
+                                 breaks = c(2023, 2000, 1950, 1900, 1850, 1824))) +
+    theme(plot.background = element_rect(
+            colour = "black", fill = "white", size = 1))
+
+ggsave(last_plot(),
+       file = here::here("./Figures_Tables/Stairway_plot/Ontario_population.png"),
        height = 5,
          width = 7,
          dpi = 200)
