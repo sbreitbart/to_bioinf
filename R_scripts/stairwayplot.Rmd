@@ -394,8 +394,9 @@ make_ne_plot <- function(df, exported_filepath){
 ```
 
 ## All sites in 1 population
+### Regular generation time (1 year)
 ```{r}
-full_fig <- read.delim(here::here("./StairwayPlot/run_full_20230908/milkweed_20230908.final.summary")) %>%
+full_fig <- read.delim(here::here("./StairwayPlot/full_mmaf0.007813/full_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -408,10 +409,26 @@ make_ne_plot(full_fig,
              "./Figures_Tables/Stairway_plot/full_with_inset.png")
 ```
 
+### Longer generation time (10 years)
+```{r}
+full_fig_10yrs <- read.delim(here::here("./StairwayPlot/full_mmaf0.007813_gentime10/full_mmaf0.007813_gentime10.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site))
+
+head(full_fig_10yrs)
+
+make_ne_plot(full_fig_10yrs,
+             "./Figures_Tables/Stairway_plot/full_with_inset_generation_time_10yrs.png")
+```
+
+
 ## Urban
 ### Urb = distance to city center
 ```{r}
-urb_fig <- read.delim(here::here("./StairwayPlot/run_urban_20230911/milkweed_urban_dist.final.summary")) %>%
+urb_fig <- read.delim(here::here("./StairwayPlot/urban_dist_mmaf0.007813/urban_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -427,7 +444,7 @@ make_ne_plot(urb_fig,
 
 ### Urb = urbanization score
 ```{r}
-urb_fig2 <- read.delim(here::here("./StairwayPlot/run_urban_usc/milkweed_urban_urbscore.final.summary")) %>%
+urb_fig2 <- read.delim(here::here("./StairwayPlot/urban_usc_mmaf0.007813/urban_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -444,7 +461,7 @@ make_ne_plot(urb_fig2,
 ## Rural
 ### Urb = distance to city center
 ```{r}
-rur_fig <- read.delim(here::here("./StairwayPlot/run_rural_20230911/milkweed_rural_dist.final.summary")) %>%
+rur_fig <- read.delim(here::here("./StairwayPlot/rural_dist_mmaf0.007813/rural_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -460,7 +477,7 @@ make_ne_plot(rur_fig,
 
 ### Urb = urbanization score
 ```{r}
-rur_fig2 <- read.delim(here::here("./StairwayPlot/run_rural_usc/milkweed_rural_urbscore.final.summary")) %>%
+rur_fig2 <- read.delim(here::here("./StairwayPlot/rural_usc_mmaf0.007813/rural_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
