@@ -10,7 +10,7 @@ source(here::here("libraries.R"))
 #### Window size: 1 million bp
 ```{r}
 global_taj <- read.delim(
-  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/global_TajD_window_1mil/global_TajD.Tajima.D")) %>%
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007813_R0.5_no-IBD_vcf-all/global_TajD_window_1mil/global_TajD_window_1mil.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
@@ -20,7 +20,7 @@ range(global_taj$TajimaD)
 #### Window size: 100,000 bp
 ```{r}
 global_taj_100k <- read.delim(
-  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/global_TajD_window_100k/global_TajD_window_100k.Tajima.D")) %>%
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007813_R0.5_no-IBD_vcf-all/global_TajD_window_100k/global_TajD_window_100k.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
@@ -31,7 +31,7 @@ range(global_taj_100k$TajimaD)
 #### Window size: 1 million bp
 ```{r}
 urb_taj <- read.delim(
-  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Urban_dist_TajD_window_1mil/Urban_dist_TajD_window_1mil.Tajima.D")) %>%
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007813_R0.5_no-IBD_vcf-all/Urban_dist_TajD_window_1mil/Urban_dist_TajD_window_1mil.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
@@ -41,7 +41,7 @@ range(urb_taj$TajimaD)
 #### Window size: 100,000 bp
 ```{r}
 urb_taj_100k <- read.delim(
-  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Urban_dist_TajD_window_100k/Urban_dist_TajD_window_100k.Tajima.D")) %>%
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007813_R0.5_no-IBD_vcf-all/Urban_dist_TajD_window_100k/Urban_dist_TajD_window_100k.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
@@ -52,7 +52,7 @@ range(urb_taj_100k$TajimaD)
 #### Window size: 1 million bp
 ```{r}
 rur_taj <- read.delim(
-  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Rural_dist_TajD_window_1mil/Rural_dist_TajD_window_1mil.Tajima.D")) %>%
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007813_R0.5_no-IBD_vcf-all/Rural_dist_TajD_window_1mil/Rural_dist_TajD_window_1mil.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
@@ -62,7 +62,7 @@ range(rur_taj$TajimaD)
 #### Window size: 100,000 bp
 ```{r}
 rur_taj_100k <- read.delim(
-  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007968_R0.5_no-IBD_vcf-all/Rural_dist_TajD_window_100k/Rural_dist_TajD_window_100k.Tajima.D")) %>%
+  here::here("./pi_fst_TajD_estimates/TajD_mmaf0.007813_R0.5_no-IBD_vcf-all/Rural_dist_TajD_window_100k/Rural_dist_TajD_window_100k.Tajima.D")) %>%
   # remove windows with 0 SNPs
   dplyr::filter(N_SNPS != 0) 
 
@@ -376,22 +376,3 @@ ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_window100k.png"),
 mean(rur_taj_100k$TajimaD)
 sum(rur_taj_100k$BIN_START) 
 ```
-
-
-## Test significance
-### Global
-```{r}
-# import vcf
-library(vcfR)
-vcf <- read.vcfR(
-  here::here("./global_pi_vcf-all/populations.all.vcf"),
-  verbose = FALSE)
-
-# this doesn't work... says 0 segregating sites
-# convert to dnabin format
-dnabin <- vcfR2DNAbin(vcf)
-
-rm(vcf)
-pegas::tajima.test(dnabin)
-```
-
