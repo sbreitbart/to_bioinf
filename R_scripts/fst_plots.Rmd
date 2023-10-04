@@ -5,53 +5,99 @@ source(here::here("libraries.R"))
 ```
 
 ## Import data
+### Urb = dist to CC
 ```{r}
-
 # Urban pop vs. Rural pop
-snp_fst_UvsR <- read.table(here::here("./fst_mmaf0.05_R0.75_no-IBD_vcf-all/urb_vs_rur.weir.fst")) %>%
+snp_fst_UvsR <- read.table(here::here("./pi_fst_TajD_estimates/fst/fst_mmaf0.05_R0.75_no-IBD_vcf-all/fst_urb_vs_rur_dist/urb_vs_rur.weir.fst")) %>%
   janitor::row_to_names(row_number = 1) %>%
   janitor::clean_names() %>%
   dplyr::rename(fst = 3) %>%
     dplyr::filter(fst != "-nan") 
 
 # Urban subpopulations
-snp_fst_U <- read.table(here::here("./fst_mmaf0.05_R0.75_no-IBD_vcf-all/urb_.weir.fst")) %>%
+snp_fst_U <- read.table(here::here("./pi_fst_TajD_estimates/fst/fst_mmaf0.05_R0.75_no-IBD_vcf-all/fst_urb_dist/urb_.weir.fst")) %>%
   janitor::row_to_names(row_number = 1) %>%
   janitor::clean_names() %>%
   dplyr::rename(fst = 3) %>%
     dplyr::filter(fst != "-nan") 
 
 # Rural subpopulations
-snp_fst_R <- read.table(here::here("./fst_mmaf0.05_R0.75_no-IBD_vcf-all/rur_.weir.fst")) %>%
+snp_fst_R <- read.table(here::here("./pi_fst_TajD_estimates/fst/fst_mmaf0.05_R0.75_no-IBD_vcf-all/fst_rur_dist/rur_.weir.fst")) %>%
   janitor::row_to_names(row_number = 1) %>%
   janitor::clean_names() %>%
   dplyr::rename(fst = 3) %>%
     dplyr::filter(fst != "-nan") 
 ```
 
-# Visualize fst
+### Urb = urb score
 ```{r}
+# Urban pop vs. Rural pop
+snp_fst_UvsR_usc <- read.table(here::here("./pi_fst_TajD_estimates/fst/fst_mmaf0.05_R0.75_no-IBD_vcf-all/fst_urb_vs_rur_usc/urb_vs_rur_usc.weir.fst")) %>%
+  janitor::row_to_names(row_number = 1) %>%
+  janitor::clean_names() %>%
+  dplyr::rename(fst = 3) %>%
+    dplyr::filter(fst != "-nan") 
 
-# Create the data
+# Urban subpopulations
+snp_fst_U_usc <- read.table(here::here("./pi_fst_TajD_estimates/fst/fst_mmaf0.05_R0.75_no-IBD_vcf-all/fst_urb_usc/urb_usc.weir.fst")) %>%
+  janitor::row_to_names(row_number = 1) %>%
+  janitor::clean_names() %>%
+  dplyr::rename(fst = 3) %>%
+    dplyr::filter(fst != "-nan") 
+
+# Rural subpopulations
+snp_fst_R_usc <- read.table(here::here("./pi_fst_TajD_estimates/fst/fst_mmaf0.05_R0.75_no-IBD_vcf-all/fst_rur_usc/rur_usc.weir.fst")) %>%
+  janitor::row_to_names(row_number = 1) %>%
+  janitor::clean_names() %>%
+  dplyr::rename(fst = 3) %>%
+    dplyr::filter(fst != "-nan") 
+```
+
+# Create the fst dfs
+```{r}
 fst <- data.frame(
   fst = c(
+    # urb = dist
     mean(as.numeric(as.character(snp_fst_UvsR$fst)), na.rm = T),
     mean(as.numeric(as.character(snp_fst_U$fst)), na.rm = T),
-    mean(as.numeric(as.character(snp_fst_R$fst)), na.rm = T)), 
+    mean(as.numeric(as.character(snp_fst_R$fst)), na.rm = T),
+    # urb = usc
+    mean(as.numeric(as.character(snp_fst_UvsR_usc$fst)), na.rm = T),
+    mean(as.numeric(as.character(snp_fst_U_usc$fst)), na.rm = T),
+    mean(as.numeric(as.character(snp_fst_R_usc$fst)), na.rm = T)
+    ), 
+  urbanization = c("Distance to City Center",
+                   "Distance to City Center",
+                   "Distance to City Center",
+                   "Urbanization Score",
+                   "Urbanization Score",
+                   "Urbanization Score"),
   category = c(
+    "Urb vs. Rural",
+    "Within Urban",
+    "Within Rural",
     "Urb vs. Rural",
     "Within Urban",
     "Within Rural"),
  SE = c(
    sd(snp_fst_UvsR$fst) / sqrt(length(snp_fst_UvsR$fst)),
    sd(snp_fst_U$fst) / sqrt(length(snp_fst_U$fst)),
-   sd(snp_fst_R$fst) / sqrt(length(snp_fst_R$fst))
+   sd(snp_fst_R$fst) / sqrt(length(snp_fst_R$fst)),
+   sd(snp_fst_UvsR_usc$fst) / sqrt(length(snp_fst_UvsR_usc$fst)),
+   sd(snp_fst_U_usc$fst) / sqrt(length(snp_fst_U_usc$fst)),
+   sd(snp_fst_R_usc$fst) / sqrt(length(snp_fst_R_usc$fst))
  ))
 
 
-# Create the barplot with points using ggplot
+```
+
+# Visualize fst
+```{r}
+
 ggplot(fst, 
-       aes(x = category, y = fst, label = round(fst, 3))) +
+       aes(x = category,
+           y = fst,
+           label = round(fst, 3))) +
   geom_errorbar(aes(ymin = fst - SE,
                     ymax = fst + SE),
                 color = "black",
@@ -67,12 +113,13 @@ ggplot(fst,
         values = c("#6633CC", "#FF3333", "#00CCFF")
     # values = c("Urb vs. Rural", "Within Rural", "Within Urban",
                                 ) +
-  geom_text(hjust = 0.5, vjust = -1.75)
+  geom_text(hjust = 0.5, vjust = -1.75) +
+  facet_wrap(vars(urbanization))
 
 
 ggsave(here::here("./Figures_Tables/fst/fst.png"), 
        plot = last_plot(),
-       width = 12,
+       width = 20,
        height = 8,
        units = "cm")
 
