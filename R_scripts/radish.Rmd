@@ -53,7 +53,217 @@ add_MW_IDs <- function(div_df) {
 ```
 
 ## Load data
+### Geographic sampling coordinates
+#### import coords
+```{r warning = FALSE}
+# lat/longs of sampling sites
+urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
+
+# sampling site IDs and genetic sample names
+coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
+
+# if population doesn't start with "MWI", it should start with "MW"
+  # rename col 1
+  dplyr::rename(pop_id = 2) %>%
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+
+# take entries with numeric populations and add "MW" as prefix
+  add_MW_IDs() %>%
+
+# left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+  left_join(., urb, by = "patch_id") %>%
+  dplyr::mutate(patch_id = as.factor(patch_id),
+                pop_id = as.factor(pop_id)) %>%
+  # KEEP ONLY URBAN POINTS
+  dplyr::filter(u_r_dist == "Urban") %>%
+  dplyr::select(c(1,2,6,7)) %>%
+  dplyr::rename("y" = 3,
+                "x" = 4) %>%
+  dplyr::arrange(sample) %>%
+  dplyr::select("x", "y")
+
+```
+
+#### convert to correct proj/cs
+```{r warning = FALSE}
+# 
+# # Convert the dataframe to a SpatialPoints object
+# sp_points <- SpatialPoints(coords, 
+#                            proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
+# 
+# # Project the SpatialPoints object to match the raster's CRS
+# sp_points_proj <- spTransform(sp_points, crs(gta_solris))
+# 
+# # convert to spatialpoints obj
+# sp_points_proj <- SpatialPoints(sp_points_proj, 
+#                            proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
+# 
+# # Plot the raster
+# plot(gta_solris)
+# 
+# # Overlay the projected SpatialPoints on the raster
+# points(sp_points_proj, col = "red", pch = 20)
+
+```
+
 ### Raster data (LULC)
+#### cropping to urban points
+```{r}
+# import raster-----
+solris_raster <- raster::raster(here::here("./raw_data/SOLRIS_Version_3_0/SOLRIS_Version_3_0_LAMBERT.tif"))
+
+# crop raster
+gta_solris <- raster::crop(solris_raster,
+                    extent(1285000, # xmin
+                           1450000, # xmax
+                           11840000, # ymin
+                           11970000)) # ymax
+
+crs(gta_solris)
+
+# that removed the projection and CS.
+
+# so reproject it:-----
+# Define the target CRS for UTM Zone 17 (EPSG:32617)
+target_crs <- "+proj=utm +zone=17 +datum=WGS84 +units=m +no_defs"
+
+# Decrease resolution from 15x15 to 90x90 (6x)-----
+gta_solris_90x <- aggregate(gta_solris,
+                            fact = 6,
+                            # aggregation method = mode
+                            fun = modal)
+
+
+# check classes
+unique(gta_solris_90x)
+
+# Reproject the raster-----
+reprojected_raster <- projectRaster(gta_solris_90x,
+                                     crs = target_crs,
+                                    # nearest neighbor
+                                    method = "ngb")
+
+# check classes
+unique(reprojected_raster)
+
+# Check the new CRS
+crs(reprojected_raster)
+
+
+# Now, reproject the points to the same CS:-----
+# Create a SpatialPointsDataFrame
+# BUT FIRST, get coords df from chunk above
+
+your_spdf <- SpatialPointsDataFrame(coords, 
+                                    data = coords, 
+                                    proj4string = CRS("+proj=longlat +datum=WGS84"))
+
+# Project to UTM Zone 17
+your_spdf_utm <- spTransform(your_spdf, target_crs)
+
+# Check the new CRS
+proj4string(your_spdf_utm)
+
+
+# overlay points onto raster
+plot(reprojected_raster)
+points(your_spdf_utm, col = "red", pch = 20)
+
+# Convert SpatialPointsDataFrame to SpatialPoints
+sp <- SpatialPoints(your_spdf_utm)
+class(sp)  # This will print "SpatialPoints"
+
+
+
+# Create convex hull around points w/5km buffer-----
+# Get the coordinates of the points
+coords <- coordinates(your_spdf_utm)
+
+# Calculate the convex hull
+convex_hull_idx <- chull(coords)
+
+# Create a SpatialPolygons object for the convex hull
+convex_hull <- SpatialPolygons(list(Polygons(list(Polygon(coords[convex_hull_idx, ])), ID = 1)))
+
+# Create a buffer around the convex hull (5km buffer)
+buffered_hull <- rgeos::gBuffer(convex_hull,
+                                width = 5000)
+
+# Crop the raster to the buffered convex hull
+cropped_raster <- crop(reprojected_raster,
+                       as(buffered_hull,
+                          "SpatialPolygons"))
+
+# Plot the cropped raster
+plot(cropped_raster)
+
+# Overlay the projected SpatialPoints on the raster
+points(your_spdf_utm, col = "red", pch = 20)
+
+# check classes intact
+unique(cropped_raster)
+
+
+# crop raster to hull-----
+cropped_raster_smaller = mask(cropped_raster,
+          buffered_hull)
+plot(cropped_raster_smaller)
+
+# Overlay the projected SpatialPoints on the raster
+points(your_spdf_utm, col = "red", pch = 20)
+
+str(cropped_raster_smaller)
+res(cropped_raster_smaller)
+unique(cropped_raster_smaller)
+
+# Create RAT to formalize raster as categorical-----
+
+lulc_integers <- unique(cropped_raster_smaller)
+print(lulc_integers)
+c(lulc_integers)
+
+# convert numeric values into factor classes
+cropped_raster_smaller <- as.factor(cropped_raster_smaller)
+
+RAT <- levels(cropped_raster_smaller)[[1]]
+
+RAT$VALUE <- c("Open Beach",
+                "Treed Sand Dune",
+                "Tallgrass Woodland",
+                "Forest",
+                "Coniferous Forest",
+                "Mixed Forest",
+                "Deciduous Forest",
+                "Treed Swamp",
+                "Thicket Swamp",
+                "Fen",
+                "Bog",
+                "Marsh",
+                "Open Water",
+                "Plantation",
+                "Hedge Rows",
+                "Tilled",
+                "Transportation",
+                "Built Up Area- Pervious",
+                "Built Up Area- Impervious",
+                "Extraction- Aggregate",
+                "Undifferentiated"
+                )
+
+levels(cropped_raster_smaller) <- RAT
+
+plot(cropped_raster_smaller,
+     main = "Landscape classification")
+
+
+# export cropped raster-----
+writeRaster(cropped_raster_smaller,
+            "test.grd")
+
+raster::
+```
+
+#### Original code- NOT USING
 ```{r warning = FALSE}
 solris_raster <- raster::raster(here::here("./raw_data/SOLRIS_Version_3_0/SOLRIS_Version_3_0_LAMBERT.tif"))
 
@@ -68,7 +278,6 @@ gta_solris <- raster::crop(solris_raster,
                            1450000, # xmax
                            11840000, # ymin
                            11970000)) # ymax
-
 
 # check classes not warped
 # unique(gta_solris)
@@ -172,7 +381,7 @@ res(gta_solris)
 
 # vcf
 vcf <- read.vcfR(
-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  here::here("./filtered_vcfs/urban_pops_dist_mmaf0.05.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -186,56 +395,6 @@ genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
 ```
 
 
-### Geographic sampling coordinates
-#### import coords
-```{r warning = FALSE}
-# lat/longs of sampling sites
-urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
-
-# sampling site IDs and genetic sample names
-coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
-
-# if population doesn't start with "MWI", it should start with "MW"
-  # rename col 1
-  dplyr::rename(pop_id = 2) %>%
-  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
-
-# take entries with numeric populations and add "MW" as prefix
-  add_MW_IDs() %>%
-
-# left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
-  left_join(., urb, by = "patch_id") %>%
-  dplyr::mutate(patch_id = as.factor(patch_id),
-                pop_id = as.factor(pop_id)) %>%
-  dplyr::select(c(1,2,6,7)) %>%
-  dplyr::rename("y" = 3,
-                "x" = 4) %>%
-  dplyr::arrange(sample) %>%
-  dplyr::select("x", "y")
-
-```
-
-#### convert to correct proj/cs
-```{r warning = FALSE}
-
-# Convert the dataframe to a SpatialPoints object
-sp_points <- SpatialPoints(coords, 
-                           proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
-
-# Project the SpatialPoints object to match the raster's CRS
-sp_points_proj <- spTransform(sp_points, crs(gta_solris))
-
-# convert to spatialpoints obj
-sp_points_proj <- SpatialPoints(sp_points_proj, 
-                           proj4string = CRS("+proj=longlat +datum=WGS84 +no_defs"))
-
-# Plot the raster
-plot(gta_solris)
-
-# Overlay the projected SpatialPoints on the raster
-points(sp_points_proj, col = "red", pch = 20)
-```
-
 # Model fitting
 ## Scale covariates
 ```{r}
@@ -243,7 +402,7 @@ points(sp_points_proj, col = "red", pch = 20)
 # scale_covs <- stack(scale(gta_solris)) ## Must be a raster stack
 
 # suggestion from Nate Pope
-scale_covs <- stack(list("gta_solris"=scale(gta_solris)))
+scale_covs <- stack(list("cropped_raster_smaller" = scale(cropped_raster_smaller)))
 
 
 print(scale_covs)
@@ -257,23 +416,28 @@ gc()
 rm(my_genind)
 rm(vcf)
 rm(inputdata1)
+rm(raster_cropped)
+rm(solris_raster)
+rm(cropped_raster)
+rm(gta_solris)
+rm(reprojected_raster)
 
+surface <- conductance_surface(covariates = scale_covs,
+                               coords = sp,
+                               directions = 8)
 
-# surface <- conductance_surface(covariates = scale_covs,
-#                                coords = sp_points_proj,
-#                                directions = 8)
-
-
-# created this surface in the cluster because it required a lot of memory. Now, I just import it and then use it:
-load(here::here("./clean_data/radish/surface2.RData"))
 ```
 
 ## Fit radish models
 ```{r}
-fit_mlpe <- radish(genetic_distance_matrix ~ gta_solris,
-                   data = surface, 
-                   conductance_model = radish::loglinear_conductance, 
-                   measurement_model = radish::mlpe)
+genetic_distance_matrix2 <- genetic_distance_matrix %>%
+  as.matrix()
+
+fit_mlpe <- radish(
+  genetic_distance_matrix2 ~ cropped_raster_smaller,
+  data = surface, 
+  conductance_model = radish::loglinear_conductance,
+  measurement_model = radish::mlpe)
 
 # examine model
 print(summary(fit_mlpe))
@@ -286,8 +450,11 @@ fitted_conductance <- conductance(surface,
                                   fit_mlpe,
                                   quantile = 0.95)
 
-plot(log(fitted_conductance[["est"]]), 
+plot(
+  log(fitted_conductance[["est"]]), 
      main = "Fitted conductance surface")
+
+
 
 ```
 

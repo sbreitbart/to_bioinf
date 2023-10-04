@@ -66,10 +66,9 @@ full_popmap %>%
 
 ```
 
-
-
 ## for URBAN fst analyses
-### pop map
+### Urb = dist to CC
+#### pop map
 ```{r}
 full_popmap %>%
   dplyr::select(sample, ID, patch_id, u_r_dist) %>%
@@ -87,9 +86,27 @@ full_popmap %>%
             row.names = FALSE,
             col.names = FALSE)
 
+
+
+full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_dist) %>%
+  dplyr::filter(u_r_dist == "Urban") %>%
+  arrange(ID) %>%
+  dplyr::select(sample) %>%
+
+# urban , determined by dist to CC
+
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_UR_dist_URBAN.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
 ```
 
-### For vcftools fst: Each pop has its own txt 
+#### For vcftools fst: Each pop has its own txt 
 ```{r}
 
 # Extract only urban pops
@@ -118,7 +135,7 @@ for (i in 1:length(populations)) {
 ```
 
 
-### For vcftools fst: Create part of vcftools fst command with populations
+#### For vcftools fst: Create part of vcftools fst command with populations
 ```{r}
 
 file_names <- paste("pop_maps_urban", paste0(populations, ".txt"), sep = "/")
@@ -128,9 +145,89 @@ paste("--weir-fst-pop", paste(file_names, collapse = " --weir-fst-pop "), sep = 
 
 ```
 
+### Urb = urb score
+#### pop map
+```{r}
+full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_usc) %>%
+  dplyr::filter(u_r_usc == "Urban") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, patch_id) %>%
+
+# urban , determined by dist to CC
+
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_U_usc.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+
+
+
+full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_usc) %>%
+  dplyr::filter(u_r_usc == "Urban") %>%
+  arrange(ID) %>%
+  dplyr::select(sample) %>%
+
+# urban , determined by dist to CC
+
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_UR_usc_URBAN.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+```
+
+#### For vcftools fst: Each pop has its own txt 
+```{r}
+
+# Extract only urban pops
+data <- full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_usc) %>%
+  dplyr::filter(u_r_usc == "Urban") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, patch_id) 
+
+# Create a list to store the sample IDs for each population
+populations <- unique(data$patch_id)
+sample_lists <- vector("list", length(populations))
+
+output_dir <- here("./genomic_resources/pop_maps_urban_usc")
+
+for (i in 1:length(populations)) {
+  # Subset the data for the current population
+  population <- populations[i]
+  samples <- data[data$patch_id == population, "sample"]
+  
+  # Save the sample IDs to a file
+  file_name <- paste0(population, ".txt")
+  file_path <- file.path(output_dir, file_name)
+  writeLines(as.character(samples), con = file_path)
+}
+```
+
+
+#### For vcftools fst: Create part of vcftools fst command with populations
+```{r}
+
+file_names <- paste("pop_maps_urban_usc", paste0(populations, ".txt"), sep = "/")
+
+paste("--weir-fst-pop", paste(file_names, collapse = " --weir-fst-pop "), sep = " ")
+
+
+```
+
 
 ## for RURAL fst analyses
-### pop map
+### Urb = dist to CC
+#### pop map
 ```{r}
 full_popmap %>%
   dplyr::select(sample, ID, patch_id, u_r_dist) %>%
@@ -148,9 +245,28 @@ full_popmap %>%
             row.names = FALSE,
             col.names = FALSE)
 
+
+
+
+full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_dist) %>%
+  dplyr::filter(u_r_dist == "Rural") %>%
+  arrange(ID) %>%
+  dplyr::select(sample) %>%
+
+# urban , determined by dist to CC
+
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_UR_dist_RURAL.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
 ```
 
-### For vcftools fst: Each pop has its own txt 
+#### For vcftools fst: Each pop has its own txt 
 ```{r}
 
 # Extract only urban pops
@@ -179,7 +295,7 @@ for (i in 1:length(populations)) {
 ```
 
 
-### For vcftools fst: Create part of vcftools fst command with populations
+#### For vcftools fst: Create part of vcftools fst command with populations
 ```{r}
 
 file_names <- paste("pop_maps_rural", paste0(populations, ".txt"), sep = "/")
@@ -189,6 +305,84 @@ paste("--weir-fst-pop", paste(file_names, collapse = " --weir-fst-pop "), sep = 
 
 ```
 
+
+### Urb = urb score
+#### pop map
+```{r}
+full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_usc) %>%
+  dplyr::filter(u_r_usc == "Rural") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, patch_id) %>%
+
+# urban , determined by dist to CC
+
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_R_usc.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+
+
+
+full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_usc) %>%
+  dplyr::filter(u_r_usc == "Rural") %>%
+  arrange(ID) %>%
+  dplyr::select(sample) %>%
+
+# urban , determined by dist to CC
+
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_UR_usc_RURAL.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+```
+
+#### For vcftools fst: Each pop has its own txt 
+```{r}
+
+# Extract only urban pops
+data <- full_popmap %>%
+  dplyr::select(sample, ID, patch_id, u_r_usc) %>%
+  dplyr::filter(u_r_usc == "Rural") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, patch_id) 
+
+# Create a list to store the sample IDs for each population
+populations <- unique(data$patch_id)
+sample_lists <- vector("list", length(populations))
+
+output_dir <- here("./genomic_resources/pop_maps_rural_usc")
+
+for (i in 1:length(populations)) {
+  # Subset the data for the current population
+  population <- populations[i]
+  samples <- data[data$patch_id == population, "sample"]
+  
+  # Save the sample IDs to a file
+  file_name <- paste0(population, ".txt")
+  file_path <- file.path(output_dir, file_name)
+  writeLines(as.character(samples), con = file_path)
+}
+```
+
+
+#### For vcftools fst: Create part of vcftools fst command with populations
+```{r}
+
+file_names <- paste("pop_maps_rural_usc", paste0(populations, ".txt"), sep = "/")
+
+paste("--weir-fst-pop", paste(file_names, collapse = " --weir-fst-pop "), sep = " ")
+
+```
 
 ## for 1 individual/population memgene analyses
 ### Urban & Rural both included
