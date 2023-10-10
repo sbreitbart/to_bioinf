@@ -112,6 +112,7 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
 # import raster-----
 solris_raster <- raster::raster(here::here("./raw_data/SOLRIS_Version_3_0/SOLRIS_Version_3_0_LAMBERT.tif"))
 
+
 # crop raster
 gta_solris <- raster::crop(solris_raster,
                     extent(1285000, # xmin
@@ -119,11 +120,13 @@ gta_solris <- raster::crop(solris_raster,
                            11840000, # ymin
                            11970000)) # ymax
 
+# see coordinate system
 crs(gta_solris)
 
-# that removed the projection and CS.
+# remove old raster
+rm(solris_raster)
 
-# so reproject it:-----
+# that removed the projection and CS, so reproject it:-----
 # Define the target CRS for UTM Zone 17 (EPSG:32617)
 target_crs <- "+proj=utm +zone=17 +datum=WGS84 +units=m +no_defs"
 
@@ -133,22 +136,34 @@ gta_solris_90x <- aggregate(gta_solris,
                             # aggregation method = mode
                             fun = modal)
 
-
 # check classes
 unique(gta_solris_90x)
 
+# remove old raster
+rm(gta_solris)
+
+# export as a GeoTIFF
+writeRaster(gta_solris_90x,
+            filename = here::here("./clean_data/radish/gta_solris_90x.tif"),
+            format = "GTiff")
+
 # Reproject the raster-----
-reprojected_raster <- projectRaster(gta_solris_90x,
+gta_solris_90x_reproj <- projectRaster(gta_solris_90x,
                                      crs = target_crs,
                                     # nearest neighbor
                                     method = "ngb")
 
 # check classes
-unique(reprojected_raster)
+unique(gta_solris_90x_reproj)
 
 # Check the new CRS
-crs(reprojected_raster)
+crs(gta_solris_90x_reproj)
 
+
+# export as a GeoTIFF
+writeRaster(gta_solris_90x_reproj,
+            filename = here::here("./clean_data/radish/gta_solris_90x_reproj.tif"),
+            format = "GTiff")
 
 # Now, reproject the points to the same CS:-----
 # Create a SpatialPointsDataFrame
@@ -166,7 +181,7 @@ proj4string(your_spdf_utm)
 
 
 # overlay points onto raster
-plot(reprojected_raster)
+plot(gta_solris_90x_reproj)
 points(your_spdf_utm, col = "red", pch = 20)
 
 # Convert SpatialPointsDataFrame to SpatialPoints
@@ -190,42 +205,56 @@ buffered_hull <- rgeos::gBuffer(convex_hull,
                                 width = 5000)
 
 # Crop the raster to the buffered convex hull
-cropped_raster <- crop(reprojected_raster,
+gta_solris_90x_reproj_cropped <- crop(gta_solris_90x_reproj,
                        as(buffered_hull,
                           "SpatialPolygons"))
 
 # Plot the cropped raster
-plot(cropped_raster)
+plot(gta_solris_90x_reproj_cropped)
 
 # Overlay the projected SpatialPoints on the raster
 points(your_spdf_utm, col = "red", pch = 20)
 
 # check classes intact
-unique(cropped_raster)
+unique(gta_solris_90x_reproj_cropped)
 
+# check CS
+crs(gta_solris_90x_reproj_cropped)
+
+
+# export as a GeoTIFF
+writeRaster(gta_solris_90x_reproj_cropped,
+            filename = here::here("./clean_data/radish/gta_solris_90x_reproj_cropped.tif"),
+            format = "GTiff")
 
 # crop raster to hull-----
-cropped_raster_smaller = mask(cropped_raster,
+lulc_raster = mask(gta_solris_90x_reproj_cropped,
           buffered_hull)
-plot(cropped_raster_smaller)
+
+plot(lulc_raster)
 
 # Overlay the projected SpatialPoints on the raster
 points(your_spdf_utm, col = "red", pch = 20)
 
-str(cropped_raster_smaller)
-res(cropped_raster_smaller)
-unique(cropped_raster_smaller)
+str(lulc_raster)
+res(lulc_raster)
+unique(lulc_raster)
+
+# export as a GeoTIFF
+writeRaster(lulc_raster,
+            filename = here::here("./clean_data/radish/lulc_raster.tif"),
+            format = "GTiff")
 
 # Create RAT to formalize raster as categorical-----
 
-lulc_integers <- unique(cropped_raster_smaller)
+lulc_integers <- unique(lulc_raster)
 print(lulc_integers)
-c(lulc_integers)
 
 # convert numeric values into factor classes
-cropped_raster_smaller <- as.factor(cropped_raster_smaller)
+## attempt #1-----
+#lulc_raster <- as.factor(lulc_raster)
 
-RAT <- levels(cropped_raster_smaller)[[1]]
+RAT <- levels(lulc_raster)[[1]]
 
 RAT$VALUE <- c("Open Beach",
                 "Treed Sand Dune",
@@ -250,17 +279,47 @@ RAT$VALUE <- c("Open Beach",
                 "Undifferentiated"
                 )
 
-levels(cropped_raster_smaller) <- RAT
+levels(lulc_raster) <- RAT
 
-plot(cropped_raster_smaller,
+plot(lulc_raster,
      main = "Landscape classification")
 
 
-# export cropped raster-----
-writeRaster(cropped_raster_smaller,
-            "test.grd")
+## attempt #2-----
 
-raster::
+# Convert the raster to have a RAT
+lulc_raster_rat <- raster::ratify(lulc_raster)
+
+# create rat table
+rat_table <- data.frame(ID = c(unique(lulc_raster)),
+                  VALUE = c("Open Beach",
+                "Treed Sand Dune",
+                "Tallgrass Woodland",
+                "Forest",
+                "Coniferous Forest",
+                "Mixed Forest",
+                "Deciduous Forest",
+                "Treed Swamp",
+                "Thicket Swamp",
+                "Fen",
+                "Bog",
+                "Marsh",
+                "Open Water",
+                "Plantation",
+                "Hedge Rows",
+                "Tilled",
+                "Transportation",
+                "Built Up Area- Pervious",
+                "Built Up Area- Impervious",
+                "Extraction- Aggregate",
+                "Undifferentiated"
+                ))
+
+levels(lulc_raster_rat) <- rat_table
+
+
+# convert to SpatialPixelsDataFrame-----
+#test <- st_as_sf(as(gta_solris, "SpatialPixelsDataFrame"))
 ```
 
 #### Original code- NOT USING
@@ -402,27 +461,20 @@ genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
 # scale_covs <- stack(scale(gta_solris)) ## Must be a raster stack
 
 # suggestion from Nate Pope
-scale_covs <- stack(list("cropped_raster_smaller" = scale(cropped_raster_smaller)))
-
+scale_covs <- stack(list("lulc_raster_rat" = scale(lulc_raster_rat)))
 
 print(scale_covs)
+
+# this is under the categorical tutorial section specifically
+stacked_covs <- stack(lulc_raster_rat)
+
+print(stacked_covs)
 ```
 
 ## Create surface
 ```{r}
 
-# remove all unnecessary objects to boost memory
-gc()
-rm(my_genind)
-rm(vcf)
-rm(inputdata1)
-rm(raster_cropped)
-rm(solris_raster)
-rm(cropped_raster)
-rm(gta_solris)
-rm(reprojected_raster)
-
-surface <- conductance_surface(covariates = scale_covs,
+surface <- conductance_surface(covariates = stacked_covs,
                                coords = sp,
                                directions = 8)
 
@@ -434,11 +486,26 @@ genetic_distance_matrix2 <- genetic_distance_matrix %>%
   as.matrix()
 
 fit_mlpe <- radish(
-  genetic_distance_matrix2 ~ cropped_raster_smaller,
+  genetic_distance_matrix2 ~ SOLRIS_Version_3_0_LAMBERT,
   data = surface, 
   conductance_model = radish::loglinear_conductance,
   measurement_model = radish::mlpe)
 
+# output:
+# Projected Newton-Raphson with Hager-Zhang line search
+# [1] f(x) = 1.084e+05   |f(x)-fold(x)| = 0.000e+00   max|f'(x)| = 8.429e-02   |f''(x)| = 4.363e-72 
+# [2] f(x) = 1.084e+05   |f(x)-fold(x)| = 4.876e-02   max|f'(x)| = 7.988e-02   |f''(x)| = 2.544e-61 
+# [3] f(x) = 1.084e+05   |f(x)-fold(x)| = 3.234e-01   max|f'(x)| = 2.443e-01   |f''(x)| = -1.246e-70 
+# ... switched to backtracking
+# Error in pmax(x, lower) : invalid input type
+# In addition: Warning messages:
+# 1: In .updateCHMfactor(object, parent, mult) :
+#   Cholmod warning 'not positive definite' at file ../Cholesky/t_cholmod_rowfac.c, line 430
+# 2: In .updateCHMfactor(object, parent, mult) :
+#   Cholmod warning 'not positive definite' at file ../Cholesky/t_cholmod_rowfac.c, line 430
+# 3: In Backtracking(dphi_fn, phi0, dphi0) : Maxit reached in backtracking
+
+# STOPPED HERE-----
 # examine model
 print(summary(fit_mlpe))
 
@@ -461,16 +528,16 @@ plot(
 # Export conductance surface
 ```{r eval=FALSE}
 
-pdf("conductance_surface.pdf",         # File name
-    width = 8, height = 7, # Width and height in inches
-    bg = "white",          # Background color
-    colormodel = "cmyk" ,   # Color model (cmyk is required for most publications)
-    paper = "A4")          # Paper size
-
-# Creating a plot
-plot(log(fitted_conductance[["est"]]), 
-     main = "Fitted conductance surface")
-
-# Closing the graphical device
-dev.off() 
+# pdf("conductance_surface.pdf",         # File name
+#     width = 8, height = 7, # Width and height in inches
+#     bg = "white",          # Background color
+#     colormodel = "cmyk" ,   # Color model (cmyk is required for most publications)
+#     paper = "A4")          # Paper size
+# 
+# # Creating a plot
+# plot(log(fitted_conductance[["est"]]), 
+#      main = "Fitted conductance surface")
+# 
+# # Closing the graphical device
+# dev.off() 
 ```
