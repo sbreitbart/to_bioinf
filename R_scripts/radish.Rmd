@@ -226,37 +226,37 @@ print(lulc_integers)
 # convert numeric values into factor classes
 ## attempt #1-----
 #lulc_raster <- as.factor(lulc_raster)
-
-RAT <- levels(lulc_raster)[[1]]
-
-RAT$VALUE <- c("Open Beach",
-                "Treed Sand Dune",
-                "Tallgrass Woodland",
-                "Forest",
-                "Coniferous Forest",
-                "Mixed Forest",
-                "Deciduous Forest",
-                "Treed Swamp",
-                "Thicket Swamp",
-                "Fen",
-                "Bog",
-                "Marsh",
-                "Open Water",
-                "Plantation",
-                "Hedge Rows",
-                "Tilled",
-                "Transportation",
-                "Built Up Area- Pervious",
-                "Built Up Area- Impervious",
-                "Extraction- Aggregate",
-                "Undifferentiated"
-                )
-
-levels(lulc_raster) <- RAT
-
-plot(lulc_raster,
-     main = "Landscape classification")
-
+# 
+# RAT <- levels(lulc_raster)[[1]]
+# 
+# RAT$VALUE <- c("Open Beach",
+#                 "Treed Sand Dune",
+#                 "Tallgrass Woodland",
+#                 "Forest",
+#                 "Coniferous Forest",
+#                 "Mixed Forest",
+#                 "Deciduous Forest",
+#                 "Treed Swamp",
+#                 "Thicket Swamp",
+#                 "Fen",
+#                 "Bog",
+#                 "Marsh",
+#                 "Open Water",
+#                 "Plantation",
+#                 "Hedge Rows",
+#                 "Tilled",
+#                 "Transportation",
+#                 "Built Up Area- Pervious",
+#                 "Built Up Area- Impervious",
+#                 "Extraction- Aggregate",
+#                 "Undifferentiated"
+#                 )
+# 
+# levels(lulc_raster) <- RAT
+# 
+# plot(lulc_raster,
+#      main = "Landscape classification")
+# 
 
 ## attempt #2-----
 

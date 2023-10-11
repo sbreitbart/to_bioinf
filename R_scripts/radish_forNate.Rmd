@@ -1,0 +1,392 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning = FALSE}
+# if(!requireNamespace("corMLPE", quietly = TRUE)) remotes::install_github("nspope/corMLPE")
+# 
+# if(!requireNamespace("radish", quietly = TRUE)) remotes::install_github("nspope/radish")
+
+library(radish)
+library(raster)
+library(igraph)
+library(tidyverse)
+library(magrittr)
+library(vcfR)
+library(sp)
+library(sf)
+library(here)
+
+add_MW_IDs <- function(div_df) {
+  # Filter out populations that start with "MWI" or "UTSC"
+  MW_pops <- div_df %>%
+    filter(!str_detect(pop_id, "MWI")) %>%
+    filter(!str_detect(pop_id, "UTSC"))
+  
+  # Get populations that start with "MWI" or "UTSC"
+  MWI_UTSC_pops <- anti_join(div_df, MW_pops)
+  
+  # Split up populations MW001->MW009 vs MW010->MW079
+  MW_pops_singledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) == 1, ]
+  MW_pops_doubledigits <- MW_pops[nchar(as.character(MW_pops$pop_id)) != 1, ]
+  
+  # Add "MW00" to single-digit populations
+  MW_pops_singledigits %<>%
+    dplyr::mutate(patch_id = paste0("MW00", pop_id))
+  
+  # Add "MW0" to double-digit populations
+  MW_pops_doubledigits %<>%
+    dplyr::mutate(patch_id = paste0("MW0", pop_id))
+  
+  # Bring all entries together again
+  all_pops <- full_join(MW_pops_singledigits,
+                        MW_pops_doubledigits) %>%
+    dplyr::relocate(patch_id, .before = 1) %>%
+    full_join(.,
+              MWI_UTSC_pops) %>%
+    # If patch_id column is NA (for MWI and UTSC values), replace it with value from pop_id
+    dplyr::mutate(patch_id = coalesce(patch_id, pop_id))
+  
+  return(all_pops)
+}
+```
+
+## Load data
+### Geographic sampling coordinates
+```{r warning = FALSE}
+# lat/longs of sampling sites
+urb <- read.csv("urb_metrics.csv")
+
+# sampling site IDs and genetic sample names
+coords <- read.csv("pop_map3.csv") %>%
+
+# if population doesn't start with "MWI", it should start with "MW"
+  # rename col 1
+  dplyr::rename(pop_id = 2) %>%
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+
+# take entries with numeric populations and add "MW" as prefix
+  add_MW_IDs() %>%
+
+# left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+  left_join(., urb, by = "patch_id") %>%
+  dplyr::mutate(patch_id = as.factor(patch_id),
+                pop_id = as.factor(pop_id)) %>%
+  # KEEP ONLY URBAN POINTS
+  dplyr::filter(u_r_dist == "Urban") %>%
+  dplyr::select(c(1,2,6,7)) %>%
+  dplyr::rename("y" = 3,
+                "x" = 4) %>%
+  dplyr::arrange(sample) %>%
+  dplyr::select("x", "y")
+
+```
+
+### Raster data (LULC)
+```{r}
+# import raster-----
+solris_raster <- raster::raster("SOLRIS_Version_3_0_LAMBERT.tif")
+
+
+# crop raster
+gta_solris <- raster::crop(solris_raster,
+                    extent(1285000, # xmin
+                           1450000, # xmax
+                           11840000, # ymin
+                           11970000)) # ymax
+
+# see coordinate system
+crs(gta_solris)
+
+# remove old raster
+rm(solris_raster)
+
+# that removed the projection and CS, so reproject it:-----
+# Define the target CRS for UTM Zone 17 (EPSG:32617)
+target_crs <- "+proj=utm +zone=17 +datum=WGS84 +units=m +no_defs"
+
+# Decrease resolution from 15x15 to 90x90 (6x)-----
+gta_solris_90x <- aggregate(gta_solris,
+                            fact = 6,
+                            # aggregation method = mode
+                            fun = modal)
+
+# check classes
+unique(gta_solris_90x)
+
+# remove old raster
+rm(gta_solris)
+
+# export as a GeoTIFF
+writeRaster(gta_solris_90x,
+            filename = here::here("./clean_data/radish/gta_solris_90x.tif"),
+            format = "GTiff")
+
+# Reproject the raster-----
+gta_solris_90x_reproj <- projectRaster(gta_solris_90x,
+                                     crs = target_crs,
+                                    # nearest neighbor
+                                    method = "ngb")
+
+# check classes
+unique(gta_solris_90x_reproj)
+
+# Check the new CRS
+crs(gta_solris_90x_reproj)
+
+
+# export as a GeoTIFF
+writeRaster(gta_solris_90x_reproj,
+            filename = here::here("./clean_data/radish/gta_solris_90x_reproj.tif"),
+            format = "GTiff")
+
+# Now, reproject the points to the same CS:-----
+# Create a SpatialPointsDataFrame
+# BUT FIRST, get coords df from chunk above
+
+your_spdf <- SpatialPointsDataFrame(coords, 
+                                    data = coords, 
+                                    proj4string = CRS("+proj=longlat +datum=WGS84"))
+
+# Project to UTM Zone 17
+your_spdf_utm <- spTransform(your_spdf, target_crs)
+
+# Check the new CRS
+proj4string(your_spdf_utm)
+
+
+# overlay points onto raster
+plot(gta_solris_90x_reproj)
+points(your_spdf_utm, col = "red", pch = 20)
+
+# Convert SpatialPointsDataFrame to SpatialPoints
+sp <- SpatialPoints(your_spdf_utm)
+class(sp)  # This will print "SpatialPoints"
+
+
+
+# Create convex hull around points w/5km buffer-----
+# Get the coordinates of the points
+coords <- coordinates(your_spdf_utm)
+
+# Calculate the convex hull
+convex_hull_idx <- chull(coords)
+
+# Create a SpatialPolygons object for the convex hull
+convex_hull <- SpatialPolygons(list(Polygons(list(Polygon(coords[convex_hull_idx, ])), ID = 1)))
+
+# Create a buffer around the convex hull (5km buffer)
+buffered_hull <- rgeos::gBuffer(convex_hull,
+                                width = 5000)
+
+# Crop the raster to the buffered convex hull
+gta_solris_90x_reproj_cropped <- crop(gta_solris_90x_reproj,
+                       as(buffered_hull,
+                          "SpatialPolygons"))
+
+# Plot the cropped raster
+plot(gta_solris_90x_reproj_cropped)
+
+# Overlay the projected SpatialPoints on the raster
+points(your_spdf_utm, col = "red", pch = 20)
+
+# check classes intact
+unique(gta_solris_90x_reproj_cropped)
+
+# check CS
+crs(gta_solris_90x_reproj_cropped)
+
+
+# export as a GeoTIFF
+writeRaster(gta_solris_90x_reproj_cropped,
+            filename = here::here("./clean_data/radish/gta_solris_90x_reproj_cropped.tif"),
+            format = "GTiff")
+
+# crop raster to hull-----
+lulc_raster = mask(gta_solris_90x_reproj_cropped,
+          buffered_hull)
+
+plot(lulc_raster)
+
+# Overlay the projected SpatialPoints on the raster
+points(your_spdf_utm, col = "red", pch = 20)
+
+str(lulc_raster)
+res(lulc_raster)
+unique(lulc_raster)
+
+# export as a GeoTIFF
+writeRaster(lulc_raster,
+            filename = here::here("./clean_data/radish/lulc_raster.tif"),
+            format = "GTiff")
+
+# Create RAT to formalize raster as categorical-----
+
+lulc_integers <- unique(lulc_raster)
+print(lulc_integers)
+
+# convert numeric values into factor classes
+## attempt #1-----
+#lulc_raster <- as.factor(lulc_raster)
+# 
+# RAT <- levels(lulc_raster)[[1]]
+# 
+# RAT$VALUE <- c("Open Beach",
+#                 "Treed Sand Dune",
+#                 "Tallgrass Woodland",
+#                 "Forest",
+#                 "Coniferous Forest",
+#                 "Mixed Forest",
+#                 "Deciduous Forest",
+#                 "Treed Swamp",
+#                 "Thicket Swamp",
+#                 "Fen",
+#                 "Bog",
+#                 "Marsh",
+#                 "Open Water",
+#                 "Plantation",
+#                 "Hedge Rows",
+#                 "Tilled",
+#                 "Transportation",
+#                 "Built Up Area- Pervious",
+#                 "Built Up Area- Impervious",
+#                 "Extraction- Aggregate",
+#                 "Undifferentiated"
+#                 )
+# 
+# levels(lulc_raster) <- RAT
+# 
+# plot(lulc_raster,
+#      main = "Landscape classification")
+# 
+
+## attempt #2-----
+
+# Convert the raster to have a RAT
+lulc_raster_rat <- raster::ratify(lulc_raster)
+
+# create rat table
+rat_table <- data.frame(ID = c(unique(lulc_raster)),
+                  VALUE = c("Open Beach",
+                "Treed Sand Dune",
+                "Tallgrass Woodland",
+                "Forest",
+                "Coniferous Forest",
+                "Mixed Forest",
+                "Deciduous Forest",
+                "Treed Swamp",
+                "Thicket Swamp",
+                "Fen",
+                "Bog",
+                "Marsh",
+                "Open Water",
+                "Plantation",
+                "Hedge Rows",
+                "Tilled",
+                "Transportation",
+                "Built Up Area- Pervious",
+                "Built Up Area- Impervious",
+                "Extraction- Aggregate",
+                "Undifferentiated"
+                ))
+
+levels(lulc_raster_rat) <- rat_table
+
+```
+
+### Genetic data
+```{r warning = FALSE}
+# format required: genetic distances
+
+# vcf
+vcf <- read.vcfR("urban_pops_dist_mmaf0.05.recode.vcf",
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+# tidy up colnames (remove periods)
+inputdata1 <- my_genind$tab
+
+genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
+
+```
+
+
+# Model fitting
+## stack covariates
+```{r}
+# this is under the categorical tutorial section specifically
+stacked_covs <- stack(lulc_raster_rat)
+
+print(stacked_covs)
+```
+
+## Create surface
+```{r}
+surface <- conductance_surface(covariates = stacked_covs,
+                               coords = sp,
+                               directions = 8)
+
+```
+
+## Fit radish models
+```{r}
+genetic_distance_matrix2 <- genetic_distance_matrix %>%
+  as.matrix()
+
+fit_mlpe <- radish(
+  # the SOLRIS part is actually the name/covariate
+  genetic_distance_matrix2 ~ SOLRIS_Version_3_0_LAMBERT,
+  data = surface, 
+  conductance_model = radish::loglinear_conductance,
+  measurement_model = radish::mlpe)
+
+# output:
+# Projected Newton-Raphson with Hager-Zhang line search
+# [1] f(x) = 1.084e+05   |f(x)-fold(x)| = 0.000e+00   max|f'(x)| = 8.429e-02   |f''(x)| = 4.363e-72 
+# [2] f(x) = 1.084e+05   |f(x)-fold(x)| = 4.876e-02   max|f'(x)| = 7.988e-02   |f''(x)| = 2.544e-61 
+# [3] f(x) = 1.084e+05   |f(x)-fold(x)| = 3.234e-01   max|f'(x)| = 2.443e-01   |f''(x)| = -1.246e-70 
+# ... switched to backtracking
+# Error in pmax(x, lower) : invalid input type
+# In addition: Warning messages:
+# 1: In .updateCHMfactor(object, parent, mult) :
+#   Cholmod warning 'not positive definite' at file ../Cholesky/t_cholmod_rowfac.c, line 430
+# 2: In .updateCHMfactor(object, parent, mult) :
+#   Cholmod warning 'not positive definite' at file ../Cholesky/t_cholmod_rowfac.c, line 430
+# 3: In Backtracking(dphi_fn, phi0, dphi0) : Maxit reached in backtracking
+
+# STOPPED HERE-----
+# examine model
+print(summary(fit_mlpe))
+
+## we are modeling conductances --> positive coefficient estimates indicate increasing conductance (e.g. rates of movement/gene flow) at higher values of the covariate, while negative coefficients indicate lower conductance at higher values of the covariate.
+
+
+## Plot fitted conductance surface
+fitted_conductance <- conductance(surface,
+                                  fit_mlpe,
+                                  quantile = 0.95)
+
+plot(
+  log(fitted_conductance[["est"]]), 
+     main = "Fitted conductance surface")
+
+
+
+```
+
+# Export conductance surface
+```{r eval=FALSE}
+
+# pdf("conductance_surface.pdf",         # File name
+#     width = 8, height = 7, # Width and height in inches
+#     bg = "white",          # Background color
+#     colormodel = "cmyk" ,   # Color model (cmyk is required for most publications)
+#     paper = "A4")          # Paper size
+# 
+# # Creating a plot
+# plot(log(fitted_conductance[["est"]]), 
+#      main = "Fitted conductance surface")
+# 
+# # Closing the graphical device
+# dev.off() 
+```
