@@ -376,3 +376,44 @@ ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_window100k.png"),
 mean(rur_taj_100k$TajimaD)
 sum(rur_taj_100k$BIN_START) 
 ```
+
+# Export means
+```{r}
+tajd_table <- data.frame(
+  Group = c("Global",
+            "Urban",
+            # "Urban",
+            # "Rural",
+            "Rural"),
+    Urbanization = c("-",
+                   "Distance to City Center",
+                   "Distance to City Center"),
+  # Urbanization = c("-",
+  #                  "Distance to City Center",
+  #                  "Urbanization Score",
+  #                  "Distance to City Center",
+  #                  "Urbanization Score"),
+  TajD_window_1mil = c(
+    round(mean(global_taj$TajimaD),3),
+    round(mean(urb_taj$TajimaD),3),
+    round(mean(rur_taj$TajimaD),3)
+    ),
+  TajD_window_100k = c(
+    round(mean(global_taj_100k$TajimaD),3),
+    round(mean(urb_taj_100k$TajimaD),3),
+    round(mean(rur_taj_100k$TajimaD),3)
+  )
+)
+
+tajd_table %>%
+  dplyr::rename("Window = 1,000,000 bp" = 3,
+                "Window = 100,000 bp" = 4) %>%
+  flextable::flextable() %>%
+  flextable::align(align = "center", i = c(1:3), part = "body") %>%
+  flextable::align(align = "left", j = 1:2, part = "all") %>%
+  flextable::align(align = "center", i = 1, j = c(3,4), part = "header") %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/tajimas_d/taj_d_means.docx"))
+```
+
