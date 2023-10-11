@@ -112,6 +112,7 @@ theta_w_rur2
 ```
 
 # Export
+## Create df with theta Ws
 ```{r}
 
 neaten_df <- function(theta_w_output, scale, urbanization){
@@ -154,8 +155,10 @@ thetas <- rbind(theta_w,
   tidyr::pivot_wider(names_from = value,
                      values_from = estimate) %>%
   slice(c(1,2,4,3,5))
+```
 
-
+## Export theta W only
+```{r}
 thetas %>%
   flextable::flextable() %>%
   flextable::align(align = "center", i = c(1:5), part = "body") %>%
@@ -167,3 +170,50 @@ thetas %>%
     "./Figures_Tables/gen_diversity/wattersons_theta.docx"))
 ```
 
+## Export theta W and pi
+### Add pi values
+```{r}
+# values from ./pi_fst_TajD_estimates/pi/dist_to_city_center/UR_dist_pi_vcf-all/populations.sumstats_summary.tsv, and from analogous tsvs
+
+# Global pi-----
+pi_global <- 0.00091
+  
+# Urb = dist to city center-----
+## Urban group
+pi_dist_urb <- 0.00091
+
+## Rural group
+pi_dist_rur <- 0.00090
+
+# Urb = dist to city center-----
+## Urban group
+pi_usc_urb <- 0.00091
+
+## Rural group
+pi_usc_rur <- 0.00090
+
+pis <- thetas %>%
+  dplyr::select(Group:Urbanization) %>%
+  dplyr::mutate(Pi = c(pi_global,
+                       pi_dist_urb,
+                       pi_usc_urb,
+                       pi_dist_rur,
+                       pi_usc_rur))
+```
+
+### Export
+```{r}
+thetas %>%
+  dplyr::full_join(.,
+                   pis,
+                   by = c("Group", "Urbanization")) %>%
+  dplyr::select(-Variance) %>%
+  flextable::flextable() %>%
+  flextable::align(align = "center", i = c(1:5), part = "body") %>%
+  flextable::align(align = "left", j = 1:2, part = "all") %>%
+  flextable::align(align = "center", i = 1, j = c(3,4), part = "header") %>%
+  hline(i = c(1,3)) %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/gen_diversity/theta_w_and_pi.docx"))
+```
