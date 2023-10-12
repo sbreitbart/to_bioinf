@@ -25,6 +25,7 @@ librarian::shelf(adegenet    ,
                  poppr       ,
                  purrr       ,
                  raster      ,
+                 rgdal       ,
                  rgeos       ,
                  rvest       ,
                  sf          ,
@@ -33,6 +34,7 @@ librarian::shelf(adegenet    ,
                  tidyverse   ,
                  tmap        ,
                  vcfR        ,
+                 vegan       ,
                  viridis
                  )
   

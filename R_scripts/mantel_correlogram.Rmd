@@ -3,11 +3,6 @@
 ```{r warning=F}
 source(here::here("libraries.R"))
 source(here::here("functions.R"))
-library("poppr")
-library(vegan)
-library(sp)
-library(rgdal)
-
 ```
 
 ## Import files
@@ -101,14 +96,16 @@ geographical_distance_matrix_utm <- dist(coords_utm)
 ## Create
 ### lat/longs
 ```{r}
-correlogram <- vegan::mantel.correlog(
-  D.eco = genetic_distance_matrix,
-  D.geo = geographical_distance_matrix,
-  nperm = 10000)
-
-
-plot(correlogram)
-
+# correlogram <- vegan::mantel.correlog(
+#   D.eco = genetic_distance_matrix,
+#   D.geo = geographical_distance_matrix,
+#   nperm = 100, # change back to 10000
+#   cutoff = F,
+#    n.class = 150,
+#    # break.pts = c(0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000, 10500, 11000, 11500, 12000, 12500, 13000, 13500, 14000, 14500, 15000, 15500, 16000, 16500, 17000, 17500, 18000, 18500, 19000, 19500, 20000, 20500, 21000, 21500, 22000, 22500, 23000, 23500, 24000, 24500, 25000, 25500, 26000, 26500, 27000, 27500, 28000, 28500, 29000, 29500, 30000, 30500, 31000, 31500, 32000, 32500, 33000, 33500, 34000, 34500, 35000, 35500, 36000, 36500, 37000, 37500, 38000, 38500, 39000, 39500, 40000, 40500, 41000, 41500, 42000, 42500, 43000, 43500, 44000, 44500, 45000, 45500, 46000, 46500, 47000, 47500, 48000, 48500, 49000, 49500, 50000, 50500, 51000, 51500, 52000, 52500, 53000, 53500, 54000, 54500, 55000, 55500, 56000, 56500, 57000, 57500, 58000, 58500, 59000, 59500, 60000, 60500, 61000, 61500, 62000, 62500, 63000, 63500, 64000, 64500, 65000, 65500, 66000, 66500, 67000, 67500, 68000, 68500, 69000, 69500, 70000 )
+#   )
+# 
+# plot(correlogram)
 ```
 
 ### UTM
@@ -116,49 +113,51 @@ plot(correlogram)
 correlogram_utm <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix,
   D.geo = geographical_distance_matrix_utm,
-  nperm = 10000)
-
+  nperm = 10000,
+  cutoff = F,
+ # n.class = 35
+   break.pts = c(0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000, 10500, 11000, 11500, 12000, 12500, 13000, 13500, 14000, 14500, 15000, 15500, 16000, 16500, 17000, 17500, 18000, 18500, 19000, 19500, 20000, 20500, 21000, 21500, 22000, 22500, 23000, 23500, 24000, 24500, 25000, 25500, 26000, 26500, 27000, 27500, 28000, 28500, 29000, 29500, 30000, 30500, 31000, 31500, 32000, 32500, 33000, 33500, 34000, 34500, 35000, 35500, 36000, 36500, 37000, 37500, 38000, 38500, 39000, 39500, 40000, 40500, 41000, 41500, 42000, 42500, 43000, 43500, 44000, 44500, 45000, 45500, 46000, 46500, 47000, 47500, 48000, 48500, 49000, 49500, 50000, 50500, 51000, 51500, 52000, 52500, 53000, 53500, 54000, 54500, 55000, 55500, 56000, 56500, 57000, 57500, 58000, 58500, 59000, 59500, 60000, 60500, 61000, 61500, 62000, 62500, 63000, 63500, 64000, 64500, 65000, 65500, 66000, 66500, 67000, 67500, 68000, 68500, 69000, 69500, 70000 )
+   )
 
 plot(correlogram_utm)
-
 ```
 
 ## Export
 ### lat/long
 ```{r}
-# export plot
-png(here::here("./Figures_Tables/correlogram/mantel_correlogram.png"), 
-    width = 1200, height = 800,
-    res = 200) 
-
-plot(correlogram)  
-
-dev.off()
-
-
-# export table
-correlogram$mantel.res %>%
-  as.data.frame() %>%
-  dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
-  drop_na() %>%
-  round(3) %>%
-  dplyr::rename("Distance Class" = 1,
-                "N" = 2,
-                "Mantel r" = 3,
-                "p" = 4) %>%
-  flextable() %>%
-  align(align = "center",
-        part = "all") %>%
-  flextable::bold(i = ~ p <= 0.05, j = 4) %>%
-  flextable::italic(i = 1, j = 4, part = "header") %>%
-  flextable::autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table.docx"))
+# # export plot
+# png(here::here("./Figures_Tables/correlogram/mantel_correlogram.png"), 
+#     width = 1200, height = 800,
+#     res = 200) 
+# 
+# plot(correlogram)  
+# 
+# dev.off()
+# 
+# 
+# # export table
+# correlogram$mantel.res %>%
+#   as.data.frame() %>%
+#   dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
+#   drop_na() %>%
+#   round(3) %>%
+#   dplyr::rename("Distance Class" = 1,
+#                 "N" = 2,
+#                 "Mantel r" = 3,
+#                 "p" = 4) %>%
+#   flextable() %>%
+#   align(align = "center",
+#         part = "all") %>%
+#   flextable::bold(i = ~ p <= 0.05, j = 4) %>%
+#   flextable::italic(i = 1, j = 4, part = "header") %>%
+#   flextable::autofit() %>%
+#   save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table.docx"))
 
 ```
 
 ### UTM
 ```{r}
-# export plot
+# export basic plot-----
 png(here::here("./Figures_Tables/correlogram/mantel_correlogram_UTM.png"), 
     width = 1200, height = 800,
     res = 200) 
@@ -168,7 +167,7 @@ plot(correlogram_utm)
 dev.off()
 
 
-# export table
+# export table-----
 correlogram_utm$mantel.res %>%
   as.data.frame() %>%
   dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
@@ -187,4 +186,56 @@ correlogram_utm$mantel.res %>%
   flextable::autofit() %>%
   save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table_utm.docx"))
 
+# export plot made with ggplot-----
+## WITHOUT LABELLED SIGNIFICANT POINTS
+corr_data_utm <- correlogram_utm[['mantel.res']] %>%
+  as.data.frame() %>%
+  dplyr::mutate(Significant = if_else(
+    `Pr(corrected)` < 0.05,
+    "Significant",
+    "Not_significant"
+  ))
+
+corr_data_utm_plot1 <- corr_data_utm %>%
+  ggplot(aes(x = class.index/1000,
+             y = Mantel.cor)) +
+  geom_line() +
+  geom_point(aes(shape = Significant,
+                 fill = Significant),
+             size = 2.5) +
+  geom_hline(yintercept = 0,
+             linetype = "dotted") +
+  scale_shape_manual(values = c(21,22)) +
+  scale_fill_manual(values = c("white", "black" )) +
+  labs(x = "Class Index (km)",
+       y = expression(paste("Mantel ", italic(r)))) +
+  ylim(-0.05, 0.15) +
+  scale_x_continuous(limits = c(0, NA),
+       breaks = c(0, 10, 20, 30, 40, 50, 60, 70)) +
+  ggpubr::theme_pubr(legend = "none")
+
+ggsave(plot = corr_data_utm_plot1,
+       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot.png"),
+       height = 3,
+       width = 8)
+
+## WITH LABELLED SIGNIFICANT POINTS
+corr_data_utm_plot1 + 
+  ggrepel::geom_text_repel(
+    seed = 1,
+    data = corr_data_utm %>%
+      dplyr::filter(Significant == "Significant"),
+    aes(x = class.index/1000,
+        y = Mantel.cor,
+        label = class.index/1000),
+    nudge_x = 2,
+    nudge_y = -0.01,
+    direction = "both" # Allow labels to be moved in both x and y directions
+  )
+
+
+ggsave(plot = last_plot(),
+       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_labelled.png"),
+       height = 3,
+       width = 8)
 ```
