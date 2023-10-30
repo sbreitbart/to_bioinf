@@ -178,6 +178,11 @@ correlogram_utm$mantel.res %>%
                 "N" = 2,
                 "Mantel r" = 3,
                 "p" = 4) %>%
+  dplyr::mutate(p = if_else(
+                p < 0.001,
+                  "<0.001",
+                as.character(p)
+                )) %>%
   flextable() %>%
   align(align = "center",
         part = "all") %>%

@@ -192,6 +192,7 @@ grp <- adegenet::find.clusters(my_genind,
 
 # Next, it asks for the number of clusters - here select the point with the lowest BIC.
 # The curve is nearly linear, increasing from 2 up to 120. I'll choose 2.
+# NOTE: upon returning, I can choose 1. It has the lowest BIC, but I can't plot it, so going through this analysis choosing 2 allows for a comparison.
 ```
 
 In the manual, they provide a U-shaped curve that plateaus for ~30 estimates of x. For cases like this, the authors state:
@@ -387,6 +388,17 @@ ggsave(here::here("./Figures_Tables/dapc/k2_dapc_map.png"),
 
 
 ### Clusters = 1- didn't work (not going to work. DAPC can only detect at least 2 clusters, as per conversation with package developers May 2023)
+#### Examine clusters
+```{r}
+head(grp$Kstat)  # BIC scores per k
+#     K=1      K=2      K=3      K=4      K=5      K=6 
+#   1252.613 1255.362 1258.501 1261.689 1265.318 1268.763
+
+
+grp$stat  # Best k based on BIC
+
+```
+
 ## Cross-validation
 
 Carrying out a DAPC requires the user to define the number of PCs retained in the analysis. As discussed above, this is not a trivial decision, as the number of PCs can have a substantial

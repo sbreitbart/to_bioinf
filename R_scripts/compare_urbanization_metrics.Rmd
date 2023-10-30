@@ -1,0 +1,110 @@
+# Set up notebook
+## Load libraries and add functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+```{r}
+sites <- read.csv(here::here("./clean_data/urb_metrics.csv"))
+
+str(sites)
+```
+
+# Regression
+```{r}
+mod1 <- lm(City_dist ~ urb_score,
+           data = sites)
+
+performance::check_model(mod1)
+
+summary(mod1)
+
+mod1_anova <- car::Anova(mod1)
+
+F_stat <- round(mod1_anova$`F value`[1], 3)
+```
+
+# Figures
+```{r}
+ggplot(sites,
+       aes(x = City_dist,
+           y = urb_score)) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5)  +
+  geom_point(size = 1.5,
+             shape = 21) +
+  xlim(0, NA) +
+  ylim(-5, 5) +
+  xlab("Distance to City Center (km)") +
+  ylab("Urbanization Score") +
+  theme_pubr() +
+# adding stats from ANOVA
+  annotate(geom = 'text',
+         x = 50,
+         y = 4.5, 
+         label = paste("F[\"1,160\"] ==", F_stat), 
+         parse = TRUE,
+         hjust = 0) +
+  annotate(geom = 'text',
+         x = 50,
+         y = 3.75, 
+         label = paste("p < 0.001"), 
+         parse = TRUE,
+         hjust = 0) +
+  annotate(geom = 'text',
+         x = 50,
+         y = 3, 
+         label = paste(
+           "R[adj]^2 ==",
+           round(summary(mod1)$adj.r.squared, 3)), 
+         parse = TRUE,
+         hjust = 0)
+                        
+# export
+ggsave(last_plot(),
+       filename = here::here("./Figures_Tables/urb_metrics/urb_metrics_regression.png"),
+         width = 12, height = 10, units = "cm")
+```
+
+# Tables
+## Export ANOVA
+```{r}
+mod1 %>%
+  car::Anova() %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Term" = rowname,
+                df = Df,
+                SS = `Sum Sq`,
+                F = `F value`,
+                p = `Pr(>F)`) %>% 
+  dplyr::mutate(Significance = case_when(
+    p < 0.001 ~ "***",
+    p < 0.01 ~ "**",
+    p <= 0.05 ~ "*")) %>%
+  dplyr::mutate(p = replace(
+    p, 
+    Significance == "***",
+    "<0.001"))  %>% 
+  dplyr::mutate_if(is.numeric, round, 3)  %>%
+  dplyr::mutate_if(is.character,
+                   str_replace_all,
+                   pattern = c("urb_score"),
+                   replacement = c("Urbanization Score")) %>%
+  replace(., is.na(.), "-") %>%
+      flextable::flextable() %>% 
+      # valign(valign = "top")%>%
+      flextable::autofit() %>%
+      align(align = "left", part = "all", j = 1) %>%
+      align(align = "center", part = "all", j = c(2:6)) %>%
+      flextable::compose(i = 1, j = 5, part = "header",
+                         value = as_paragraph(as_i("p"))) %>%
+      fontsize(size = 12, part = "header") %>%
+      fontsize(size = 12, part = "body") %>%
+      fix_border_issues() %>%
+  save_as_docx(path = here::here("./Figures_Tables/urb_metrics/urb_metrics_anova.docx"))
+```
+

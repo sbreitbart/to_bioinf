@@ -290,6 +290,302 @@ rat_table <- data.frame(ID = c(unique(lulc_raster)),
 
 levels(lulc_raster_rat) <- rat_table
 
+## attempt #3-----
+
+# The model won't work with this many LULC classes. So I'll aggregate the raster into just a few classes 
+
+land_use_frequency <- table(getValues(lulc_raster))
+
+# top 10 land use categories 
+head(sort(land_use_frequency,
+          decreasing = TRUE),
+     10)
+
+#   203    250    170    193    202    201     93     92 
+# 123296  25589  24534  14611  12549  11326   5141   4752 
+#   131     91    # categories
+#  3676   1808    # Pixels
+# 
+# 203: Built-Up Area – Impervious
+# 250: Undifferentiated
+# 170: Open Water
+# 193: Tilled
+# 202: Built-Up Area – Pervious
+# 201: Transportation
+# 93: Deciduous forest
+# 92: Mixed forest
+# 131: Treed swamp
+# 91: Coniferous forest
+
+plot(head(sort(land_use_frequency,
+          decreasing = TRUE),
+     10))
+
+# New category ideas:
+# Built-up area---203: Built-Up Area – Impervious
+# Other---250: Undifferentiated
+# Water---170: Open Water
+# Agriculture---193: Tilled
+# Built-up area---202: Built-Up Area – Pervious
+# Built-up area---201: Transportation
+# Forested area---93: Deciduous forest
+# Forested area---92: Mixed forest
+# Swamp---131: Treed swamp
+# Forested area---91: Coniferous forest
+
+# Reclassify these classes-----
+# BUILT-UP AREA (x --> 203)-----
+# 202 --> 203
+lulc_raster_reclassified <- reclassify(lulc_raster, 
+                             matrix(
+                               c(202, # original class
+                                 203), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 201 --> 203
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(201, # original class
+                                 203), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# FORESTED AREA (x --> 93)-----
+# 91 --> 93
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(91, # original class
+                                 93), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 92 --> 93
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(92, # original class
+                                 93), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+
+
+# check number of pixels with each LULC-----
+head(sort(table(getValues(lulc_raster_reclassified)),
+                            decreasing = TRUE), 5)
+
+
+#    203    250    170     193  193  # category
+# 147171  25589  24534  14611  11701  # Pixels
+
+# look at remaining categories
+sort(table(getValues(lulc_raster_reclassified)),
+                             decreasing = TRUE)
+
+#   203    250    170    193     93    131    160     90 
+# 147171  25589  24534  14611  11701   3676    434    297 
+#   192    135    191    204     83     23    150     11 
+#   243    192    183     65     33     23     12      8 
+#   140 
+#     1
+
+# Now, I'll reclassify these values:
+# 
+# Swamp---160 (Marsh)
+# Forested area---90 (Forest)
+# Forested area---192 (Hedge rows)
+# Swamp---135 (Thicket Swamp)
+# Forested area---191 (Plantations – Tree Cultivated)
+# Other---204 (Extraction –Aggregate)
+# Forested area---83 (Tallgrass Woodland)
+# Forested area---23 (Treed Sand Dune)
+# Swamp---150 (Bog)
+# Swamp---11 (Open Beach/Bar)
+# Swamp---140 (Fen)
+
+# SWAMP (x --> 131)-----
+# 160 --> 131
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(160, # original class
+                                 131), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 135 --> 131
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(135, # original class
+                                 131), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 150 --> 131
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(150, # original class
+                                 131), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 11 --> 131
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(11, # original class
+                                 131), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 140 --> 131
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(140, # original class
+                                 131), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+
+
+
+# FORESTED AREA (x --> 93)-----
+# 90 --> 93
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(90, # original class
+                                 93), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 192 --> 93
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(192, # original class
+                                 93), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 191 --> 93
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(191, # original class
+                                 93), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 83 --> 93
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(83, # original class
+                                 93), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+# 23 --> 93
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(23, # original class
+                                 93), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+
+
+
+
+# OTHER (x --> 250)-----
+# 204 --> 250
+lulc_raster_reclassified <- reclassify(lulc_raster_reclassified, 
+                             matrix(
+                               c(204, # original class
+                                 250), # new class
+                               ncol = 2, 
+                               byrow = TRUE))
+
+
+# check number of pixels with each LULC-----
+sort(table(getValues(lulc_raster_reclassified)),
+                            decreasing = TRUE)
+
+#   203      250    170      193         93      131 
+# 147171    25654  24534    14611      12480    4323 
+# Built-up  Other  Water  Agriculture Forested  Swamp
+
+
+# plot and export reclassified raster-----
+pdf(here::here("./Figures_Tables/radish/reclassified_raster_discrete_points.pdf"),         # File name
+    width = 8, height = 7, # Width and height in inches
+    bg = "white",          # Background color
+    paper = "A4")          # Paper size
+
+
+# Plot the raster with discrete legend
+plot(lulc_raster_reclassified,
+     legend = FALSE, 
+     col = c("limegreen", "yellow", "cyan", "brown", "gray", "magenta"))
+
+legend("bottomright", 
+       legend = c("Forested", "Swamp", "Water", "Agriculture", "Built-up", "Other"),
+       fill = c("limegreen", "yellow", "cyan", "brown", "gray", "magenta")
+       )
+
+# Overlay the projected SpatialPoints on the raster
+points(your_spdf_utm, col = "black", pch = 21)
+
+dev.off()
+
+
+
+# Convert the raster to have a RAT-----
+lulc_raster_rat <- raster::ratify(lulc_raster_reclassified)
+
+# create rat table
+
+# unique(lulc_raster_reclassified)
+# [1]  93 131 170 193 203 250
+
+rat_table <- data.frame(ID = c(unique(lulc_raster_reclassified)),
+                  VALUE = c(
+                    "Forested",
+                    "Swamp",
+                    "Water",
+                    "Agriculture",
+                    "Built-up",
+                    "Other"
+                ))
+
+levels(lulc_raster_rat) <- rat_table
+
+# rat_table
+#    ID       VALUE
+# 1  93    Forested
+# 2 131       Swamp
+# 3 170       Water
+# 4 193 Agriculture
+# 5 203    Built-up
+# 6 250       Other
+
+# export rat-----
+
+as.data.frame(rat_table) %>%
+  dplyr::mutate("Included Variables" = c(
+                "Coniferous Forest, Mixed Forest, Deciduous Forest, Forest, Hedge Rows, Plantations – Tree Cultivated, Tallgrass Woodland, Treed Sand Dune","Treed Swamp, Marsh, Thicket Swamp, Bog, Open Beach/Bar, Fen",
+                 "Open Water",
+                 "Tilled",
+                 "Built-Up Area – Impervious, Built-Up Area – Pervious, Transportation",
+                 "Undifferentiated, Extraction – Aggregate"
+                )) %>%
+  dplyr::rename("Category" = 2) %>%
+  flextable::flextable() %>%
+  flextable::autofit() %>%
+  flextable::footnote(i = 6,
+                      j = 2,
+                      ref_symbols = c("1"),
+                      part = "body",
+                      value = flextable::as_paragraph("'Undifferentiated', as defined in the Southern Ontario Land Resource Information System Version 3.0 Data Specifications, 'Represents all remaining areas that are exclusive to the other data classes. Includes all agricultural lands not included in tilled (e.g., hay/pasture, orchards, vineyards, nurseries, and rural properties and farmland not currently in production), as well as urban brown fields, hydro right-of- ways, the edges of transportation corridors, upland thickets, and clearings within forests.'")) %>%
+  flextable::width(j = 3,
+                   width = 4, 
+                   unit = "in") %>%
+  flextable::save_as_docx(path = here::here("./Figures_Tables/radish/lulc_table.docx"))
 ```
 
 ### Genetic data
@@ -343,21 +639,83 @@ fit_mlpe <- radish(
 
 # output:
 # Projected Newton-Raphson with Hager-Zhang line search
-# [1] f(x) = 1.084e+05   |f(x)-fold(x)| = 0.000e+00   max|f'(x)| = 8.429e-02   |f''(x)| = 4.363e-72 
-# [2] f(x) = 1.084e+05   |f(x)-fold(x)| = 4.876e-02   max|f'(x)| = 7.988e-02   |f''(x)| = 2.544e-61 
-# [3] f(x) = 1.084e+05   |f(x)-fold(x)| = 3.234e-01   max|f'(x)| = 2.443e-01   |f''(x)| = -1.246e-70 
-# ... switched to backtracking
-# Error in pmax(x, lower) : invalid input type
-# In addition: Warning messages:
-# 1: In .updateCHMfactor(object, parent, mult) :
-#   Cholmod warning 'not positive definite' at file ../Cholesky/t_cholmod_rowfac.c, line 430
-# 2: In .updateCHMfactor(object, parent, mult) :
-#   Cholmod warning 'not positive definite' at file ../Cholesky/t_cholmod_rowfac.c, line 430
-# 3: In Backtracking(dphi_fn, phi0, dphi0) : Maxit reached in backtracking
+# [1] f(x) = 1.084e+05   |f(x)-fold(x)| = 0.000e+00   max|f'(x)| = 7.322e-02   |f''(x)| = 1.081e-11 
+# [2] f(x) = 1.084e+05   |f(x)-fold(x)| = 1.985e-01   max|f'(x)| = 4.508e-02   |f''(x)| = 5.411e-11 
+# [3] f(x) = 1.084e+05   |f(x)-fold(x)| = 4.210e-02   max|f'(x)| = 6.876e-02   |f''(x)| = -9.880e-17 
+# [4] f(x) = 1.084e+05   |f(x)-fold(x)| = 3.215e-02   max|f'(x)| = 1.498e-02   |f''(x)| = 1.061e-14 
+# [5] f(x) = 1.084e+05   |f(x)-fold(x)| = 1.491e-03   max|f'(x)| = 1.617e-03   |f''(x)| = 2.485e-14 
+# [6] f(x) = 1.084e+05   |f(x)-fold(x)| = 1.063e-02   max|f'(x)| = 1.445e-02   |f''(x)| = -3.082e-15 
+# [7] f(x) = 1.084e+05   |f(x)-fold(x)| = 1.350e-03   max|f'(x)| = 4.441e-03   |f''(x)| = -4.279e-15 
+# [8] f(x) = 1.084e+05   |f(x)-fold(x)| = 5.811e-05   max|f'(x)| = 1.011e-05   |f''(x)| = -1.680e-15 
+# [9] f(x) = 1.084e+05   |f(x)-fold(x)| = 8.775e-09   max|f'(x)| = 1.241e-05   |f''(x)| = -1.804e-16 
+# Solution on interior with `max(abs(gradient))` == 1.240711e-05 and `diff(f)` == 8.774805e-09 
 
-# STOPPED HERE-----
+
+
+
 # examine model
 print(summary(fit_mlpe))
+
+
+
+# Conductance surface with 228773 vertices (150 focal) estimated by maximum likelihood
+# Call:   radish(formula = genetic_distance_matrix2 ~ SOLRIS_Version_3_0_LAMBERT, 
+#     data = surface, conductance_model = radish::loglinear_conductance, 
+#     measurement_model = radish::mlpe)
+# 
+# Loglikelihood: 108358.8 (9 degrees freedom)
+# AIC: -216699.6 
+# 
+# Number of function calls: 41 
+# Number of Newton-Raphson steps: 9 
+# Norm of gradient at MLE: 1.326956e-05 
+# 
+# Nuisance parameters:
+#     alpha       beta        tau        rho  
+# 7.267e-04  1.556e-05  1.961e+01  2.807e-01  
+# 
+# Coefficients:
+#                                     Estimate Std. Error
+# SOLRIS_Version_3_0_LAMBERTBuilt-up     1.340      6.556
+# SOLRIS_Version_3_0_LAMBERTForested     5.842     10.851
+# SOLRIS_Version_3_0_LAMBERTOther       -1.960      7.103
+# SOLRIS_Version_3_0_LAMBERTSwamp        4.981     18.397
+# SOLRIS_Version_3_0_LAMBERTWater      -17.689  30128.553
+#                                    z value Pr(>|z|)
+# SOLRIS_Version_3_0_LAMBERTBuilt-up   0.204    0.838
+# SOLRIS_Version_3_0_LAMBERTForested   0.538    0.590
+# SOLRIS_Version_3_0_LAMBERTOther     -0.276    0.783
+# SOLRIS_Version_3_0_LAMBERTSwamp      0.271    0.787
+# SOLRIS_Version_3_0_LAMBERTWater     -0.001    1.000
+# 
+# Correlation of Coefficients:
+#                                    SOLRIS_Version_3_0_LAMBERTBuilt-up
+# SOLRIS_Version_3_0_LAMBERTForested                       5.547052e-01
+# SOLRIS_Version_3_0_LAMBERTOther                          9.344305e-01
+# SOLRIS_Version_3_0_LAMBERTSwamp                          3.325132e-01
+# SOLRIS_Version_3_0_LAMBERTWater                          1.734264e-04
+#                                    SOLRIS_Version_3_0_LAMBERTForested
+# SOLRIS_Version_3_0_LAMBERTForested                                   
+# SOLRIS_Version_3_0_LAMBERTOther                          5.533895e-01
+# SOLRIS_Version_3_0_LAMBERTSwamp                          4.016658e-01
+# SOLRIS_Version_3_0_LAMBERTWater                          9.360451e-05
+#                                    SOLRIS_Version_3_0_LAMBERTOther
+# SOLRIS_Version_3_0_LAMBERTForested                                
+# SOLRIS_Version_3_0_LAMBERTOther                                   
+# SOLRIS_Version_3_0_LAMBERTSwamp                       3.466931e-01
+# SOLRIS_Version_3_0_LAMBERTWater                       1.650721e-04
+#                                    SOLRIS_Version_3_0_LAMBERTSwamp
+# SOLRIS_Version_3_0_LAMBERTForested                                
+# SOLRIS_Version_3_0_LAMBERTOther                                   
+# SOLRIS_Version_3_0_LAMBERTSwamp                                   
+# SOLRIS_Version_3_0_LAMBERTWater                       5.877599e-05
+# Warning message:
+# In summary.radish(fit_mlpe) :
+#   Hessian matrix is singular or nearly singular: model is probably non-identifiable
+
+
+
+
 
 ## we are modeling conductances --> positive coefficient estimates indicate increasing conductance (e.g. rates of movement/gene flow) at higher values of the covariate, while negative coefficients indicate lower conductance at higher values of the covariate.
 
@@ -371,23 +729,42 @@ plot(
   log(fitted_conductance[["est"]]), 
      main = "Fitted conductance surface")
 
-
-
 ```
 
 # Export conductance surface
-```{r eval=FALSE}
+## As GeoTIFF
+```{r}
 
-# pdf("conductance_surface.pdf",         # File name
-#     width = 8, height = 7, # Width and height in inches
-#     bg = "white",          # Background color
-#     colormodel = "cmyk" ,   # Color model (cmyk is required for most publications)
-#     paper = "A4")          # Paper size
-# 
-# # Creating a plot
-# plot(log(fitted_conductance[["est"]]), 
-#      main = "Fitted conductance surface")
-# 
-# # Closing the graphical device
-# dev.off() 
+# Loop through each layer in the RasterStack
+for (i in 1:nlayers(fitted_conductance)) {
+  # Define the file name for the exported file
+  output_path <- paste0(
+    here::here("./clean_data/radish//"),
+    "layer_",
+    i,
+    ".tif")
+  
+  # Use writeRaster to export the individual layer
+  writeRaster(fitted_conductance[[i]],
+              filename = output_path, 
+              format = "GTiff")
+}
+
+```
+
+## As PDF
+```{r}
+
+pdf(here::here("./Figures_Tables/radish/conductance_surface.pdf"),         # File name
+    width = 8, height = 7, # Width and height in inches
+    bg = "white",          # Background color
+    colormodel = "cmyk" ,   # Color model (cmyk is required for most publications)
+    paper = "A4")          # Paper size
+
+# Creating a plot
+plot(log(fitted_conductance[["est"]]),
+     main = "Fitted conductance surface- urban core")
+
+# Closing the graphical device
+dev.off()
 ```

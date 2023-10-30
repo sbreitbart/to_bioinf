@@ -2,11 +2,6 @@
 ## Load packages
 ```{r}
 source(here::here("libraries.R"))
-
-# a few map-related packages
-library(ggmap)
-library(ggsn)
-
 ```
 
 ## Import data
