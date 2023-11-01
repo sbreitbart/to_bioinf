@@ -5,15 +5,7 @@
 # 
 # if(!requireNamespace("radish", quietly = TRUE)) remotes::install_github("nspope/radish")
 
-library(radish)
-library(raster)
-library(igraph)
-library(tidyverse)
-library(magrittr)
-library(vcfR)
-library(sp)
-library(sf)
-library(here)
+source("libraries.R")
 
 add_MW_IDs <- function(div_df) {
   # Filter out populations that start with "MWI" or "UTSC"
@@ -729,6 +721,32 @@ plot(
   log(fitted_conductance[["est"]]), 
      main = "Fitted conductance surface")
 
+
+# Export table with coefficients and p-values
+data.frame("Category" = c(
+            "Built-up",
+            "Forested",
+            "Other", 
+            "Swamp",
+            "Water" ),
+           "Coefficient" = c(
+             1.340,
+             5.842,
+             -1.960,
+             4.981,
+             -17.689),
+           "p" = c(
+             0.838,
+             0.590,
+             0.783,
+             0.787,
+             1.000)
+           ) %>%
+  flextable::flextable() %>%
+  flextable::align(part = "all", j = 2:3, align = "center") %>%
+  flextable::autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/radish/radish_model_output.docx"))
+  
 ```
 
 # Export conductance surface
