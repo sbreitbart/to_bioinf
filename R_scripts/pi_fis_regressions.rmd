@@ -1,21 +1,5 @@
----
-title: How does urbanization predict pi and FIS?
-output: 
-  html_document:
-    toc: true
-    toc_float: true
-    toc_collapsed: true
-    toc_depth: 3
-    number_sections: true
-    theme: lumen
----
-
 These analyses use the narrow, conservative genetic dataset:
 -R = 0.75 & -min_maf = 0.05
-
-```{r setup, include=FALSE} 
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
-```
 
 # Set up notebook
 ## Load libraries & functions
@@ -266,6 +250,9 @@ fis_dist_pred <- ggeffects::ggpredict(fis_dist,
 
 fis_dist_pred_plot <- plot(fis_dist_pred, 
      add.data = F) +
+  # geom_point(data = diversity_variant_sites,
+  #            aes(x = City_dist,
+  #                y = fis)) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
                   ymax = conf.high),
