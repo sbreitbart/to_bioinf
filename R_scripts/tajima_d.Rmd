@@ -624,48 +624,6 @@ mean(rur_taj_100k_usc$TajimaD)
 sum(rur_taj_100k_usc$BIN_START) 
 ```
 
-# Export means
-```{r}
-tajd_table <- data.frame(
-  Group = c("Global",
-            "Urban",
-            "Urban",
-            "Rural",
-            "Rural"),
-  Urbanization = c("-",
-                   "Distance to City Center",
-                   "Urbanization Score",
-                   "Distance to City Center",
-                   "Urbanization Score"),
-  TajD_window_1mil = c(
-    round(mean(global_taj$TajimaD),3),
-    round(mean(urb_taj$TajimaD),3),
-    round(mean(rur_taj$TajimaD),3),
-    round(mean(urb_taj_usc$TajimaD),3),
-    round(mean(rur_taj_usc$TajimaD),3)
-    ),
-  TajD_window_100k = c(
-    round(mean(global_taj_100k$TajimaD),3),
-    round(mean(urb_taj_100k$TajimaD),3),
-    round(mean(rur_taj_100k$TajimaD),3),
-    round(mean(urb_taj_100k_usc$TajimaD),3),
-    round(mean(rur_taj_100k_usc$TajimaD),3)
-  )
-)
-
-tajd_table %>%
-  dplyr::rename("Window = 1,000,000 bp" = 3,
-                "Window = 100,000 bp" = 4) %>%
-  flextable::flextable() %>%
-  flextable::align(align = "center", i = c(1:5), part = "body") %>%
-  flextable::align(align = "left", j = 1:2, part = "all") %>%
-  flextable::align(align = "center", i = 1, j = c(3,4), part = "header") %>%
-  flextable::autofit() %>%
-  flextable::save_as_docx(path = here::here(
-    "./Figures_Tables/tajimas_d/taj_d_means.docx"))
-```
-
-
 # Significance testing: Are the Tajima's D values significantly different from zero?
 ## Create function
 ```{r}
@@ -745,6 +703,61 @@ rural_1mil_ttest_usc <- t_test_tajd(rur_taj_usc)
 #### 100k bp
 ```{r}
 rural_100k_ttest_usc <- t_test_tajd(rur_taj_100k_usc)
+```
+
+
+# Export means with p-values
+```{r}
+tajd_table <- data.frame(
+  Group = c("Global",
+            "Urban",
+            "Urban",
+            "Rural",
+            "Rural"),
+  Urbanization = c("-",
+                   "Distance to City Center",
+                   "Urbanization Score",
+                   "Distance to City Center",
+                   "Urbanization Score"),
+  TajD_window_1mil = c(
+    round(mean(global_taj$TajimaD),3),
+    round(mean(urb_taj$TajimaD),3),
+    round(mean(rur_taj$TajimaD),3),
+    round(mean(urb_taj_usc$TajimaD),3),
+    round(mean(rur_taj_usc$TajimaD),3)
+    ),
+  # TajD_window_100k = c(
+  #   round(mean(global_taj_100k$TajimaD),3),
+  #   round(mean(urb_taj_100k$TajimaD),3),
+  #   round(mean(rur_taj_100k$TajimaD),3),
+  #   round(mean(urb_taj_100k_usc$TajimaD),3),
+  #   round(mean(rur_taj_100k_usc$TajimaD),3)
+  # ),
+  p = c(
+    round(global_ttest$p.value, 3),
+    round(urban_1mil_ttest$p.value, 3),
+    round(urban_1mil_ttest_usc$p.value, 3),
+    round(rural_1mil_ttest$p.value, 3),
+    round(rural_1mil_ttest_usc$p.value, 3)
+  )) %>%
+  dplyr::mutate(p = ifelse(
+      p < 0.001, 
+      "<0.001",
+      p)) 
+
+tajd_table %>%
+  dplyr::rename("Tajima's D" = 3
+    #"Window = 1,000,000 bp" = 3,
+               # "Window = 100,000 bp" = 4
+               ) %>%
+  flextable::flextable() %>%
+  flextable::italic(i = 1, j = 4, part = "header") %>%
+  flextable::align(align = "center", i = c(1:5), part = "body") %>%
+  flextable::align(align = "left", j = 1:2, part = "all") %>%
+  flextable::align(align = "center", i = 1, j = c(3:4), part = "header") %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/tajimas_d/taj_d_means.docx"))
 ```
 
 
@@ -833,6 +846,7 @@ export_ttests(rural_100k_ttest_usc)
 ```
 
 ### Significance testing: Are the urban and rural values different?
+#### Export test results
 ```{r}
 export_ttests(dist_1mil_ttest_UvsR)
 export_ttests(dist_100k_ttest_UvsR)
@@ -840,5 +854,35 @@ export_ttests(dist_100k_ttest_UvsR)
 export_ttests(usc_1mil_ttest_UvsR)
 export_ttests(usc_100k_ttest_UvsR)
 
+```
+
+
+#### Export results in one table
+```{r}
+tajd_table2 <- data.frame(
+  Urbanization = c("Distance to City Center",
+                   "Urbanization Score"),
+  t = c(
+    round((dist_1mil_ttest_UvsR$statistic),3),
+    round((usc_1mil_ttest_UvsR$statistic),3)
+    ),
+  df = c(
+    round(dist_1mil_ttest_UvsR$parameter, 3),
+    round(usc_1mil_ttest_UvsR$parameter, 3)
+    ),
+  p = c(
+    round(dist_1mil_ttest_UvsR$p.value, 3),
+    round(usc_1mil_ttest_UvsR$p.value, 3)
+  )) 
+
+
+tajd_table2 %>%
+  flextable::flextable() %>%
+  flextable::italic(i = 1, j = 4, part = "header") %>%
+  flextable::align(align = "center", j = c(2:4), part = "all") %>%
+  flextable::align(align = "left", j = 1, part = "all") %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/tajimas_d/taj_d_UvsR.docx"))
 ```
 
