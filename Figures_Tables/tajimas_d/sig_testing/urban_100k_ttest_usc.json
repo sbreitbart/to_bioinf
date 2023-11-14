@@ -1,0 +1,44 @@
+{
+  "ttest_obj": {
+    "name": "combined_data %>% dplyr::select(TajimaD) and combined_data %>% dplyr::select(simulated_value)",
+    "method": "Welch Two Sample t-test",
+    "statistics": [
+      {
+        "name": "estimate",
+        "symbol": "M",
+        "subscript": "diff.",
+        "value": -0.348739,
+        "interval": "CI",
+        "level": 0.95,
+        "lower": -0.436209,
+        "upper": -0.26127
+      },
+      {
+        "name": "SE",
+        "value": 0.044597
+      },
+      {
+        "name": "statistic",
+        "symbol": "t",
+        "value": -7.819799
+      },
+      {
+        "name": "df",
+        "value": 1729.698063
+      },
+      {
+        "name": "p",
+        "value": 9.127069e-15
+      }
+    ],
+    "alternative": {
+      "direction": "two.sided",
+      "null_value": 0
+    },
+    "var_equal": false,
+    "package": {
+      "name": "stats",
+      "version": "4.3.1"
+    }
+  }
+}

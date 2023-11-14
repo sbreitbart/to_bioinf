@@ -666,219 +666,179 @@ tajd_table %>%
 ```
 
 
-# Confidence intervals & significance testing
-## Global
+# Significance testing: Are the Tajima's D values significantly different from zero?
+## Create function
 ```{r}
-
-calc_conf_ints <- function(global_tajd_1mil,
-                           global_tajd_100k){
-  
-  # 1 million bp window
-  result_1mil <- t.test(x = global_tajd_1mil %>%
-                          dplyr::select(TajimaD),
-                 conf.level = 0.95)
+t_test_tajd <- function(tajd_df){
  
-  # Extract the confidence interval
-  confidence_interval <- result_1mil$conf.int
-   
-  conf_int_1 <- data.frame(
-    "Window_kpb" = 1000,
-    "Low_bound" = confidence_interval[1],
-    "High_bound" = confidence_interval[2],
-    "Mean" = global_tajd_1mil %>%
-                    dplyr::filter(is.na(TajimaD) == F) %>%
-                    dplyr::select(TajimaD) %>%
-                    dplyr::summarise(mean = mean(TajimaD)))
+   # create random normal distribution with a mean of zero and the same SD as dataset
+  set.seed(1)
+  
+  norm_distr <- rnorm(n = nobs(tajd_df),
+                    mean = 0,
+                    sd = sd(tajd_df[,"TajimaD"])) %>%
+  as.data.frame() %>%
+  dplyr::rename("simulated_value" = 1)
 
+  # create df with both sets of observations
+  combined_data <- cbind(tajd_df %>%
+                           dplyr::select(TajimaD),
+                         norm_distr)
   
+  # t-test
+  ttest <- t.test(combined_data %>%
+                    dplyr::select(TajimaD),
+                  combined_data %>%
+                    dplyr::select(simulated_value))
   
-  # 100,000 bp window
-  result_100k <- t.test(x = global_tajd_100k %>%
-                          dplyr::select(TajimaD),
-                 conf.level = 0.95)
- 
-  # Extract the confidence interval
-  confidence_interval2 <- result_100k$conf.int
-   
-  conf_int_2 <- data.frame(
-    "Window_kpb" = 100,
-    "Low_bound" = confidence_interval2[1],
-    "High_bound" = confidence_interval2[2],
-    "Mean" = global_tajd_100k %>%
-                    dplyr::filter(is.na(TajimaD) == F) %>%
-                    dplyr::select(TajimaD) %>%
-                    dplyr::summarise(mean = mean(TajimaD)))
+  return(ttest)
 
-  return(rbind(conf_int_1,
-               conf_int_2) %>%
-           dplyr::mutate(across(2:4,
-                                ~ round(.x, 3))))
-  
-  
 }
-
-
-conf_ints_global <- calc_conf_ints(global_taj,
-                       global_taj_100k)
-
 ```
 
-## Urban vs rural
+## Global
+```{r}
+global_ttest <- t_test_tajd(global_taj)
+```
+
+## Urban
 ### City_dist
 #### 1 mil bp
 ```{r}
-# join urb, rur Tajimas D estimates
-dist_tajd <- dplyr::full_join(urb_taj,
-                              rur_taj,
-                              by = c("CHROM",
-                                     "BIN_START"),
-                              suffix = c(".urb", ".rur")) %>%
-  dplyr::select(starts_with("Taj"))
-
-# bootstrapping- on hold for now-----
-library(boot)
-
-stats_function <- function(data){
-  sampled_data <- data[indices, ]
-  mean_tajima_urb <- mean(sampled_data$TajimaD.urb)
-  mean_tajima_rur <- mean(sampled_data$TajimaD.rur)
-  return(c(mean_tajima_urb, mean_tajima_rur))
-}
-
-set.seed(1)
-bootstrap_dist <- boot(data = dist_tajd,
-                       statistic = stats_function,
-                       R = 1000)
-
-conf_intervals <- boot.ci(bootstrap_dist, type = "bca")
-print(conf_intervals)
-
-
-# t-test-----
-# join urb, rur Tajimas D estimates
-dist_tajd_reshaped <- gather(dist_tajd, 
-                             key = "Group",
-                             value = "Tajimas_D")
-
-
-dist_1mil_ttest <- t.test(Tajimas_D ~ Group,
-       alternative = "two.sided",
-       data = dist_tajd_reshaped)
-
+urban_1mil_ttest <- t_test_tajd(urb_taj)
 ```
 
 #### 100k bp
 ```{r}
-# join urb, rur Tajimas D estimates
-dist_tajd_100k <- dplyr::full_join(urb_taj_100k,
-                              rur_taj_100k,
-                              by = c("CHROM",
-                                     "BIN_START"),
-                              suffix = c(".urb", ".rur")) %>%
-  dplyr::select(starts_with("Taj"))
-
-# t-test-----
-# join urb, rur Tajimas D estimates
-dist_tajd_reshaped_100k <- gather(dist_tajd_100k, 
-                             key = "Group",
-                             value = "Tajimas_D")
-
-
-dist_100k_ttest <- t.test(Tajimas_D ~ Group,
-       alternative = "two.sided",
-       data = dist_tajd_reshaped_100k)
-
+urban_100k_ttest <- t_test_tajd(urb_taj_100k)
 ```
 
 ### Urb_score
 #### 1 mil bp
 ```{r}
-# join urb, rur Tajimas D estimates
-usc_tajd <- dplyr::full_join(urb_taj_usc,
-                              rur_taj_usc,
-                              by = c("CHROM",
-                                     "BIN_START"),
-                              suffix = c(".urb", ".rur")) %>%
-  dplyr::select(starts_with("Taj"))
-
-# t-test-----
-# join urb, rur Tajimas D estimates
-usc_tajd_reshaped <- gather(usc_tajd, 
-                             key = "Group",
-                             value = "Tajimas_D")
-
-
-usc_1mil_ttest <- t.test(Tajimas_D ~ Group,
-       alternative = "two.sided",
-       data = usc_tajd_reshaped)
-
+urban_1mil_ttest_usc <- t_test_tajd(urb_taj_usc)
 ```
 
 #### 100k bp
 ```{r}
-# join urb, rur Tajimas D estimates
-usc_tajd_100k <- dplyr::full_join(urb_taj_100k_usc,
-                              rur_taj_100k_usc,
-                              by = c("CHROM",
-                                     "BIN_START"),
-                              suffix = c(".urb", ".rur")) %>%
-  dplyr::select(starts_with("Taj"))
-
-# t-test-----
-# join urb, rur Tajimas D estimates
-usc_tajd_reshaped_100k <- gather(usc_tajd_100k, 
-                             key = "Group",
-                             value = "Tajimas_D")
-
-
-usc_100k_ttest <- t.test(Tajimas_D ~ Group,
-       alternative = "two.sided",
-       data = usc_tajd_reshaped_100k)
-
+urban_100k_ttest_usc <- t_test_tajd(urb_taj_100k_usc)
 ```
 
+## Rural
+### City_dist
+#### 1 mil bp
+```{r}
+rural_1mil_ttest <- t_test_tajd(rur_taj)
+```
+
+#### 100k bp
+```{r}
+rural_100k_ttest <- t_test_tajd(rur_taj_100k)
+```
+
+### Urb_score
+#### 1 mil bp
+```{r}
+rural_1mil_ttest_usc <- t_test_tajd(rur_taj_usc)
+```
+
+#### 100k bp
+```{r}
+rural_100k_ttest_usc <- t_test_tajd(rur_taj_100k_usc)
+```
+
+
+# Significance testing: Are the urban and rural values different?
+## Create function
+```{r}
+perform_ttest_UvsR <- function(urb_taj_df,
+                               rur_taj_df){
+  
+  # join urb, rur Tajimas D estimates
+  combined_tajd <- dplyr::full_join(urb_taj_df,
+                                rur_taj_df,
+                                by = c("CHROM",
+                                       "BIN_START"),
+                                suffix = c(".urb", ".rur")) %>%
+    dplyr::select(starts_with("Taj"))
+  
+  # t-test
+  set.seed(1)
+  
+  ttest_result <- t.test(combined_tajd[,"TajimaD.urb"], 
+         combined_tajd["TajimaD.rur"],
+         alternative = "two.sided")
+  
+  return(ttest_result)
+}
+```
+
+## City_dist
+### 1 mil bp
+```{r}
+dist_1mil_ttest_UvsR <- perform_ttest_UvsR(urb_taj,
+                              rur_taj)
+```
+
+### 100k bp
+```{r}
+dist_100k_ttest_UvsR <- perform_ttest_UvsR(urb_taj_100k,
+                              rur_taj_100k)
+```
+
+## Urb_score
+### 1 mil bp
+```{r}
+usc_1mil_ttest_UvsR <- perform_ttest_UvsR(urb_taj_usc,
+                              rur_taj_usc)
+```
+
+### 100k bp
+```{r}
+usc_100k_ttest_UvsR <- perform_ttest_UvsR(urb_taj_100k_usc,
+                              rur_taj_100k_usc)
+
+```
 
 ## Export
-### Global
+### Significance testing: Are the Tajima's D values significantly different from zero?
+#### Function
 ```{r}
-conf_ints_global %>%
-  dplyr::rename("Window (kbp)" = 1,
-                "Upper bound" = 2,
-                "Lower bound" = 3,
-                "Mean Tajima's D" = 4) %>%
-  flextable() %>%
-  flextable::align(part = "all", align = "center") %>%
-  autofit()
+export_ttests <- function(ttest_obj){
+  
+  filepath <- paste0("./Figures_Tables/tajimas_d/sig_testing/",
+                     deparse(substitute(ttest_obj)),
+                     ".json")
+  
+  list() %>%
+  add_stats(ttest_obj) %>%
+  write_stats(here::here(filepath))
+}
 
 ```
 
-### Urban vs. Rural
-#### City_dist
-##### 1 mil bp
+#### Export all
 ```{r}
-list() %>%
-  add_stats(dist_1mil_ttest) %>%
-  write_stats(here::here("./Figures_Tables/tajimas_d/dist_1mil_ttest_stats.json"))
+export_ttests(global_ttest)
+
+export_ttests(urban_1mil_ttest)
+export_ttests(urban_100k_ttest)
+export_ttests(urban_1mil_ttest_usc)
+export_ttests(urban_100k_ttest_usc)
+
+export_ttests(rural_1mil_ttest)
+export_ttests(rural_100k_ttest)
+export_ttests(rural_1mil_ttest_usc)
+export_ttests(rural_100k_ttest_usc)
 ```
 
-##### 100k bp
+### Significance testing: Are the urban and rural values different?
 ```{r}
-list() %>%
-  add_stats(dist_100k_ttest) %>%
-  write_stats(here::here("./Figures_Tables/tajimas_d/dist_100k_ttest_stats.json"))
+export_ttests(dist_1mil_ttest_UvsR)
+export_ttests(dist_100k_ttest_UvsR)
+
+export_ttests(usc_1mil_ttest_UvsR)
+export_ttests(usc_100k_ttest_UvsR)
+
 ```
 
-#### Urb_score
-##### 1 mil bp
-```{r}
-list() %>%
-  add_stats(usc_1mil_ttest) %>%
-  write_stats(here::here("./Figures_Tables/tajimas_d/usc_1mil_ttest_stats.json"))
-```
-
-##### 100k bp
-```{r}
-list() %>%
-  add_stats(usc_100k_ttest) %>%
-  write_stats(here::here("./Figures_Tables/tajimas_d/usc_100k_ttest_stats.json"))
-```
