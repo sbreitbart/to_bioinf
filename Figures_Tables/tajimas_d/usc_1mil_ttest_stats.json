@@ -1,0 +1,44 @@
+{
+  "usc_1mil_ttest": {
+    "name": "Tajimas_D by Group",
+    "method": "Welch Two Sample t-test",
+    "statistics": [
+      {
+        "name": "estimate",
+        "symbol": "M",
+        "subscript": "diff.",
+        "value": -0.019126,
+        "interval": "CI",
+        "level": 0.95,
+        "lower": -0.140946,
+        "upper": 0.102694
+      },
+      {
+        "name": "SE",
+        "value": 0.06204
+      },
+      {
+        "name": "statistic",
+        "symbol": "t",
+        "value": -0.308281
+      },
+      {
+        "name": "df",
+        "value": 660.618246
+      },
+      {
+        "name": "p",
+        "value": 0.757966
+      }
+    ],
+    "alternative": {
+      "direction": "two.sided",
+      "null_value": 0
+    },
+    "var_equal": false,
+    "package": {
+      "name": "stats",
+      "version": "4.3.1"
+    }
+  }
+}
