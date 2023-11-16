@@ -54,6 +54,7 @@ snp_fst_R_usc <- read.table(here::here("./pi_fst_TajD_estimates/fst/fst_mmaf0.05
 ```
 
 # Create the fst dfs
+## mean fst df
 ```{r}
 fst <- data.frame(
   fst = c(
@@ -91,7 +92,40 @@ fst <- data.frame(
 
 ```
 
+## All site-specific fst estimates
+```{r}
+ # can't figure out how to automate adding df's name as col
+ snp_fst_UvsR %<%
+   dplyr::mutate(dataset = "snp_fst_UvsR")
+
+ snp_fst_UvsR_usc %<%
+   dplyr::mutate(dataset = "snp_fst_UvsR_usc")
+ 
+ snp_fst_U %<%
+   dplyr::mutate(dataset = "snp_fst_U")
+ 
+ snp_fst_U_usc %<%
+   dplyr::mutate(dataset = "snp_fst_U_usc")
+ 
+ snp_fst_R %<%
+   dplyr::mutate(dataset = "snp_fst_R")
+ 
+ snp_fst_R_usc %<%
+   dplyr::mutate(dataset = "snp_fst_R_usc")
+
+# combine into one df
+all_dfs <- rbind(snp_fst_UvsR,
+                snp_fst_UvsR_usc,
+                snp_fst_U,
+                snp_fst_U_usc,
+                snp_fst_R,
+                snp_fst_R_usc) %>%
+  dplyr::mutate(fst = as.numeric(fst))
+
+```
+
 # Visualize fst
+## Point values
 ```{r}
 
 ggplot(fst, 
@@ -124,3 +158,71 @@ ggsave(here::here("./Figures_Tables/fst/fst.png"),
        units = "cm")
 
 ```
+
+## Violin plot
+```{r}
+
+ggplot(all_dfs, 
+       aes(x = dataset,
+           y = fst,
+           fill = dataset)) +
+  geom_violin(aes(color = dataset),
+              size = 1,
+              width = 1) +
+  geom_boxplot(width = 0.05,
+               color = "black") +
+  ylab(expression(F[ST])) +
+  theme_pubr() +
+  theme(legend.position = "none") +
+  scale_color_brewer(palette = "Paired") +
+  scale_fill_brewer(palette = "Paired") +
+  scale_x_discrete(labels=c("Rural\n(D)",
+                            "Rural\n(U)",
+                            "Urban\n(D)",
+                            "Urban\n(U)",
+                            "Urban vs. Rural\n(D)",
+                            "Urban vs. Rural\n(U)"))
+
+
+ggsave(here::here("./Figures_Tables/fst/fst_violins.png"),
+       plot = last_plot(),
+       width = 25,
+       height = 8,
+       units = "cm")
+
+```
+
+## Dot plot
+```{r}
+
+ggplot(all_dfs, 
+       aes(x = dataset,
+           y = fst,
+           fill = dataset)) +
+  geom_boxplot(width = 0.7,
+               color = "black") +
+      geom_jitter(aes(fill = dataset),
+                  size=0.7, 
+                  alpha=0.9,
+                  shape = 21) +
+  ylab(expression(F[ST])) +
+  theme_pubr() +
+  theme(legend.position = "none") +
+  scale_fill_brewer(palette = "Paired") +
+  scale_x_discrete(labels=c("Rural\n(D)",
+                            "Rural\n(U)",
+                            "Urban\n(D)",
+                            "Urban\n(U)",
+                            "Urban vs. Rural\n(D)",
+                            "Urban vs. Rural\n(U)"))
+
+
+
+ggsave(here::here("./Figures_Tables/fst/fst_violins_dots.png"),
+       plot = last_plot(),
+       width = 25,
+       height = 8,
+       units = "cm")
+
+```
+
