@@ -336,6 +336,20 @@ ontario_pop <- read.csv(here::here("./raw_data/human_population/Ontario_human_po
     
 ```
 
+## Import Toronto human population data
+```{r}
+toronto_pop <- read.csv(here::here("./raw_data/human_population/Toronto_human_population_Wikipedia/Toronto_city_population.csv")) %>%
+  dplyr::select(Year, City) %>%
+  dplyr::rename(Population = City) %>%
+  dplyr::mutate( years_before_present = 2023 - Year) %T>%
+  # export
+  write.csv(.,
+          file =
+            here::here("./clean_data/human_population_Toronto_clean.csv"))
+    
+```
+
+
 ## Create plot-exporting function
 ```{r}
 make_ne_plot <- function(df, exported_filepath){
@@ -395,6 +409,7 @@ make_ne_plot <- function(df, exported_filepath){
 
 ## All sites in 1 population
 ### Regular generation time (1 year)
+#### Log scale
 ```{r}
 full_fig <- read.delim(here::here("./StairwayPlot/full_mmaf0.007813/full_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -408,6 +423,42 @@ head(full_fig)
 make_ne_plot(full_fig,
              "./Figures_Tables/Stairway_plot/full_with_inset.png")
 ```
+
+#### Regular scale
+```{r}
+ggplot(
+    full_fig,
+    aes(
+      x = year,
+      y = Ne_median))  +
+    geom_segment( # add red vertical line at 500 yrs
+      aes(
+        x = 500,
+        xend = 500,
+        y = 0,
+        yend = max(full_fig$Ne_median*1.1)),
+      color = "red",
+      linetype = 2 ) +
+    geom_point(size = 0.75) +
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_continuous(breaks=c(0, 50000, 100000, 150000),
+                  labels = scales::comma,
+                  limits = c(1, 150000)) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+
+  # Export
+  ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_no_inset_reg_scale.png"),
+         height = 5,
+         width = 7,
+         dpi = 200)
+```
+
 
 ### Longer generation time (10 years)
 ```{r}
@@ -424,6 +475,65 @@ make_ne_plot(full_fig_10yrs,
              "./Figures_Tables/Stairway_plot/full_with_inset_generation_time_10yrs.png")
 ```
 
+
+### Just the inset
+#### Past 200 years
+```{r}
+ggplot(
+    full_fig,
+    aes(
+      x = year,
+      y = Ne_median))  +
+    geom_point(size = 0.75) +
+    scale_x_continuous(limits = c(NA, 200),
+                       labels = scales::comma) +
+    scale_y_continuous(breaks=c(0, 10000, 20000, 30000, 40000, 50000),
+                  labels = scales::comma,
+                  limits = c(1, 50000)) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+          plot.background = element_rect(
+            colour = "black", fill = "white", size = 1))
+
+  
+# Export
+ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_inset_200yrs.png"),
+         height = 5,
+         width = 7,
+         dpi = 200)
+```
+
+#### Past 500 years
+```{r}
+ggplot(
+    full_fig,
+    aes(
+      x = year,
+      y = Ne_median))  +
+    geom_point(size = 0.75) +
+    scale_x_continuous(limits = c(NA, 800),
+                       labels = scales::comma) +
+    scale_y_continuous(breaks=c(0, 20000, 40000, 60000, 80000, 100000),
+                  labels = scales::comma,
+                  limits = c(1, 105000)) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+          plot.background = element_rect(
+            colour = "black", fill = "white", size = 1))
+
+  
+# Export
+ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_inset_800yrs.png"),
+         height = 5,
+         width = 7,
+         dpi = 200)
+```
 
 ## Urban
 ### Urb = distance to city center
@@ -563,6 +673,37 @@ ggplot(
 
 ggsave(last_plot(),
        file = here::here("./Figures_Tables/Stairway_plot/Ontario_population.png"),
+       height = 5,
+         width = 7,
+         dpi = 200)
+  
+```
+
+
+## Toronto population figure
+```{r}
+
+ggplot(
+    toronto_pop,
+    aes(
+      x = years_before_present,
+      y = Population/1000000))  +
+    geom_point(size = 0.75) +
+    geom_line() +
+    scale_y_continuous(limits = c(0, 3)) +
+    xlab("Years before present") +
+    ylab("Human population in\n Toronto (millions)") +
+    theme_bw() +
+    labs_pubr() +
+    scale_x_continuous(limits = c(0, 200),
+                       sec.axis = sec_axis(~ 2023 - .,
+                                 name = "Year",
+                                 breaks = c(2023, 2000, 1950, 1900, 1850, 1824))) +
+    theme(plot.background = element_rect(
+            colour = "black", fill = "white", size = 1))
+
+ggsave(last_plot(),
+       file = here::here("./Figures_Tables/Stairway_plot/Toronto_population.png"),
        height = 5,
          width = 7,
          dpi = 200)
