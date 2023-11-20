@@ -4,6 +4,7 @@
 source("libraries.R")
 ```
 
+# Create sfs
 ## Load vcf2sfs code
 ```{r}
 # can't install this package so copied the R code into my own file, load it
@@ -42,8 +43,8 @@ This holds up because the mmaf = 0.05, R = 1 plot should
  5%, so the first individual should show up at
  0.05*2n=0.05*2*261=26 individuals. It does.
  
-# Read the VCF file and the popmap file and create a gt object
-## SFS for all individuals in 1 population
+## Read the VCF file and the popmap file and create a gt object
+### SFS for all individuals in 1 population
 ```{r}
 mygt <- vcf2gt(vcf_address,
                here::here("./genomic_resources/pop_map3_all1pop_for_sfs.txt"))
@@ -52,8 +53,8 @@ mygt <- vcf2gt(vcf_address,
 unique(mygt$popmap)
 ```
 
-## SFS for URBAN or RURAL individuals in 1 population
-### Urbanization = dist to CC
+### SFS for URBAN or RURAL individuals in 1 population
+#### Urbanization = dist to CC
 ```{r}
 mygt_urb <- vcf2gt(vcf_address,
                here::here("./clean_data/pop_map3_UR_dist.txt"))
@@ -62,7 +63,7 @@ mygt_urb <- vcf2gt(vcf_address,
 unique(mygt_urb$popmap)
 ```
 
-### Urbanization = urbanization score
+#### Urbanization = urbanization score
 ```{r}
 mygt_urb2 <- vcf2gt(vcf_address,
                here::here("./clean_data/pop_map3_UR_usc.txt"))
@@ -71,8 +72,8 @@ mygt_urb2 <- vcf2gt(vcf_address,
 unique(mygt_urb2$popmap)
 ```
 
-# Create sfs
-## SFS for all individuals in 1 population
+## Create sfs
+### SFS for all individuals in 1 population
 ```{r}
 sfs <- gt2sfs.raw(mygt,
            "1") %>%
@@ -82,8 +83,8 @@ sfs <- gt2sfs.raw(mygt,
 
 ```
 
-## SFS for URBAN individuals in 1 population
-### Urbanization = dist to CC
+### SFS for URBAN individuals in 1 population
+#### Urbanization = dist to CC
 ```{r}
 sfs_urb <- gt2sfs.raw(mygt_urb,
            "Urban") %>%
@@ -93,7 +94,7 @@ sfs_urb <- gt2sfs.raw(mygt_urb,
 
 ```
 
-### Urbanization = urbanization score
+#### Urbanization = urbanization score
 ```{r}
 sfs_urb2 <- gt2sfs.raw(mygt_urb2,
            "Urban") %>%
@@ -103,8 +104,8 @@ sfs_urb2 <- gt2sfs.raw(mygt_urb2,
 
 ```
 
-## SFS for RURAL individuals in 1 population
-### Urbanization = dist to CC
+### SFS for RURAL individuals in 1 population
+#### Urbanization = dist to CC
 ```{r}
 sfs_rur <- gt2sfs.raw(mygt_urb,
            "Rural") %>%
@@ -114,7 +115,7 @@ sfs_rur <- gt2sfs.raw(mygt_urb,
 
 ```
 
-### Urbanization = urbanization score
+#### Urbanization = urbanization score
 ```{r}
 sfs_rur2 <- gt2sfs.raw(mygt_urb2,
            "Rural") %>%
@@ -124,8 +125,8 @@ sfs_rur2 <- gt2sfs.raw(mygt_urb2,
 
 ```
 
-# Prepare to export sfs
-## SFS for all individuals in 1 population
+## Prepare to export sfs
+### SFS for all individuals in 1 population
 ```{r}
 # get freqs for SFS
 freqs_for_stairwayplot <- sfs %>%
@@ -144,8 +145,8 @@ writeLines(freqs_string,
 length(freqs_for_stairwayplot)
 ```
 
-## SFS for URBAN individuals in 1 population
-### Urbanization = dist to CC
+### SFS for URBAN individuals in 1 population
+#### Urbanization = dist to CC
 ```{r}
 # get freqs for SFS
 sfs_urb %>%
@@ -161,7 +162,7 @@ length(sfs_urb %>%
   pull())
 ```
 
-### Urbanization = urbanization score
+#### Urbanization = urbanization score
 ```{r}
 # get freqs for SFS
 sfs_urb2 %>%
@@ -177,8 +178,8 @@ length(sfs_urb2 %>%
   pull())
 ```
 
-## SFS for RURAL individuals in 1 population
-### Urbanization = dist to CC
+### SFS for RURAL individuals in 1 population
+#### Urbanization = dist to CC
 ```{r}
 # get freqs for SFS
 sfs_rur %>%
@@ -194,7 +195,7 @@ length(sfs_rur %>%
   pull())
 ```
 
-### Urbanization = urbanization score
+#### Urbanization = urbanization score
 ```{r}
 # get freqs for SFS
 sfs_rur2 %>%
@@ -211,92 +212,95 @@ length(sfs_rur2 %>%
 ```
 
 # Stairway Plot figures
-## Import Canada human population data
-### Past-2007
+## Import human population data
+### Import Canada human population data
+#### Past-2007
 ```{r}
 # this data doesn't have human population info- more about dwellings-----
 # library(sf)
 # human_pop <- st_read(here::here("./raw_data/Toronto_human_population_data_HWagner_20230918/GTADwellings.shp"))
 
 
-# scrape historic Canadian population data
-# 1867-1970 data Source: CANSIM, table 075-0001 (persons) ii
-# 1971 to present (2007) data Source: CANSIM, table 051-0001 (persons) iii
+# # scrape historic Canadian population data
+# # 1867-1970 data Source: CANSIM, table 075-0001 (persons) ii
+# # 1971 to present (2007) data Source: CANSIM, table 051-0001 (persons) iii
+# 
+# library(rvest)
+# 
+# # Read the HTML code from the website
+# webpage <- read_html("https://www150.statcan.gc.ca/n1/pub/98-187-x/4151287-eng.htm")
+# 
+# # Using CSS selectors to scrape the relevant section
+# human_pop <- html_nodes(webpage,
+#                             'td div') %>%
+#   html_text() %>%
+#   as.data.frame() %>%
+#   dplyr::rename("Year_and_Population" = 1) %T>%
+#   # export
+#   write.csv(.,
+#           file =
+#             here::here("./raw_data/human_population/human_population_Canada_raw.csv"))
+# 
+# human_pop %<>%
+#   dplyr::rename("Year" = 1) %>%
+#   separate(.,
+#            "Year",
+#            into = c("Year", "Population"),
+#            sep = " +") %>%
+#   dplyr::filter(is.na(Population) == F) %>%
+# 
+# # manual data cleaning
+# # specific rows without spaces splitting year and population
+#   dplyr::mutate(Year = ifelse(row_number() == 123,
+#                                     1868, Year),
+#                 Population = ifelse(row_number() == 123,
+#                                     "3,511,000", Population),
+#                 
+#                 Year = ifelse(row_number() == 146,
+#                                     1891, Year),
+#                 Population = ifelse(row_number() == 146,
+#                                     "4,833,000", Population),
+#                 
+# 
+#                 Year = ifelse(row_number() == 152,
+#                                     1897, Year),
+#                 Population = ifelse(row_number() == 152,
+#                                     "5,122,000", Population)
+#                 ,
+#                 
+# 
+#                 Year = ifelse(row_number() == 168,
+#                                     1913, Year),
+#                 Population = ifelse(row_number() == 168,
+#                                     "7,632,000", Population)
+#                 ) %>%
+#   # remove years before 1867- census isn't uniform and numbers vary wildly
+#   dplyr::slice(-(1:121)) %>%
+# 
+# # Split the Population column by comma
+#   separate(.,
+#            "Population",
+#            into = c("Population1", "Population2", "Population3"),
+#            sep = ",+") %>%
+#   # only keep last 3 digits before last comma- there were some superscripts in original table (e.g., 50, 51...) that were added on as extra values to these population counts and have to be removed
+#   dplyr::mutate(Population3 = str_sub(
+#     Population3, start = 1, end = 3)) %>%
+#   dplyr::mutate(Population = paste0(Population1, Population2, Population3)) %>%
+#   dplyr::select(-c(Population1, Population2, Population3)) %>%
+#     # convert to years before present, just like x axis in Ne dfs
+#   dplyr::mutate(Population = as.numeric(Population),
+#                 Year = as.numeric(Year),
+#                 years_before_present = 2023 - Year) %T>%
+#   # export
+#   write.csv(.,
+#           file =
+#             here::here("./clean_data/human_population_Canada_clean.csv"))
 
-library(rvest)
 
-# Read the HTML code from the website
-webpage <- read_html("https://www150.statcan.gc.ca/n1/pub/98-187-x/4151287-eng.htm")
-
-# Using CSS selectors to scrape the relevant section
-human_pop <- html_nodes(webpage,
-                            'td div') %>%
-  html_text() %>%
-  as.data.frame() %>%
-  dplyr::rename("Year_and_Population" = 1) %T>%
-  # export
-  write.csv(.,
-          file =
-            here::here("./raw_data/human_population/human_population_Canada_raw.csv"))
-
-human_pop2 <- human_pop %>%
-  dplyr::rename("Year" = 1) %>%
-  separate(.,
-           "Year",
-           into = c("Year", "Population"),
-           sep = " +") %>%
-  dplyr::filter(is.na(Population) == F) %>%
-
-# manual data cleaning
-# specific rows without spaces splitting year and population
-  dplyr::mutate(Year = ifelse(row_number() == 123,
-                                    1868, Year),
-                Population = ifelse(row_number() == 123,
-                                    "3,511,000", Population),
-                
-                Year = ifelse(row_number() == 146,
-                                    1891, Year),
-                Population = ifelse(row_number() == 146,
-                                    "4,833,000", Population),
-                
-
-                Year = ifelse(row_number() == 152,
-                                    1897, Year),
-                Population = ifelse(row_number() == 152,
-                                    "5,122,000", Population)
-                ,
-                
-
-                Year = ifelse(row_number() == 168,
-                                    1913, Year),
-                Population = ifelse(row_number() == 168,
-                                    "7,632,000", Population)
-                ) %>%
-  # remove years before 1867- census isn't uniform and numbers vary wildly
-  dplyr::slice(-(1:121)) %>%
-
-# Split the Population column by comma
-  separate(.,
-           "Population",
-           into = c("Population1", "Population2", "Population3"),
-           sep = ",+") %>%
-  # only keep last 3 digits before last comma- there were some superscripts in original table (e.g., 50, 51...) that were added on as extra values to these population counts and have to be removed
-  dplyr::mutate(Population3 = str_sub(
-    Population3, start = 1, end = 3)) %>%
-  dplyr::mutate(Population = paste0(Population1, Population2, Population3)) %>%
-  dplyr::select(-c(Population1, Population2, Population3)) %>%
-    # convert to years before present, just like x axis in Ne dfs
-  dplyr::mutate(Population = as.numeric(Population),
-                Year = as.numeric(Year),
-                years_before_present = 2023 - Year) %T>%
-  # export
-  write.csv(.,
-          file =
-            here::here("./clean_data/human_population_Canada_clean.csv"))
-
+human_pop <- read.csv(here::here("./clean_data/human_population_Canada_clean.csv"))
 ```
 
-### 2008-2022
+#### 2008-2022
 ```{r}
 all_pop <- read.csv(here::here("./raw_data/human_population/human_population_Canada_raw_after2007.csv")) %>%
   # keep only Q1 values
@@ -312,17 +316,19 @@ all_pop <- read.csv(here::here("./raw_data/human_population/human_population_Can
                 Year = as.numeric(Year),
                 years_before_present = 2023 - Year) %>%
   # join with older data
-  dplyr::full_join(human_pop2,
+  dplyr::full_join(human_pop,
                    .,
-                   by = c("Year", "Population", "years_before_present"))  %T>%
-  # export
-  write.csv(.,
-          file =
-            here::here("./clean_data/human_population_Canada_clean.csv"))
+                   by = c("Year", "Population", "years_before_present")) 
+
+# %T>%
+#   # export
+#   write.csv(.,
+#           file =
+#             here::here("./clean_data/human_population_Canada_clean.csv"))
 
 ```
 
-## Import Ontario human population data
+### Import Ontario human population data
 ```{r}
 ontario_pop <- read.csv(here::here("./raw_data/human_population/Ontario_human_population/ontario_pop.csv")) %>%
   dplyr::mutate(Population = gsub(",", "", Population)) %>%
@@ -336,7 +342,7 @@ ontario_pop <- read.csv(here::here("./raw_data/human_population/Ontario_human_po
     
 ```
 
-## Import Toronto human population data
+### Import Toronto human population data
 ```{r}
 toronto_pop <- read.csv(here::here("./raw_data/human_population/Toronto_human_population_Wikipedia/Toronto_city_population.csv")) %>%
   dplyr::select(Year, City) %>%
@@ -453,7 +459,7 @@ ggplot(
   
 
   # Export
-  ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_no_inset_reg_scale.png"),
+  ggsave(filename = here::here("./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale.png"),
          height = 5,
          width = 7,
          dpi = 200)
@@ -500,13 +506,13 @@ ggplot(
 
   
 # Export
-ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_inset_200yrs.png"),
+ggsave(filename = here::here("./Figures_Tables/Stairway_plot/Insets/full_inset_200yrs.png"),
          height = 5,
          width = 7,
          dpi = 200)
 ```
 
-#### Past 500 years
+#### Past 800 years
 ```{r}
 ggplot(
     full_fig,
@@ -529,11 +535,41 @@ ggplot(
 
   
 # Export
-ggsave(filename = here::here("./Figures_Tables/Stairway_plot/full_inset_800yrs.png"),
+ggsave(filename = here::here("./Figures_Tables/Stairway_plot/Insets/full_inset_800yrs.png"),
          height = 5,
          width = 7,
          dpi = 200)
 ```
+
+#### Past 2500 years
+```{r}
+ggplot(
+    full_fig,
+    aes(
+      x = year,
+      y = Ne_median))  +
+    geom_point(size = 0.75) +
+    scale_x_continuous(limits = c(NA, 2500),
+                       labels = scales::comma) +
+    scale_y_continuous(breaks=c(0, 30000, 60000, 90000, 120000, 150000),
+                  labels = scales::comma,
+                  limits = c(1, 150000)) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+          plot.background = element_rect(
+            colour = "black", fill = "white", size = 1))
+
+  
+# Export
+ggsave(filename = here::here("./Figures_Tables/Stairway_plot/Insets/full_inset_2500yrs.png"),
+         height = 5,
+         width = 7,
+         dpi = 200)
+```
+
 
 ## Urban
 ### Urb = distance to city center
@@ -602,9 +638,9 @@ make_ne_plot(rur_fig2,
 
 ```
 
-## Canada population figure
+## Export human population graphs
+### Canada
 ```{r}
-
 ggplot(
     all_pop,
     aes(
@@ -634,16 +670,15 @@ ggplot(
             colour = "black", fill = "white", size = 1))
 
 ggsave(last_plot(),
-       file = here::here("./Figures_Tables/Stairway_plot/Canada_population.png"),
+       file = here::here("./Figures_Tables/Stairway_plot/Human_population/Canada_population.png"),
        height = 5,
          width = 7,
          dpi = 200)
   
 ```
 
-## Ontario population figure
+### Ontario
 ```{r}
-
 ggplot(
     ontario_pop,
     aes(
@@ -672,7 +707,7 @@ ggplot(
             colour = "black", fill = "white", size = 1))
 
 ggsave(last_plot(),
-       file = here::here("./Figures_Tables/Stairway_plot/Ontario_population.png"),
+       file = here::here("./Figures_Tables/Stairway_plot/Human_population/Ontario_population.png"),
        height = 5,
          width = 7,
          dpi = 200)
@@ -680,9 +715,8 @@ ggsave(last_plot(),
 ```
 
 
-## Toronto population figure
+### Toronto
 ```{r}
-
 ggplot(
     toronto_pop,
     aes(
@@ -703,7 +737,7 @@ ggplot(
             colour = "black", fill = "white", size = 1))
 
 ggsave(last_plot(),
-       file = here::here("./Figures_Tables/Stairway_plot/Toronto_population.png"),
+       file = here::here("./Figures_Tables/Stairway_plot/Human_population/Toronto_population.png"),
        height = 5,
          width = 7,
          dpi = 200)
