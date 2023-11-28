@@ -44,6 +44,17 @@ my_genind_rur <- vcfR2genind(vcf_rur)
 
 
 
+#### 1 individual/population
+```{r}
+# vcf
+vcf_subsamp <- read.vcfR(
+  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_subsamp <- vcfR2genind(vcf_subsamp)
+```
+
+
 #### 1 individual/population- URBAN ONLY
 ```{r}
 # vcf
@@ -131,6 +142,13 @@ coords_utm_rur <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
   "./clean_data/pop_map3_R_dist.csv")
 ```
+#### 1 individual/population
+```{r}
+coords_utm_subsamp <- create_geog_dist_matrix(
+  "./clean_data/urb_metrics.csv",
+  "./clean_data/pop_map3_1indiv_per_pop.csv")
+```
+
 
 #### 1 individual/population- URBAN ONLY
 ```{r}
@@ -157,6 +175,9 @@ genetic_distance_matrix_urb <- poppr::prevosti.dist(my_genind_urb)
 # rural individuals
 genetic_distance_matrix_rur <- poppr::prevosti.dist(my_genind_rur)
 
+# 1 individual/site
+genetic_distance_matrix_subsamp <- poppr::prevosti.dist(my_genind_subsamp)
+
 # 1 individual/site: urban
 genetic_distance_matrix_urb_subsamp <- poppr::prevosti.dist(my_genind_urb_subsamp)
 
@@ -169,97 +190,202 @@ genetic_distance_matrix_rur_subsamp <- poppr::prevosti.dist(my_genind_rur_subsam
 ```
 
 # Mantel correlogram (UTM)
-## Create breakpoints vector
+## Create breakpoints vectors
+### Urban: 2.5km spacing btwn sampling sites
 ```{r}
-break_points <- c(0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000, 10500, 11000, 11500, 12000, 12500, 13000, 13500, 14000, 14500, 15000, 15500, 16000, 16500, 17000, 17500, 18000, 18500, 19000, 19500, 20000, 20500, 21000, 21500, 22000, 22500, 23000, 23500, 24000, 24500, 25000, 25500, 26000, 26500, 27000, 27500, 28000, 28500, 29000, 29500, 30000, 30500, 31000, 31500, 32000, 32500, 33000, 33500, 34000, 34500, 35000, 35500, 36000, 36500, 37000, 37500, 38000, 38500, 39000, 39500, 40000, 40500, 41000, 41500, 42000, 42500, 43000, 43500, 44000, 44500, 45000, 45500, 46000, 46500, 47000, 47500, 48000, 48500, 49000, 49500, 50000, 50500, 51000, 51500, 52000, 52500, 53000, 53500, 54000, 54500, 55000, 55500, 56000, 56500, 57000, 57500, 58000, 58500, 59000, 59500, 60000, 60500, 61000, 61500, 62000, 62500, 63000, 63500, 64000, 64500, 65000, 65500, 66000, 66500, 67000, 67500, 68000, 68500, 69000, 69500, 70000 )
+break_points_2500m <- c(0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, 25000, 27500, 30000, 32500, 35000, 37500, 40000, 42500, 45000, 47500, 50000, 52500, 55000, 57500, 60000, 62500, 65000, 67500, 70000 )
+```
+
+### Urban: 3km spacing btwn sampling sites
+```{r}
+break_points_3000m <- c(0, 3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000, 30000, 33000, 36000, 39000, 42000, 45000, 48000, 51000, 54000, 57000, 60000, 63000, 66000, 69000)
+```
+
+### Rural: 10km spacing btwn sampling sites
+```{r}
+break_points_10km <- c(0, 10000, 20000, 30000, 40000, 50000, 60000, 70000)
+```
+
+### Rural: 12km spacing btwn sampling sites
+```{r}
+break_points_12km <- c(0, 12000, 24000, 36000, 48000, 60000, 72000)
 ```
 
 ## All individuals
+### 2.5km spacing
 ```{r}
 correlogram_utm <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix,
-  D.geo = geographical_distance_matrix_utm,
+  D.geo = coords_utm,
   nperm = 1000,
-  cutoff = F,
- # n.class = 35
-   break.pts = break_points
+  cutoff = T,
+  break.pts = break_points_2500m
    )
 
 plot(correlogram_utm)
 ```
 
+### 10km spacing
+```{r}
+correlogram_utm_10km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix,
+  D.geo = coords_utm,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_10km
+   )
+
+plot(correlogram_utm_10km)
+```
+
 ## Urban
+### 2.5km spacing
 ```{r}
 correlogram_utm_urb <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb,
   D.geo = coords_utm_urb,
   nperm = 1000,
-  cutoff = F,
- # n.class = 35
-   break.pts = break_points
+  cutoff = T,
+  break.pts = break_points_2500m
    )
 
 plot(correlogram_utm_urb)
 ```
 
+### 3km spacing
+```{r}
+correlogram_utm_urb_3km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb,
+  D.geo = coords_utm_urb,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_3000m
+   )
+
+plot(correlogram_utm_urb_3km)
+```
+
 ## Rural
+### 10km spacing
 ```{r}
 correlogram_utm_rur <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_rur,
   D.geo = coords_utm_rur,
   nperm = 1000,
-  cutoff = F,
- # n.class = 35
-   break.pts = break_points
+  cutoff = T,
+   break.pts = break_points_10km
    )
 
 plot(correlogram_utm_rur)
 ```
 
+### 12km spacing
+```{r}
+correlogram_utm_rur_12km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_rur,
+  D.geo = coords_utm_rur,
+  nperm = 1000,
+  cutoff = T,
+   break.pts = break_points_12km
+   )
+
+plot(correlogram_utm_rur_12km)
+```
+
+## 1 individual/site
+### 2.5km spacing
+```{r}
+correlogram_utm_subsamp <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_subsamp,
+  D.geo = coords_utm_subsamp,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_2500m
+   )
+
+plot(correlogram_utm_subsamp)
+```
+
+### 10km spacing
+```{r}
+correlogram_utm_subsamp_10km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_subsamp,
+  D.geo = coords_utm_subsamp,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_10km
+   )
+
+plot(correlogram_utm_subsamp_10km)
+```
 
 ## 1 individual/site- Urban
+### 2.5km spacing
 ```{r}
 correlogram_utm_urb_subsamp <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb_subsamp,
   D.geo = coords_utm_urb_subsamp,
   nperm = 1000,
-  cutoff = F,
- # n.class = 35
-   break.pts = break_points
+  cutoff = T,
+  break.pts = break_points_2500m
    )
 
 plot(correlogram_utm_urb_subsamp)
 ```
 
+### 3km spacing
+```{r}
+correlogram_utm_urb_subsamp_3km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb_subsamp,
+  D.geo = coords_utm_urb_subsamp,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_3000m
+   )
+
+plot(correlogram_utm_urb_subsamp_3km)
+```
+
 ## 1 individual/site- Rural
+### 10km spacing
 ```{r}
 correlogram_utm_rur_subsamp <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_rur_subsamp,
   D.geo = coords_utm_rur_subsamp,
   nperm = 1000,
-  cutoff = F,
- # n.class = 35
-   break.pts = break_points
+  cutoff = T,
+  break.pts = break_points_10km
    )
 
 plot(correlogram_utm_rur_subsamp)
 ```
 
-# Export (UTM)
-## All individuals
+### 12km spacing
 ```{r}
-# export basic plot-----
-png(here::here("./Figures_Tables/correlogram/mantel_correlogram_UTM.png"), 
-    width = 1200, height = 800,
-    res = 200) 
+correlogram_utm_rur_subsamp_12km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_rur_subsamp,
+  D.geo = coords_utm_rur_subsamp,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_12km
+   )
 
-plot(correlogram_utm)  
+plot(correlogram_utm_rur_subsamp_12km)
+```
 
-dev.off()
-
-
-# export table-----
-correlogram_utm$mantel.res %>%
+# Export tables
+## Create function
+```{r}
+export_corr_table <- function(correlogram_object,
+                              output_file_name){
+  
+  filepath <- paste0(
+    "./Figures_Tables/correlogram/tables/",
+    deparse(substitute(output_file_name)),
+    ".docx")
+  
+  correlogram_object %>%
+    purrr::pluck("mantel.res") %>%
   as.data.frame() %>%
   dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
   drop_na() %>%
@@ -280,389 +406,90 @@ correlogram_utm$mantel.res %>%
   flextable::bold(i = ~ p <= 0.05, j = 4) %>%
   flextable::italic(i = 1, j = 4, part = "header") %>%
   flextable::autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table_utm.docx"))
+  save_as_docx(path = here::here(filepath))
+}
+```
 
+## All individuals
+```{r}
+# 2.5 km
+export_corr_table(correlogram_utm, all_indiv_2500m)
 
-# export plot made with ggplot-----
-## WITHOUT LABELLED SIGNIFICANT POINTS
-corr_data_utm <- correlogram_utm[['mantel.res']] %>%
-  as.data.frame() %>%
-  dplyr::mutate(Significant = if_else(
-    `Pr(corrected)` < 0.05,
-    "Significant",
-    "Not_significant"
-  ))
-
-corr_data_utm_plot1 <- corr_data_utm %>%
-  ggplot(aes(x = class.index/1000,
-             y = Mantel.cor)) +
-  geom_line() +
-  geom_point(aes(shape = Significant,
-                 fill = Significant),
-             size = 2.5) +
-  geom_hline(yintercept = 0,
-             linetype = "dotted") +
-  scale_shape_manual(values = c(21,22)) +
-  scale_fill_manual(values = c("white", "black" )) +
-  labs(x = "Class Index (km)",
-       y = expression(paste("Mantel ", italic(r)))) +
-  ylim(-0.05, 0.15) +
-  scale_x_continuous(limits = c(0, NA),
-       breaks = c(0, 10, 20, 30, 40, 50, 60, 70)) +
-  ggpubr::theme_pubr(legend = "none")
-
-ggsave(plot = corr_data_utm_plot1,
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot.png"),
-       height = 3,
-       width = 8)
-
-## WITH LABELLED SIGNIFICANT POINTS
-corr_data_utm_plot1 + 
-  ggrepel::geom_text_repel(
-    seed = 1,
-    data = corr_data_utm %>%
-      dplyr::filter(Significant == "Significant"),
-    aes(x = class.index/1000,
-        y = Mantel.cor,
-        label = class.index/1000),
-    nudge_x = 2,
-    nudge_y = -0.01,
-    direction = "both" # Allow labels to be moved in both x and y directions
-  )
-
-
-ggsave(plot = last_plot(),
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_labelled.png"),
-       height = 3,
-       width = 8)
+# 10 km
+export_corr_table(correlogram_utm_10km, all_indiv_10km)
 ```
 
 ## Urban
 ```{r}
-# export basic plot-----
-png(here::here("./Figures_Tables/correlogram/mantel_correlogram_UTM_urban.png"), 
-    width = 1200, height = 800,
-    res = 200) 
+# 2.5 km
+export_corr_table(correlogram_utm_urb, urban_2500m)
 
-plot(correlogram_utm_urb)  
-
-dev.off()
-
-
-# export table-----
-correlogram_utm_urb$mantel.res %>%
-  as.data.frame() %>%
-  dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
-  drop_na() %>%
-  round(3) %>%
-  dplyr::mutate(class.index = round(class.index, 0)) %>%
-  dplyr::rename("Distance Class (m)" = 1,
-                "N" = 2,
-                "Mantel r" = 3,
-                "p" = 4) %>%
-  dplyr::mutate(p = if_else(
-                p < 0.001,
-                  "<0.001",
-                as.character(p)
-                )) %>%
-  flextable() %>%
-  align(align = "center",
-        part = "all") %>%
-  flextable::bold(i = ~ p <= 0.05, j = 4) %>%
-  flextable::italic(i = 1, j = 4, part = "header") %>%
-  flextable::autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table_utm_urban.docx"))
-
-
-# export plot made with ggplot-----
-## WITHOUT LABELLED SIGNIFICANT POINTS
-corr_data_utm_urb <- correlogram_utm_urb[['mantel.res']] %>%
-  as.data.frame() %>%
-  dplyr::mutate(Significant = if_else(
-    `Pr(corrected)` < 0.05,
-    "Significant",
-    "Not_significant"
-  ))
-
-corr_data_utm_plot1_urb <- corr_data_utm_urb %>%
-  dplyr::filter(is.na(Mantel.cor) == F) %>%
-  ggplot(aes(x = class.index/1000,
-             y = Mantel.cor)) +
-  geom_line() +
-  geom_point(aes(shape = Significant,
-                 fill = Significant),
-             size = 2.5) +
-  geom_hline(yintercept = 0,
-             linetype = "dotted") +
-  scale_shape_manual(values = c(21,22)) +
-  scale_fill_manual(values = c("white", "black" )) +
-  labs(x = "Class Index (km)",
-       y = expression(paste("Mantel ", italic(r)))) +
-  #ylim(-0.05, 0.15) +
-  scale_x_continuous(limits = c(0, NA),
-       breaks = c(0, 10, 20, 30, 40, 50, 60)) +
-  ggpubr::theme_pubr(legend = "none")
-
-ggsave(plot = corr_data_utm_plot1_urb,
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_urban.png"),
-       height = 3,
-       width = 8)
-
-## WITH LABELLED SIGNIFICANT POINTS
-corr_data_utm_plot1_urb + 
-  ggrepel::geom_text_repel(
-    seed = 1,
-    data = corr_data_utm_urb %>%
-      dplyr::filter(Significant == "Significant"),
-    aes(x = class.index/1000,
-        y = Mantel.cor,
-        label = class.index/1000),
-    nudge_x = 2,
-    nudge_y = -0.01,
-    direction = "both" # Allow labels to be moved in both x and y directions
-  )
-
-
-ggsave(plot = last_plot(),
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_labelled_urban.png"),
-       height = 3,
-       width = 8)
+# 3 km
+export_corr_table(correlogram_utm_urb_3km, urban_3km)
 ```
 
 ## Rural
 ```{r}
-# export basic plot-----
-png(here::here("./Figures_Tables/correlogram/mantel_correlogram_UTM_rural.png"), 
-    width = 1200, height = 800,
-    res = 200) 
+# 10 km
+export_corr_table(correlogram_utm_rur, rural_10km)
 
-plot(correlogram_utm_rur)  
-
-dev.off()
+# 12 km
+export_corr_table(correlogram_utm_rur_12km, rural_12km)
+```
 
 
-# export table-----
-correlogram_utm_rur$mantel.res %>%
-  as.data.frame() %>%
-  dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
-  drop_na() %>%
-  round(3) %>%
-  dplyr::mutate(class.index = round(class.index, 0)) %>%
-  dplyr::rename("Distance Class (m)" = 1,
-                "N" = 2,
-                "Mantel r" = 3,
-                "p" = 4) %>%
-  dplyr::mutate(p = if_else(
-                p < 0.001,
-                  "<0.001",
-                as.character(p)
-                )) %>%
-  flextable() %>%
-  align(align = "center",
-        part = "all") %>%
-  flextable::bold(i = ~ p <= 0.05, j = 4) %>%
-  flextable::italic(i = 1, j = 4, part = "header") %>%
-  flextable::autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table_utm_rural.docx"))
 
+## 1 individual/site
+```{r}
+# 2.5 km
+export_corr_table(correlogram_utm_subsamp, one_indiv_2500m)
 
-# export plot made with ggplot-----
-## WITHOUT LABELLED SIGNIFICANT POINTS
-corr_data_utm_rur <- correlogram_utm_rur[['mantel.res']] %>%
-  as.data.frame() %>%
-  dplyr::mutate(Significant = if_else(
-    `Pr(corrected)` < 0.05,
-    "Significant",
-    "Not_significant"
-  ))
-
-corr_data_utm_plot1_rur <- corr_data_utm_rur %>%
-  dplyr::filter(is.na(Mantel.cor) == F) %>%
-  ggplot(aes(x = class.index/1000,
-             y = Mantel.cor)) +
-  geom_line() +
-  geom_point(aes(shape = Significant,
-                 fill = Significant),
-             size = 2.5) +
-  geom_hline(yintercept = 0,
-             linetype = "dotted") +
-  scale_shape_manual(values = c(21,22)) +
-  scale_fill_manual(values = c("white", "black" )) +
-  labs(x = "Class Index (km)",
-       y = expression(paste("Mantel ", italic(r)))) +
-  #ylim(-0.05, 0.15) +
-  scale_x_continuous(limits = c(0, NA),
-       breaks = c(0, 10, 20, 30, 40, 50, 60)) +
-  ggpubr::theme_pubr(legend = "none")
-
-ggsave(plot = corr_data_utm_plot1_rur,
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_rural.png"),
-       height = 3,
-       width = 8)
-
-## WITH LABELLED SIGNIFICANT POINTS
-corr_data_utm_plot1_rur + 
-  ggrepel::geom_text_repel(
-    seed = 1,
-    data = corr_data_utm_rur %>%
-      dplyr::filter(Significant == "Significant"),
-    aes(x = class.index/1000,
-        y = Mantel.cor,
-        label = class.index/1000),
-    nudge_x = 2,
-    nudge_y = -0.01,
-    direction = "both" # Allow labels to be moved in both x and y directions
-  )
-
-
-ggsave(plot = last_plot(),
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_labelled_rural.png"),
-       height = 3,
-       width = 8)
+# 10 km
+export_corr_table(correlogram_utm_subsamp_10km, one_indiv_10km)
 ```
 
 ## 1 individual/site: Urban
 ```{r}
-# export basic plot-----
-png(here::here("./Figures_Tables/correlogram/mantel_correlogram_UTM_urban_subsamp.png"), 
-    width = 1200, height = 800,
-    res = 200) 
+# 2.5 km
+export_corr_table(correlogram_utm_urb_subsamp, one_indiv_urban_2500m)
 
-plot(correlogram_utm_urb_subsamp)  
-
-dev.off()
-
-
-# export table-----
-correlogram_utm_urb_subsamp$mantel.res %>%
-  as.data.frame() %>%
-  dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
-  drop_na() %>%
-  round(3) %>%
-  dplyr::mutate(class.index = round(class.index, 0)) %>%
-  dplyr::rename("Distance Class (m)" = 1,
-                "N" = 2,
-                "Mantel r" = 3,
-                "p" = 4) %>%
-  dplyr::mutate(p = if_else(
-                p < 0.001,
-                  "<0.001",
-                as.character(p)
-                )) %>%
-  flextable() %>%
-  align(align = "center",
-        part = "all") %>%
-  flextable::bold(i = ~ p <= 0.05, j = 4) %>%
-  flextable::italic(i = 1, j = 4, part = "header") %>%
-  flextable::autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table_utm_urban_subsamp.docx"))
-
-
-# export plot made with ggplot-----
-## WITHOUT LABELLED SIGNIFICANT POINTS
-corr_data_utm_urb_subsamp <- correlogram_utm_urb_subsamp[['mantel.res']] %>%
-  as.data.frame() %>%
-  dplyr::mutate(Significant = if_else(
-    `Pr(corrected)` < 0.05,
-    "Significant",
-    "Not_significant"
-  ))
-
-corr_data_utm_plot1_urb_subsamp <- corr_data_utm_urb_subsamp %>%
-  dplyr::filter(is.na(Mantel.cor) == F) %>%
-  ggplot(aes(x = class.index/1000,
-             y = Mantel.cor)) +
-  geom_line() +
-  geom_point(aes(shape = Significant,
-                 fill = Significant),
-             size = 2.5) +
-  geom_hline(yintercept = 0,
-             linetype = "dotted") +
-  scale_shape_manual(values = c(21,22)) +
-  scale_fill_manual(values = c("white", "black" )) +
-  labs(x = "Class Index (km)",
-       y = expression(paste("Mantel ", italic(r)))) +
-  #ylim(-0.05, 0.15) +
-  scale_x_continuous(limits = c(0, NA),
-       breaks = c(0, 10, 20, 30, 40, 50, 60)) +
-  ggpubr::theme_pubr(legend = "none")
-
-ggsave(plot = corr_data_utm_plot1_urb_subsamp,
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_urban_subsamp.png"),
-       height = 3,
-       width = 8)
-
-## WITH LABELLED SIGNIFICANT POINTS
-corr_data_utm_plot1_urb_subsamp + 
-  ggrepel::geom_text_repel(
-    seed = 1,
-    data = corr_data_utm_urb_subsamp %>%
-      dplyr::filter(Significant == "Significant"),
-    aes(x = class.index/1000,
-        y = Mantel.cor,
-        label = class.index/1000),
-    nudge_x = 2,
-    nudge_y = -0.01,
-    direction = "both" # Allow labels to be moved in both x and y directions
-  )
-
-
-ggsave(plot = last_plot(),
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_labelled_urban_subsamp.png"),
-       height = 3,
-       width = 8)
+# 3 km
+export_corr_table(correlogram_utm_urb_subsamp_3km, one_indiv_urban_3km)
 ```
 
 ## 1 individual/site: Rural
 ```{r}
-# export basic plot-----
-png(here::here("./Figures_Tables/correlogram/mantel_correlogram_UTM_rural_subsamp.png"), 
-    width = 1200, height = 800,
-    res = 200) 
+# 10 km
+export_corr_table(correlogram_utm_rur_subsamp, one_indiv_rural_10km)
 
-plot(correlogram_utm_rur_subsamp)  
+# 12 km
+export_corr_table(correlogram_utm_rur_subsamp_12km, one_indiv_rural_12km)
+```
 
-dev.off()
-
-
-# export table-----
-correlogram_utm_rur_subsamp$mantel.res %>%
-  as.data.frame() %>%
-  dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
-  drop_na() %>%
-  round(3) %>%
-  dplyr::mutate(class.index = round(class.index, 0)) %>%
-  dplyr::rename("Distance Class (m)" = 1,
-                "N" = 2,
-                "Mantel r" = 3,
-                "p" = 4) %>%
-  dplyr::mutate(p = if_else(
-                p < 0.001,
-                  "<0.001",
-                as.character(p)
-                )) %>%
-  flextable() %>%
-  align(align = "center",
-        part = "all") %>%
-  flextable::bold(i = ~ p <= 0.05, j = 4) %>%
-  flextable::italic(i = 1, j = 4, part = "header") %>%
-  flextable::autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/correlogram/correlogram_table_utm_rural_subsamp.docx"))
-
-
-# export plot made with ggplot-----
-## WITHOUT LABELLED SIGNIFICANT POINTS
-corr_data_utm_rur_subsamp <- correlogram_utm_rur_subsamp[['mantel.res']] %>%
+# Export figures
+## Create function
+```{r}
+export_corr_figure <- function(correlogram_object,
+                               output_file_name){
+  
+    filepath <- paste0(
+    "./Figures_Tables/correlogram/figures/",
+    deparse(substitute(output_file_name)),
+    ".png")
+  
+    # create df
+    corr_data <- correlogram_object %>%
+      purrr::pluck("mantel.res") %>%
   as.data.frame() %>%
   dplyr::mutate(Significant = if_else(
     `Pr(corrected)` < 0.05,
     "Significant",
     "Not_significant"
-  ))
-
-corr_data_utm_plot1_rur_subsamp <- corr_data_utm_rur_subsamp %>%
-  dplyr::filter(is.na(Mantel.cor) == F) %>%
-  ggplot(aes(x = class.index/1000,
+  )) 
+    
+  # plot
+  ggplot(corr_data,
+         aes(x = class.index/1000,
              y = Mantel.cor)) +
   geom_line() +
   geom_point(aes(shape = Significant,
@@ -674,33 +501,80 @@ corr_data_utm_plot1_rur_subsamp <- corr_data_utm_rur_subsamp %>%
   scale_fill_manual(values = c("white", "black" )) +
   labs(x = "Class Index (km)",
        y = expression(paste("Mantel ", italic(r)))) +
-  #ylim(-0.05, 0.15) +
-  scale_x_continuous(limits = c(0, NA),
-       breaks = c(0, 10, 20, 30, 40, 50, 60)) +
+  # ylim(-0.05, 0.15) +
+  # scale_x_continuous(limits = c(0, NA),
+  #      breaks = c(0, 10, 20, 30, 40, 50, 60, 70)) +
   ggpubr::theme_pubr(legend = "none")
-
-ggsave(plot = corr_data_utm_plot1_rur_subsamp,
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_rural_subsamp.png"),
-       height = 3,
-       width = 8)
-
-## WITH LABELLED SIGNIFICANT POINTS
-corr_data_utm_plot1_rur_subsamp + 
   ggrepel::geom_text_repel(
     seed = 1,
-    data = corr_data_utm_rur_subsamp %>%
+    data = corr_data %>%
       dplyr::filter(Significant == "Significant"),
     aes(x = class.index/1000,
         y = Mantel.cor,
         label = class.index/1000),
     nudge_x = 2,
     nudge_y = -0.01,
-    direction = "both" # Allow labels to be moved in both x and y directions
+    direction = "both"
   )
-
-
-ggsave(plot = last_plot(),
-       filename = here::here("./Figures_Tables/correlogram/correlogram_UTM_ggplot_labelled_rural_subsamp.png"),
-       height = 3,
-       width = 8)
+  
+  ggsave(plot = last_plot(),
+         filename = here::here(filepath),
+         height = 3,
+         width = 8)
+}
 ```
+
+## All individuals
+```{r}
+export_corr_figure(correlogram_utm,
+                   all_indiv_2500m)
+
+export_corr_figure(correlogram_utm_10km,
+                   all_indiv_10km)
+```
+
+## Urban
+```{r}
+# 2.5 km
+export_corr_figure(correlogram_utm_urb, urban_2500m)
+
+# 3 km
+export_corr_figure(correlogram_utm_urb_3km, urban_3km)
+```
+
+## Rural
+```{r}
+# 10 km
+export_corr_figure(correlogram_utm_rur, rural_10km)
+
+# 12 km
+export_corr_figure(correlogram_utm_rur_12km, rural_12km)
+```
+
+## 1 individual/site
+```{r}
+# 2.5 km
+export_corr_figure(correlogram_utm_subsamp, one_indiv_2500m)
+
+# 10 km
+export_corr_figure(correlogram_utm_subsamp_10km, one_indiv_10km)
+```
+
+## 1 individual/site: Urban
+```{r}
+# 2.5 km
+export_corr_figure(correlogram_utm_urb_subsamp, one_indiv_urban_2500m)
+
+# 3 km
+export_corr_figure(correlogram_utm_urb_subsamp_3km, one_indiv_urban_3km)
+```
+
+## 1 individual/site: Rural
+```{r}
+# 10 km
+export_corr_figure(correlogram_utm_rur_subsamp, one_indiv_rural_10km)
+
+# 12 km
+export_corr_figure(correlogram_utm_rur_subsamp_12km, one_indiv_rural_12km)
+```
+
