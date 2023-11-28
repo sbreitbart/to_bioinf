@@ -366,12 +366,22 @@ make_ne_plot <- function(df, exported_filepath){
     aes(
       x = year,
       y = Ne_median))  +
+    
+    geom_segment( # add red vertical line at 12,000 yrs (glaciers retreat)
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max(df$Ne_median)*1.1),
+      color = "blue",
+      linetype = 5 ) +
+    
     geom_segment( # add red vertical line at 500 yrs
       aes(
         x = 500,
         xend = 500,
         y = 0,
-        yend = max(df$Ne_median*1.1)),
+        yend = max(df$Ne_median)*1.1),
       color = "red",
       linetype = 2 ) +
     geom_point(size = 0.75) +
@@ -410,7 +420,6 @@ make_ne_plot <- function(df, exported_filepath){
          width = 7,
          dpi = 200)
 }
-
 ```
 
 ## All sites in 1 population
@@ -437,20 +446,34 @@ ggplot(
     aes(
       x = year,
       y = Ne_median))  +
-    geom_segment( # add red vertical line at 500 yrs
+  geom_point(size = 0.75) +
+  
+  geom_segment( # add red vertical line at 500 yrs
       aes(
         x = 500,
         xend = 500,
         y = 0,
-        yend = max(full_fig$Ne_median*1.1)),
+        yend = max(Ne_median)*1.1),
       color = "red",
       linetype = 2 ) +
-    geom_point(size = 0.75) +
+  
+  geom_segment( # add blue vertical line at 12,000 yrs (glaciers retreat)
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max(Ne_median*1.1)),
+      color = "blue",
+      linetype = 5 ) +
+  
     scale_x_continuous(labels = scales::comma,
                        limits = c(NA, 40000)) +
     scale_y_continuous(breaks=c(0, 50000, 100000, 150000),
-                  labels = scales::comma,
-                  limits = c(1, 150000)) +
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  141264.75 # this is the max * 1.1
+                                  )
+                  ) +
     xlab("Years before present") +
     ylab("Median Ne") +
     theme_bw() +
@@ -465,8 +488,8 @@ ggplot(
          dpi = 200)
 ```
 
-
 ### Longer generation time (10 years)
+#### Log scale
 ```{r}
 full_fig_10yrs <- read.delim(here::here("./StairwayPlot/full_mmaf0.007813_gentime10/full_mmaf0.007813_gentime10.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -479,6 +502,49 @@ head(full_fig_10yrs)
 
 make_ne_plot(full_fig_10yrs,
              "./Figures_Tables/Stairway_plot/full_with_inset_generation_time_10yrs.png")
+```
+
+#### Regular scale
+```{r}
+ggplot(
+    full_fig_10yrs,
+    aes(
+      x = year,
+      y = Ne_median))  +
+  geom_point(size = 0.75) +
+  
+  geom_segment( # add red vertical line at 500 yrs
+      aes(
+        x = 500.4076,
+        xend = 500.4076,
+        y = 0,
+        yend = max(Ne_median)*1.1),
+      color = "red",
+      linetype = 2 ) +
+  
+  geom_segment( # add blue vertical line at 12,000 yrs (glaciers retreat)
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max(Ne_median)*1.1),
+      color = "blue",
+      linetype = 5 ) +
+  
+    scale_x_continuous(labels = scales::comma) +
+    scale_y_continuous(labels = scales::comma) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+
+  # Export
+  ggsave(filename = here::here("./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale_generation_time_10yrs.png"),
+         height = 5,
+         width = 7,
+         dpi = 200)
 ```
 
 
