@@ -6,32 +6,57 @@ source(here::here("functions.R"))
 ```
 
 ## Import data
-### Urbanization data
+### All populations
 ```{r}
-dat <- read.csv(here::here("./genomic_resources/pop_map2.csv"))
+all <- read.csv(here::here("./genomic_resources/pop_map3.csv"))
 
-dat_sum <- dat %>%
+all_sum <- all %>%
   dplyr::group_by(population) %>%
   dplyr::summarise(n = n())
 ```
 
-# Plot
+### Urban populations
+```{r}
+urb <- read.csv(here::here("./clean_data/pop_map3_U_dist.csv"))
+
+urb_sum <- urb %>%
+  dplyr::group_by(population) %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::mutate(group = "urban")
+```
+
+### Rural populations
+```{r}
+rur <- read.csv(here::here("./clean_data/pop_map3_R_dist.csv"))
+
+rur_sum <- rur %>%
+  dplyr::group_by(population) %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::mutate(group = "rural")
+```
+
+### Combine urban, rural populations into one df
+```{r}
+urb_rur <- rbind(urb_sum, rur_sum) %>%
+  dplyr::group_by(group, n) %>%
+  dplyr::summarise(n_indiv = n())
+
+```
+
+# Plot & export
+## All pops
 ```{r}
 
-ggplot(dat_sum,
-       aes(x = n)) +
-  geom_histogram(binwidth = 1,
-                 fill = "grey",
-                 color = "black") +
+ggplot(all_sum,
+       aes(x = as.factor(n))
+           ) +
+  geom_bar(stat = "count",
+           fill = "lightgrey",
+           color = "black") +
   ylab("Count") +
   xlab("Individuals/Population") +
   theme_pubr() +
-  labs_pubr() +
-  stat_bin(binwidth=1,
-           geom='text',
-           color='black',
-           aes(label=..count..),
-           position=position_stack(vjust = 0.5))
+  labs_pubr() 
 
 ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site.png", 
        plot = last_plot(),
@@ -40,3 +65,27 @@ ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site.png",
        units = "cm")
 ```
 
+## Urb, rur pops
+```{r}
+
+ggplot(urb_rur,
+       aes(x = as.factor(n),
+           y = n_indiv,
+           fill = group)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  ylab("Count") +
+  xlab("Individuals/Population") +
+  ylim(0, max(urb_rur$n_indiv)*1.1) +
+  theme_pubr() +
+  labs_pubr() +
+  geom_text(aes(label = n_indiv),
+            vjust = -0.2,
+            position = position_dodge(.9))
+
+ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site_UvsR.png", 
+       plot = last_plot(),
+       height = 12,
+       width = 20,
+       units = "cm")
+```
