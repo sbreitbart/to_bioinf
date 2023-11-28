@@ -265,6 +265,32 @@ correlogram_utm_urb_3km <- vegan::mantel.correlog(
 plot(correlogram_utm_urb_3km)
 ```
 
+### 10km spacing
+```{r}
+correlogram_utm_urb_10km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb,
+  D.geo = coords_utm_urb,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_10km
+   )
+
+plot(correlogram_utm_urb_10km)
+```
+
+### 12km spacing
+```{r}
+correlogram_utm_urb_12km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb,
+  D.geo = coords_utm_urb,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_12km
+   )
+
+plot(correlogram_utm_urb_12km)
+```
+
 ## Rural
 ### 10km spacing
 ```{r}
@@ -346,6 +372,32 @@ correlogram_utm_urb_subsamp_3km <- vegan::mantel.correlog(
 plot(correlogram_utm_urb_subsamp_3km)
 ```
 
+### 2.5km spacing
+```{r}
+correlogram_utm_urb_subsamp_10km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb_subsamp,
+  D.geo = coords_utm_urb_subsamp,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_10km
+   )
+
+plot(correlogram_utm_urb_subsamp_10km)
+```
+
+### 3km spacing
+```{r}
+correlogram_utm_urb_subsamp_12km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb_subsamp,
+  D.geo = coords_utm_urb_subsamp,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_12km
+   )
+
+plot(correlogram_utm_urb_subsamp_12km)
+```
+
 ## 1 individual/site- Rural
 ### 10km spacing
 ```{r}
@@ -373,13 +425,14 @@ correlogram_utm_rur_subsamp_12km <- vegan::mantel.correlog(
 plot(correlogram_utm_rur_subsamp_12km)
 ```
 
-# Export tables
-## Create function
+# Export
+## Create function to export figures and tables
 ```{r}
-export_corr_table <- function(correlogram_object,
+export_corr_table_fig <- function(correlogram_object,
                               output_file_name){
   
-  filepath <- paste0(
+  # export table
+  filepath_table <- paste0(
     "./Figures_Tables/correlogram/tables/",
     deparse(substitute(output_file_name)),
     ".docx")
@@ -406,73 +459,11 @@ export_corr_table <- function(correlogram_object,
   flextable::bold(i = ~ p <= 0.05, j = 4) %>%
   flextable::italic(i = 1, j = 4, part = "header") %>%
   flextable::autofit() %>%
-  save_as_docx(path = here::here(filepath))
-}
-```
-
-## All individuals
-```{r}
-# 2.5 km
-export_corr_table(correlogram_utm, all_indiv_2500m)
-
-# 10 km
-export_corr_table(correlogram_utm_10km, all_indiv_10km)
-```
-
-## Urban
-```{r}
-# 2.5 km
-export_corr_table(correlogram_utm_urb, urban_2500m)
-
-# 3 km
-export_corr_table(correlogram_utm_urb_3km, urban_3km)
-```
-
-## Rural
-```{r}
-# 10 km
-export_corr_table(correlogram_utm_rur, rural_10km)
-
-# 12 km
-export_corr_table(correlogram_utm_rur_12km, rural_12km)
-```
-
-
-
-## 1 individual/site
-```{r}
-# 2.5 km
-export_corr_table(correlogram_utm_subsamp, one_indiv_2500m)
-
-# 10 km
-export_corr_table(correlogram_utm_subsamp_10km, one_indiv_10km)
-```
-
-## 1 individual/site: Urban
-```{r}
-# 2.5 km
-export_corr_table(correlogram_utm_urb_subsamp, one_indiv_urban_2500m)
-
-# 3 km
-export_corr_table(correlogram_utm_urb_subsamp_3km, one_indiv_urban_3km)
-```
-
-## 1 individual/site: Rural
-```{r}
-# 10 km
-export_corr_table(correlogram_utm_rur_subsamp, one_indiv_rural_10km)
-
-# 12 km
-export_corr_table(correlogram_utm_rur_subsamp_12km, one_indiv_rural_12km)
-```
-
-# Export figures
-## Create function
-```{r}
-export_corr_figure <- function(correlogram_object,
-                               output_file_name){
+  save_as_docx(path = here::here(filepath_table))
   
-    filepath <- paste0(
+  
+  # export figure
+      filepath_fig <- paste0(
     "./Figures_Tables/correlogram/figures/",
     deparse(substitute(output_file_name)),
     ".png")
@@ -518,63 +509,77 @@ export_corr_figure <- function(correlogram_object,
   )
   
   ggsave(plot = last_plot(),
-         filename = here::here(filepath),
+         filename = here::here(filepath_fig),
          height = 3,
          width = 8)
+  
 }
 ```
 
 ## All individuals
 ```{r}
-export_corr_figure(correlogram_utm,
-                   all_indiv_2500m)
+# 2.5 km
+export_corr_table_fig(correlogram_utm, all_indiv_2500m)
 
-export_corr_figure(correlogram_utm_10km,
-                   all_indiv_10km)
+# 10 km
+export_corr_table_fig(correlogram_utm_10km, all_indiv_10km)
 ```
 
 ## Urban
 ```{r}
 # 2.5 km
-export_corr_figure(correlogram_utm_urb, urban_2500m)
+export_corr_table_fig(correlogram_utm_urb, urban_2500m)
 
 # 3 km
-export_corr_figure(correlogram_utm_urb_3km, urban_3km)
+export_corr_table_fig(correlogram_utm_urb_3km, urban_3km)
+
+# 10 km
+export_corr_table_fig(correlogram_utm_urb_10km, urban_10km)
+
+# 12 km
+export_corr_table_fig(correlogram_utm_urb_12km, urban_12km)
 ```
 
 ## Rural
 ```{r}
 # 10 km
-export_corr_figure(correlogram_utm_rur, rural_10km)
+export_corr_table_fig(correlogram_utm_rur, rural_10km)
 
 # 12 km
-export_corr_figure(correlogram_utm_rur_12km, rural_12km)
+export_corr_table_fig(correlogram_utm_rur_12km, rural_12km)
 ```
+
+
 
 ## 1 individual/site
 ```{r}
 # 2.5 km
-export_corr_figure(correlogram_utm_subsamp, one_indiv_2500m)
+export_corr_table_fig(correlogram_utm_subsamp, one_indiv_2500m)
 
 # 10 km
-export_corr_figure(correlogram_utm_subsamp_10km, one_indiv_10km)
+export_corr_table_fig(correlogram_utm_subsamp_10km, one_indiv_10km)
 ```
 
 ## 1 individual/site: Urban
 ```{r}
 # 2.5 km
-export_corr_figure(correlogram_utm_urb_subsamp, one_indiv_urban_2500m)
+export_corr_table_fig(correlogram_utm_urb_subsamp, one_indiv_urban_2500m)
 
 # 3 km
-export_corr_figure(correlogram_utm_urb_subsamp_3km, one_indiv_urban_3km)
+export_corr_table_fig(correlogram_utm_urb_subsamp_3km, one_indiv_urban_3km)
+
+# 10 km
+export_corr_table_fig(correlogram_utm_urb_subsamp_10km, one_indiv_urban_10km)
+
+# 12 km
+export_corr_table_fig(correlogram_utm_urb_subsamp_12km, one_indiv_urban_12km)
 ```
 
 ## 1 individual/site: Rural
 ```{r}
 # 10 km
-export_corr_figure(correlogram_utm_rur_subsamp, one_indiv_rural_10km)
+export_corr_table_fig(correlogram_utm_rur_subsamp, one_indiv_rural_10km)
 
 # 12 km
-export_corr_figure(correlogram_utm_rur_subsamp_12km, one_indiv_rural_12km)
+export_corr_table_fig(correlogram_utm_rur_subsamp_12km, one_indiv_rural_12km)
 ```
-
