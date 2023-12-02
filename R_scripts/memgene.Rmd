@@ -42,6 +42,13 @@ gen_data_urban <- process_vcf_data(
   )
 ```
 
+#### JUST RURAL individuals
+```{r}
+gen_data_rural <- process_vcf_data(
+  here::here("./filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf")
+  )
+```
+
 #### 1 individual/population
 ```{r}
 gen_data_subsamp <- process_vcf_data(
@@ -106,6 +113,14 @@ coords_urban <- process_location_data(
 # I converted the pop_map3_U_dist.txt into csv, then removed the "MW" prefixes so that the function would work
 ```
 
+#### All RURAL individuals
+```{r}
+coords_rural <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_map3_R_dist.csv"))
+
+```
+
 #### 1 individual/population
 ```{r}
 coords_subsamp <- process_location_data(
@@ -136,6 +151,15 @@ milkweed_analysis <- mgQuick(gen_data, coords)
 set.seed(1)
 if (!exists("milkweed_analysis_urban"))
 milkweed_analysis_urban <- mgQuick(gen_data_urban, coords_urban)
+
+# No significant MEMs detected
+```
+
+### Just RURAL individuals
+```{r}
+set.seed(1)
+if (!exists("milkweed_analysis_rural"))
+milkweed_analysis_rural <- mgQuick(gen_data_rural, coords_rural)
 
 # No significant MEMs detected
 ```

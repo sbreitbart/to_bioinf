@@ -1,0 +1,91 @@
+# Set up notebook
+## Load libraries & functions
+```{r}
+source(here::here("libraries.R"))
+
+library(hierfstat)
+```
+
+## Import genetic data
+```{r}
+vcf <- read.vcfR(
+  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+
+
+# read in pop map with populations
+pops <- read.csv(here("./genomic_resources/pop_map3.csv"))
+
+# pop map with urban/rural designations
+pops_UR <- read.delim(here("./clean_data/pop_map3_UR_dist.txt"),
+                      header = F) %>%
+  dplyr::rename("sample" = 1,
+                "urban_rural" = 2)
+
+# join pop maps
+pops <- full_join(pops,
+                  pops_UR,
+                  by = "sample")
+
+
+# add pops to genind
+strata(my_genind) <- pops
+pop(my_genind) <- pops[,"population"]
+```
+
+# Hierfstat
+```{r}
+barplot(betas(my_genind)$betaiovl)
+
+formatted_genind <- genind2hierfstat(my_genind)
+
+# THIS WORKED- but it doesn't include urb vs rural
+varcomp.glob(levels = formatted_genind$pop, # same as pops[2]
+             loci = formatted_genind[,-1],
+             diploid = TRUE)
+
+# THIS WORKED- but it doesn't include individual populations
+varcomp.glob(levels = pops[3], 
+             loci = formatted_genind[,-1],
+             diploid = TRUE)
+
+# What DOESN'T work (get lots of NaNs) for levels:
+# pops[-1]
+# pops
+# pops[,2:3]
+# pops[,c(2:3)]
+# data.frame(pops$population, pops$urban_rural)
+
+
+
+
+# try adding hierarchical levels to loci df
+fg_with_UR <- cbind(formatted_genind,
+                    pops %>%
+                      dplyr::select(urban_rural)) %>%
+  dplyr::relocate(urban_rural,
+                  .after = pop)
+
+# this doesn't work either
+varcomp.glob(levels = fg_with_UR[,c(1:2)],
+             loci = fg_with_UR[,-c(1:2)],
+             diploid = TRUE)
+
+
+# the instructions say to add the levels from outermost to innermost,
+# so I'll swap the order of population and urban_rural and see if
+# that makes a difference...
+
+varcomp.glob(levels = data.frame(pops$urban_rural,
+                                 pops$population),
+             loci = formatted_genind[,-1],
+             diploid = TRUE)
+
+# it worked! commit, then erase old trials
+
+```
+
