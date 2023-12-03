@@ -7,6 +7,7 @@ library(hierfstat)
 ```
 
 ## Import genetic data
+### All sites
 ```{r}
 vcf <- read.vcfR(
   here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
@@ -37,8 +38,45 @@ strata(my_genind) <- pops
 pop(my_genind) <- pops[,"population"]
 ```
 
+### Urban sites
+```{r}
+vcf_urb <- read.vcfR(
+  here::here("./filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_urb <- vcfR2genind(vcf_urb)
+
+
+# read in pop map with populations
+pops_urb <- read.csv(here("./clean_data/pop_map3_U_dist.csv"))
+
+# add pops to genind
+strata(my_genind_urb) <- pops_urb
+pop(my_genind_urb) <- pops_urb[,"population"]
+```
+
+### Rural sites
+```{r}
+vcf_rur <- read.vcfR(
+  here::here("./filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_rur <- vcfR2genind(vcf_rur)
+
+
+# read in pop map with populations
+pops_rur <- read.csv(here("./clean_data/pop_map3_R_dist.csv"))
+
+# add pops to genind
+strata(my_genind_rur) <- pops_rur
+pop(my_genind_rur) <- pops_rur[,"population"]
+```
+
 # Hierfstat
 ## Create f-statistic matrix
+### All sites
 ```{r}
 # convert it to correct format for package
 formatted_genind <- genind2hierfstat(my_genind)
@@ -57,8 +95,8 @@ fsts$overall %>%
 fsts$F %>%
   as.data.frame()
 
-# p-value
-# this isn't working- 0s and p = 1
+# p-value = 1
+# the g.star matrix is all zeroes. But when I use only a small subset of SNPs, the matrix generates non-zero numbers and p<1, so this is working
 test.between(formatted_genind[,-1],
        test.lev = pops$urban_rural,
        rand.unit = pops$population,
@@ -66,7 +104,49 @@ test.between(formatted_genind[,-1],
 
 ```
 
+### Urban sites
+```{r}
+# convert it to correct format for package
+formatted_genind_urb <- genind2hierfstat(my_genind_urb)
+
+# make sure levels are from outermost to innermost
+fsts_urb <- varcomp.glob(levels = data.frame(pops_urb$population),
+             loci = formatted_genind_urb[,-1],
+             diploid = TRUE)
+
+# look at variance components summed over all loci
+fsts_urb$overall %>%
+  as.data.frame()
+
+# look at f-statistic matrix
+fsts_urb$F %>%
+  as.data.frame()
+
+# slightly negative fst between pops-total means more variation within than between populations. This can stem from uneven sample sizes
+```
+
+### Rural sites
+```{r}
+# convert it to correct format for package
+formatted_genind_rur <- genind2hierfstat(my_genind_rur)
+
+# make sure levels are from outermost to innermost
+fsts_rur <- varcomp.glob(levels = data.frame(pops_rur$population),
+             loci = formatted_genind_rur[,-1],
+             diploid = TRUE)
+
+# look at variance components summed over all loci
+fsts_rur$overall %>%
+  as.data.frame()
+
+# look at f-statistic matrix
+fsts_rur$F %>%
+  as.data.frame()
+
+```
+
 ## Calculate population-specific fst
+### All sites
 ```{r}
 betas(formatted_genind)$betaiovl %>%
   as.data.frame() %>%
@@ -78,14 +158,45 @@ betas(formatted_genind)$betaiovl %>%
 ```
 
 ## Calculate pairwise Fst
+### All sites
 ```{r}
-# takes about 6 hours
-pairwise_fst_matrix <- genet.dist(my_genind, method = "WC84")
+pairwise_fst_matrix <- genet.dist(my_genind,
+                                      method = "WC84")
+
+```
+
+### Urban sites
+```{r}
+# just take the existing matrix and keep the urban populations
+urban_pop_list <- pops_urb$population %>%
+  as.vector()
+
+pairwise_fst_urb <- read.csv(here::here("./Figures_Tables/fst/pairwise_fst_matrix.csv")) %>%
+  dplyr::select(-1) %>%
+  # remove added "X" from every colname
+  dplyr::rename_with(~gsub("X", "", .), everything()) %>%
+  # keep only urban populations in "population" column
+  dplyr::filter(population %in% urban_pop_list) %>%
+  dplyr::select(1, all_of(urban_pop_list))
+
+```
+
+### Rural sites
+```{r}
+# just take the existing matrix and keep the rural populations
+pairwise_fst_rur <- read.csv(here::here("./Figures_Tables/fst/pairwise_fst_matrix.csv")) %>%
+  dplyr::select(-1) %>%
+  # remove added "X" from every colname
+  dplyr::rename_with(~gsub("X", "", .), everything()) %>%
+  # EXCLUDE the urban populations in "population" column
+  dplyr::filter(!(population %in% urban_pop_list)) %>%
+  dplyr::select(-all_of(urban_pop_list))
 
 ```
 
 # Export f-statistics
 ## Hierarchical
+### All sites
 ```{r}
 # first, turn off scientific notation
 options(scipen=999) 
@@ -109,7 +220,52 @@ fsts$F %>%
 
 ```
 
+### Urban sites
+```{r}
+# first, turn off scientific notation
+options(scipen=999) 
+
+# then, export matrix of hierarchical F-statistics type-coefficients
+fsts_urb$F %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Level" = 1,
+                "Sampling Site" = 2,
+                "Individual" = 3) %>%
+  dplyr::mutate_if(is.numeric, round, 4) %>%
+  dplyr::mutate(Level = case_when(Level == "pops_urb.population" ~ "Sampling Site",
+                         TRUE ~ Level)) %>%
+  dplyr::mutate_all(~ ifelse(. == 0, "-", .)) %>%
+  flextable() %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/fst/hierfstat_urban.docx"))
+
+```
+
+### Rural sites
+```{r}
+# first, turn off scientific notation
+options(scipen=999) 
+
+# then, export matrix of hierarchical F-statistics type-coefficients
+fsts_rur$F %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Level" = 1,
+                "Sampling Site" = 2,
+                "Individual" = 3) %>%
+  dplyr::mutate_if(is.numeric, round, 4) %>%
+  dplyr::mutate(Level = case_when(Level == "pops_rur.population" ~ "Sampling Site",
+                         TRUE ~ Level)) %>%
+  dplyr::mutate_all(~ ifelse(. == 0, "-", .)) %>%
+  flextable() %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/fst/hierfstat_rural.docx"))
+
+```
+
 ## Pairwise fst
+### All sites
 ```{r}
 # transform dist object into matrix, then export
 full_matrix <- pairwise_fst_matrix %>%
@@ -122,3 +278,15 @@ write.csv(full_matrix,
           file = here::here("./Figures_Tables/fst/pairwise_fst_matrix.csv"))
 ```
 
+
+### Urban sites
+```{r}
+write.csv(pairwise_fst_urb,
+          file = here::here("./Figures_Tables/fst/pairwise_fst_matrix_urban.csv"))
+```
+
+### Rural sites
+```{r}
+write.csv(pairwise_fst_rur,
+          file = here::here("./Figures_Tables/fst/pairwise_fst_matrix_rural.csv"))
+```
