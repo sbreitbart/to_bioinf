@@ -38,54 +38,87 @@ pop(my_genind) <- pops[,"population"]
 ```
 
 # Hierfstat
+## Create f-statistic matrix
 ```{r}
-barplot(betas(my_genind)$betaiovl)
-
+# convert it to correct format for package
 formatted_genind <- genind2hierfstat(my_genind)
 
-# THIS WORKED- but it doesn't include urb vs rural
-varcomp.glob(levels = formatted_genind$pop, # same as pops[2]
-             loci = formatted_genind[,-1],
-             diploid = TRUE)
-
-# THIS WORKED- but it doesn't include individual populations
-varcomp.glob(levels = pops[3], 
-             loci = formatted_genind[,-1],
-             diploid = TRUE)
-
-# What DOESN'T work (get lots of NaNs) for levels:
-# pops[-1]
-# pops
-# pops[,2:3]
-# pops[,c(2:3)]
-# data.frame(pops$population, pops$urban_rural)
-
-
-
-
-# try adding hierarchical levels to loci df
-fg_with_UR <- cbind(formatted_genind,
-                    pops %>%
-                      dplyr::select(urban_rural)) %>%
-  dplyr::relocate(urban_rural,
-                  .after = pop)
-
-# this doesn't work either
-varcomp.glob(levels = fg_with_UR[,c(1:2)],
-             loci = fg_with_UR[,-c(1:2)],
-             diploid = TRUE)
-
-
-# the instructions say to add the levels from outermost to innermost,
-# so I'll swap the order of population and urban_rural and see if
-# that makes a difference...
-
-varcomp.glob(levels = data.frame(pops$urban_rural,
+# make sure levels are from outermost to innermost
+fsts <- varcomp.glob(levels = data.frame(pops$urban_rural,
                                  pops$population),
              loci = formatted_genind[,-1],
              diploid = TRUE)
 
-# it worked! commit, then erase old trials
+# look at variance components summed over all loci
+fsts$overall %>%
+  as.data.frame()
 
+# look at f-statistic matrix
+fsts$F %>%
+  as.data.frame()
+
+# p-value
+# this isn't working- 0s and p = 1
+test.between(formatted_genind[,-1],
+       test.lev = pops$urban_rural,
+       rand.unit = pops$population,
+       nperm = 100) 
+
+```
+
+## Calculate population-specific fst
+```{r}
+betas(formatted_genind)$betaiovl %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("sampling_site" = 1,
+                "fst" = 2) %>%
+  dplyr::arrange(fst)
+
+```
+
+## Calculate pairwise Fst
+```{r}
+# takes about 6 hours
+pairwise_fst_matrix <- genet.dist(my_genind, method = "WC84")
+
+```
+
+# Export f-statistics
+## Hierarchical
+```{r}
+# first, turn off scientific notation
+options(scipen=999) 
+
+# then, export matrix of hierarchical F-statistics type-coefficients
+fsts$F %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Level" = 1,
+                "Urban/Rural Group" = 2,
+                "Sampling Site" = 3,
+                "Individual" = 4) %>%
+  dplyr::mutate_if(is.numeric, round, 4) %>%
+  dplyr::mutate(Level = case_when(Level == "pops.urban_rural" ~ "Urban/Rural Group",
+                                  Level == "pops.population" ~ "Sampling Site",
+                         TRUE ~ Level)) %>%
+  dplyr::mutate_all(~ ifelse(. == 0, "-", .)) %>%
+  flextable() %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/fst/hierfstat.docx"))
+
+```
+
+## Pairwise fst
+```{r}
+# transform dist object into matrix, then export
+full_matrix <- pairwise_fst_matrix %>%
+  as.matrix() %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("population" = 1)
+
+write.csv(full_matrix,
+          file = here::here("./Figures_Tables/fst/pairwise_fst_matrix.csv"))
 ```
 
