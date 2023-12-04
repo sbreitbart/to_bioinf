@@ -356,8 +356,9 @@ toronto_pop <- read.csv(here::here("./raw_data/human_population/Toronto_human_po
 ```
 
 
-## Create plot-exporting function
+## Create plot-exporting functions
 ```{r}
+# log10 y axis
 make_ne_plot <- function(df, exported_filepath){
   
   # full plot without red horizontal line at 500 years ago
@@ -420,6 +421,73 @@ make_ne_plot <- function(df, exported_filepath){
          width = 7,
          dpi = 200)
 }
+
+# regular y axis
+make_ne_plot_reg_y <- function(df, exported_filepath){
+  
+  # full plot with red horizontal line at 500 years ago
+  full_plot <- ggplot(
+    df,
+    aes(
+      x = year,
+      y = Ne_median))  +
+    
+    geom_segment( # add blue vertical line at 12,000 yrs (glaciers retreat)
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max(df$Ne_median)*1.1),
+      color = "blue",
+      linetype = 5 ) +
+    
+    geom_segment( # add red vertical line at 500 yrs
+      aes(
+        x = 500,
+        xend = 500,
+        y = 0,
+        yend = max(df$Ne_median)*1.1),
+      color = "red",
+      linetype = 2 ) +
+    geom_point(size = 0.75) +
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  141264.75 # this is the max * 1.1
+                                  )) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+  ### Plot inset (past 500 years)
+  full_inset <- full_plot +
+    scale_x_continuous(limits = c(NA, 800),
+                       labels = scales::comma) +
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black", fill = "white", size = 1))
+  
+  ### Overlay inset in full figure
+  cowplot::ggdraw() +
+    draw_plot(full_plot) +
+    draw_plot(full_inset,
+              x = 0.45,
+              y = 0.4, 
+              width = 0.45,
+              height = 0.5)
+  
+  
+  #### Export
+  ggsave(filename = here::here(exported_filepath),
+         height = 5,
+         width = 7,
+         dpi = 200)
+}
+
 ```
 
 ## All sites in 1 population
@@ -441,51 +509,9 @@ make_ne_plot(full_fig,
 
 #### Regular scale
 ```{r}
-ggplot(
-    full_fig,
-    aes(
-      x = year,
-      y = Ne_median))  +
-  geom_point(size = 0.75) +
-  
-  geom_segment( # add red vertical line at 500 yrs
-      aes(
-        x = 500,
-        xend = 500,
-        y = 0,
-        yend = max(Ne_median)*1.1),
-      color = "red",
-      linetype = 2 ) +
-  
-  geom_segment( # add blue vertical line at 12,000 yrs (glaciers retreat)
-      aes(
-        x = 12000,
-        xend = 12000,
-        y = 0,
-        yend = max(Ne_median*1.1)),
-      color = "blue",
-      linetype = 5 ) +
-  
-    scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 40000)) +
-    scale_y_continuous(breaks=c(0, 50000, 100000, 150000),
-                       labels = scales::comma,
-                       limits = c(0, 
-                                  141264.75 # this is the max * 1.1
-                                  )
-                  ) +
-    xlab("Years before present") +
-    ylab("Median Ne") +
-    theme_bw() +
-    labs_pubr() +
-    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-  
-
-  # Export
-  ggsave(filename = here::here("./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale.png"),
-         height = 5,
-         width = 7,
-         dpi = 200)
+# export
+make_ne_plot_reg_y(full_fig,
+             "./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale.png")
 ```
 
 ### Longer generation time (10 years)
@@ -652,6 +678,10 @@ head(urb_fig)
 
 make_ne_plot(urb_fig,
              "./Figures_Tables/Stairway_plot/urban_with_inset.png")
+
+
+make_ne_plot_reg_y(urb_fig,
+             "./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale_urban.png")
 ```
 
 ### Urb = urbanization score
@@ -668,6 +698,10 @@ head(urb_fig2)
 
 make_ne_plot(urb_fig2,
              "./Figures_Tables/Stairway_plot/urban_with_inset_urbscore.png")
+
+
+make_ne_plot_reg_y(urb_fig2,
+             "./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale_urban_urbscore.png")
 ```
 
 ## Rural
@@ -685,6 +719,10 @@ head(rur_fig)
 
 make_ne_plot(rur_fig,
              "./Figures_Tables/Stairway_plot/rural_with_inset.png")
+
+
+make_ne_plot_reg_y(rur_fig,
+             "./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale_rural.png")
 ```
 
 ### Urb = urbanization score
@@ -702,6 +740,9 @@ head(rur_fig2)
 make_ne_plot(rur_fig2,
              "./Figures_Tables/Stairway_plot/rural_with_inset_urbscore.png")
 
+
+make_ne_plot_reg_y(rur_fig2,
+             "./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale_rural_urbscore.png")
 ```
 
 ## Export human population graphs
