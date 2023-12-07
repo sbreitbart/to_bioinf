@@ -95,13 +95,45 @@ fsts$overall %>%
 fsts$F %>%
   as.data.frame()
 
+# Test the significance of the effect of urban/rural groups on genetic differentiation
 # p-value = 1
 # the g.star matrix is all zeroes. But when I use only a small subset of SNPs, the matrix generates non-zero numbers and p<1, so this is working
 test.between(formatted_genind[,-1],
        test.lev = pops$urban_rural,
        rand.unit = pops$population,
-       nperm = 100) 
+       nperm = 1000) 
 
+# test the effect of urban/rural groups on genetic differentiation
+test.g(formatted_genind[,-1], 
+       level = pops$urban_rural,
+       nperm = 1000)
+# g.star matrix all zeroes and p = 1
+# so effect of urban/rural grouping on genetic differentiation is non-significant
+
+# test the effect of sampling site on genetic differentiation
+test.g(formatted_genind[,-1], 
+       level = formatted_genind[1], # same as pops$population
+       nperm = 1000)
+# g.star matrix all zeroes and p = 1
+# so effect of sample site is non-significant
+
+# test the significance of F(sampling site/UR group)
+test.within(formatted_genind[,-1], 
+       within = pops$urban_rural,
+       test.lev = pops$population,
+       nperm = 100)
+# g.star matrix all zeroes and p = 1
+# so effect of sample site is non-significant
+
+
+basic.stats(my_genind,
+            diploid = T)
+
+# $overall
+#     Ho     Hs     Ht    Dst    Htp   Dstp    Fst   Fstp 
+# 0.2132 0.2348 0.2548 0.0200 0.2549 0.0202 0.0784 0.0791 
+#    Fis   Dest 
+# 0.0921 0.0263 
 ```
 
 ### Urban sites
@@ -123,6 +155,15 @@ fsts_urb$F %>%
   as.data.frame()
 
 # slightly negative fst between pops-total means more variation within than between populations. This can stem from uneven sample sizes
+
+basic.stats(my_genind_urb,
+            diploid = T)
+
+# $overall
+#      Ho      Hs      Ht     Dst     Htp    Dstp     Fst 
+#  0.2088  0.2532  0.2520 -0.0011  0.2520 -0.0012 -0.0046 
+#    Fstp     Fis    Dest 
+# -0.0046  0.1754 -0.0016 
 ```
 
 ### Rural sites
@@ -143,6 +184,16 @@ fsts_rur$overall %>%
 fsts_rur$F %>%
   as.data.frame()
 
+
+
+basic.stats(my_genind_rur,
+            diploid = T)
+
+# $overall
+#     Ho     Hs     Ht    Dst    Htp   Dstp    Fst   Fstp 
+# 0.2156 0.2532 0.2559 0.0027 0.2560 0.0027 0.0105 0.0107 
+#    Fis   Dest 
+# 0.1486 0.0037 
 ```
 
 ## Calculate population-specific fst
@@ -154,7 +205,6 @@ betas(formatted_genind)$betaiovl %>%
   dplyr::rename("sampling_site" = 1,
                 "fst" = 2) %>%
   dplyr::arrange(fst)
-
 ```
 
 ## Calculate pairwise Fst
@@ -178,7 +228,6 @@ pairwise_fst_urb <- read.csv(here::here("./Figures_Tables/fst/pairwise_fst_matri
   # keep only urban populations in "population" column
   dplyr::filter(population %in% urban_pop_list) %>%
   dplyr::select(1, all_of(urban_pop_list))
-
 ```
 
 ### Rural sites

@@ -2,11 +2,12 @@
 ## Load packages
 ```{r}
 source(here::here("libraries.R"))
+source(here::here("functions.R"))
 ```
 
 ## Import data
 ```{r}
-sites <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
+urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
   dplyr::mutate(site_id = as.factor(site_id),
                 patch_id = as.factor(patch_id),
                 urb_rur = as.factor(urb_rur),
@@ -14,15 +15,39 @@ sites <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
                 river_valley = as.factor(river_valley)
                 ) 
 
-# Number of rural vs urban sites
-# This is from the original 100 scattershot survey.
-# I added sites sampled in a prior study, too, so there are >100 sites.
 
-max(sites$City_dist)
-sum(sites$u_r_dist == "Urban")
-sum(sites$u_r_dist == "Rural")
-sum(sites$u_r_usc == "Urban")
-sum(sites$u_r_usc == "Rural")
+all_sites <- read.csv(here::here("./genomic_resources/pop_map3.csv")) %>%
+    # rename col 1
+  dplyr::rename(pop_id = 2) %>%
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+### Add "MW" to numeric populations
+  add_MW_IDs()
+
+# keep only the sampling sites for which I sequenced DNA
+sites <- left_join(all_sites,
+                   urb)
+
+# check
+length(unique(sites$patch_id))
+
+
+max(sites$City_dist) # max City_dist
+min(sites$City_dist) # min City_dist
+
+max(sites$urb_score) # max Urb Score
+min(sites$urb_score) # min Urb Score
+
+# Number of rural vs urban sites
+# first, make df with only unique sites
+sites_unique <- sites %>%
+  dplyr::group_by(patch_id) %>%
+  dplyr::summarise(u_r_dist = first(u_r_dist),
+                   u_r_usc = first(u_r_usc))
+
+sum(sites_unique$u_r_dist == "Urban")
+sum(sites_unique$u_r_dist == "Rural")
+sum(sites_unique$u_r_usc == "Urban")
+sum(sites_unique$u_r_usc == "Rural")
 
 ```
 
@@ -31,7 +56,7 @@ sum(sites$u_r_usc == "Rural")
 ### Based on distance to CC
 ```{r}
 mylocation <- c(-80.5, 43.2, -78.5, 44.2)
-base_map <- ggmap(get_map(location = mylocation, maptype = 'terrain', source = 'stamen'))
+base_map <- ggmap(get_map(location = mylocation, maptype = 'terrain', source = "stamen"))
 
  map1 <- base_map +
   geom_point(data = sites, 
