@@ -55,191 +55,192 @@ sum(sites_unique$u_r_usc == "Rural")
 ## Main map: Urban/rural symbols
 ### Based on distance to CC
 ```{r}
-mylocation <- c(-80.5, 43.2, -78.5, 44.2)
-base_map <- ggmap(get_map(location = mylocation, maptype = 'terrain', source = "stamen"))
 
- map1 <- base_map +
-  geom_point(data = sites, 
-             mapping = aes(x = long, 
-                           y = lat,
-                           fill=u_r_dist,
-                           shape=u_r_dist),
-             size=3) +
-  labs(x = 'Longitude', 
-       y = 'Latitude',
-       fill = "Site Classification") +
-   scale_shape_manual(name = "Site Classification",
-                     values = c(24,21)) +
-   scale_fill_manual(name = "Site Classification",
-                    values = c('red', 'cyan')) +
-   scalebar(x.min = -80.5, x.max = -78.6,
-            y.min = 43.25, y.max = 44.2,
-            dist = 20, dist_unit = "km",
-            st.bottom = FALSE, st.color = "black",
-            transform = TRUE, model = 'WGS84',
-           st.dist=.04) +
-  theme(legend.position = c(0.85, 0.25),
-        legend.background = element_rect(fill = "white",
-                                         colour = "black"),
-        legend.box.margin = margin(6, 6, 6, 6)) 
- 
-north2(map1, x = .679, y = .3, scale = 0.11, symbol = 1)
+# Convert the dataframe to an sf object
+sites <- sf::st_as_sf(sites,
+                  coords = c("long", "lat"),
+                  crs = 4326)
+
+bbox <- c(-80.3, 43.15, -78.3, 44.2)
+
+tmap_mode("plot")
+
+# get map tiles for basemap
+my_tiles = get_tiles(sites,
+                     provider = "Esri.WorldImagery",
+                     zoom = 10,
+                     crop = FALSE)
+
+# basemap
+tm_shape(my_tiles,
+         raster.downsample = TRUE ) +
+  tm_rgb(alpha = 0.6) + 
+  tm_grid(lines = F,
+          x = c(-80.5, -80, -79.5, -79, -78.5 )) +
+  # sample sites
+  tm_shape(sites,
+           bbox = bbox) +
+  tm_symbols(col = "u_r_dist", 
+             shape = "u_r_dist",
+             size = 0.4,
+             shapes = c(21, 24),
+             palette = c("Urban" = "cyan", "Rural" = "red"),
+         # title.shape = "Group",
+             legend.shape.show = FALSE,
+		         legend.col.show = FALSE) +
+  tm_add_legend(type = "symbol",
+                shape = c(21, 24), 
+                col = c("cyan", "red"), 
+                labels = c("Urban", "Rural"),
+                title = "Group") +
+  
+  # layout
+  tm_layout(frame = TRUE,
+            # legend.position = c(0.02, 0.7),
+            legend.position = c(0.75, 0),
+            legend.title.size = 0.95,
+            inner.margins = c(0.0, 0.0, 0.0, 0.0),
+            legend.bg.color = "white",
+          legend.bg.alpha = 0.5) +
+  tm_compass(type = "4star",
+             size = 1, 
+             position = c("left", "top")) +
+  tm_scale_bar(position = c(0.3, -0.03)) 
 
 
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/pops_urb_rur_based-on-city_dist.pdf"),
-             width = 7.5, height = 5)
+             width = 5, height = 4)
 
-# export as png too
-png(here::here("./Figures_Tables/sample_site_map/pops_urb_rur_based-on-city_dist.png"),
-             width = 20, height = 12.5,
-    units = "cm",
-    res = 720)
-
-north2(map1, x = .679, y = .3, scale = 0.11, symbol = 1)
-
-dev.off()
 ```
 
 ### Based on urb score
 ```{r}
-map2 <- base_map +
-  geom_point(data = sites,
-             mapping = aes(x = long, 
-                           y = lat, 
-                           fill=u_r_usc, 
-                           shape=u_r_usc), 
-             size=3) +
-  labs(x = 'Longitude',
-       y = 'Latitude',
-       fill = "Site Classification") +
-  scale_shape_manual(name = "Site Classification",
-                     values = c(24,21)) +
-  scale_fill_manual(name = "Site Classification",
-                    values = c('red', 'cyan')) +
-  scalebar(x.min = -80.5,
-           x.max = -78.6,
-           y.min = 43.25,
-           y.max = 44.2,
-           dist = 20, 
-           dist_unit = "km",
-           st.bottom = FALSE,
-           st.color = "black",
-           transform = TRUE,
-           model = 'WGS84',
-           st.dist=.04) +
-  theme(legend.position = c(0.85, 0.25),
-        legend.background = element_rect(fill = "white",
-                                         colour = "black"),
-        legend.box.margin = margin(6, 6, 6, 6)        ) 
+tmap_mode("plot")
 
-north2(map2, x = .679, y = .3, scale = 0.11, symbol = 1)
+# basemap
+tm_shape(my_tiles,
+         raster.downsample = TRUE ) +
+  tm_rgb(alpha = 0.6) + 
+  tm_grid(lines = F,
+          x = c(-80.5, -80, -79.5, -79, -78.5 )) +
+  # sample sites
+  tm_shape(sites,
+           bbox = bbox) +
+  tm_symbols(col = "u_r_usc", 
+             shape = "u_r_usc",
+             size = 0.4,
+             shapes = c(21, 24),
+             palette = c("Urban" = "cyan", "Rural" = "red"),
+         # title.shape = "Group",
+             legend.shape.show = FALSE,
+		         legend.col.show = FALSE) +
+  tm_add_legend(type = "symbol",
+                shape = c(21, 24), 
+                col = c("cyan", "red"), 
+                labels = c("Urban", "Rural"),
+                title = "Group") +
+  
+  # layout
+  tm_layout(frame = TRUE,
+            # legend.position = c(0.02, 0.7),
+            legend.position = c(0.75, 0),
+            legend.title.size = 0.95,
+            inner.margins = c(0.0, 0.0, 0.0, 0.0),
+            legend.bg.color = "white",
+          legend.bg.alpha = 0.5) +
+  tm_compass(type = "4star",
+             size = 1, 
+             position = c("left", "top")) +
+  tm_scale_bar(position = c(0.3, -0.03)) 
+
 
 
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/pops_urb_rur_based-on-urb_score.pdf"),
-             width = 7.5, height = 5)
+             width = 5, height = 4)
 ```
 
 ## Main map: Distance to CC
 ```{r}
-map1_dist <- base_map +
-  geom_point(data = urb_scores,
-             mapping = aes(x = long,
-                           y = lat,
-                           fill = City_dist),
-             size = 3,
-             shape = 23,
-             color = "black") +
-  labs(x = 'Longitude', 
-       y = 'Latitude', 
-       fill = "Urbanization Score") +
-  scale_fill_gradient(low = "dark red", high = "white",
-                      #breaks=c(-4, -2, 0, 2, 4),
-                      labels=c("0 (Urban)", 20, 40, 60, "80 (Rural)"),
-                       limits=c(0, 80),
-                      name = "Distance to \nCity Center (km)"
-                      ) +
-  scalebar(x.min = -80.5,
-           x.max = -78.6,
-            y.min = 43.25, 
-           y.max = 44.2,
-            dist = 20, 
-           dist_unit = "km",
-            st.bottom = FALSE, 
-           st.color = "black",
-            transform = TRUE,
-           model = 'WGS84',
-           st.dist=.04) +
-  theme(
-    legend.position = c(0.85, 0.37),
-        legend.background = element_rect(fill = "white",
-                                         colour = "black"),
-        legend.box.margin = margin(6, 6, 6, 6)) 
-
-north2(map1_dist, x = .679, y = .3, scale = 0.11, symbol = 1)
+# basemap
+tm_shape(my_tiles,
+         raster.downsample = TRUE ) +
+  tm_rgb(alpha = 0.6) + 
+  tm_grid(lines = F,
+          x = c(-80.5, -80, -79.5, -79, -78.5 )) +
+  # sample sites
+  tm_shape(sites,
+           bbox = bbox) +
+  tm_symbols(col = "City_dist", 
+             size = 0.4,
+          title.col = "Distance to\n the City\n Center (km)",
+		         legend.col.show = TRUE,
+          style = "cont") +
+  # tm_add_legend(type = "symbol",
+  #           #    col = c("cyan", "red"), 
+  #               labels = c("Urban", "Rural"),
+  #               title = "Group") +
+  
+  # layout
+  tm_layout(frame = TRUE,
+            legend.position = c(0.77, 0),
+            # legend.title.size = 0.73,
+             legend.text.size = 1,
+            legend.width = 0.4,
+            legend.height = 0.45,
+            inner.margins = c(0.0, 0.0, 0.0, 0.0),
+            legend.bg.color = "white",
+          legend.bg.alpha = 0.5) +
+  tm_compass(type = "4star",
+             size = 1, 
+             position = c("left", "top")) +
+  tm_scale_bar(position = c(0.3, -0.03)) 
 
 
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_citydist.pdf"),
-             width = 7.5, height = 5)
+             width = 5, height = 4)
 ```
 
 
 ## Main map: urbanization score
 ```{r}
+# basemap
+tm_shape(my_tiles,
+         raster.downsample = TRUE ) +
+  tm_rgb(alpha = 0.6) + 
+  tm_grid(lines = F,
+          x = c(-80.5, -80, -79.5, -79, -78.5 )) +
+  # sample sites
+  tm_shape(sites,
+           bbox = bbox) +
+  tm_symbols(col = "urb_score", 
+          size = 0.4,
+          title.col = "Urbanization\n Score",
+		      legend.col.show = TRUE,
+          palette = "PuOr",
+		      legend.col.reverse = TRUE,
+          style = "cont") +
+  
+  # layout
+  tm_layout(frame = TRUE,
+            legend.position = c(0.77, 0),
+            # legend.title.size = 0.73,
+             legend.text.size = 1,
+            legend.width = 0.4,
+            legend.height = 0.45,
+            inner.margins = c(0.0, 0.0, 0.0, 0.0),
+            legend.bg.color = "white",
+          legend.bg.alpha = 0.5) +
+  tm_compass(type = "4star",
+             size = 1, 
+             position = c("left", "top")) +
+  tm_scale_bar(position = c(0.3, -0.03)) 
 
-map1_usc <- base_map +
-  geom_point(data = urb_scores,
-             mapping = aes(x = long,
-                           y = lat,
-                           fill = urb_score),
-             size = 3,
-             shape = 21,
-             color = "black") +
-  labs(x = 'Longitude', 
-       y = 'Latitude', 
-       fill = "Urbanization Score") +
-  scale_fill_gradient(low = "white", high = "dark red",
-                      breaks=c(-4, -2, 0, 2, 4),
-                      labels=c("-4 (Rural)", -2, 0, 2, "4 (Urban)"),
-                      limits=c(-4, 4),
-                      name = "Urbanization Score"
-                      ) +
-  scalebar(x.min = -80.5,
-           x.max = -78.6,
-            y.min = 43.25, 
-           y.max = 44.2,
-            dist = 20, 
-           dist_unit = "km",
-            st.bottom = FALSE, 
-           st.color = "black",
-            transform = TRUE,
-           model = 'WGS84',
-           st.dist=.04) +
-  theme(
-    legend.position = c(0.85, 0.37),
-        legend.background = element_rect(fill = "white",
-                                         colour = "black"),
-        legend.box.margin = margin(6, 6, 6, 6)) 
-
-north2(map1_usc, x = .679, y = .3, scale = 0.11, symbol = 1)
 
 
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_urbscore.pdf"),
-             width = 7.5, height = 5)
-```
-
-# Adding river valley markers
-```{r}
-# first need to find out which sites are characterized as being near a river valley...
-# need the greenbelt planning map
-# then have to put coordinates in those cells and assign them
-
-
-map3 <- map1 + 
-
-north2(map3, x = .679, y = .3, scale = 0.11, symbol = 1)
-
+             width = 5, height = 4)
 ```
