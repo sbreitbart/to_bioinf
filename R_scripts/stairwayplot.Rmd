@@ -356,7 +356,8 @@ toronto_pop <- read.csv(here::here("./raw_data/human_population/Toronto_human_po
 ```
 
 
-## Create plot-exporting functions
+## Create functions
+### Export plots
 ```{r}
 
 # log10 y axis
@@ -491,6 +492,52 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
 
 ```
 
+### Find Ne highs, lows
+```{r}
+Ne_stats <- function(Ne_df){
+
+max_ne <- max(Ne_df$Ne_median)  
+
+# find year of max Ne
+max_ne_years <- Ne_df %>%
+  dplyr::filter(Ne_median == max_ne) %>%
+   dplyr::select(year) %>%
+   dplyr::mutate(year = round(year, 0))
+
+print(paste0("Years of max Ne: ", max_ne_years))
+
+
+# find median Ne around 500 years ago
+median_ne_500YA <- Ne_df %>%
+  dplyr::filter(year > 500 & year < 501) %>%
+  dplyr::select(Ne_median) %>%
+  dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
+  slice(1) %>%
+  as.numeric()
+
+print(paste0("Median Ne ~500 years ago: ", median_ne_500YA))
+
+min_year <- min(Ne_df$year)  
+
+# find most recent median Ne
+most_recent_ne <- Ne_df %>%
+  dplyr::filter(year == min_year) %>%
+  dplyr::select(Ne_median) %>%
+  dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
+  slice(1) %>%
+  as.numeric()
+
+print(paste0("Most recent median Ne: ", most_recent_ne))
+
+
+# find % decrease from max to min
+perc_decrease <- round(((most_recent_ne-median_ne_500YA)/median_ne_500YA ) * 100, 3)
+
+print(paste0("% decrease in Ne: ", perc_decrease))
+}
+
+```
+
 ## All sites in 1 population
 ### Regular generation time (1 year)
 #### Log scale
@@ -503,6 +550,8 @@ full_fig <- read.delim(here::here("./StairwayPlot/full_mmaf0.007813/full_mmaf0.0
                    mutation_per_site))
 
 head(full_fig)
+
+Ne_stats(full_fig)
 
 make_ne_plot(full_fig,
              "./Figures_Tables/Stairway_plot/full_with_inset.png")
@@ -676,6 +725,7 @@ urb_fig <- read.delim(here::here("./StairwayPlot/urban_dist_mmaf0.007813/urban_d
 
 head(urb_fig)
 
+Ne_stats(urb_fig)
 
 make_ne_plot(urb_fig,
              "./Figures_Tables/Stairway_plot/urban_with_inset.png")
@@ -716,6 +766,8 @@ rur_fig <- read.delim(here::here("./StairwayPlot/rural_dist_mmaf0.007813/rural_d
                    mutation_per_site))
 
 head(rur_fig)
+
+Ne_stats(rur_fig)
 
 
 make_ne_plot(rur_fig,

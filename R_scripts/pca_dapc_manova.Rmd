@@ -177,18 +177,15 @@ pop(my_genind) <- pops$population
 # This function displays a graph of cumulated variance explained by the eigenvalues of the PCA.
 
 grp <- adegenet::find.clusters(my_genind,
-                        # max clusters = number of sample site populations = 122
-                        # max.n.clust= n_unique_pops, 
-                        
-                        # since I've been through this and seen that the lowest BIC is for ~2 clusters, I'm making this smaller to see the detail better
-                        max.n.clust= 10, 
+    # since I've been through this and seen that the lowest BIC is for ~2 clusters, I'm making this smaller to see the detail better
+                        max.n.clust = 10,
                         var.contrib = TRUE, 
                         scale = FALSE,
                         n.da = nPop(my_genind) - 1
                         )
 
 # The adegenet tutorial says: "Apart from computational time, there is no reason for keeping a small number of components." 
-# I'll choose n = 250- nearly all the PCs.
+# I'll choose n = 256- all the PCs.
 
 # Next, it asks for the number of clusters - here select the point with the lowest BIC.
 # The curve is nearly linear, increasing from 2 up to 120. I'll choose 2.
@@ -387,16 +384,19 @@ ggsave(here::here("./Figures_Tables/dapc/k2_dapc_map.png"),
 ```
 
 
-### Clusters = 1- didn't work (not going to work. DAPC can only detect at least 2 clusters, as per conversation with package developers May 2023)
+### Clusters = 1
+Didn't work (not going to work. DAPC can only detect at least 2 clusters, as per conversation with package developers May 2023)
+But upon revisiting in the fall, I can explore data with 1 cluster...
 #### Examine clusters
 ```{r}
 head(grp$Kstat)  # BIC scores per k
-#     K=1      K=2      K=3      K=4      K=5      K=6 
-#   1252.613 1255.362 1258.501 1261.689 1265.318 1268.763
+#      K=1      K=2      K=3      K=4      K=5      K=6 
+# 1253.280 1256.087 1259.100 1262.365 1266.032 1269.594 
 
 
 grp$stat  # Best k based on BIC
-
+#     K=1 
+# 1253.28 
 ```
 
 ## Cross-validation
@@ -457,4 +457,247 @@ scatter(xval[7]$DAPC,
 
 # this looks like a mess. I'm concerned that so many populations couldn't be included in the cross-validation because there was only 1 individual for 77 populations. So I don't trust this very much.
 # And again, as stated earlier in the tutorial, "Apart from computational time, there is no reason for keeping a small number of components". So I'll keep doing what I was doing earlier and using all the PCs.
+```
+
+# adonis (distance-based MANOVA)
+First, generate "pca" object under "PCA" heading
+## Analysis
+### Urbanization is quantitative
+#### Distance to CC
+```{r}
+# this does the same thing as if I created my own distance matrix and replaced the pca[,3:22] with it:
+# dist_matrix <- dist(pca[, 3:22], method = "euclidean")
+adonis_dist1 <- vegan::adonis2(formula = pca[,3:22] ~ City_dist,
+               data = pca,
+               permutations = 1000,
+               method = "euclidean",
+               # control for sampling indivs within the same pop
+               strata = pca$pop_id)
+
+# not significant
+```
+
+#### Urb Score
+```{r}
+
+adonis_usc1 <- vegan::adonis2(formula = pca[,3:22] ~ urb_score,
+               data = pca,
+               permutations = 1000,
+               method = "euclidean",
+               # control for sampling indivs within the same pop
+               strata = pca$pop_id)
+
+# same result
+
+```
+
+### Urbanization is categorical
+#### Create columns categorizing sites as urban or rural
+```{r}
+pca %<>%
+  dplyr::mutate(u_r_dist = case_when(
+    City_dist <= 30 ~ "Urban",
+    TRUE ~ "Rural")) %>%
+  dplyr::mutate(u_r_usc = case_when(
+    urb_score > 0 ~ "Urban",
+    TRUE ~ "Rural"))
+```
+
+#### Distance to CC
+```{r}
+
+adonis_dist2 <- vegan::adonis2(formula = pca[,3:22] ~ u_r_dist,
+               data = pca,
+               permutations = 1000,
+               method = "euclidean",
+               # control for sampling indivs within the same pop
+               strata = pca$pop_id)
+
+# qualitatively identical results as above
+
+```
+
+#### Urb Score
+```{r}
+
+adonis_usc2 <- vegan::adonis2(formula = pca[,3:22] ~ u_r_usc,
+               data = pca,
+               permutations = 1000,
+               method = "euclidean",
+               # control for sampling indivs within the same pop
+               strata = pca$pop_id)
+
+# same result as above
+
+```
+
+## Export
+### Create function
+```{r}
+adonis_export <- function(adonis_obj, output_file_name){
+  adonis_obj %>%
+    as.data.frame() %>%
+    rownames_to_column() %>%
+    dplyr::rename("Variable" = 1,
+                  "df" = 2,
+                  "SS" = 3,
+                  "p" = 6) %>%
+    dplyr::mutate_if(is.numeric, round, 3) %>%
+    dplyr::mutate(Variable = case_when(
+      Variable == 'City_dist' ~ 'Distance to City Center',
+      Variable == 'urb_score' ~ 'Urbanization Score',     
+      Variable == 'u_r_dist' ~ 'Distance to City Center',
+      Variable == 'u_r_usc' ~ 'Urbanization Score',
+      TRUE ~ Variable)) %>%
+    flextable() %>%
+    flextable::compose(i = 1, j = 4, part = "header",
+                       value = as_paragraph("R", as_sup("2"))) %>%  autofit() %>%
+    save_as_docx(path = here::here(paste0("./Figures_Tables/permanova_permdisp/",
+                                          output_file_name,
+                                          ".docx")))
+}
+```
+
+### Export
+```{r}
+adonis_export(adonis_dist1, "adonis_dist_quant")
+adonis_export(adonis_usc1, "adonis_usc_quant")
+adonis_export(adonis_dist2, "adonis_dist_categ")
+adonis_export(adonis_usc2, "adonis_usc_categ")
+```
+
+# PERMDISP (beta dispersal)
+multivariate extension of Levene’s test for homogeneity of variances
+## Urb = dist
+```{r}
+# create distance object, officially
+dist_matrix <- dist(pca[, 3:22], method = "euclidean")
+
+
+# type = median
+bd <- vegan::betadisper(d = dist_matrix, 
+                  group = pca$u_r_dist,
+                  type = "median"
+                  )
+
+# this shows that there is weak evidence that there is more variation within one group vs the other
+anova(bd)
+
+# looking at bd, we can see the urban group has a slightly higher average distance to the median than the rural
+# # Average distance to median:
+#  Rural  Urban 
+# 0.2618 0.2763 
+
+# % difference? 5.5%
+((0.2763-0.2618)/0.2618)*100
+
+
+# type = centroid- what I'm citing in the paper
+bd_centroid <- vegan::betadisper(d = dist_matrix, 
+                  group = pca$u_r_dist,
+                  type = "centroid"
+                  )
+
+# this shows that there is weak evidence that there is more variation within one group vs the other (nearly identical p-value to result above- 0.07)
+anova(bd_centroid)
+
+# looking at bd, we can see the urban group has a slightly higher average distance to the centroid than the rural
+# Average distance to centroid:
+#  Rural  Urban 
+# 0.2620 0.2765 
+
+# % difference? 5.5%
+((0.2765-0.2620)/0.2620)*100
+
+
+plot(bd, ellipse = TRUE, hull = FALSE)
+plot(bd_centroid, ellipse = TRUE, hull = FALSE)
+```
+
+## Urb = urb score
+```{r}
+# type = median
+bd_usc <- vegan::betadisper(d = dist_matrix, 
+                  group = pca$u_r_usc,
+                  type = "median"
+                  )
+
+# this shows that there is weak evidence that there is NOT more variation within one group vs the other
+anova(bd_usc)
+
+# looking at bd_usc, we can see the urban group has a slightly higher average distance to the median than the rural
+# # Average distance to median:
+#  Rural  Urban 
+# 0.2643 0.2752 
+
+
+# type = centroid- what I'm citing in the paper
+bd_centroid_usc <- vegan::betadisper(d = dist_matrix, 
+                  group = pca$u_r_usc,
+                  type = "centroid"
+                  )
+
+# this shows that there is NOT evidence that there is more variation within one group vs the other
+anova(bd_centroid_usc)
+
+# looking at bd_centroid_usc, we can see the urban group has a slightly higher average distance to the centroid than the rural
+# Average distance to centroid:
+#  Rural  Urban 
+# 0.2645 0.2753 
+
+plot(bd_usc, ellipse = TRUE, hull = FALSE)
+plot(bd_centroid_usc, ellipse = TRUE, hull = FALSE)
+```
+
+
+## Export
+### Create function to export anovas
+```{r}
+bd_export <- function(betadisper_obj, output_file_name){
+
+  betadisper_obj %>%
+  anova() %>%
+    as.data.frame() %>%
+    rownames_to_column() %>%
+    dplyr::rename("Variable" = 1,
+                  "df" = 2,
+                  "SS" = 3,
+                  "MS" = 4,
+                  "F" = 5,
+                  "p" = 6) %>%
+    dplyr::mutate_if(is.numeric, round, 3) %>%
+    dplyr::mutate(Variable = case_when(
+      Variable == 'Groups' ~ 'Urban/Rural Groups',
+      TRUE ~ Variable)) %>%
+    flextable() %>%
+    flextable::align(j = c(2:6), part = "all", align = "center") %>%
+  autofit() %>%
+    save_as_docx(path = here::here(paste0("./Figures_Tables/permanova_permdisp/",
+                                          output_file_name,
+                                          ".docx")))
+}
+
+```
+
+### Export anovas
+```{r}
+bd_export(bd_centroid, "bd_dist")
+bd_export(bd_centroid_usc, "bd_usc")
+```
+
+### Export plots
+```{r}
+# Dist to CC
+png(here::here("./Figures_Tables/permanova_permdisp/permdisp_centroid_dist.png"),
+    height = 400,
+    width = 400)
+plot(bd_centroid, ellipse = TRUE, hull = FALSE)
+dev.off()
+
+# Urb score
+png(here::here("./Figures_Tables/permanova_permdisp/permdisp_centroid_urbscore.png"),
+    height = 400,
+    width = 400)
+plot(bd_centroid_usc, ellipse = TRUE, hull = FALSE)
+dev.off()
 ```

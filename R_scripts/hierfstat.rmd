@@ -2,8 +2,6 @@
 ## Load libraries & functions
 ```{r}
 source(here::here("libraries.R"))
-
-library(hierfstat)
 ```
 
 ## Import genetic data
