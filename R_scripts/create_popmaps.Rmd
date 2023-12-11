@@ -462,3 +462,85 @@ uniques_rur %>%
             file = here::here("./clean_data/pop_map3_1indiv_per_pop_RURAL.csv"))
 ```
 
+
+## for all pops with >1 individual
+### All individuals
+```{r}
+# find pops with 1 individual
+pops_atleast1indiv <- pop_map3 %>%
+  dplyr::group_by(pop_id) %>%
+  dplyr::summarise(n_indiv = n()) %>%
+  dplyr::filter(n_indiv > 1)
+
+# join to keep only those pops
+multi_indiv_pops <- dplyr::right_join(
+  pop_map3,
+  pops_atleast1indiv) %>%
+  dplyr::arrange(ID) %>%
+  dplyr::select(sample, pop_id)
+
+multi_indiv_pops %>%
+  write.table(., 
+            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+multi_indiv_pops %>%
+  write_csv(., 
+            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop.csv"))
+```
+
+### Urban (~dist to CC)
+```{r}
+larger_urb_pops <- full_popmap %>%
+  dplyr::right_join(., pops_atleast1indiv) %>%
+  dplyr::select(sample, ID, pop_id, u_r_dist) %>%
+  dplyr::filter(u_r_dist == "Urban") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, pop_id)
+
+# urban , determined by dist to CC
+
+write.table(larger_urb_pops, 
+            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_URBAN.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+
+larger_urb_pops %>%
+  write_csv(., 
+            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_URBAN.csv"))
+
+```
+
+### Rural (~dist to CC)
+```{r}
+larger_rur_pops <- full_popmap %>%
+  dplyr::right_join(., pops_atleast1indiv) %>%
+  dplyr::select(sample, ID, pop_id, u_r_dist) %>%
+  dplyr::filter(u_r_dist == "Rural") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, pop_id)
+
+# rural , determined by dist to CC
+
+write.table(larger_rur_pops, 
+            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_RURAL.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+
+larger_rur_pops %>%
+  write_csv(., 
+            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_RURAL.csv"))
+
+```

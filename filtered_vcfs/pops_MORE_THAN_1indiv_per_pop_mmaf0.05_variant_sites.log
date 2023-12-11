@@ -1,0 +1,15 @@
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /home/breitba1/step08_no-IBD/global_fst/populations.snps.vcf
+	--keep /home/breitba1/scratch/hierfstat_vcf/pop_map3_MORE_THAN_1indiv_per_pop.txt
+	--out /home/breitba1/scratch/hierfstat_vcf/pops_atleast2indivs_mmaf0.05_variant_sites
+	--recode
+
+Keeping individuals in 'keep' list
+After filtering, kept 179 out of 256 Individuals
+Outputting VCF file...
+After filtering, kept 973 out of a possible 973 Sites
+Run Time = 0.00 seconds

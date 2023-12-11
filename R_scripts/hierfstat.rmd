@@ -72,6 +72,95 @@ strata(my_genind_rur) <- pops_rur
 pop(my_genind_rur) <- pops_rur[,"population"]
 ```
 
+### Sites with >1 individual
+```{r}
+vcf_larger_pops <- read.vcfR(
+  here::here("./filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_larger_pops <- vcfR2genind(vcf_larger_pops)
+
+
+
+# read in pop map with ALL populations
+pops_all <- read.csv(here("./genomic_resources/pop_map3.csv"))
+
+# read in pop map with ONLY populations >1 indiv
+pops_larger <- read.csv(here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop.csv")) %>%
+  dplyr::rename(population = pop_id) %>%
+  dplyr::mutate(population = as.character(population))
+
+# pop map with urban/rural designations
+pops_UR <- read.delim(here("./clean_data/pop_map3_UR_dist.txt"),
+                      header = F) %>%
+  dplyr::rename("sample" = 1,
+                "urban_rural" = 2)
+
+
+
+# join pop maps
+pops_larger_pops <- full_join(pops_all,
+                  pops_UR,
+                  by = "sample") %>%
+  # keep only pops with >1 indiv
+  dplyr::right_join(.,
+                    pops_larger,
+                    by = c("sample", "population"))
+
+
+
+# add pops to genind
+strata(my_genind_larger_pops) <- pops_larger_pops
+pop(my_genind_larger_pops) <- pops_larger_pops[,"population"]
+```
+
+### Sites with >1 individual: URBAN
+```{r}
+vcf_larger_pops_urb <- read.vcfR(
+  here::here("./filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_URBAN_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_larger_pops_urb <- vcfR2genind(vcf_larger_pops_urb)
+
+
+
+
+# keep only urban pops
+pops_larger_pops_urb <- pops_larger_pops %>%
+  dplyr::filter(urban_rural == "Urban") %>%
+  dplyr::select(-urban_rural)
+
+
+
+# add pops to genind
+strata(my_genind_larger_pops_urb) <- pops_larger_pops_urb
+pop(my_genind_larger_pops_urb) <- pops_larger_pops_urb[,"population"]
+```
+
+### Sites with >1 individual: RURAL
+```{r}
+vcf_larger_pops_rur <- read.vcfR(
+  here::here("./filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_RURAL_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_larger_pops_rur <- vcfR2genind(vcf_larger_pops_rur)
+
+
+# keep only rural pops
+pops_larger_pops_rur <- pops_larger_pops %>%
+  dplyr::filter(urban_rural == "Rural") %>%
+  dplyr::select(-urban_rural)
+
+
+
+# add pops to genind
+strata(my_genind_larger_pops_rur) <- pops_larger_pops_rur
+pop(my_genind_larger_pops_rur) <- pops_larger_pops_rur[,"population"]
+```
+
 # Hierfstat
 ## Create f-statistic matrix
 ### All sites
@@ -194,6 +283,101 @@ basic.stats(my_genind_rur,
 # 0.1486 0.0037 
 ```
 
+### Sites with >1 individual
+```{r}
+# convert it to correct format for package
+formatted_genind_larger_pops <- genind2hierfstat(my_genind_larger_pops)
+
+# make sure levels are from outermost to innermost
+fsts_larger_pops <- varcomp.glob(levels = 
+                            data.frame(
+                              pops_larger_pops$urban_rural,
+                              pops_larger_pops$population),
+             loci = formatted_genind_larger_pops[,-1],
+             diploid = TRUE)
+
+# look at variance components summed over all loci
+fsts_larger_pops$overall %>%
+  as.data.frame()
+
+# look at f-statistic matrix
+fsts_larger_pops$F %>%
+  as.data.frame()
+
+
+basic.stats(my_genind_larger_pops,
+            diploid = T)
+
+# $overall
+#     Ho     Hs     Ht    Dst    Htp   Dstp    Fst 
+# 0.2134 0.2545 0.2550 0.0005 0.2550 0.0005 0.0019 
+#   Fstp    Fis   Dest 
+# 0.0020 0.1614 0.0007 
+
+```
+
+### Sites with >1 individual: URBAN
+```{r}
+# convert it to correct format for package
+formatted_genind_larger_pops_urb <- genind2hierfstat(my_genind_larger_pops_urb)
+
+# make sure levels are from outermost to innermost
+fsts_larger_pops_urb <- varcomp.glob(levels = 
+                            data.frame(
+                              pops_larger_pops_urb$population),
+             loci = formatted_genind_larger_pops_urb[,-1],
+             diploid = TRUE)
+
+# look at variance components summed over all loci
+fsts_larger_pops_urb$overall %>%
+  as.data.frame()
+
+# look at f-statistic matrix
+fsts_larger_pops_urb$F %>%
+  as.data.frame()
+
+
+basic.stats(my_genind_larger_pops_urb,
+            diploid = T)
+
+# $overall
+#      Ho      Hs      Ht     Dst     Htp    Dstp 
+#  0.2114  0.2549  0.2542 -0.0006  0.2542 -0.0006 
+#     Fst    Fstp     Fis    Dest 
+# -0.0025 -0.0025  0.1707 -0.0009 
+
+```
+
+### Sites with >1 individual: RURAL
+```{r}
+# convert it to correct format for package
+formatted_genind_larger_pops_rur <- genind2hierfstat(my_genind_larger_pops_rur)
+
+# make sure levels are from outermost to innermost
+fsts_larger_pops_rur <- varcomp.glob(levels = data.frame(pops_larger_pops_rur$population),
+             loci = formatted_genind_larger_pops_rur[,-1],
+             diploid = TRUE)
+
+# look at variance components summed over all loci
+fsts_larger_pops_rur$overall %>%
+  as.data.frame()
+
+# look at f-statistic matrix
+fsts_larger_pops_rur$F %>%
+  as.data.frame()
+
+
+basic.stats(my_genind_larger_pops_rur,
+            diploid = T)
+
+# $overall
+#      Ho      Hs      Ht     Dst     Htp    Dstp 
+#  0.2159  0.2555  0.2554  0.0000  0.2554 -0.0001 
+#     Fst    Fstp     Fis    Dest 
+# -0.0002 -0.0002  0.1550 -0.0001 
+
+```
+
 ## Calculate population-specific fst
 ### All sites
 ```{r}
@@ -308,6 +492,74 @@ fsts_rur$F %>%
   flextable() %>%
   autofit() %>%
   save_as_docx(path = here::here("./Figures_Tables/fst/hierfstat_rural.docx"))
+
+```
+
+### All sites with >1 individual
+```{r}
+# first, turn off scientific notation
+options(scipen=999) 
+
+# then, export matrix of hierarchical F-statistics type-coefficients
+fsts_larger_pops$F %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Level" = 1,
+                "Urban/Rural Group" = 2,
+                "Sampling Site" = 3,
+                "Individual" = 4) %>%
+  dplyr::mutate_if(is.numeric, round, 4) %>%
+  dplyr::mutate(Level = case_when(Level == "pops.urban_rural" ~ "Urban/Rural Group",
+                                  Level == "pops.population" ~ "Sampling Site",
+                         TRUE ~ Level)) %>%
+  dplyr::mutate_all(~ ifelse(. == 0, "-", .)) %>%
+  flextable() %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/fst/hierfstat_MORE_THAN_1indiv_per_pop.docx"))
+
+```
+
+### All sites with >1 individual: URBAN
+```{r}
+# first, turn off scientific notation
+options(scipen=999) 
+
+# then, export matrix of hierarchical F-statistics type-coefficients
+fsts_larger_pops_urb$F %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Level" = 1,
+                "Sampling Site" = 2,
+                "Individual" = 3) %>%
+  dplyr::mutate_if(is.numeric, round, 4) %>%
+  dplyr::mutate(Level = case_when(                                  Level == "pops_larger_pops_urb.population" ~ "Sampling Site",
+                         TRUE ~ Level)) %>%
+  dplyr::mutate_all(~ ifelse(. == 0, "-", .)) %>%
+  flextable() %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/fst/hierfstat_MORE_THAN_1indiv_per_pop_URBAN.docx"))
+
+```
+
+### All sites with >1 individual: RURAL
+```{r}
+# first, turn off scientific notation
+options(scipen=999) 
+
+# then, export matrix of hierarchical F-statistics type-coefficients
+fsts_larger_pops_rur$F %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Level" = 1,
+                "Sampling Site" = 2,
+                "Individual" = 3) %>%
+  dplyr::mutate_if(is.numeric, round, 4) %>%
+  dplyr::mutate(Level = case_when(                                  Level == "pops_larger_pops_rur.population" ~ "Sampling Site",
+                         TRUE ~ Level)) %>%
+  dplyr::mutate_all(~ ifelse(. == 0, "-", .)) %>%
+  flextable() %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/fst/hierfstat_MORE_THAN_1indiv_per_pop_RURAL.docx"))
 
 ```
 
