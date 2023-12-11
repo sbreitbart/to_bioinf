@@ -1,0 +1,323 @@
+These analyses use the liberal genetic dataset:
+-R = 0.5 & -min_maf = 2/256
+-monomorphic loci included
+
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+```
+
+# Import data
+## Urbanization data
+```{r}
+urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
+  dplyr::mutate(site_id = as.factor(site_id),
+                patch_id = as.factor(patch_id),
+                urb_rur = as.factor(urb_rur),
+                quadrant = as.factor(quadrant),
+                river_valley = as.factor(river_valley)
+                )
+```
+
+## Genetic data
+```{r}
+pi_data <- here::here("./summary_stats/output_populations_no-IBD/mmaf0.007813_R0.5/output_populations_no-IBD-vcf-all/mmaf0.007813_R0.5/populations.sumstats_summary.tsv") %>%
+  extract_all_position_summary() %>%
+# if population doesn't start with "MWI", it should start with "MW"
+  # clean names
+  janitor::clean_names() %>%
+  # rename col 1
+  dplyr::rename(pop_id = 1) %>%
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+
+### Add "MW" to numeric populations
+  add_MW_IDs()
+
+```
+
+## Join genetic data with urbanization data
+```{r}
+# left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+pi_data %<>%
+  left_join(., urb, by = "patch_id") %>%
+  dplyr::mutate(patch_id = as.factor(patch_id),
+                pop_id = as.factor(pop_id))
+
+```
+
+# Does urbanization predict genetic diversity within pops?
+## Explore data
+### Structure
+```{r}
+str(pi_data)
+
+head(pi_data)
+
+pi_data %>%
+  dplyr::select(1, 3, 4, "pi", "fis", "City_dist", "urb_score") %>%
+  view
+
+```
+
+### Visualizations
+```{r}
+
+ggplot(pi_data, 
+       aes(y= pi)) + 
+  geom_boxplot()
+
+
+# quick regressions of genetic vars against distance from cc
+ggplot(pi_data, 
+       aes(x = City_dist,
+           y = pi)) + 
+  geom_point()
+
+ggplot(pi_data, 
+       aes(x = urb_score,
+           y = pi)) + 
+  geom_point() 
+
+qplot(data = pi_data,
+      City_dist, num_indv)
+
+
+# regress all selected variables against one another
+pi_data %>%
+  dplyr::select(pi, num_indv, fis, urb_score, City_dist) %>%
+  pairs()
+
+
+# look at distributions of urb vs rural pops
+qplot(data = pi_data,
+      u_r_dist, pi)
+
+qplot(data = pi_data,
+      u_r_usc, pi)
+```
+
+### Does urbanization correlate with number of individuals/population?
+```{r}
+test1 <- glmmTMB(City_dist ~ num_indv, pi_data)
+performance::check_model(test1)
+car::Anova(test1) # yes
+r.squaredGLMM(test1) # only ~4% variance explained
+
+
+test1 <- glmmTMB(urb_score ~ num_indv, pi_data)
+performance::check_model(test1)
+car::Anova(test1) # no
+```
+
+### Does the number of individuals per populations correlate with pop gen stats?
+#### Pi
+```{r}
+qplot(pi_data$num_indv,
+      pi_data$pi)
+
+ggplot(pi_data,
+       aes(x = num_indv,
+           y = pi)) +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+test1 <- glmmTMB(pi ~ num_indv,
+                 pi_data)
+performance::check_model(test1)
+car::Anova(test1) # yes
+r.squaredGLMM(test1) # ~40% variance explained
+# SO I WILL add num_indivs as a random effect to these models
+
+pi_data %>%
+  dplyr::group_by(round(num_indv, 0)) %>%
+  dplyr::summarise(pi_per_groupsize <- mean(pi))
+```
+
+## Urbanization is continuous
+### Fit linear models/diagnostics
+#### Pi
+##### City_dist
+```{r}
+pi_dist <- glmmTMB(pi ~ City_dist  + (1|num_indv),
+           pi_data)
+
+performance::check_model(pi_dist)
+
+```
+
+##### Urb_score
+###### All individuals
+```{r}
+pi_usc <- glmmTMB(pi ~ urb_score  + (1|num_indv),
+           pi_data)
+
+performance::check_model(pi_usc)
+
+# % decrease with urb: (have to create pi_usc_pred object in Figures section below)
+perc_decrease(pi_usc_pred) # 3.5%
+```
+
+###### Sites with only 1 individual
+```{r}
+pi_usc_1indiv <- glmmTMB(pi ~ urb_score,
+           pi_data %>%
+             dplyr::filter(num_indv == 1))
+
+performance::check_model(pi_usc_1indiv)
+
+car::Anova(pi_usc_1indiv)
+
+pi_usc_pred_1indiv <- ggeffects::ggpredict(pi_usc_1indiv,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(pi_usc_pred_1indiv, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  # geom_point(data = pi_data %>%
+  #            dplyr::filter(num_indv == 1),
+  #            aes(x = urb_score,
+  #            y = pi)) +
+  xlab("Urbanization Score") +
+  ylab("Pi") +
+ # ylim(0.18, 0.25) +
+  labs(title = "") +
+  scale_x_reverse() +
+  theme_pubr() +
+  labs_pubr() 
+
+MuMIn::r.squaredGLMM(pi_usc_1indiv) # R2m = 0.053
+
+# % decrease with urb:
+perc_decrease(pi_dist_pred_1indiv) # 11.8%
+```
+
+### ANOVA & effect sizes
+```{r}
+
+mod_list <- list(pi_dist,
+                 pi_usc)
+
+
+all_anovas <- do.call(rbind, create_anova_df(mod_list)) %>%
+  view
+
+# create flextable
+all_anovas %>%
+  dplyr::select(-Sig) %>%
+  flextable::flextable() %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("Χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 6, part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%
+  bold(~ p <= 0.05) %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here("./Figures_Tables/regressions/pi_anova.docx"))
+```
+
+### Figures
+#### Pi
+##### City_dist
+```{r}
+pi_dist_pred <- ggeffects::ggpredict(pi_dist,
+                                   terms = c("City_dist"),
+                                   type = "fe")
+
+pi_dist_pred_plot <- plot(pi_dist_pred, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Distance to City Center (km)") +
+  ylab("Pi") +
+  ylim(0.00067, 0.00082) +
+  labs(title = "") +
+  theme_pubr() +
+  labs_pubr() 
+
+pi_dist_pred_plot
+```
+
+##### Urb_score
+```{r}
+pi_usc_pred <- ggeffects::ggpredict(pi_usc,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+pi_usc_pred_plot <- plot(pi_usc_pred, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  xlab("Urbanization Score") +
+  ylab("Pi") +
+  ylim(0.00067, 0.00082) +
+  labs(title = "") +
+  xlim(4, -4) +
+  theme_pubr() +
+  labs_pubr() 
+
+pi_usc_pred_plot
+```
+
+#### Number of individuals per pop
+##### City_dist
+```{r}
+ggplot(pi_data,
+       aes(x = City_dist,
+           y = num_indv)) +
+  xlab("Distance to City Center (km)") +
+  ylab("Individuals/Population") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+
+ggplot(pi_data,
+       aes(x = num_indv)) +
+  geom_histogram() +
+  xlab("Individuals/Population") +
+#  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() 
+```
+
+##### Urb_score
+```{r}
+ggplot(pi_data,
+       aes(x = urb_score,
+           y = num_indv)) +
+  xlab("Urbanization Score") +
+  ylab("Individuals/Population") +
+  plot_aesthetics +
+  theme_pubr() +
+  labs_pubr() +
+  xlim(4, -4)
+
+```
+
+#### Export all in one pdf
+```{r}
+# not including indivs/pop plots
+
+(pi_dist_pred_plot | pi_usc_pred_plot)
+
+ggsave(here::here("./Figures_Tables/regressions/pi.png"),
+       width = 10,
+       height = 3.5,
+       units = "in")
+
+```
