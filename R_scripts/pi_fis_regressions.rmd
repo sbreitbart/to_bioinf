@@ -205,14 +205,59 @@ pi_dist <- glmmTMB(pi ~ City_dist  + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(pi_dist)
+
 ```
 
 ##### Urb_score
+###### All individuals
 ```{r}
 pi_usc <- glmmTMB(pi ~ urb_score  + (1|num_indv),
            diversity_variant_sites)
 
 performance::check_model(pi_usc)
+
+# % decrease with urb: (have to create pi_usc_pred object in Figures section below)
+perc_decrease(pi_usc_pred) # 5.5%
+```
+
+###### Sites with only 1 individual
+```{r}
+pi_usc_1indiv <- glmmTMB(pi ~ urb_score,
+           diversity_variant_sites %>%
+             dplyr::filter(num_indv == 1))
+
+performance::check_model(pi_usc_1indiv)
+
+car::Anova(pi_usc_1indiv)
+
+pi_usc_pred_1indiv <- ggeffects::ggpredict(pi_usc_1indiv,
+                                   terms = c("urb_score"),
+                                   type = "fe")
+
+plot(pi_usc_pred_1indiv, 
+     add.data = F) +
+  geom_ribbon(aes(x = x,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              # fill = "#66a182",
+               alpha = 0.1
+              ) +
+  # geom_point(data = diversity_variant_sites %>%
+  #            dplyr::filter(num_indv == 1),
+  #            aes(x = urb_score,
+  #            y = pi)) +
+  xlab("Urbanization Score") +
+  ylab("Pi") +
+  ylim(0.18, 0.25) +
+  labs(title = "") +
+  scale_x_reverse() +
+  theme_pubr() +
+  labs_pubr() 
+
+MuMIn::r.squaredGLMM(pi_usc_1indiv) # R2m = 0.101
+
+# % decrease with urb:
+perc_decrease(pi_dist_pred_1indiv) # 11.8%
 ```
 
 ### ANOVA & effect sizes
@@ -319,7 +364,7 @@ pi_dist_pred_plot <- plot(pi_dist_pred,
 pi_dist_pred_plot
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
 pi_usc_pred <- ggeffects::ggpredict(pi_usc,
                                    terms = c("urb_score"),

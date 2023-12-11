@@ -1,0 +1,88 @@
+These analyses use the narrow, conservative genetic dataset:
+-R = 0.75 & -min_maf = 0.05
+
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+```
+
+## Import data
+### Urbanization data
+```{r}
+urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
+  dplyr::mutate(site_id = as.factor(site_id),
+                patch_id = as.factor(patch_id),
+                urb_rur = as.factor(urb_rur),
+                quadrant = as.factor(quadrant),
+                river_valley = as.factor(river_valley)
+                )
+```
+
+### Genetic data
+```{r}
+
+diversity_variant_sites <- here::here("./populations_no-IBD_vcf-all_mainfiles/mmaf0.05_R0.75/populations.sumstats_summary.tsv") %>%
+  extract_variant_position_summary() %>%
+# if population doesn't start with "MWI", it should start with "MW"
+  # clean names
+  janitor::clean_names() %>%
+  # rename col 1
+  dplyr::rename(pop_id = 1) %>%
+  dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+
+### Add "MW" to numeric populations
+  add_MW_IDs()
+
+```
+
+## Join genetic data with urbanization data
+```{r}
+# left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+diversity_variant_sites %<>%
+  left_join(., urb, by = "patch_id") %>%
+  dplyr::mutate(patch_id = as.factor(patch_id),
+                pop_id = as.factor(pop_id))
+
+```
+
+# Compute heterozygosity
+```{r}
+# Install and load the VariantAnnotation package
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("VariantAnnotation")
+library(VariantAnnotation)
+
+# Read VCF file
+vcf <- read.vcfR(
+  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  verbose = FALSE)
+
+# # Count loci that are heterozygous for individuals
+# heterozygous_loci <- apply(vcf@gt, 1, function(x) any(x != 0 & x != 1))
+# num_heterozygous_loci <- sum(heterozygous_loci) %T>%
+#   print()
+
+# get genotype matrix
+gt_matrix <- extract.gt(vcf)
+
+# logical matrix of heterozygous loci
+gt_matrix_het <- is_het(gt_matrix)
+
+# Count heterozygous loci for each individual
+heterozygous_counts <- apply(gt_matrix_het, 2, sum) %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("sample" = 1,
+                "heterozygous_loci" = 2)
+
+# Create a histogram
+hist(heterozygous_counts$heterozygous_loci, 
+     main = "Heterozygous loci per individual (out of 972 loci)",
+     xlab = "Heterozygous loci",
+     ylab = "Individuals", col = "skyblue",
+     breaks = 20)
+
+```
