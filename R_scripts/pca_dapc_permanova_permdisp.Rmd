@@ -459,7 +459,7 @@ scatter(xval[7]$DAPC,
 # And again, as stated earlier in the tutorial, "Apart from computational time, there is no reason for keeping a small number of components". So I'll keep doing what I was doing earlier and using all the PCs.
 ```
 
-# adonis (distance-based MANOVA)
+# PERMANOVA (distance-based MANOVA)
 First, generate "pca" object under "PCA" heading
 ## Analysis
 ### Urbanization is quantitative
@@ -560,10 +560,10 @@ adonis_export <- function(adonis_obj, output_file_name){
 
 ### Export
 ```{r}
-adonis_export(adonis_dist1, "adonis_dist_quant")
-adonis_export(adonis_usc1, "adonis_usc_quant")
-adonis_export(adonis_dist2, "adonis_dist_categ")
-adonis_export(adonis_usc2, "adonis_usc_categ")
+adonis_export(adonis_dist1, "permanova_dist_quant")
+adonis_export(adonis_usc1, "permanova_usc_quant")
+adonis_export(adonis_dist2, "permanova_dist_categ")
+adonis_export(adonis_usc2, "permanova_usc_categ")
 ```
 
 # PERMDISP (beta dispersal)
@@ -681,8 +681,8 @@ bd_export <- function(betadisper_obj, output_file_name){
 
 ### Export anovas
 ```{r}
-bd_export(bd_centroid, "bd_dist")
-bd_export(bd_centroid_usc, "bd_usc")
+bd_export(bd_centroid, "permdisp_anova_dist")
+bd_export(bd_centroid_usc, "permdisp_anova_usc")
 ```
 
 ### Export plots

@@ -187,3 +187,27 @@ create_anova_df_cat <- function(mod_list) {
       dplyr::select(1,5,2,3,4,7,6)
   })
 }
+
+
+# Find percent decrease of pi with urbanization
+perc_decrease <- function(predicted_pi_df){
+
+    # % decrease with urb:
+    pred_min <- (predicted_pi_df %>%
+                   as.data.frame() %>%
+                   dplyr::filter(x == 0) %>%
+                   dplyr::select(predicted) %>%
+                   as.numeric())
+    
+    pred_max <- (predicted_pi_df %>%
+                   as.data.frame() %>%
+                   dplyr::filter(x == max(x)) %>%
+                   dplyr::select(predicted) %>%
+                   as.numeric())
+    
+    perc_decrease <- ((pred_min-pred_max)/pred_max)*100
+  
+    return(paste0("Percent decrease with urbanization: ",
+                  round(perc_decrease, 3),
+                  "%"))
+}
