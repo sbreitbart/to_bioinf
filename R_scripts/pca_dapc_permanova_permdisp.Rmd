@@ -68,6 +68,7 @@ cumsum(pve$pve)
 
 ## Plot, export PCA
 ### Axes 1-2
+#### Urb = dist to CC
 ```{r}
 ggplot(pca, 
        aes(PC1,
@@ -94,15 +95,38 @@ ggsave("pca.png",
        units = "cm")
 ```
 
+#### Urb = urb score
+```{r}
+ggplot(pca, 
+       aes(PC1,
+           PC2,
+           fill = urb_score
+       )) + 
+  geom_point(size = 2,
+             shape = 21,
+             color = "black") +
+  scale_fill_viridis(option="plasma",
+                     trans = "reverse"
+                     ) +
+  coord_equal() +
+  xlab(paste0("PC1 (", signif(pve$pve[1], 3), "%)")) +
+  ylab(paste0("PC2 (", signif(pve$pve[2], 3), "%)")) +
+  ggpubr::theme_pubr() +
+  labs(fill = "Urbanization\n      Score") 
+
+ggsave("pca_usc.png",
+       path = "Figures_Tables/pca",
+       height = 10,
+       width = 10,
+       units = "cm")
+```
+
 ### All PC axes' plots
+#### Urb = dist to CC
 ```{r}
 # remove first 2 cols from pca
 pca2 <- pca %>%
   dplyr::select(-(1:2))
-
-# Load required libraries
-library(ggplot2)
-library(ggpubr)
 
 # Create a list to store the plots
 plot_list <- list()
@@ -141,6 +165,56 @@ combined_plot <- ggarrange(plotlist = plot_list,
 ggsave(path = "Figures_Tables/pca",
       "pc_plots.pdf",
        combined_plot,
+       width = 15,
+       height = 8)
+
+```
+
+#### Urb = urb score
+```{r}
+# remove first 2 cols from pca
+pca2 <- pca %>%
+  dplyr::select(-(1:2))
+
+# Create a list to store the plots
+plot_list_usc <- list()
+
+# Loop through the PC axis pairs and create plots
+for (i in seq(1, 20, by = 2)) {
+  pc1 <- colnames(pca2)[i]
+  pc2 <- colnames(pca2)[i + 1]
+  
+  # Check if both PC axes have non-zero variance
+  if (sum(var(pca2[, c(pc1, pc2)])) > 0) {
+    # Create the plot
+    plot <- ggplot(pca2, aes_string(pc1, pc2, fill = "urb_score")) +
+      geom_point(size = 2, shape = 21, color = "black") +
+      scale_fill_viridis(option="plasma",
+                     trans = "reverse"
+                     ) +
+      coord_equal() +
+      xlab(paste0(pc1, " (", signif(pve$pve[i], 3), "%)")) +
+      ylab(paste0(pc2, " (", signif(pve$pve[i + 1], 3), "%)")) +
+      theme_pubr() +
+      labs(fill = "Urbanization\n      Score") 
+    
+    # Add the plot to the list
+    plot_list_usc[[i]] <- plot
+  }
+}
+
+# Remove any empty plots from the list
+plot_list_usc <- plot_list_usc[!sapply(plot_list_usc, is.null)]
+
+# Combine all non-empty plots onto the same page
+combined_plot_usc <- ggarrange(plotlist = plot_list_usc, 
+                           nrow = 2,
+                           ncol = 5)
+
+# Save the combined plot as a PDF file
+ggsave(path = "Figures_Tables/pca",
+      "pc_plots_usc.pdf",
+       combined_plot_usc,
        width = 15,
        height = 8)
 

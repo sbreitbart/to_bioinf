@@ -16,6 +16,7 @@ all_sum <- all %>%
 ```
 
 ### Urban populations
+#### Urb = dist to CC
 ```{r}
 urb <- read.csv(here::here("./clean_data/pop_map3_U_dist.csv"))
 
@@ -25,7 +26,21 @@ urb_sum <- urb %>%
   dplyr::mutate(group = "urban")
 ```
 
+#### Urb = urb score
+```{r}
+urb_usc <- read.delim(here::here("./clean_data/pop_map3_U_usc.txt"),
+                      header = F) %>%
+  dplyr::rename("sample" = 1,
+                "population" = 2)
+
+urb_sum_usc <- urb_usc %>%
+  dplyr::group_by(population) %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::mutate(group = "urban")
+```
+
 ### Rural populations
+#### Urb = dist to CC
 ```{r}
 rur <- read.csv(here::here("./clean_data/pop_map3_R_dist.csv"))
 
@@ -35,11 +50,40 @@ rur_sum <- rur %>%
   dplyr::mutate(group = "rural")
 ```
 
+#### Urb = urb score
+```{r}
+rur_usc <- read.delim(here::here("./clean_data/pop_map3_R_usc.txt"),
+                      header = F) %>%
+  dplyr::rename("sample" = 1,
+                "population" = 2)
+
+
+rur_sum_usc <- rur_usc %>%
+  dplyr::group_by(population) %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::mutate(group = "rural")
+```
+
 ### Combine urban, rural populations into one df
+#### Urb = dist to CC
 ```{r}
 urb_rur <- rbind(urb_sum, rur_sum) %>%
   dplyr::group_by(group, n) %>%
-  dplyr::summarise(n_indiv = n())
+  dplyr::summarise(n_indiv = n()) %>%
+  dplyr::mutate(group = case_when(group == "urban" ~ "Urban",
+                                  group == "rural" ~ "Rural",
+                                    TRUE ~ group))
+
+```
+
+#### Urb = urb score
+```{r}
+urb_rur_usc <- rbind(urb_sum_usc, rur_sum_usc) %>%
+  dplyr::group_by(group, n) %>%
+  dplyr::summarise(n_indiv = n()) %>%
+  dplyr::mutate(group = case_when(group == "urban" ~ "Urban",
+                                  group == "rural" ~ "Rural",
+                                    TRUE ~ group))
 
 ```
 
@@ -54,7 +98,7 @@ ggplot(all_sum,
            fill = "lightgrey",
            color = "black") +
   ylab("Count") +
-  xlab("Individuals/Population") +
+  xlab("Individuals per Sampling Site") +
   theme_pubr() +
   labs_pubr() 
 
@@ -66,8 +110,8 @@ ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site.png",
 ```
 
 ## Urb, rur pops
+#### Urb = dist to CC
 ```{r}
-
 ggplot(urb_rur,
        aes(x = as.factor(n),
            y = n_indiv,
@@ -75,17 +119,43 @@ ggplot(urb_rur,
   geom_bar(stat = "identity",
            position = "dodge") +
   ylab("Count") +
-  xlab("Individuals/Population") +
+  xlab("Individuals per Sampling Site") +
   ylim(0, max(urb_rur$n_indiv)*1.1) +
-  theme_pubr() +
   labs_pubr() +
+  theme_pubr() +
+  theme(legend.title=element_blank()) +
   geom_text(aes(label = n_indiv),
             vjust = -0.2,
             position = position_dodge(.9))
 
 ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site_UvsR.png", 
        plot = last_plot(),
-       height = 12,
-       width = 20,
+       height = 8,
+       width = 14,
+       units = "cm")
+```
+
+#### Urb = dist to CC
+```{r}
+ggplot(urb_rur_usc,
+       aes(x = as.factor(n),
+           y = n_indiv,
+           fill = group)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  ylab("Count") +
+  xlab("Individuals per Sampling Site") +
+  ylim(0, max(urb_rur_usc$n_indiv)*1.1) +
+  labs_pubr() +
+  theme_pubr() +
+  theme(legend.title=element_blank()) +
+  geom_text(aes(label = n_indiv),
+            vjust = -0.2,
+            position = position_dodge(.9))
+
+ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site_UvsR_usc.png", 
+       plot = last_plot(),
+       height = 8,
+       width = 14,
        units = "cm")
 ```
