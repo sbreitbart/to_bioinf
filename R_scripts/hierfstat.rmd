@@ -212,9 +212,39 @@ test.within(formatted_genind[,-1],
 # g.star matrix all zeroes and p = 1
 # so effect of sample site is non-significant
 
-
-basic.stats(my_genind,
+# compute mean FIS per urban/rural group
+test <- basic.stats(my_genind,
             diploid = T)
+
+fis_per_pop <- test$Fis %>%
+  as.data.frame() %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("population" = 1)
+
+row_means <- fis_per_pop %>%
+   dplyr::mutate(mean_fis = rowMeans(
+     select(., -population), 
+     na.rm = TRUE)) %>%
+  dplyr::select(1, mean_fis) %>%
+  dplyr::left_join(.,
+                   pops %>%
+                     dplyr::group_by(population) %>%
+                     dplyr::summarise(population = first(population),
+                                      urban_rural = first(urban_rural)),
+                   by = "population")
+
+UR_fis <- row_means %>%
+  dplyr::group_by(urban_rural) %>%
+  dplyr::summarise(mean_fis = mean(mean_fis, na.rm = T))
+
+# very similar to means of stacks' output
+#   urban_rural mean_fis
+# 1 Rural         0.0309
+# 2 Urban         0.0126
+
+
 
 # $overall
 #     Ho     Hs     Ht    Dst    Htp   Dstp    Fst   Fstp 

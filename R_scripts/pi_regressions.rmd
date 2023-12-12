@@ -170,6 +170,8 @@ performance::check_model(pi_usc_1indiv)
 
 car::Anova(pi_usc_1indiv)
 
+r.squaredGLMM(pi_usc_1indiv) # R2m = 0.053
+
 pi_usc_pred_1indiv <- ggeffects::ggpredict(pi_usc_1indiv,
                                    terms = c("urb_score"),
                                    type = "fe")
