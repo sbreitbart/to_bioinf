@@ -798,8 +798,9 @@ make_ne_plot_reg_y(rur_fig2,
              "./Figures_Tables/Stairway_plot/Reg_scale_y/full_no_inset_reg_scale_rural_urbscore.png")
 ```
 
-## Total, urban, & rural in same plot (based on dist to CC)
+## Total, urban, & rural in same plot
 ### Merge dfs
+#### Urb = dist to CC
 ```{r}
 all_dist <- dplyr::full_join(urb_fig %>%
                     dplyr::mutate(Group = "Urban"),
@@ -815,7 +816,23 @@ all_dist %<>%
 ```
 
 
+#### Urb = urb score
+```{r}
+all_usc <- dplyr::full_join(urb_fig2 %>%
+                    dplyr::mutate(Group = "Urban"),
+                  rur_fig2 %>%
+                    dplyr::mutate(Group = "Rural")) %>%
+  dplyr::full_join(.,
+                   full_fig %>%
+                    dplyr::mutate(Group = "Global"))
+
+# remove duplicate rows
+all_usc %<>%
+  distinct(.keep_all = TRUE)
+```
+
 ### Regular y axis
+#### Urb = dist to CC
 ```{r}
 all_plot <- ggplot(all_dist)  +
     
@@ -893,7 +910,86 @@ cowplot::ggdraw() +
          dpi = 200)
 ```
 
+#### Urb = urb score
+```{r}
+all_plot_usc <- ggplot(all_usc)  +
+    
+    geom_segment( # add red vertical line at 12,000 yrs (glaciers retreat)
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max(Ne_median)*1.1),
+      color = "blue",
+      linetype = 5 ) +
+    
+    geom_segment( # add red vertical line at 500 yrs
+      aes(
+        x = 500,
+        xend = 500,
+        y = 0,
+        yend = max(Ne_median)*1.1),
+      color = "red",
+      linetype = 2 ) +
+
+    geom_point(aes(x = year,
+                   y = Ne_median,
+                   color = Group),
+               size = 0.25) +
+  
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  141264.75 # this is the max * 1.1
+                                  )) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+  scale_color_viridis(discrete=TRUE) +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm")) +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+  
+
+  ### Plot inset (past 2300 years)
+all_plot_inset_usc <- all_plot_usc +
+    scale_x_continuous(limits = c(NA, 2300),
+                       labels = scales::comma) +
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black",
+            fill = "white",
+            size = 1),
+          legend.position = "none")
+
+  
+  
+#### Export
+ggsave(plot =
+         
+      
+### Overlay inset in full figure
+cowplot::ggdraw() +
+    draw_plot(all_plot_usc) +
+    draw_plot(all_plot_inset_usc,
+              x = 0.4,
+              y = 0.4, 
+              width = 0.4,
+              height = 0.5),     
+         
+         
+  filename = here::here("./Figures_Tables/Stairway_plot/Reg_scale_y/all_with_inset_reg_scale_urbscore.png"),
+         height = 5,
+         width = 9,
+         dpi = 200)
+```
+
 ### Log10 y axis
+#### Urb = dist to CC
 ```{r}
 all_plot_log10 <- ggplot(all_dist)  +
     
@@ -967,6 +1063,80 @@ cowplot::ggdraw() +
          dpi = 200)
 ```
 
+
+#### Urb = urb score
+```{r}
+all_plot_log10_usc <- ggplot(all_usc)  +
+    
+    geom_segment( # add red vertical line at 12,000 yrs (glaciers retreat)
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max(Ne_median)*1.1),
+      color = "blue",
+      linetype = 5 ) +
+    
+    geom_segment( # add red vertical line at 500 yrs
+      aes(
+        x = 500,
+        xend = 500,
+        y = 0,
+        yend = max(Ne_median)*1.1),
+      color = "red",
+      linetype = 2 ) +
+
+    geom_point(aes(x = year,
+                   y = Ne_median,
+                   color = Group),
+               size = 0.25) +
+  
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_log10(breaks=c(1, 10, 100, 1000, 10000, 100000),
+                  labels = scales::comma,
+                  limits = c(1, NA)) +
+    xlab("Years before present") +
+    ylab("Median Ne") +
+    theme_bw() +
+    labs_pubr() +
+  scale_color_viridis(discrete=TRUE) +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm")) +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+  
+
+### Plot inset (past 2300 years)
+all_plot_log10_inset_usc <- all_plot_log10_usc +
+    scale_x_continuous(limits = c(NA, 2300),
+                       labels = scales::comma) +
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black",
+            fill = "white",
+            size = 1),
+          legend.position = "none")
+  
+  
+#### Export
+ggsave(plot = 
+         
+         ### Overlay inset in full figure
+cowplot::ggdraw() +
+    draw_plot(all_plot_log10_usc) +
+    draw_plot(all_plot_log10_inset_usc,
+              x = 0.4,
+              y = 0.15, 
+              width = 0.4,
+              height = 0.5),
+         
+         
+  filename = here::here("./Figures_Tables/Stairway_plot/all_with_inset_urbscore.png"),
+         height = 5,
+         width = 9,
+         dpi = 200)
+```
 
 ## Export human population graphs
 ### Canada
