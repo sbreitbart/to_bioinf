@@ -619,3 +619,37 @@ write.csv(pairwise_fst_urb,
 write.csv(pairwise_fst_rur,
           file = here::here("./Figures_Tables/fst/pairwise_fst_matrix_rural.csv"))
 ```
+# try other package
+```{r}
+#library(devtools)
+#install_github('OchoaLab/popkinsuppl')
+library(popkinsuppl)
+#BiocManager::install("trio")
+library(trio)
+
+
+# this is going to be complicated... my vcf isn't the right format...
+# create genotype matrix
+test <- vcf2geno(vcf, 
+         none = "0/0", one = c("0/1"), both = "1/1",
+         na.string = ".",
+         use.rownames = FALSE, 
+         allowDifference = FALSE, 
+         removeMonomorphic = TRUE, 
+		removeNonBiallelic = TRUE, 
+		changeMinor = FALSE)
+
+
+# estimate FST using the "Hudson" formula
+popkinsuppl::fst_hudson_k_obj <- fst_hudson_k(,
+                                 formatted_genind[,1])
+# the genome-wide FST estimate
+fst_hudson_k_obj$fst
+# vector of per-locus FST estimates
+fst_hudson_k_obj$fst_loci
+
+# estimated pairwise FST matrix using the "Hudson" formula
+fst_hudson_matrix <- fst_hudson_pairwise(X, labs)
+
+```
+
