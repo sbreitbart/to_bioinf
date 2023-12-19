@@ -213,10 +213,10 @@ length(sfs_rur2 %>%
 
 # Stairway Plot figures
 ## Import stairway plot data
-### mu = 1x10^-8 & generation time = 1 year
+### mu = 1.0x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
-full_fig_1e8 <- read.delim(here::here("./StairwayPlot/mu_1e-8/full_mmaf0.007813_mut_rate_1e-8/full_mmaf0.007813_mut_rate_1e-8.final.summary")) %>%
+full_fig_1e8 <- read.delim(here::here("./StairwayPlot/mu_1e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -227,104 +227,24 @@ full_fig_1e8 <- read.delim(here::here("./StairwayPlot/mu_1e-8/full_mmaf0.007813_
 
 ```
 
-#### Urban
-##### Dist to CC
+### mu = 1.0x10^-8 & generation time = 1.5 years
+#### All sites in 1 population
 ```{r}
-# urb_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_dist_mmaf0.007813/urban_dist_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(urb_fig)
-```
+full_fig_1e8_1.5yrs <- read.delim(here::here("./StairwayPlot/mu_1e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1e-8_gt1.5.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
 
-##### Urb Score
-```{r}
-# urb_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_usc_mmaf0.007813/urban_usc_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(urb_fig2)
-
-```
-
-#### Rural
-##### Dist to CC
-```{r}
-# rur_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_dist_mmaf0.007813/rural_dist_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(rur_fig)
-
-```
-
-
-##### Urb score
-```{r}
-# rur_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_usc_mmaf0.007813/rural_usc_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(rur_fig2)
-
-```
-
-#### Merge dfs
-##### Urb = dist to CC
-```{r}
-# all_dist <- dplyr::full_join(urb_fig %>%
-#                     dplyr::mutate(Group = "Urban"),
-#                   rur_fig %>%
-#                     dplyr::mutate(Group = "Rural")) %>%
-#   dplyr::full_join(.,
-#                    full_fig %>%
-#                     dplyr::mutate(Group = "Global"))
-# 
-# # remove duplicate rows
-# all_dist %<>%
-#   distinct(.keep_all = TRUE)
-```
-
-
-##### Urb = urb score
-```{r}
-# all_usc <- dplyr::full_join(urb_fig2 %>%
-#                     dplyr::mutate(Group = "Urban"),
-#                   rur_fig2 %>%
-#                     dplyr::mutate(Group = "Rural")) %>%
-#   dplyr::full_join(.,
-#                    full_fig %>%
-#                     dplyr::mutate(Group = "Global"))
-# 
-# # remove duplicate rows
-# all_usc %<>%
-#   distinct(.keep_all = TRUE)
 ```
 
 ### mu = 1.2x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
-full_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/full_mmaf0.007813/full_mmaf0.007813.final.summary")) %>%
+full_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/full_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -333,13 +253,12 @@ full_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/full_mmaf0.007813/fu
   # remove duplicate rows
   distinct(.keep_all = TRUE)
 
-head(full_fig)
 ```
 
 #### Urban
 ##### Dist to CC
 ```{r}
-urb_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_dist_mmaf0.007813/urban_dist_mmaf0.007813.final.summary")) %>%
+urb_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -348,12 +267,11 @@ urb_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_dist_mmaf0.0078
   # remove duplicate rows
   distinct(.keep_all = TRUE)
 
-head(urb_fig)
 ```
 
 ##### Urb Score
 ```{r}
-urb_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_usc_mmaf0.007813/urban_usc_mmaf0.007813.final.summary")) %>%
+urb_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -361,15 +279,13 @@ urb_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_usc_mmaf0.0078
                    mutation_per_site)) %>%
   # remove duplicate rows
   distinct(.keep_all = TRUE)
-
-head(urb_fig2)
 
 ```
 
 #### Rural
 ##### Dist to CC
 ```{r}
-rur_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_dist_mmaf0.007813/rural_dist_mmaf0.007813.final.summary")) %>%
+rur_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -377,15 +293,12 @@ rur_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_dist_mmaf0.0078
                    mutation_per_site)) %>%
   # remove duplicate rows
   distinct(.keep_all = TRUE)
-
-head(rur_fig)
 
 ```
 
-
 ##### Urb score
 ```{r}
-rur_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_usc_mmaf0.007813/rural_usc_mmaf0.007813.final.summary")) %>%
+rur_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -393,8 +306,6 @@ rur_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_usc_mmaf0.0078
                    mutation_per_site)) %>%
   # remove duplicate rows
   distinct(.keep_all = TRUE)
-
-head(rur_fig2)
 
 ```
 
@@ -430,10 +341,24 @@ all_usc %<>%
   distinct(.keep_all = TRUE)
 ```
 
+### mu = 1.2x10^-8 & generation time = 1.5 years
+#### All sites in 1 population
+```{r}
+full_fig_1.5yrs <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1.2e-8_gt1.5.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
 ### mu = 1.8x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
-full_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/full_mmaf0.007813_mut_rate_1.8e-8/full_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+full_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -447,105 +372,145 @@ full_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/full_mmaf0.007
 #### Urban
 ##### Dist to CC
 ```{r}
-# urb_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_dist_mmaf0.007813/urban_dist_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(urb_fig)
+urb_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
 ```
 
 ##### Urb Score
 ```{r}
-# urb_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/urban_usc_mmaf0.007813/urban_usc_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(urb_fig2)
+urb_fig2_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
 
 ```
 
 #### Rural
 ##### Dist to CC
 ```{r}
-# rur_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_dist_mmaf0.007813/rural_dist_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(rur_fig)
+rur_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
 
 ```
 
-
 ##### Urb score
 ```{r}
-# rur_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/rural_usc_mmaf0.007813/rural_usc_mmaf0.007813.final.summary")) %>%
-#   dplyr::select(-c(theta_per_site_median,
-#                    theta_per_site_2.5.,
-#                    theta_per_site_97.5.,
-#                    n_estimation,
-#                    mutation_per_site)) %>%
-#   # remove duplicate rows
-#   distinct(.keep_all = TRUE)
-# 
-# head(rur_fig2)
+rur_fig2_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
 
 ```
 
 #### Merge dfs
 ##### Urb = dist to CC
 ```{r}
-# all_dist <- dplyr::full_join(urb_fig %>%
-#                     dplyr::mutate(Group = "Urban"),
-#                   rur_fig %>%
-#                     dplyr::mutate(Group = "Rural")) %>%
-#   dplyr::full_join(.,
-#                    full_fig %>%
-#                     dplyr::mutate(Group = "Global"))
-# 
-# # remove duplicate rows
-# all_dist %<>%
-#   distinct(.keep_all = TRUE)
+all_dist_1.8e8 <- dplyr::full_join(urb_fig_1.8e8 %>%
+                    dplyr::mutate(Group = "Urban"),
+                  rur_fig_1.8e8 %>%
+                    dplyr::mutate(Group = "Rural")) %>%
+  dplyr::full_join(.,
+                   full_fig_1.8e8 %>%
+                    dplyr::mutate(Group = "Global"))
+
+# remove duplicate rows
+all_dist_1.8e8 %<>%
+  distinct(.keep_all = TRUE)
 ```
 
 
 ##### Urb = urb score
 ```{r}
-# all_usc <- dplyr::full_join(urb_fig2 %>%
-#                     dplyr::mutate(Group = "Urban"),
-#                   rur_fig2 %>%
-#                     dplyr::mutate(Group = "Rural")) %>%
-#   dplyr::full_join(.,
-#                    full_fig %>%
-#                     dplyr::mutate(Group = "Global"))
-# 
-# # remove duplicate rows
-# all_usc %<>%
-#   distinct(.keep_all = TRUE)
+all_usc_1.8e8 <- dplyr::full_join(urb_fig2_1.8e8 %>%
+                    dplyr::mutate(Group = "Urban"),
+                  rur_fig2_1.8e8 %>%
+                    dplyr::mutate(Group = "Rural")) %>%
+  dplyr::full_join(.,
+                   full_fig_1.8e8 %>%
+                    dplyr::mutate(Group = "Global"))
+
+# remove duplicate rows
+all_usc_1.8e8 %<>%
+  distinct(.keep_all = TRUE)
 ```
 
+### mu = 1.8x10^-8 & generation time = 1.5 years
+#### All sites in 1 population
+```{r}
+full_fig_1.8e8_1.5yr <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1.8e-8_gt1.5.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+### mu = 2.6x10^-8 & generation time = 1 year
+#### All sites in 1 population
+```{r}
+full_fig_2.6e8 <- read.delim(here::here("./StairwayPlot/mu_2.6e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_2.6e-8.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+### mu = 2.6x10^-8 & generation time = 1.5 years
+#### All sites in 1 population
+```{r}
+full_fig_2.6e8_1.5yr <- read.delim(here::here("./StairwayPlot/mu_2.6e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_2.6e-8_gt1.5.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
 
 ## Create functions
 ### Export plots
 #### All, urban, and rural separately
 ```{r}
-
 # regular y axis
 make_ne_plot_reg_y <- function(df, exported_filepath){
+  
+  max_y <- df %>%
+    dplyr::select(Ne_median) %>%
+    dplyr::filter(Ne_median == max(Ne_median)) %>%
+    dplyr::slice(1) %>%
+    dplyr::mutate(max = Ne_median*1.1) %>%
+    dplyr::select(max) %>%
+    as.numeric()
   
   # full plot with red horizontal line at 500 years ago
   full_plot <- ggplot(
@@ -559,7 +524,7 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
         x = 12000,
         xend = 12000,
         y = 0,
-        yend = max(df$Ne_median)*1.1),
+        yend = max_y),
       color = "blue",
       linetype = 5 ) +
     
@@ -568,7 +533,7 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
         x = 500,
         xend = 500,
         y = 0,
-        yend = max(df$Ne_median)*1.1),
+        yend = max_y),
       color = "red",
       linetype = 2 ) +
     geom_point(size = 0.75) +
@@ -577,17 +542,18 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
     scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
                        limits = c(0, 
-                                  141264.75 # this is the max * 1.1
-                                  )) +
+                                  max_y
+                                  )
+                       ) +
     xlab("Years before present") +
-    ylab("Median Ne (1k individuals)") +
+    ylab("Median Nₑ (1k individuals)") +
     theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
   
-  ### Plot inset (past 500 years)
+  ### Plot inset (past 2300 years)
   full_inset <- full_plot +
-    scale_x_continuous(limits = c(NA, 800),
+    scale_x_continuous(limits = c(NA, 2300),
                        labels = scales::comma) +
     theme(axis.title = element_blank(),
           plot.background = element_rect(
@@ -609,7 +575,6 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
          width = 7,
          dpi = 200)
 }
-
 ```
 
 #### All plots together
@@ -617,6 +582,23 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
 export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
   
   # All plots will have regular y axis
+  
+  # first, find maximum y axis values
+    max_y_distCC <- df_distCC %>%
+    dplyr::select(Ne_median) %>%
+    dplyr::filter(Ne_median == max(Ne_median)) %>%
+    dplyr::slice(1) %>%
+    dplyr::mutate(max = Ne_median*1.1) %>%
+    dplyr::select(max) %>%
+    as.numeric()
+    
+    max_y_urbscore <- df_urbscore %>%
+    dplyr::select(Ne_median) %>%
+    dplyr::filter(Ne_median == max(Ne_median)) %>%
+    dplyr::slice(1) %>%
+    dplyr::mutate(max = Ne_median*1.1) %>%
+    dplyr::select(max) %>%
+    as.numeric()
   
   # DISTANCE TO CC-----
   exported_filename_distCC <- paste0("./Figures_Tables/Stairway_plot/mu_",
@@ -633,7 +615,7 @@ export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
         x = 12000,
         xend = 12000,
         y = 0,
-        yend = max(Ne_median)*1.1),
+        yend = max_y_distCC),
       color = "blue",
       linetype = 5 ) +
     
@@ -642,7 +624,7 @@ export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
         x = 500,
         xend = 500,
         y = 0,
-        yend = max(Ne_median)*1.1),
+        yend = max_y_distCC),
       color = "red",
       linetype = 2 ) +
 
@@ -656,10 +638,10 @@ export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
     scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
                        limits = c(0, 
-                                  141264.75 # this is the max * 1.1
+                                  max_y_distCC
                                   )) +
     xlab("Years before present") +
-    ylab("Median Ne (1k individuals)") +
+    ylab("Median Nₑ (1k individuals)") +
     theme_bw() +
     labs_pubr() +
   scale_color_viridis(discrete=TRUE) +
@@ -715,7 +697,7 @@ all_plot_usc <- ggplot(df_urbscore)  +
         x = 12000,
         xend = 12000,
         y = 0,
-        yend = max(Ne_median)*1.1),
+        yend = max_y_urbscore),
       color = "blue",
       linetype = 5 ) +
     
@@ -724,7 +706,7 @@ all_plot_usc <- ggplot(df_urbscore)  +
         x = 500,
         xend = 500,
         y = 0,
-        yend = max(Ne_median)*1.1),
+        yend = max_y_urbscore),
       color = "red",
       linetype = 2 ) +
 
@@ -738,11 +720,10 @@ all_plot_usc <- ggplot(df_urbscore)  +
     scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
                        limits = c(0, 
-                                  141264.75 # this is the max * 1.1
-                                  )) +
+                                  max_y_urbscore)) +
     xlab("Years before present") +
-    ylab("Median Ne (1k individuals)") +
-    theme_bw() +
+    ylab("Median Nₑ (1k individuals)") +
+  theme_bw() +
     labs_pubr() +
   scale_color_viridis(discrete=TRUE) +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm")) +
@@ -796,15 +777,15 @@ max_ne_years <- Ne_df %>%
 print(paste0("Years of max Ne: ", max_ne_years))
 
 
-# find median Ne around 500 years ago
-median_ne_500YA <- Ne_df %>%
-  dplyr::filter(year > 500 & year < 501) %>%
+# find median Ne around 750 years ago
+median_ne_750YA <- Ne_df %>%
+  dplyr::filter(year > 750 & year < 751) %>%
   dplyr::select(Ne_median) %>%
   dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
   slice(1) %>%
   as.numeric()
 
-print(paste0("Median Ne ~500 years ago: ", median_ne_500YA*1000))
+print(paste0("Median Ne ~750 years ago: ", median_ne_750YA*1000))
 
 min_year <- min(Ne_df$year)  
 
@@ -820,20 +801,85 @@ print(paste0("Most recent median Ne: ", most_recent_ne*1000))
 
 
 # find % decrease from max to min
-perc_decrease <- round(((most_recent_ne-median_ne_500YA)/median_ne_500YA ) * 100, 3)
+perc_decrease <- round(((most_recent_ne-median_ne_750YA)/median_ne_750YA ) * 100, 3)
 
 print(paste0("% decrease in Ne: ", perc_decrease))
 }
 
 ```
 
-## Export SP plots
+## Export plots
+### Mu = 1.0e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_1e8,
+                   "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1yr/full_with_inset.png")
+```
+
+### Mu = 1.0e-8 & gen time = 1.5 yrs
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_1e8_1.5yrs,
+                   "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1.5yr/full_with_inset.png")
+```
+
 ### Mu = 1.2e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig,
+                   "./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_1yr/full_with_inset.png")
+```
+
+#### Export all plots
 ```{r}
 export_all_plots(df_distCC = all_dist,
                  df_urbscore = all_usc,
                  mu = "1.2e-8",
                  gen_time = "1yr")
+```
+
+### Mu = 1.2e-8 & gen time = 1.5 yrs
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_1.5yrs,
+                   "./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_1.5yr/full_with_inset.png")
+```
+
+### Mu = 1.8e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_1.8e8,
+                   "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")
+```
+
+#### Export all plots
+```{r}
+export_all_plots(df_distCC = all_dist_1.8e8,
+                 df_urbscore = all_usc_1.8e8,
+                 mu = "1.8e-8",
+                 gen_time = "1yr")
+```
+
+
+### Mu = 1.8e-8 & gen time = 1.5 yrs
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_1.8e8_1.5yr,
+                   "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1.5yr/full_with_inset.png")
+```
+
+### Mu = 2.6e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_2.6e8,
+                   "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1yr/full_with_inset.png")
+```
+
+### Mu = 2.6e-8 & gen time = 1.5 yrs
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_2.6e8_1.5yr,
+                   "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1.5yr/full_with_inset.png")
 ```
 
 ### Just the inset (gen time = 1 yr, mu = 1.2e-8)
@@ -851,8 +897,8 @@ ggplot(
                   labels = scales::comma,
                   limits = c(1, 50000)) +
     xlab("Years before present") +
-    ylab("Median Ne (1k individuals)") +
-    theme_bw() +
+    ylab("Median Nₑ (1k individuals)") +
+  theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
           plot.background = element_rect(
@@ -880,8 +926,8 @@ ggplot(
                   labels = scales::comma,
                   limits = c(1, 105000)) +
     xlab("Years before present") +
-    ylab("Median Ne (1k individuals)") +
-    theme_bw() +
+    ylab("Median Nₑ (1k individuals)") +
+  theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
           plot.background = element_rect(
@@ -909,8 +955,8 @@ ggplot(
                   labels = scales::comma,
                   limits = c(1, 150000)) +
     xlab("Years before present") +
-    ylab("Median Ne (1k individuals)") +
-    theme_bw() +
+    ylab("Median Nₑ (1k individuals)") +
+  theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
           plot.background = element_rect(
@@ -924,6 +970,16 @@ ggsave(filename = here::here("./Figures_Tables/Stairway_plot/Insets/full_inset_2
          dpi = 200)
 ```
 
+
+## Calculate Ne stats
+### mu = 1.8 x 10^-8, gen time = 1 yr
+```{r}
+Ne_stats(full_fig_1.8e8)
+Ne_stats(urb_fig_1.8e8)
+#Ne_stats(urb_fig2_1.8e8)
+Ne_stats(rur_fig_1.8e8)
+#Ne_stats(rur_fig2_1.8e8)
+```
 
 ## Import human population data
 ### Import Canada human population data
