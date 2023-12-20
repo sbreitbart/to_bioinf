@@ -1,0 +1,15 @@
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /home/breitba1/step08_no-IBD/global_fst/populations.snps.vcf
+	--keep /home/breitba1/step08_no-IBD/pop_map3_R_usc.txt
+	--out /home/breitba1/scratch/filtered_vcfs/rural_pops_usc_mmaf0.05_variant_sites
+	--recode
+
+Keeping individuals in 'keep' list
+After filtering, kept 115 out of 256 Individuals
+Outputting VCF file...
+After filtering, kept 973 out of a possible 973 Sites
+Run Time = 0.00 seconds
