@@ -79,7 +79,7 @@ sfs <- gt2sfs.raw(mygt,
            "1") %>%
         as.data.frame() %>%
   dplyr::filter(X1 != 0) %T>%
-  write_delim(here::here("./StairwayPlot/sfs.txt"))
+  write_delim(here::here("./clean_data/sfs/sfs.txt"))
 
 ```
 
@@ -90,7 +90,7 @@ sfs_urb <- gt2sfs.raw(mygt_urb,
            "Urban") %>%
         as.data.frame() %>%
   dplyr::filter(Urban != 0) %T>%
-  write_delim(here::here("./StairwayPlot/sfs_urban.txt"))
+  write_delim(here::here("./clean_data/sfs/sfs_urban.txt"))
 
 ```
 
@@ -100,7 +100,7 @@ sfs_urb2 <- gt2sfs.raw(mygt_urb2,
            "Urban") %>%
         as.data.frame() %>%
   dplyr::filter(Urban != 0) %T>%
-  write_delim(here::here("./StairwayPlot/sfs_urban_urbscore.txt"))
+  write_delim(here::here("./clean_data/sfs/sfs_urban_urbscore.txt"))
 
 ```
 
@@ -111,7 +111,7 @@ sfs_rur <- gt2sfs.raw(mygt_urb,
            "Rural") %>%
         as.data.frame() %>%
   dplyr::filter(Rural != 0) %T>%
-  write_delim(here::here("./StairwayPlot/sfs_rural.txt"))
+  write_delim(here::here("./clean_data/sfs/sfs_rural.txt"))
 
 ```
 
@@ -121,7 +121,7 @@ sfs_rur2 <- gt2sfs.raw(mygt_urb2,
            "Rural") %>%
         as.data.frame() %>%
   dplyr::filter(Rural != 0) %T>%
-  write_delim(here::here("./StairwayPlot/sfs_rural_urbscore.txt"))
+  write_delim(here::here("./clean_data/sfs/sfs_rural_urbscore.txt"))
 
 ```
 
@@ -139,7 +139,7 @@ freqs_string <- paste(freqs_for_stairwayplot,
 
 # Write the string to a txt file
 writeLines(freqs_string,
-           here::here("./StairwayPlot/sfs_freqs.txt"))
+           here::here("./clean_data/sfs/sfs_freqs.txt"))
 
 # length of SFS
 length(freqs_for_stairwayplot)
@@ -154,7 +154,7 @@ sfs_urb %>%
   pull() %>%
   paste(collapse = " ") %T>%
 # Write the string to a txt file
-  writeLines(here::here("./StairwayPlot/sfs_freqs_urb.txt"))
+  writeLines(here::here("./clean_data/sfs/sfs_freqs_urb.txt"))
 
 # length of SFS
 length(sfs_urb %>%
@@ -170,7 +170,7 @@ sfs_urb2 %>%
   pull() %>%
   paste(collapse = " ") %T>%
 # Write the string to a txt file
-  writeLines(here::here("./StairwayPlot/sfs_freqs_urb_urbscore.txt"))
+  writeLines(here::here("./clean_data/sfs/sfs_freqs_urb_urbscore.txt"))
 
 # length of SFS
 length(sfs_urb2 %>%
@@ -187,7 +187,7 @@ sfs_rur %>%
   pull() %>%
   paste(collapse = " ") %T>%
 # Write the string to a txt file
-  writeLines(here::here("./StairwayPlot/sfs_freqs_rur.txt"))
+  writeLines(here::here("./clean_data/sfs/sfs_freqs_rur.txt"))
 
 # length of SFS
 length(sfs_rur %>%
@@ -203,7 +203,7 @@ sfs_rur2 %>%
   pull() %>%
   paste(collapse = " ") %T>%
 # Write the string to a txt file
-  writeLines(here::here("./StairwayPlot/sfs_freqs_rur_urbscore.txt"))
+  writeLines(here::here("./clean_data/sfs/sfs_freqs_rur_urbscore.txt"))
 
 # length of SFS
 length(sfs_rur2 %>%
@@ -216,7 +216,7 @@ length(sfs_rur2 %>%
 ### mu = 1.0x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
-full_fig_1e8 <- read.delim(here::here("./StairwayPlot/mu_1e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1e-8.final.summary")) %>%
+full_fig_1e8 <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -230,7 +230,7 @@ full_fig_1e8 <- read.delim(here::here("./StairwayPlot/mu_1e-8/gen_time_1yr/full_
 ### mu = 1.0x10^-8 & generation time = 1.5 years
 #### All sites in 1 population
 ```{r}
-full_fig_1e8_1.5yrs <- read.delim(here::here("./StairwayPlot/mu_1e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1e-8_gt1.5.final.summary")) %>%
+full_fig_1e8_1.5yrs <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1e-8_gt1.5.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -244,7 +244,7 @@ full_fig_1e8_1.5yrs <- read.delim(here::here("./StairwayPlot/mu_1e-8/gen_time_1.
 ### mu = 1.2x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
-full_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/full_mmaf0.007813.final.summary")) %>%
+full_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/full_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -258,7 +258,7 @@ full_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/full_mm
 #### Urban
 ##### Dist to CC
 ```{r}
-urb_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_dist_mmaf0.007813.final.summary")) %>%
+urb_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -271,7 +271,7 @@ urb_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_di
 
 ##### Urb Score
 ```{r}
-urb_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_usc_mmaf0.007813.final.summary")) %>%
+urb_fig2 <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -285,7 +285,7 @@ urb_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_u
 #### Rural
 ##### Dist to CC
 ```{r}
-rur_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_dist_mmaf0.007813.final.summary")) %>%
+rur_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -298,7 +298,7 @@ rur_fig <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_di
 
 ##### Urb score
 ```{r}
-rur_fig2 <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_usc_mmaf0.007813.final.summary")) %>%
+rur_fig2 <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -344,7 +344,7 @@ all_usc %<>%
 ### mu = 1.2x10^-8 & generation time = 1.5 years
 #### All sites in 1 population
 ```{r}
-full_fig_1.5yrs <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1.2e-8_gt1.5.final.summary")) %>%
+full_fig_1.5yrs <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1.2e-8_gt1.5.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -358,7 +358,7 @@ full_fig_1.5yrs <- read.delim(here::here("./StairwayPlot/mu_1.2e-8/gen_time_1.5y
 ### mu = 1.8x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
-full_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+full_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -372,7 +372,7 @@ full_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/f
 #### Urban
 ##### Dist to CC
 ```{r}
-urb_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+urb_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -385,7 +385,7 @@ urb_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/ur
 
 ##### Urb Score
 ```{r}
-urb_fig2_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+urb_fig2_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -399,7 +399,7 @@ urb_fig2_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/u
 #### Rural
 ##### Dist to CC
 ```{r}
-rur_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+rur_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -412,7 +412,7 @@ rur_fig_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/ru
 
 ##### Urb score
 ```{r}
-rur_fig2_1.8e8 <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
+rur_fig2_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -458,7 +458,7 @@ all_usc_1.8e8 %<>%
 ### mu = 1.8x10^-8 & generation time = 1.5 years
 #### All sites in 1 population
 ```{r}
-full_fig_1.8e8_1.5yr <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1.8e-8_gt1.5.final.summary")) %>%
+full_fig_1.8e8_1.5yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_1.8e-8_gt1.5.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -472,7 +472,7 @@ full_fig_1.8e8_1.5yr <- read.delim(here::here("./StairwayPlot/mu_1.8e-8/gen_time
 ### mu = 2.6x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
-full_fig_2.6e8 <- read.delim(here::here("./StairwayPlot/mu_2.6e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_2.6e-8.final.summary")) %>%
+full_fig_2.6e8 <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_2.6e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -486,7 +486,7 @@ full_fig_2.6e8 <- read.delim(here::here("./StairwayPlot/mu_2.6e-8/gen_time_1yr/f
 ### mu = 2.6x10^-8 & generation time = 1.5 years
 #### All sites in 1 population
 ```{r}
-full_fig_2.6e8_1.5yr <- read.delim(here::here("./StairwayPlot/mu_2.6e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_2.6e-8_gt1.5.final.summary")) %>%
+full_fig_2.6e8_1.5yr <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/gen_time_1.5yr/full_mmaf0.007813_mut_rate_2.6e-8_gt1.5.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
