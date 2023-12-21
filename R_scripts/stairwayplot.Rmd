@@ -57,7 +57,7 @@ unique(mygt$popmap)
 #### Urbanization = dist to CC
 ```{r}
 mygt_urb <- vcf2gt(vcf_address,
-               here::here("./clean_data/pop_map3_UR_dist.txt"))
+               here::here("./clean_data/pop_maps/pop_map3_UR_dist.txt"))
 
 # look at all unique populations
 unique(mygt_urb$popmap)
@@ -66,7 +66,7 @@ unique(mygt_urb$popmap)
 #### Urbanization = urbanization score
 ```{r}
 mygt_urb2 <- vcf2gt(vcf_address,
-               here::here("./clean_data/pop_map3_UR_usc.txt"))
+               here::here("./clean_data/pop_maps/pop_map3_UR_usc.txt"))
 
 # look at all unique populations
 unique(mygt_urb2$popmap)

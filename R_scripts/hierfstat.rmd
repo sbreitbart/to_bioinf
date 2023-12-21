@@ -20,7 +20,7 @@ my_genind <- vcfR2genind(vcf)
 pops <- read.csv(here("./genomic_resources/pop_map3.csv"))
 
 # pop map with urban/rural designations
-pops_UR <- read.delim(here("./clean_data/pop_map3_UR_dist.txt"),
+pops_UR <- read.delim(here("./clean_data/pop_maps/pop_map3_UR_dist.txt"),
                       header = F) %>%
   dplyr::rename("sample" = 1,
                 "urban_rural" = 2)
@@ -47,7 +47,7 @@ my_genind_urb <- vcfR2genind(vcf_urb)
 
 
 # read in pop map with populations
-pops_urb <- read.csv(here("./clean_data/pop_map3_U_dist.csv"))
+pops_urb <- read.csv(here("./clean_data/pop_maps/pop_map3_U_dist.csv"))
 
 # add pops to genind
 strata(my_genind_urb) <- pops_urb
@@ -65,7 +65,7 @@ my_genind_rur <- vcfR2genind(vcf_rur)
 
 
 # read in pop map with populations
-pops_rur <- read.csv(here("./clean_data/pop_map3_R_dist.csv"))
+pops_rur <- read.csv(here("./clean_data/pop_maps/pop_map3_R_dist.csv"))
 
 # add pops to genind
 strata(my_genind_rur) <- pops_rur
@@ -87,12 +87,12 @@ my_genind_larger_pops <- vcfR2genind(vcf_larger_pops)
 pops_all <- read.csv(here("./genomic_resources/pop_map3.csv"))
 
 # read in pop map with ONLY populations >1 indiv
-pops_larger <- read.csv(here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop.csv")) %>%
+pops_larger <- read.csv(here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop.csv")) %>%
   dplyr::rename(population = pop_id) %>%
   dplyr::mutate(population = as.character(population))
 
 # pop map with urban/rural designations
-pops_UR <- read.delim(here("./clean_data/pop_map3_UR_dist.txt"),
+pops_UR <- read.delim(here("./clean_data/pop_maps/pop_map3_UR_dist.txt"),
                       header = F) %>%
   dplyr::rename("sample" = 1,
                 "urban_rural" = 2)

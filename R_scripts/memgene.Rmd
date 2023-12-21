@@ -108,7 +108,7 @@ coords <- process_location_data(
 ```{r}
 coords_urban <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
-  here::here("./clean_data/pop_map3_U_dist.csv"))
+  here::here("./clean_data/pop_maps/pop_map3_U_dist.csv"))
 
 # I converted the pop_map3_U_dist.txt into csv, then removed the "MW" prefixes so that the function would work
 ```
@@ -117,7 +117,7 @@ coords_urban <- process_location_data(
 ```{r}
 coords_rural <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
-  here::here("./clean_data/pop_map3_R_dist.csv"))
+  here::here("./clean_data/pop_maps/pop_map3_R_dist.csv"))
 
 ```
 
@@ -125,7 +125,7 @@ coords_rural <- process_location_data(
 ```{r}
 coords_subsamp <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
-  here::here("./clean_data/pop_map3_1indiv_per_pop.csv"))
+  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop.csv"))
 
 ```
 
@@ -133,7 +133,7 @@ coords_subsamp <- process_location_data(
 ```{r}
 coords_subsamp_rural <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
-  here::here("./clean_data/pop_map3_1indiv_per_pop_RURAL.csv"))
+  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.csv"))
 
 ```
 

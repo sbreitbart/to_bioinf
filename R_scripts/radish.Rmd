@@ -79,7 +79,7 @@ coords <- read.csv(here("./genomic_resources/pop_map3.csv")) %>%
 urb <- read.csv(here::here("./clean_data/urb_metrics.csv"))
 
 # sampling site IDs and genetic sample names
-coords_subsamp <- read.csv(here("./clean_data/pop_map3_1indiv_per_pop.csv")) %>%
+coords_subsamp <- read.csv(here("./clean_data/pop_maps/pop_map3_1indiv_per_pop.csv")) %>%
 
 # if population doesn't start with "MWI", it should start with "MW"
   # rename col 1

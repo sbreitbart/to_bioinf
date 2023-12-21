@@ -19,7 +19,7 @@ n_unique_pops <- pops %>%
   as.numeric() %T>% print
 
 # pop map with urban/rural designations
-pops_UR <- read.delim(here("./clean_data/pop_map3_UR_dist.txt"),
+pops_UR <- read.delim(here("./clean_data/pop_maps/pop_map3_UR_dist.txt"),
                       header = F) %>%
   dplyr::rename("sample" = 1,
                 "urban_rural" = 2)

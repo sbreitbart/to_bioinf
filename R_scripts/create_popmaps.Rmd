@@ -35,7 +35,7 @@ full_popmap %>%
   dplyr::select(sample, patch_id, u_r_dist) %>%
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_all_dist.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_all_dist.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -51,7 +51,7 @@ full_popmap %>%
   dplyr::select(sample, patch_id, u_r_usc) %>%
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_all_usc.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_all_usc.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -70,7 +70,7 @@ full_popmap %>%
 # urban vs. rural, determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_UR_dist.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_UR_dist.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -90,7 +90,7 @@ full_popmap %>%
 # urban vs. rural, determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_UR_usc.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_UR_usc.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -112,7 +112,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_U_dist.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_U_dist.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -130,7 +130,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_UR_dist_URBAN.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_UR_dist_URBAN.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -190,7 +190,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_U_usc.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_U_usc.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -209,7 +209,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_UR_usc_URBAN.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_UR_usc_URBAN.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -271,7 +271,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_R_dist.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_R_dist.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -290,7 +290,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_UR_dist_RURAL.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_UR_dist_RURAL.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -351,7 +351,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_R_usc.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_R_usc.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -370,7 +370,7 @@ full_popmap %>%
 # urban , determined by dist to CC
 
   write.table(., 
-            file = here::here("./clean_data/pop_map3_UR_usc_RURAL.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_UR_usc_RURAL.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -433,7 +433,7 @@ uniques <- pop_map3 %>%
 
 uniques %>%
   write.table(., 
-            file = here::here("./clean_data/pop_map3_1indiv_per_pop.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -442,7 +442,7 @@ uniques %>%
 
 uniques %>%
   write_csv(., 
-            file = here::here("./clean_data/pop_map3_1indiv_per_pop.csv"))
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop.csv"))
 ```
 
 ### Urban only
@@ -458,7 +458,7 @@ uniques_urb <- full_popmap %>%
 
 uniques_urb %>%
   write.table(., 
-            file = here::here("./clean_data/pop_map3_1indiv_per_pop_URBAN.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -467,7 +467,7 @@ uniques_urb %>%
 
 uniques_urb %>%
   write_csv(., 
-            file = here::here("./clean_data/pop_map3_1indiv_per_pop_URBAN.csv"))
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN.csv"))
 ```
 
 ### Rural only
@@ -483,7 +483,7 @@ uniques_rur <- full_popmap %>%
 
 uniques_rur %>%
   write.table(., 
-            file = here::here("./clean_data/pop_map3_1indiv_per_pop_RURAL.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -492,7 +492,7 @@ uniques_rur %>%
 
 uniques_rur %>%
   write_csv(., 
-            file = here::here("./clean_data/pop_map3_1indiv_per_pop_RURAL.csv"))
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.csv"))
 ```
 
 
@@ -514,7 +514,7 @@ multi_indiv_pops <- dplyr::right_join(
 
 multi_indiv_pops %>%
   write.table(., 
-            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -523,7 +523,7 @@ multi_indiv_pops %>%
 
 multi_indiv_pops %>%
   write_csv(., 
-            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop.csv"))
+            file = here::here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop.csv"))
 ```
 
 ### Urban (~dist to CC)
@@ -538,7 +538,7 @@ larger_urb_pops <- full_popmap %>%
 # urban , determined by dist to CC
 
 write.table(larger_urb_pops, 
-            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_URBAN.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop_URBAN.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -548,7 +548,7 @@ write.table(larger_urb_pops,
 
 larger_urb_pops %>%
   write_csv(., 
-            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_URBAN.csv"))
+            file = here::here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop_URBAN.csv"))
 
 ```
 
@@ -564,7 +564,7 @@ larger_rur_pops <- full_popmap %>%
 # rural , determined by dist to CC
 
 write.table(larger_rur_pops, 
-            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_RURAL.txt"),
+            file = here::here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop_RURAL.txt"),
             stdout(),
             sep='\t',
             quote = FALSE,
@@ -574,6 +574,6 @@ write.table(larger_rur_pops,
 
 larger_rur_pops %>%
   write_csv(., 
-            file = here::here("./clean_data/pop_map3_MORE_THAN_1indiv_per_pop_RURAL.csv"))
+            file = here::here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop_RURAL.csv"))
 
 ```

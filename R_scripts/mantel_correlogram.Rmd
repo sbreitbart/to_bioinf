@@ -156,14 +156,14 @@ To make these pop map csvs, I took the txt, made it into a csv, and removed the 
 ```{r}
 coords_utm_urb <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
-  "./clean_data/pop_map3_U_dist.csv")
+  "./clean_data/pop_maps/pop_map3_U_dist.csv")
 ```
 
 ##### Urb = urb score
 ```{r}
 coords_utm_urb2 <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
-  "./clean_data/pop_map3_U_usc.csv")
+  "./clean_data/pop_maps/pop_map3_U_usc.csv")
 ```
 
 #### Rural
@@ -171,21 +171,21 @@ coords_utm_urb2 <- create_geog_dist_matrix(
 ```{r}
 coords_utm_rur <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
-  "./clean_data/pop_map3_R_dist.csv")
+  "./clean_data/pop_maps/pop_map3_R_dist.csv")
 ```
 
 ##### Urb = urb score
 ```{r}
 coords_utm_rur2 <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
-  "./clean_data/pop_map3_R_usc.csv")
+  "./clean_data/pop_maps/pop_map3_R_usc.csv")
 ```
 
 #### 1 individual/population
 ```{r}
 coords_utm_subsamp <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
-  "./clean_data/pop_map3_1indiv_per_pop.csv")
+  "./clean_data/pop_maps/pop_map3_1indiv_per_pop.csv")
 ```
 
 
@@ -193,14 +193,14 @@ coords_utm_subsamp <- create_geog_dist_matrix(
 ```{r}
 coords_utm_urb_subsamp <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
-  "./clean_data/pop_map3_1indiv_per_pop_URBAN.csv")
+  "./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN.csv")
 ```
 
 #### 1 individual/population- RURAL ONLY
 ```{r}
 coords_utm_rur_subsamp <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
-  "./clean_data/pop_map3_1indiv_per_pop_RURAL.csv")
+  "./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.csv")
 ```
 
 # Create genetic distance matrices
