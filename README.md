@@ -28,4 +28,4 @@ TBD
 
 ### Notes
 
-* 
+* At the beginning of this project, we referred to the areas in which we sampled milkweed as populations. As the project developed, we decided to stop using the word "population" to refer to these locations and, instead, call them "sampling sites". Please note that the original data, scripts, and output figures/tables may still refer to sampling sites as populations. Outside the context of our question asking how many genetic populations or clusters are present (Q2), the instances of the word "population" should refer to a sampling site. 
