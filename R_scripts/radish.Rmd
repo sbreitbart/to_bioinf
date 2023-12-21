@@ -964,7 +964,7 @@ as.data.frame(rat_table) %>%
 
 # vcf
 vcf <- read.vcfR(
-  here::here("./filtered_vcfs/urban_pops_dist_mmaf0.05.recode.vcf"),
+  here::here("./clean_data/filtered_vcfs/urban_pops_dist_mmaf0.05.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -982,7 +982,7 @@ genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
 ```{r}
 # vcf
 vcf_subsamp <- read.vcfR(
-  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf"),
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object

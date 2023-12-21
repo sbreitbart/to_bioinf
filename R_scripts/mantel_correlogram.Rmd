@@ -24,7 +24,7 @@ my_genind <- vcfR2genind(vcf)
 ```{r}
 # vcf
 vcf_urb <- read.vcfR(
-  here::here("./filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
+  here::here("./clean_data/filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
 
 ## Convert vcf to genind object
 my_genind_urb <- vcfR2genind(vcf_urb)
@@ -35,7 +35,7 @@ my_genind_urb <- vcfR2genind(vcf_urb)
 ```{r}
 # vcf
 vcf_urb2 <- read.vcfR(
-  here::here("./filtered_vcfs/urban_pops_usc_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
+  here::here("./clean_data/filtered_vcfs/urban_pops_usc_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
 
 ## Convert vcf to genind object
 my_genind_urb2 <- vcfR2genind(vcf_urb2)
@@ -47,7 +47,7 @@ my_genind_urb2 <- vcfR2genind(vcf_urb2)
 ```{r}
 # vcf
 vcf_rur <- read.vcfR(
-  here::here("./filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
+  here::here("./clean_data/filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
 
 ## Convert vcf to genind object
 my_genind_rur <- vcfR2genind(vcf_rur)
@@ -58,7 +58,7 @@ my_genind_rur <- vcfR2genind(vcf_rur)
 ```{r}
 # vcf
 vcf_rur2 <- read.vcfR(
-  here::here("./filtered_vcfs/rural_pops_usc_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
+  here::here("./clean_data/filtered_vcfs/rural_pops_usc_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
 
 ## Convert vcf to genind object
 my_genind_rur2 <- vcfR2genind(vcf_rur2)
@@ -69,7 +69,7 @@ my_genind_rur2 <- vcfR2genind(vcf_rur2)
 ```{r}
 # vcf
 vcf_subsamp <- read.vcfR(
-  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE)
 
 ## Convert vcf to genind object
 my_genind_subsamp <- vcfR2genind(vcf_subsamp)
@@ -80,7 +80,7 @@ my_genind_subsamp <- vcfR2genind(vcf_subsamp)
 ```{r}
 # vcf
 vcf_urb_subsamp <- read.vcfR(
-  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf"), verbose = FALSE)
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf"), verbose = FALSE)
 
 ## Convert vcf to genind object
 my_genind_urb_subsamp <- vcfR2genind(vcf_urb_subsamp)
@@ -90,7 +90,7 @@ my_genind_urb_subsamp <- vcfR2genind(vcf_urb_subsamp)
 ```{r}
 # vcf
 vcf_rur_subsamp <- read.vcfR(
-  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_RURAL.recode.vcf"), verbose = FALSE)
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_RURAL.recode.vcf"), verbose = FALSE)
 
 ## Convert vcf to genind object
 my_genind_rur_subsamp <- vcfR2genind(vcf_rur_subsamp)

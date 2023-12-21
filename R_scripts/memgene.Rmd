@@ -38,28 +38,28 @@ gen_data <- process_vcf_data(here::here("./summary_stats/output_populations_no-I
 #### JUST URBAN individuals
 ```{r}
 gen_data_urban <- process_vcf_data(
-  here::here("./filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf")
+  here::here("./clean_data/filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
 #### JUST RURAL individuals
 ```{r}
 gen_data_rural <- process_vcf_data(
-  here::here("./filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf")
+  here::here("./clean_data/filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
 #### 1 individual/population
 ```{r}
 gen_data_subsamp <- process_vcf_data(
-  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf")
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
 #### 1 individual/population- RURAL ONLY
 ```{r}
 gen_data_subsamp_rural <- process_vcf_data(
-  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_RURAL.recode.vcf")
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_RURAL.recode.vcf")
   )
 ```
 
@@ -175,7 +175,7 @@ milkweed_analysis_subsamp <- mgQuick(gen_data_subsamp, coords_subsamp)
 # I checked multiple ways that this null result is not from a mis-ordering of samples (that the genetic and geographic data align perfectly). One example:
 # 
 # 
-#  my_genind <- vcfR2genind(read.vcfR(  here::here("./filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE))
+#  my_genind <- vcfR2genind(read.vcfR(  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf"), verbose = FALSE))
 # 
 # my_genind@tab %>% rownames
 #   [1] "1.2_1A10_sorted" "1.2_1A11_sorted" "1.2_1A1_sorted" 

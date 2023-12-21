@@ -39,7 +39,7 @@ pop(my_genind) <- pops[,"population"]
 ### Urban sites
 ```{r}
 vcf_urb <- read.vcfR(
-  here::here("./filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
+  here::here("./clean_data/filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -57,7 +57,7 @@ pop(my_genind_urb) <- pops_urb[,"population"]
 ### Rural sites
 ```{r}
 vcf_rur <- read.vcfR(
-  here::here("./filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
+  here::here("./clean_data/filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -75,7 +75,7 @@ pop(my_genind_rur) <- pops_rur[,"population"]
 ### Sites with >1 individual
 ```{r}
 vcf_larger_pops <- read.vcfR(
-  here::here("./filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_mmaf0.05_variant_sites.recode.vcf"),
+  here::here("./clean_data/filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_mmaf0.05_variant_sites.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -118,7 +118,7 @@ pop(my_genind_larger_pops) <- pops_larger_pops[,"population"]
 ### Sites with >1 individual: URBAN
 ```{r}
 vcf_larger_pops_urb <- read.vcfR(
-  here::here("./filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_URBAN_mmaf0.05_variant_sites.recode.vcf"),
+  here::here("./clean_data/filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_URBAN_mmaf0.05_variant_sites.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -142,7 +142,7 @@ pop(my_genind_larger_pops_urb) <- pops_larger_pops_urb[,"population"]
 ### Sites with >1 individual: RURAL
 ```{r}
 vcf_larger_pops_rur <- read.vcfR(
-  here::here("./filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_RURAL_mmaf0.05_variant_sites.recode.vcf"),
+  here::here("./clean_data/filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_RURAL_mmaf0.05_variant_sites.recode.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
