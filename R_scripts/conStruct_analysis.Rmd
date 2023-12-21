@@ -316,23 +316,23 @@ tmp.order <- match.layers.x.runs(tmp,
 ## Cross-validation
 ### read in non-spatial output
 ```{r}
-nsp_k1 <- read.table(here::here("./conStruct/xval_k1/xval_nsp_xval_results.txt"),
+nsp_k1 <- read.table(here::here("./results/conStruct/xval_k1/xval_nsp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 1)
 
-nsp_k2 <- read.table(here::here("./conStruct/xval_k2_2/xval_nsp_xval_results.txt"),
+nsp_k2 <- read.table(here::here("./results/conStruct/xval_k2_2/xval_nsp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 2)
 
-nsp_k3 <- read.table(here::here("./conStruct/xval_k3/xval_nsp_xval_results.txt"),
+nsp_k3 <- read.table(here::here("./results/conStruct/xval_k3/xval_nsp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 3)
 
-nsp_k4 <- read.table(here::here("./conStruct/xval_k4/xval_nsp_xval_results.txt"),
+nsp_k4 <- read.table(here::here("./results/conStruct/xval_k4/xval_nsp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 4)
 
-nsp_k5 <- read.table(here::here("./conStruct/xval_k5/xval_nsp_xval_results.txt"),
+nsp_k5 <- read.table(here::here("./results/conStruct/xval_k5/xval_nsp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 5)
 
@@ -354,25 +354,25 @@ nsp.CIs <- apply(nsp[, c(1:8)],1,function(x){mean(x) + c(-1.96,1.96) * sd(x)/len
 
 ### read in spatial output
 ```{r}
-sp_k1 <- read.table(here::here("./conStruct/xval_k1/xval_sp_xval_results.txt"),
+sp_k1 <- read.table(here::here("./results/conStruct/xval_k1/xval_sp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 1)
 
-sp_k2 <- read.table(here::here("./conStruct/xval_k2_2/xval_sp_xval_results.txt"),
+sp_k2 <- read.table(here::here("./results/conStruct/xval_k2_2/xval_sp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 2)
 
 
-sp_k3 <- read.table(here::here("./conStruct/xval_k3/xval_sp_xval_results.txt"),
+sp_k3 <- read.table(here::here("./results/conStruct/xval_k3/xval_sp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 3)
 
 
-sp_k4 <- read.table(here::here("./conStruct/xval_k4/xval_sp_xval_results.txt"),
+sp_k4 <- read.table(here::here("./results/conStruct/xval_k4/xval_sp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 4)
 
-sp_k5 <- read.table(here::here("./conStruct/xval_k5/xval_sp_xval_results.txt"),
+sp_k5 <- read.table(here::here("./results/conStruct/xval_k5/xval_sp_xval_results.txt"),
                      header=T, sep="\ ") %>%
   dplyr::mutate("k" = 5)
 

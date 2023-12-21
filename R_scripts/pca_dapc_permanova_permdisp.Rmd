@@ -10,10 +10,10 @@ source(here::here("functions.R"))
 ```{r}
 # pca data
 pca <- read_table(
-  here::here("./plink_files_mmaf0.05_R0.75/mmaf0.05_R0.75.eigenvec"), 
+  here::here("./results/plink_files_mmaf0.05_R0.75/mmaf0.05_R0.75.eigenvec"), 
   col_names = FALSE)
 
-eigenval <- scan(here::here("./plink_files_mmaf0.05_R0.75/mmaf0.05_R0.75.eigenval"))
+eigenval <- scan(here::here("./results/plink_files_mmaf0.05_R0.75/mmaf0.05_R0.75.eigenval"))
 
 # urbanization data
 urb <- read.csv(here("./clean_data/urb_metrics.csv")) %>%
