@@ -173,7 +173,7 @@ thetas %>%
 ## Export theta W and pi
 ### Add pi values
 ```{r}
-# values from ./pi_fst_TajD_estimates/pi/dist_to_city_center/UR_dist_pi_vcf-all/populations.sumstats_summary.tsv, and from analogous tsvs
+# values from ./results/pi_fst_TajD_estimates/pi/dist_to_city_center/UR_dist_pi_vcf-all/populations.sumstats_summary.tsv, and from analogous tsvs
 
 # Global pi-----
 pi_global <- 0.00091

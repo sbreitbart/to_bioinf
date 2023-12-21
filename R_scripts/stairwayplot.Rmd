@@ -14,7 +14,7 @@ source(here::here("./R_scripts/exploration/vcf2sfs_code.R"))
 
 ## get path to vcf
 ```{r}
-vcf_address <- here::here("./pi_fst_TajD_estimates/pi/global_pi/global_pi_vcf-all/populations.all.vcf")
+vcf_address <- here::here("./results/pi_fst_TajD_estimates/pi/global_pi/global_pi_vcf-all/populations.all.vcf")
 
 ```
 
