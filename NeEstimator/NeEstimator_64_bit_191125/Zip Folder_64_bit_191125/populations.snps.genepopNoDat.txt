@@ -1,0 +1,1128 @@
+Missing data from input file populations.snps.genepop.txt.
+
+Possible four types of missing data at a locus:
+	1. Genotype contains only zeros or partially scored.
+	2. Genotype has less digits than normal one.
+	3. Genotype has more digits than normal one.
+	4. Genotype contains non-digit character.
+Types 3 and 4 stop the program.
+
+In the table, each row is for an individual with missing data
+(a) If column 'Locus' has only one number, then it is the first
+    locus with missing data and also of highest missing data type.
+(b) If column 'Locus' has 2 numbers, then the first number is
+    the first locus with data missing, and the second number is
+    the first locus that has highest missing data type.
+(c) Genotype column contains the genotype of the locus in case (a)
+    or the second locus in case (b).
+
+Population 1 [1.2_1A10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           381
+       2           21             0000           692
+       3           54             0000           672
+       4           21             0000           633
+-----------------------------------------------------------
+Total missing data for population    1:         2378
+
+Population 2 [1.2_1A11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           56             0000           289
+       2           23             0000           552
+       3           23             0000           646
+       4           21             0000           929
+       5           57             0000           351
+-----------------------------------------------------------
+Total missing data for population    2:         2767
+
+Population 3 [1.2_1A1_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           50             0000           743
+       2           23             0000           361
+       3           28             0000           849
+       4           56             0000           434
+-----------------------------------------------------------
+Total missing data for population    3:         2387
+
+Population 4 [1.2_1A2_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           568
+       2           26             0000           832
+       3           29             0000           335
+       4           23             0000           456
+       5           23             0000           650
+-----------------------------------------------------------
+Total missing data for population    4:         2841
+
+Population 5 [1.2_1A3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           281
+       2           26             0000           676
+       3           21             0000           608
+       4           21             0000           324
+       5           21             0000           381
+-----------------------------------------------------------
+Total missing data for population    5:         2270
+
+Population 6 [1.2_1A4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           412
+       2           21             0000           360
+       3           21             0000           304
+       4           21             0000           506
+       5           23             0000           731
+-----------------------------------------------------------
+Total missing data for population    6:         2313
+
+Population 7 [1.2_1A5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           416
+       2           21             0000           952
+       3           23             0000           476
+-----------------------------------------------------------
+Total missing data for population    7:         1844
+
+Population 8 [1.2_1A7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           35             0000           413
+       2           33             0000           536
+       3           54             0000           686
+       4           36             0000           354
+-----------------------------------------------------------
+Total missing data for population    8:         1989
+
+Population 9 [1.2_1A8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           436
+       2           35             0000           744
+       3           59             0000           496
+       4           58             0000           600
+-----------------------------------------------------------
+Total missing data for population    9:         2276
+
+Population 10 [1.2_1A9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           670
+-----------------------------------------------------------
+Total missing data for population   10:          670
+
+Population 11 [1.2_1B10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           778
+       2           21             0000           304
+-----------------------------------------------------------
+Total missing data for population   11:         1082
+
+Population 12 [1.2_1B1_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           509
+       2           23             0000           391
+       3           23             0000           420
+       4           23             0000           622
+-----------------------------------------------------------
+Total missing data for population   12:         1942
+
+Population 13 [1.2_1B2_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           47             0000           261
+       2           21             0000           460
+       3           33             0000           448
+       4           25             0000           565
+-----------------------------------------------------------
+Total missing data for population   13:         1734
+
+Population 14 [1.2_1B4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           57             0000           717
+       2           54             0000          1125
+       3           26             0000          1145
+       4           35             0000          1395
+       5           36             0000          1026
+-----------------------------------------------------------
+Total missing data for population   14:         5408
+
+Population 15 [1.2_1B5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           401
+       2           21             0000           563
+       3           21             0000           686
+       4           28             0000           517
+-----------------------------------------------------------
+Total missing data for population   15:         2167
+
+Population 16 [1.2_1B6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           33             0000           347
+       2           35             0000           370
+-----------------------------------------------------------
+Total missing data for population   16:          717
+
+Population 17 [1.2_1B7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000          1162
+       2           23             0000           775
+       3           23             0000           681
+       4           21             0000           976
+       5           56             0000           576
+-----------------------------------------------------------
+Total missing data for population   17:         4170
+
+Population 18 [1.2_1B8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           456
+       2           35             0000           638
+       3           26             0000          1188
+-----------------------------------------------------------
+Total missing data for population   18:         2282
+
+Population 19 [1.2_1B9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           57             0000           342
+       2           21             0000           314
+       3           26             0000           987
+       4           23             0000           352
+       5           54             0000           471
+-----------------------------------------------------------
+Total missing data for population   19:         2466
+
+Population 20 [1.2_1C10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           464
+       2           23             0000           566
+       3           21             0000           358
+-----------------------------------------------------------
+Total missing data for population   20:         1388
+
+Population 21 [1.2_1C2_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           389
+       2           23             0000           462
+       3           21             0000           542
+       4           23             0000           350
+       5           49             0000           522
+-----------------------------------------------------------
+Total missing data for population   21:         2265
+
+Population 22 [1.2_1C3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           541
+       2           21             0000           983
+       3           21             0000           449
+       4           23             0000           508
+       5           23             0000          1262
+-----------------------------------------------------------
+Total missing data for population   22:         3743
+
+Population 23 [1.2_1C5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           703
+       2           15             0000           609
+       3           23             0000           511
+       4           21             0000           520
+       5           26             0000           422
+-----------------------------------------------------------
+Total missing data for population   23:         2765
+
+Population 24 [1.2_1C6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           25             0000           328
+       2           50             0000           805
+       3           54             0000          1268
+       4           26             0000          1047
+       5           23             0000           398
+-----------------------------------------------------------
+Total missing data for population   24:         3846
+
+Population 25 [1.2_1D1_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           274
+       2           29             0000           679
+       3           23             0000           820
+       4           21             0000           654
+       5           23             0000           366
+-----------------------------------------------------------
+Total missing data for population   25:         2793
+
+Population 26 [1.2_1D3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           680
+       2           21             0000           744
+       3           35             0000           457
+       4           58             0000           399
+       5           21             0000           771
+-----------------------------------------------------------
+Total missing data for population   26:         3051
+
+Population 27 [1.2_1D4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           560
+-----------------------------------------------------------
+Total missing data for population   27:          560
+
+Population 28 [1.2_1D5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           480
+       2           32             0000           458
+       3           56             0000           383
+       4           21             0000           286
+-----------------------------------------------------------
+Total missing data for population   28:         1607
+
+Population 29 [1.2_1D6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           22             0000           638
+       2           23             0000           349
+       3           21             0000           506
+       4           21             0000           983
+       5           21             0000           933
+-----------------------------------------------------------
+Total missing data for population   29:         3409
+
+Population 30 [1.2_1E11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           35             0000           442
+-----------------------------------------------------------
+Total missing data for population   30:          442
+
+Population 31 [1.2_1E8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           24             0000          1103
+-----------------------------------------------------------
+Total missing data for population   31:         1103
+
+Population 32 [1.2_1F1_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           35             0000           463
+       2           35             0000          1280
+       3           54             0000           682
+       4           54             0000           454
+       5           21             0000           878
+-----------------------------------------------------------
+Total missing data for population   32:         3757
+
+Population 33 [1.2_1F5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           510
+       2           23             0000           362
+       3           35             0000           338
+-----------------------------------------------------------
+Total missing data for population   33:         1210
+
+Population 34 [1.2_1F7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           24             0000           734
+       2           35             0000           412
+       3           23             0000           557
+       4           35             0000          1014
+       5           21             0000           879
+-----------------------------------------------------------
+Total missing data for population   34:         3596
+
+Population 35 [1.2_1F8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           466
+       2           54             0000          1174
+       3           23             0000           445
+-----------------------------------------------------------
+Total missing data for population   35:         2085
+
+Population 36 [1.2_1G2_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           654
+       2           23             0000           795
+       3           25             0000           532
+       4           54             0000           454
+       5           21             0000           408
+-----------------------------------------------------------
+Total missing data for population   36:         2843
+
+Population 37 [1.2_1G6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           388
+       2           21             0000           319
+-----------------------------------------------------------
+Total missing data for population   37:          707
+
+Population 38 [1.2_1H10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000          1271
+       2           35             0000           956
+       3           25             0000           598
+       4           35             0000           392
+-----------------------------------------------------------
+Total missing data for population   38:         3217
+
+Population 39 [1.2_1H1_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           574
+       2           35             0000           530
+       3           41             0000           488
+       4           23             0000           445
+       5           21             0000           920
+-----------------------------------------------------------
+Total missing data for population   39:         2957
+
+Population 40 [1.2_1H2_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           16             0000           800
+       2           25             0000           642
+       3           23             0000           714
+       4           29             0000          1059
+-----------------------------------------------------------
+Total missing data for population   40:         3215
+
+Population 41 [1.2_1H4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           663
+       2           50             0000           421
+-----------------------------------------------------------
+Total missing data for population   41:         1084
+
+Population 42 [1.2_1H8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           504
+       2           23             0000           372
+       3           21             0000          1016
+       4           21             0000           691
+-----------------------------------------------------------
+Total missing data for population   42:         2583
+
+Population 43 [1.2_1H9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           476
+       2           21             0000           503
+       3           55             0000           497
+-----------------------------------------------------------
+Total missing data for population   43:         1476
+
+Population 44 [1.2_2A2_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           35             0000           353
+       2           54             0000           317
+-----------------------------------------------------------
+Total missing data for population   44:          670
+
+Population 45 [1.2_2A3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           825
+       2           23             0000           573
+       3           21             0000           769
+       4           21             0000           410
+-----------------------------------------------------------
+Total missing data for population   45:         2577
+
+Population 46 [1.2_2A5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           376
+       2           35             0000           449
+       3           21             0000          1261
+-----------------------------------------------------------
+Total missing data for population   46:         2086
+
+Population 47 [1.2_2A8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           33             0000           489
+       2           21             0000           345
+       3           29             0000           504
+       4           21             0000           508
+       5           57             0000           623
+-----------------------------------------------------------
+Total missing data for population   47:         2469
+
+Population 48 [1.2_2B7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           55             0000          1172
+       2           23             0000           567
+       3           21             0000          1149
+-----------------------------------------------------------
+Total missing data for population   48:         2888
+
+Population 49 [1.2_2C8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           431
+       2           54             0000           535
+-----------------------------------------------------------
+Total missing data for population   49:          966
+
+Population 50 [3A_A11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           378
+-----------------------------------------------------------
+Total missing data for population   50:          378
+
+Population 51 [3A_A12_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           421
+-----------------------------------------------------------
+Total missing data for population   51:          421
+
+Population 52 [3A_A4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           386
+-----------------------------------------------------------
+Total missing data for population   52:          386
+
+Population 53 [3A_A5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           363
+-----------------------------------------------------------
+Total missing data for population   53:          363
+
+Population 54 [3A_A6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           33             0000           445
+-----------------------------------------------------------
+Total missing data for population   54:          445
+
+Population 55 [3A_A7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           331
+-----------------------------------------------------------
+Total missing data for population   55:          331
+
+Population 56 [3A_A8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           269
+-----------------------------------------------------------
+Total missing data for population   56:          269
+
+Population 57 [3A_A9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000          1123
+-----------------------------------------------------------
+Total missing data for population   57:         1123
+
+Population 58 [3A_B10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           341
+-----------------------------------------------------------
+Total missing data for population   58:          341
+
+Population 59 [3A_B11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           543
+-----------------------------------------------------------
+Total missing data for population   59:          543
+
+Population 60 [3A_B12_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           29             0000           418
+-----------------------------------------------------------
+Total missing data for population   60:          418
+
+Population 61 [3A_B1_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           376
+-----------------------------------------------------------
+Total missing data for population   61:          376
+
+Population 62 [3A_B4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           311
+-----------------------------------------------------------
+Total missing data for population   62:          311
+
+Population 63 [3A_B5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           360
+-----------------------------------------------------------
+Total missing data for population   63:          360
+
+Population 64 [3A_B6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           36             0000           329
+-----------------------------------------------------------
+Total missing data for population   64:          329
+
+Population 65 [3A_B7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           951
+-----------------------------------------------------------
+Total missing data for population   65:          951
+
+Population 66 [3A_B8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000          1192
+-----------------------------------------------------------
+Total missing data for population   66:         1192
+
+Population 67 [3A_B9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000          1177
+-----------------------------------------------------------
+Total missing data for population   67:         1177
+
+Population 68 [3A_C10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           831
+-----------------------------------------------------------
+Total missing data for population   68:          831
+
+Population 69 [3A_C11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           301
+-----------------------------------------------------------
+Total missing data for population   69:          301
+
+Population 70 [3A_C12_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           781
+-----------------------------------------------------------
+Total missing data for population   70:          781
+
+Population 71 [3A_C4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000          1193
+-----------------------------------------------------------
+Total missing data for population   71:         1193
+
+Population 72 [3A_C5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           350
+-----------------------------------------------------------
+Total missing data for population   72:          350
+
+Population 73 [3A_C6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           56             0000           376
+-----------------------------------------------------------
+Total missing data for population   73:          376
+
+Population 74 [3A_C7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000          1022
+-----------------------------------------------------------
+Total missing data for population   74:         1022
+
+Population 75 [3A_C8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000          1090
+-----------------------------------------------------------
+Total missing data for population   75:         1090
+
+Population 76 [3A_C9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           31             0000           904
+-----------------------------------------------------------
+Total missing data for population   76:          904
+
+Population 77 [3A_D10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           297
+-----------------------------------------------------------
+Total missing data for population   77:          297
+
+Population 78 [3A_D11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           303
+-----------------------------------------------------------
+Total missing data for population   78:          303
+
+Population 79 [3A_D12_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           289
+-----------------------------------------------------------
+Total missing data for population   79:          289
+
+Population 80 [3A_D4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           56             0000           318
+-----------------------------------------------------------
+Total missing data for population   80:          318
+
+Population 81 [3A_D5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           57             0000           452
+-----------------------------------------------------------
+Total missing data for population   81:          452
+
+Population 82 [3A_D6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           878
+-----------------------------------------------------------
+Total missing data for population   82:          878
+
+Population 83 [3A_D7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           55             0000           367
+-----------------------------------------------------------
+Total missing data for population   83:          367
+
+Population 84 [3A_D8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           57             0000           286
+-----------------------------------------------------------
+Total missing data for population   84:          286
+
+Population 85 [3A_D9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           55             0000           454
+-----------------------------------------------------------
+Total missing data for population   85:          454
+
+Population 86 [3A_E10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           28             0000           256
+-----------------------------------------------------------
+Total missing data for population   86:          256
+
+Population 87 [3A_E11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           351
+-----------------------------------------------------------
+Total missing data for population   87:          351
+
+Population 88 [3A_E12_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           289
+-----------------------------------------------------------
+Total missing data for population   88:          289
+
+Population 89 [3A_E3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           735
+-----------------------------------------------------------
+Total missing data for population   89:          735
+
+Population 90 [3A_E4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           56             0000           334
+-----------------------------------------------------------
+Total missing data for population   90:          334
+
+Population 91 [3A_E5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           966
+-----------------------------------------------------------
+Total missing data for population   91:          966
+
+Population 92 [3A_E6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           338
+-----------------------------------------------------------
+Total missing data for population   92:          338
+
+Population 93 [3A_E8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           34             0000           687
+-----------------------------------------------------------
+Total missing data for population   93:          687
+
+Population 94 [3A_E9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000          1478
+-----------------------------------------------------------
+Total missing data for population   94:         1478
+
+Population 95 [3A_F10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           361
+-----------------------------------------------------------
+Total missing data for population   95:          361
+
+Population 96 [3A_F11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           416
+-----------------------------------------------------------
+Total missing data for population   96:          416
+
+Population 97 [3A_F12_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           14             0000           945
+-----------------------------------------------------------
+Total missing data for population   97:          945
+
+Population 98 [3A_F3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           403
+-----------------------------------------------------------
+Total missing data for population   98:          403
+
+Population 99 [3A_F4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           56             0000           342
+-----------------------------------------------------------
+Total missing data for population   99:          342
+
+Population 100 [3A_F5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           900
+-----------------------------------------------------------
+Total missing data for population  100:          900
+
+Population 101 [3A_F6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           472
+-----------------------------------------------------------
+Total missing data for population  101:          472
+
+Population 102 [3A_F7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           578
+-----------------------------------------------------------
+Total missing data for population  102:          578
+
+Population 103 [3A_F8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           358
+-----------------------------------------------------------
+Total missing data for population  103:          358
+
+Population 104 [3A_F9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000          1420
+-----------------------------------------------------------
+Total missing data for population  104:         1420
+
+Population 105 [3A_G10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           325
+-----------------------------------------------------------
+Total missing data for population  105:          325
+
+Population 106 [3A_G11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           35             0000           302
+-----------------------------------------------------------
+Total missing data for population  106:          302
+
+Population 107 [3A_G12_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           527
+-----------------------------------------------------------
+Total missing data for population  107:          527
+
+Population 108 [3A_G3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000          1200
+-----------------------------------------------------------
+Total missing data for population  108:         1200
+
+Population 109 [3A_G4_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           35             0000           484
+-----------------------------------------------------------
+Total missing data for population  109:          484
+
+Population 110 [3A_G5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           320
+-----------------------------------------------------------
+Total missing data for population  110:          320
+
+Population 111 [3A_G6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           54             0000           919
+-----------------------------------------------------------
+Total missing data for population  111:          919
+
+Population 112 [3A_G7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           325
+-----------------------------------------------------------
+Total missing data for population  112:          325
+
+Population 113 [3A_G8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000           309
+-----------------------------------------------------------
+Total missing data for population  113:          309
+
+Population 114 [3A_G9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           21             0000          1013
+-----------------------------------------------------------
+Total missing data for population  114:         1013
+
+Population 115 [3A_H10_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           33             0000          1336
+-----------------------------------------------------------
+Total missing data for population  115:         1336
+
+Population 116 [3A_H11_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           980
+-----------------------------------------------------------
+Total missing data for population  116:          980
+
+Population 117 [3A_H3_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           415
+-----------------------------------------------------------
+Total missing data for population  117:          415
+
+Population 118 [3A_H5_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           29             0000           474
+-----------------------------------------------------------
+Total missing data for population  118:          474
+
+Population 119 [3A_H6_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           36             0000           625
+-----------------------------------------------------------
+Total missing data for population  119:          625
+
+Population 120 [3A_H7_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           35             0000           424
+-----------------------------------------------------------
+Total missing data for population  120:          424
+
+Population 121 [3A_H8_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           23             0000           398
+-----------------------------------------------------------
+Total missing data for population  121:          398
+
+Population 122 [3A_H9_sorted]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           37             0000          1209
+-----------------------------------------------------------
+Total missing data for population  122:         1209
+
