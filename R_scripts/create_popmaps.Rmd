@@ -153,7 +153,7 @@ data <- full_popmap %>%
 populations <- unique(data$patch_id)
 sample_lists <- vector("list", length(populations))
 
-output_dir <- here("./genomic_resources/pop_maps_urban")
+output_dir <- here("./clean_data/pop_maps/pop_maps_urban")
 
 for (i in 1:length(populations)) {
   # Subset the data for the current population
@@ -232,7 +232,7 @@ data <- full_popmap %>%
 populations <- unique(data$patch_id)
 sample_lists <- vector("list", length(populations))
 
-output_dir <- here("./genomic_resources/pop_maps_urban_usc")
+output_dir <- here("./clean_data/pop_maps/pop_maps_urban_usc")
 
 for (i in 1:length(populations)) {
   # Subset the data for the current population
@@ -313,7 +313,7 @@ data <- full_popmap %>%
 populations <- unique(data$patch_id)
 sample_lists <- vector("list", length(populations))
 
-output_dir <- here("./genomic_resources/pop_maps_rural")
+output_dir <- here("./clean_data/pop_maps/pop_maps_rural")
 
 for (i in 1:length(populations)) {
   # Subset the data for the current population
@@ -393,7 +393,7 @@ data <- full_popmap %>%
 populations <- unique(data$patch_id)
 sample_lists <- vector("list", length(populations))
 
-output_dir <- here("./genomic_resources/pop_maps_rural_usc")
+output_dir <- here("./clean_data/pop_maps/pop_maps_rural_usc")
 
 for (i in 1:length(populations)) {
   # Subset the data for the current population
