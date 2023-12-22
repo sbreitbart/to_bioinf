@@ -8,6 +8,7 @@ source(here::here("functions.R"))
 ```
 
 ## Import files
+### All individuals
 ```{r}
 # pop map with populations
 pops <- read.csv(here("./genomic_resources/pop_map3.csv"))
@@ -31,7 +32,7 @@ pops <- full_join(pops,
 
 # vcf
 vcf <- read.vcfR(
-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -40,13 +41,94 @@ my_genind <- vcfR2genind(vcf)
 
 # add pops to genind
 strata(my_genind) <- pops
+pop(my_genind) <- pops[,"population"]
+```
+
+### Urban sites
+```{r}
+vcf_urb <- read.vcfR(
+  here::here("./clean_data/filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_urb <- vcfR2genind(vcf_urb)
+
+
+# read in pop map with populations
+pops_urb <- read.csv(here("./clean_data/pop_maps/pop_map3_U_dist.csv"))
+
+# add pops to genind
+strata(my_genind_urb) <- pops_urb
+pop(my_genind_urb) <- pops_urb[,"population"]
+```
+
+### Rural sites
+```{r}
+vcf_rur <- read.vcfR(
+  here::here("./clean_data/filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_rur <- vcfR2genind(vcf_rur)
+
+
+# read in pop map with populations
+pops_rur <- read.csv(here("./clean_data/pop_maps/pop_map3_R_dist.csv"))
+
+# add pops to genind
+strata(my_genind_rur) <- pops_rur
+pop(my_genind_rur) <- pops_rur[,"population"]
+```
+
+### Sites with >1 individual
+```{r}
+vcf_larger_pops <- read.vcfR(
+  here::here("./clean_data/filtered_vcfs/pops_MORE_THAN_1indiv_per_pop_mmaf0.05_variant_sites.recode.vcf"),
+  verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_larger_pops <- vcfR2genind(vcf_larger_pops)
+
+
+
+# read in pop map with ALL populations
+pops_all <- read.csv(here("./genomic_resources/pop_map3.csv"))
+
+# read in pop map with ONLY populations >1 indiv
+pops_larger <- read.csv(here("./clean_data/pop_maps/pop_map3_MORE_THAN_1indiv_per_pop.csv")) %>%
+  dplyr::rename(population = pop_id) %>%
+  dplyr::mutate(population = as.character(population))
+
+# pop map with urban/rural designations
+pops_UR <- read.delim(here("./clean_data/pop_maps/pop_map3_UR_dist.txt"),
+                      header = F) %>%
+  dplyr::rename("sample" = 1,
+                "urban_rural" = 2)
+
+
+
+# join pop maps
+pops_larger_pops <- full_join(pops_all,
+                  pops_UR,
+                  by = "sample") %>%
+  # keep only pops with >1 indiv
+  dplyr::right_join(.,
+                    pops_larger,
+                    by = c("sample", "population"))
+
+
+
+# add pops to genind
+strata(my_genind_larger_pops) <- pops_larger_pops
+pop(my_genind_larger_pops) <- pops_larger_pops[,"population"]
 ```
 
 # AMOVA- Analysis of Molecular Variance
+## All individuals
 ```{r}
 # estimate the percent of molecular variance at each hierarchical level
 amova.result <- poppr::poppr.amova(my_genind,
-                hier = ~ urban_rural/population, 
+                hier = ~urban_rural/population, 
                 within=FALSE, # specifies that within-individual variance (i.e., observed heterozygosity) should not be tested. Setting this to ‘TRUE’ can lead to problems with missing values.
                 method = "ade4")
 
@@ -59,6 +141,129 @@ amova.test
 
 # plot
 plot(amova.test)
+```
+
+## Urban individuals
+```{r}
+# estimate the percent of molecular variance at each hierarchical level
+amova.urban <- poppr::poppr.amova(my_genind_urb,
+                hier = ~population, 
+                within=FALSE, 
+                method = "ade4")
+
+amova.urban
+
+
+# $call
+# ade4::amova(samples = xtab, distances = xdist, structures = xstruct)
+# 
+# $results
+#                  Df    Sum Sq  Mean Sq
+# Between samples  61  4408.614 72.27236
+# Within samples   88  6522.134 74.11516
+# Total           149 10930.749 73.36073
+# 
+# $componentsofcovariance
+#                                  Sigma          %
+# Variations  Between samples -0.7673451  -1.046173
+# Variations  Within samples  74.1151647 101.046173
+# Total variations            73.3478196 100.000000
+# 
+# $statphi
+#                           Phi
+# Phi-samples-total -0.01046173
+
+
+
+
+# test whether variance component is statistically significant (i.e., significantly larger than zero)
+amova.test_urb <- ade4::randtest(amova.urban, nrepet = 999)
+
+amova.test_urb
+
+```
+
+## Rural individuals
+```{r}
+# estimate the percent of molecular variance at each hierarchical level
+amova.rural <- poppr::poppr.amova(my_genind_rur,
+                hier = ~population, 
+                within=FALSE,
+                method = "ade4")
+
+amova.rural
+
+# $call
+# ade4::amova(samples = xtab, distances = xdist, structures = xstruct)
+# 
+# $results
+#                  Df   Sum Sq  Mean Sq
+# Between samples  59 4045.743 68.57191
+# Within samples   46 3168.011 68.86981
+# Total           105 7213.754 68.70242
+# 
+# $componentsofcovariance
+#                                  Sigma           %
+# Variations  Between samples -0.1705773  -0.2482958
+# Variations  Within samples  68.8698096 100.2482958
+# Total variations            68.6992323 100.0000000
+# 
+# $statphi
+#                            Phi
+# Phi-samples-total -0.002482958
+
+
+
+
+
+
+# test whether variance component is statistically significant (i.e., significantly larger than zero)
+amova.test_rur <- ade4::randtest(amova.rural, nrepet = 999)
+
+amova.test_rur
+
+```
+
+## Sites with >1 individual
+```{r}
+amova.larger_pops <- poppr::poppr.amova(my_genind_larger_pops,
+                hier = ~urban_rural/population, 
+                within=FALSE,
+                method = "ade4")
+
+amova.larger_pops
+
+# $call
+# ade4::amova(samples = xtab, distances = xdist, structures = xstruct)
+# 
+# $results
+#                                     Df      Sum Sq  Mean Sq
+# Between urban_rural                  1    69.37201 69.37201
+# Between samples Within urban_rural  43  3164.14861 73.58485
+# Within samples                     134  9462.89198 70.61860
+# Total                              178 12696.41260 71.32816
+# 
+# $componentsofcovariance
+#                                                      Sigma            %
+# Variations  Between urban_rural                -0.05657655  -0.07933814
+# Variations  Between samples Within urban_rural  0.74864234   1.04983226
+# Variations  Within samples                     70.61859686  99.02950588
+# Total variations                               71.31066264 100.00000000
+# 
+# $statphi
+#                                   Phi
+# Phi-samples-total        0.0097049412
+# Phi-samples-urban_rural  0.0104900000
+# Phi-urban_rural-total   -0.0007933814
+
+
+
+
+# test whether variance component is statistically significant (i.e., significantly larger than zero)
+amova.test_larger_pops <- ade4::randtest(amova.larger_pops, nrepet = 999)
+
+amova.test_larger_pops
+
 ```
 
 # Export

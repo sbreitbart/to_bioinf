@@ -8,7 +8,7 @@ source(here::here("libraries.R"))
 ### All sites
 ```{r}
 vcf <- read.vcfR(
-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object
@@ -664,7 +664,7 @@ fst_hudson_matrix <- fst_hudson_pairwise(X, labs)
 
 
 # this will only work for one hierarchical level... not multiple at once.
-vcf_h <- hierfstat::read.VCF(here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"))
+vcf_h <- hierfstat::read.VCF(here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"))
 
 fs.dosage(vcf_h,
           pop = pops[,2])

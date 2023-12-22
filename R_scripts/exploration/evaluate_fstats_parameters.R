@@ -20,19 +20,19 @@ extract_samples_per_locus <- function(files) {
 
 
 file_paths <- c(
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial01/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial02/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial03/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial04/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial05/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial06/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial07/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial08/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial09/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial10/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial11/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial12/populations.log.distribs"),
-  here::here("./summary_stats/trial_02/output_filtering_fstats_trial13/populations.log.distribs")
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial01/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial02/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial03/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial04/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial05/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial06/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial07/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial08/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial09/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial10/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial11/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial12/populations.log.distribs"),
+  here::here("./clean_data/stacks_output/trial_02/output_filtering_fstats_trial13/populations.log.distribs")
 )
 
 samples_per_locus <- extract_samples_per_locus(file_paths)

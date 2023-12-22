@@ -23,7 +23,7 @@ Following this guide: https://cran.r-project.org/web/packages/conStruct/vignette
 This is the "Allele frequency data".
 ```{r}
 allele_frqs <- conStruct::structure2conStruct(
-  infile = here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.structure.txt"),
+  infile = here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.structure.txt"),
   onerowperind = FALSE,
   start.loci = 3,
   start.samples = 2,

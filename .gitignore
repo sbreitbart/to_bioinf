@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 to_sgs-main_20230306
-summary_stats
+stacks_output
 qc_reports
 Urb_Index_SGS
 GBS-PreProcess-master
@@ -18,3 +18,6 @@ R_dist_fst_vcf-all
 surface1.rds
 surface2.RData
 pi_fst_TajD_estimates
+.ipynb_checkpoints
+Hudson_fst.ipynb
+hudson_fst_script.py

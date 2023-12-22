@@ -234,7 +234,7 @@ n_unique_pops <- pops %>%
 
 # vcf
 vcf <- read.vcfR(
-  here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
+  here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"),
   verbose = FALSE)
 
 ## Convert vcf to genind object

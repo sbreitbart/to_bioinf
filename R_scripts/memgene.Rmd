@@ -31,7 +31,7 @@ process_vcf_data <- function(vcf_filepath) {
 
 #### All individuals
 ```{r}
-gen_data <- process_vcf_data(here::here("./summary_stats/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"))
+gen_data <- process_vcf_data(here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"))
 
 ```
 
