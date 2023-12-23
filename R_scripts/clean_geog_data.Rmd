@@ -1,22 +1,18 @@
 # Set up notebook
 ## Load packages
 ```{r}
-library(tidyverse)
-library(here)
-library(magrittr)
-library(janitor)
-library(geosphere)
+source("libraries.R")
 ```
 
 # Import data
 ```{r}
 # urbanization data
-urb <- read.csv(here::here("./raw_data/102_Sites_updatedASlatlongs.csv")) %>%
+urb <- read.csv(here::here("./raw_data/sample_site_data/102_Sites_updatedASlatlongs.csv")) %>%
   janitor::clean_names() %>%
   dplyr::select(-c(6,7,8))
 
 # urbanization score data
-usc <- read.csv(here::here("./raw_data/Urb_index_sgs.csv")) %>%
+usc <- read.csv(here::here("./raw_data/sample_site_data/Urb_index_sgs.csv")) %>%
   janitor::clean_names()
 ```
 
