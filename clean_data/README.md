@@ -24,7 +24,7 @@ This folder contains site frequency spectrum data used for demographic modelling
 
 ### stacks_output
 
-This folder contains...
+This folder contains output from Stacks `refmap` and `population` scripts.
 
 ## File descriptions
 
