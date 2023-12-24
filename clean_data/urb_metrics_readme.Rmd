@@ -1,0 +1,25 @@
+# urb_metrics.csv readme
+
+## Column meanings
+
+"site_id": One of two sampling site identifiers (with patch_id). During the first data collection event along the urbanization gradient extending west from the city center, sites were given an identifier starting with "AS" for *Asclepias syriaca*. Some of these sites were within 500m of one another (could be the same deme), so we created a second identifier, "MW" (for milkweed), to differentiate the sites that were >500m apart. When we went out for the second data collection event, along multiple urbanization gradients expanding east, west, and north of the city center, we gave the sampling sites new identifiers starting with "MWI".
+
+"patch_id": See description for "site_id", above. We used "patch_id" as the main identifier and kept "site_id" primarily for joining with other datasets.
+
+"lat": Each sampling site's latitude.
+
+"long": Each sampling site's longitude.
+
+"urb_rur": During the data collection event when we sampled the "MWI" plants, we also noted whether the site was in an urban or rural area. We didn't use these data further.
+
+"quadrant": During the data collection event when we sampled the "MWI" plants, we also noted which 10x10 km (rural) or 2.5x2.5 km (urban) quadrant (on a map) was associated with the sampling site. We didn't use these data further.
+
+"river_valley": During the data collection event when we sampled the "MWI" plants, we also noted whether the sampling site was in a quadrant intersected by a river valley (on the map). We didn't use these data further.
+
+"urb_score": The Urbanization Score associated with each sampling site. Scores range from ~-4 (very rural) to ~4 (very urban).
+
+"City_dist": The distance, in km, from each sampling site to the Yonge/Dundas intersection in Toronto, ON (43.656327, -79.380904).
+
+"u_r_dist": Binary classification of a sampling site as urban or rural based on distance to the city center: if the distance was <= 30 km, it was designated as urban; otherwise, rural.
+
+"u_r_usc": Binary classification of a sampling site as urban or rural based on Urbanization Score: if the urb. score was > 0, it was designated as urban; otherwise, rural.

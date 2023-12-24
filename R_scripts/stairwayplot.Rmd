@@ -9,7 +9,7 @@ source("libraries.R")
 ```{r}
 # can't install this package so copied the R code into my own file, load it
 
-source(here::here("./R_scripts/exploration/vcf2sfs_code.R"))
+source(here::here("./R_scripts/vcf2sfs_code.R"))
 ```
 
 ## get path to vcf

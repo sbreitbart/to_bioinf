@@ -4,7 +4,7 @@
 
 `1indiv_per_mmaf0.05_variant_sites_RURAL`...: files with this in the filename were created when filtering the vcf created with Stacks `populations`.
 
-* To create the original vcf, the first script's filtering criteria included setting the minimum minor allele frequency (mmaf) to 0.05 and the minimum percentage of individuals across populations required to process a locus. (R) to 0.75. This vcf only included variant sites (i.e., excluding the monomorphic sites).
+* To create the original vcf, the first script's filtering criteria included setting the minimum minor allele frequency (mmaf) to 0.05 and the minimum percentage of individuals across populations required to process a locus (R) to 0.75. This vcf only included variant sites (i.e., excluding the monomorphic sites).
 
 * To filter the original vcf and create this one, only rural sampling sites (when categorized based on distance to the city center) were included. Also, only one individual per sampling site was included.
 

@@ -1,0 +1,29 @@
+# sample_site_data readme
+
+## 102_Sites_updatedASlatlongs.csv column meanings
+
+"Site_ID": One of two sampling site identifiers (with Patch_ID). During the first data collection event along the urbanization gradient extending west from the city center, sites were given an identifier starting with "AS" for *Asclepias syriaca*. Some of these sites were within 500m of one another (could be the same deme), so we created a second identifier, "MW" (for milkweed), to differentiate the sites that were >500m apart. When we went out for the second data collection event, along multiple urbanization gradients expanding east, west, and north of the city center, we gave the sampling sites new identifiers starting with "MWI".
+
+"Patch_ID": See description for "Site_ID", above. We used "Patch_ID" as the main identifier and kept "Site_ID" primarily for joining with other datasets.
+
+"lat": Each sampling site's latitude.
+
+"long": Each sampling site's longitude.
+
+"Urb_Rur": During the data collection event when we sampled the "MWI" plants, we also noted whether the site was in an urban or rural area. We didn't use these data further.
+
+"Updated_latlong", "Updated_urbrural", and "Incorrect_outdated_Urb_Rur": Not used in analysis.
+
+"Quadrant": During the data collection event when we sampled the "MWI" plants, we also noted which 10x10 km (rural) or 2.5x2.5 km (urban) quadrant (on a map) was associated with the sampling site. We didn't use these data further.
+
+"River_Valley": During the data collection event when we sampled the "MWI" plants, we also noted whether the sampling site was in a quadrant intersected by a river valley (on the map). We didn't use these data further.
+
+## Urb_index_sgs.csv column meanings
+
+First 4 columns: see above
+
+"Urb_score": The Urbanization Score associated with each sampling site. Scores range from ~-4 (very rural) to ~4 (very urban).
+
+## Info about sampling
+
+This data was collected by Sophie Breitbart and Lindsay Miles in July-August 2018.
