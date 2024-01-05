@@ -268,6 +268,7 @@ amova.test_larger_pops
 
 # Export
 ## General AMOVA
+### All sites
 ```{r}
 amova_general <- amova.result$results %>%
   as.data.frame() %>%
@@ -280,8 +281,8 @@ amova_general <- amova.result$results %>%
                        ~ round(., 3))) %>%
   dplyr::mutate(Group = case_when(
          Group == "Between urban_rural  " ~ "Among urban/rural groups",
-         Group == "Between samples Within urban_rural" ~ "Among populations within urban/rural groups",
-         Group == "Within samples" ~ "Within populations",
+         Group == "Between samples Within urban_rural" ~ "Among sampling sites within urban/rural groups",
+         Group == "Within samples" ~ "Within sampling sites",
          TRUE ~ Group
      ))
 
@@ -293,7 +294,35 @@ amova_general %>%
     "./Figures_Tables/amova/amova.docx"))
 ```
 
+### Sites with >1 individual
+```{r}
+amova_larger_pops <- amova.larger_pops$results %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Group" = 1,
+                "df" = 2,
+                "SS" = 3,
+                "MS" = 4) %>%
+  dplyr::mutate(across("SS": "MS",
+                       ~ round(., 3))) %>%
+  dplyr::mutate(Group = case_when(
+         Group == "Between urban_rural  " ~ "Among urban/rural groups",
+         Group == "Between samples Within urban_rural" ~ "Among sampling sites within urban/rural groups",
+         Group == "Within samples" ~ "Within sampling sites",
+         TRUE ~ Group
+     ))
+
+amova_larger_pops %>%
+  flextable() %>%
+  flextable::align(j = c(2:4), align = "center", part = "all") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_larger_pops.docx"))
+```
+
+
 ## Components of covariance
+### All sites
 ```{r}
 amova_cov <- amova.result$componentsofcovariance %>%
   as.data.frame() %>%
@@ -309,8 +338,8 @@ amova_cov <- amova.result$componentsofcovariance %>%
   dplyr::mutate(Variation = paste0(Variation, "%")) %>%
   dplyr::mutate(Group = case_when(
          Group == " Between urban_rural  " ~ "Among urban/rural groups",
-         Group == " Between samples Within urban_rural" ~ "Among populations within urban/rural groups",
-         Group == " Within samples" ~ "Within populations",
+         Group == " Between samples Within urban_rural" ~ "Among sampling sites within urban/rural groups",
+         Group == " Within samples" ~ "Within sampling sites",
          TRUE ~ Group
      )) 
 
@@ -322,7 +351,37 @@ amova_cov %>%
     "./Figures_Tables/amova/amova_covariance.docx"))
 ```
 
+### Sites with >1 individual
+```{r}
+amova_cov_larger_pops <- amova.larger_pops$componentsofcovariance %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Group" = 1,
+                "Variation" = 3) %>%
+  dplyr::mutate(Group = str_replace(Group,
+                                        "Variations ", ""),
+                Group = str_replace(Group,
+                                        " variations", "")) %>%
+  dplyr::mutate(across(Sigma:Variation,
+                       ~ round(., 3))) %>%
+  dplyr::mutate(Variation = paste0(Variation, "%")) %>%
+  dplyr::mutate(Group = case_when(
+         Group == " Between urban_rural  " ~ "Among urban/rural groups",
+         Group == " Between samples Within urban_rural" ~ "Among sampling sites within urban/rural groups",
+         Group == " Within samples" ~ "Within sampling sites",
+         TRUE ~ Group
+     )) 
+
+amova_cov_larger_pops %>%
+  flextable() %>%
+  flextable::align(j = c(2:3), align = "center", part = "all") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_covariance_larger_pops.docx"))
+```
+
 ## Phi
+### All sites
 ```{r}
 amova_phi <- amova.result$statphi %>%
   as.data.frame() %>%
@@ -330,8 +389,8 @@ amova_phi <- amova.result$statphi %>%
   dplyr::rename("Group" = 1) %>%
   dplyr::mutate(across(Phi, ~ round(., 3))) %>%
   dplyr::mutate(Group = case_when(
-         Group == "Phi-samples-total" ~ "Populations:Total",
-         Group == "Phi-samples-urban_rural" ~ "Populations:Urban/rural groups",
+         Group == "Phi-samples-total" ~ "Sampling sites:Total",
+         Group == "Phi-samples-urban_rural" ~ "Sampling sites:Urban/rural groups",
          Group == "Phi-urban_rural-total" ~ "Urban/rural groups:Total",
          TRUE ~ Group
      ))
@@ -344,24 +403,34 @@ amova_phi %>%
   flextable::save_as_docx(path = here::here(
     "./Figures_Tables/amova/amova_phi.docx"))
 
+```
 
-# table with abbreviations for groups
-## Individuals = I; Populations = P; Groups = G
-amova_phi %>%
+### Sites with >1 individual
+```{r}
+amova_phi_larger_pops <- amova.larger_pops$statphi %>%
+  as.data.frame() %>%
+  rownames_to_column() %>%
+  dplyr::rename("Group" = 1) %>%
+  dplyr::mutate(across(Phi, ~ round(., 3))) %>%
   dplyr::mutate(Group = case_when(
-         Group == "Populations:Total" ~ "PT",
-         Group == "Populations:Urban/rural groups" ~ "PG",
-         Group == "Urban/rural groups:Total" ~ "GT",
+         Group == "Phi-samples-total" ~ "Sampling sites:Total",
+         Group == "Phi-samples-urban_rural" ~ "Sampling sites:Urban/rural groups",
+         Group == "Phi-urban_rural-total" ~ "Urban/rural groups:Total",
          TRUE ~ Group
-     )) %>%
+     ))
+
+# table with full names of groups
+amova_phi_larger_pops %>%
   flextable() %>%
   flextable::align(j = 2, align = "center", part = "all") %>%
   flextable::autofit() %T>%
   flextable::save_as_docx(path = here::here(
-    "./Figures_Tables/amova/amova_phi_abbrevs.docx"))
+    "./Figures_Tables/amova/amova_phi_larger_pops.docx"))
+
 ```
 
 ## P-values
+### All sites
 ```{r}
 # have to recreate amova table to export it as a table
 amova_list <- list(
@@ -386,8 +455,8 @@ amova_p <- cbind(names, obs, Std.obs, alter, p) %>%
                 Alternative = 4,
                 p = 5) %>%
   dplyr::mutate(Test = case_when(
-         Test == "Variations within samples" ~ "Variation within populations",
-         Test == "Variations between samples" ~ "Variation between populations",
+         Test == "Variations within samples" ~ "Variation within sampling sites",
+         Test == "Variations between samples" ~ "Variation between sampling sites",
          Test == "Variations between urban_rural" ~ "Variation between urban/rural groups",
          TRUE ~ Test
      )) %>%
@@ -402,11 +471,54 @@ amova_p %>%
   flextable::save_as_docx(path = here::here(
     "./Figures_Tables/amova/amova_significance.docx"))
   
+```
 
+### Sites with >1 individual
+```{r}
+# have to recreate amova table to export it as a table
+amova_list_larger_pops <- list(
+  amova.test_larger_pops$obs,
+  amova.test_larger_pops$alter,
+  amova.test_larger_pops$names,
+  amova.test_larger_pops$expvar$Std.Obs,
+  amova.test_larger_pops$pvalue
+  )
+
+list_larger_pops <- purrr::map(amova_list_larger_pops,
+                     tibble::as_tibble)
+
+names(list_larger_pops) <- c("obs", "alter", "names", "Std.obs", "p")
+
+list2env(list_larger_pops, envir = .GlobalEnv)
+
+amova_p_larger_pops <- cbind(names, obs, Std.obs, alter, p) %>%
+  dplyr::rename(Test = 1,
+                Obs = 2,
+                Std.Obs = 3,
+                Alternative = 4,
+                p = 5) %>%
+  dplyr::mutate(Test = case_when(
+         Test == "Variations within samples" ~ "Variation within sampling sites",
+         Test == "Variations between samples" ~ "Variation between sampling sites",
+         Test == "Variations between urban_rural" ~ "Variation between urban/rural groups",
+         TRUE ~ Test
+     )) %>%
+    dplyr::mutate(across(c(Obs:Std.Obs, p),
+                       ~ round(., 3)))
+
+amova_p_larger_pops %>%
+  flextable() %>%
+  flextable::align(j = c(2:5), align = "center", part = "all") %>%
+  flextable::italic(j = 5, part = "header") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_significance_larger_pops.docx"))
+  
 ```
 
 
 ## Combine the above tables (except phi) into one table
+### All sites
 ```{r}
 amova_all <- amova_cov %>%
   dplyr::full_join(amova_general, .) %>%
@@ -415,8 +527,8 @@ amova_all <- amova_cov %>%
                      dplyr::select(Test, p) %>%
                      dplyr::rename("Group" = 1) %>%
                      dplyr::mutate(Group = case_when(
-         Group == "Variation within populations" ~ "Within populations",
-         Group == "Variation between populations" ~ "Among populations within urban/rural groups",
+         Group == "Variation within populations" ~ "Within sampling sites",
+         Group == "Variation between populations" ~ "Among sampling sites within urban/rural groups",
          Group == "Variation between urban/rural groups" ~ "Among urban/rural groups",
          TRUE ~ Group
      )))
@@ -428,12 +540,37 @@ amova_all %>%
   flextable::autofit() %T>%
   flextable::save_as_docx(path = here::here(
     "./Figures_Tables/amova/amova_combined_table.docx"))
+```
+
+### Sites with >1 individual
+```{r}
+amova_all_larger_pops <- amova_cov_larger_pops %>%
+  dplyr::full_join(amova_larger_pops, .) %>%
+  dplyr::full_join(.,
+                   amova_p_larger_pops %>%
+                     dplyr::select(Test, p) %>%
+                     dplyr::rename("Group" = 1) %>%
+                     dplyr::mutate(Group = case_when(
+         Group == "Variation within populations" ~ "Within sampling sites",
+         Group == "Variation between populations" ~ "Among sampling sites within urban/rural groups",
+         Group == "Variation between urban/rural groups" ~ "Among urban/rural groups",
+         TRUE ~ Group
+     )))
+
+amova_all_larger_pops %>%
+  flextable() %>%
+  flextable::align(j = 2:7, align = "center", part = "all") %>%
+  flextable::italic(j = 7, part = "header") %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/amova/amova_combined_table_larger_pops.docx"))
   
 ```
 
 ## Plot
+### All sites
 ```{r}
-png(here::here("./Figures_Tables/amova/test.png"),
+png(here::here("./Figures_Tables/amova/amova_plot.png"),
     width = 12,
     height = 12,
     units = "cm",
@@ -442,7 +579,17 @@ png(here::here("./Figures_Tables/amova/test.png"),
 plot(amova.test)
 
 dev.off()
-
-
 ```
 
+### Sites with >1 individual
+```{r}
+png(here::here("./Figures_Tables/amova/amova_plot_larger_pops.png"),
+    width = 12,
+    height = 12,
+    units = "cm",
+    res = 200)
+
+plot(amova.test_larger_pops)
+
+dev.off()
+```

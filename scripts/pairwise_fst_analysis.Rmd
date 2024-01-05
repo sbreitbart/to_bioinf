@@ -1,0 +1,60 @@
+# Set up notebook
+## Load libraries and add functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+```{r}
+# urb = dist to CC
+hudson_pairwise_fst <- read.csv(here::here("./results/python_fst/fst.csv"))
+```
+
+# Compute mean pairwise Hudson's fst per urban/rural group
+```{r}
+# urban-urban comparisons
+mean_uu <- hudson_pairwise_fst %>%
+  dplyr::filter(pop1_hab == "Urban" & pop2_hab == "Urban") %>%
+  dplyr::summarise(mean_fst_uu = mean(fst)) %>%
+  as.numeric() %>%
+  round(3)
+
+# rural-rural comparisons
+mean_rr <- hudson_pairwise_fst %>%
+  dplyr::filter(pop1_hab == "Rural" & pop2_hab == "Rural") %>%
+  dplyr::summarise(mean_fst_rr = mean(fst)) %>%
+  as.numeric() %>%
+  round(3)
+
+# urban-rural comparisons
+mean_ur <- hudson_pairwise_fst %>%
+  dplyr::filter(pop1_hab == "Urban" & pop2_hab == "Rural" | pop1_hab == "Rural" & pop2_hab == "Urban") %>%
+  dplyr::summarise(mean_fst_ur = mean(fst)) %>%
+  as.numeric() %>%
+  round(3)
+
+# all comparisons
+mean_all <- hudson_pairwise_fst %>%
+  dplyr::summarise(mean_fst = mean(fst)) %>%
+  as.numeric() %>%
+  round(3)
+
+all_fsts <- data.frame(sampling_site_pair = c("UU", "RR", "UR", "All"),
+                       Mean_pairwise_hudson_fst = c(mean_uu,
+                                             mean_rr,
+                                             mean_ur,
+                                             mean_all))
+```
+
+# Export table
+```{r}
+all_fsts %>%
+  flextable() %>%
+  flextable::align(part = "all",
+                   align = "center") %>%
+  flextable::set_header_labels(sampling_site_pair = "Sampling site pair",
+                    Mean_pairwise_hudson_fst = "Mean pairwise Hudson's Fst") %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(path = here::here("./Figures_Tables/fst/Hudsons_pairwise_fst.docx"))
+```

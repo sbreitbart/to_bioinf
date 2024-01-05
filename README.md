@@ -24,7 +24,7 @@ TBD
 * `Figures_Tables`: Contains figures and tables summarizing analyses.
 * `genomic_resources`: Contains information pertaining to sequencing and files used for analysis on the HPCC (high performance computing cluster).
 * `misc`: Contains miscellaneous files associated with project.
-* `R_scripts`: Contains scripts used to wrangle, analyze, and plot data in R.
+* `scripts`: Contains scripts used to wrangle, analyze, and plot data in R and python.
 * `raw_data`: Contains raw data collected in the field and elsewhere which was eventually cleaned and analyzed.
 * `renv`: Contains archived versions of packages used in analyses.
 * `results`: Contains data that has been processed for analysis or visualization in R.
