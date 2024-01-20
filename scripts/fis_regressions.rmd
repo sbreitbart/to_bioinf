@@ -113,8 +113,9 @@ car::Anova(test1) # no
 ggplot(diversity_all_sites, 
        aes(x = num_indv,
            y = fis)) + 
-  geom_point(aes(color = City_dist)) +
-  scale_color_continuous(type = "viridis")
+  geom_point() +
+  geom_smooth() +
+  ggpubr::theme_pubr()
 
 # this (and the df) shows us that populations with 1 individual all have fis = 0.
 # I'll remove them from this analysis' dataset.

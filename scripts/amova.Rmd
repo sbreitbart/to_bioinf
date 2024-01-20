@@ -130,7 +130,11 @@ pop(my_genind_larger_pops) <- pops_larger_pops[,"population"]
 amova.result <- poppr::poppr.amova(my_genind,
                 hier = ~urban_rural/population, 
                 within=FALSE, # specifies that within-individual variance (i.e., observed heterozygosity) should not be tested. Setting this to ‘TRUE’ can lead to problems with missing values.
-                method = "ade4")
+                method = "ade4"#,
+                
+                # this gives similar results to raw genetic distances. Other distance types (e.g., Nei's) won't work here. Prop shared alleles doesn't work either (codomtoPropshared)
+               # dist = prevosti.dist(my_genind)
+                )
 
 amova.result
 

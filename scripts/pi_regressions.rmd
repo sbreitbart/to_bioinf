@@ -114,18 +114,20 @@ car::Anova(test1) # no
 ### Does the number of individuals per populations correlate with pop gen stats?
 #### Pi
 ```{r}
-qplot(pi_data$num_indv,
-      pi_data$pi)
-
-ggplot(pi_data,
+ggplot(pi_data %>%
+                   dplyr::filter(num_indv > 1),
        aes(x = num_indv,
            y = pi)) +
-  plot_aesthetics +
+  geom_smooth() +
+  geom_point() +
   theme_pubr() +
   labs_pubr() 
 
+
+
 test1 <- glmmTMB(pi ~ num_indv,
-                 pi_data)
+                 pi_data %>%
+                   dplyr::filter(num_indv > 1))
 performance::check_model(test1)
 car::Anova(test1) # yes
 r.squaredGLMM(test1) # ~40% variance explained
@@ -133,7 +135,10 @@ r.squaredGLMM(test1) # ~40% variance explained
 
 pi_data %>%
   dplyr::group_by(round(num_indv, 0)) %>%
-  dplyr::summarise(pi_per_groupsize <- mean(pi))
+  dplyr::summarise(pi_per_groupsize = mean(pi))
+
+# pi_data %<>%
+#   dplyr::mutate(pi_per_indiv = pi/num_indv)
 ```
 
 ## Urbanization is continuous
