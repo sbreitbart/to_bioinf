@@ -159,14 +159,16 @@ plot_list <- plot_list[!sapply(plot_list, is.null)]
 # Combine all non-empty plots onto the same page
 combined_plot <- ggarrange(plotlist = plot_list, 
                            nrow = 2,
-                           ncol = 5)
+                           ncol = 5,
+                            common.legend = TRUE,
+                           align = "v")
 
 # Save the combined plot as a PDF file
 ggsave(path = "Figures_Tables/pca",
       "pc_plots.pdf",
        combined_plot,
-       width = 15,
-       height = 8)
+       width = 14,
+       height = 7)
 
 ```
 
@@ -208,15 +210,17 @@ plot_list_usc <- plot_list_usc[!sapply(plot_list_usc, is.null)]
 
 # Combine all non-empty plots onto the same page
 combined_plot_usc <- ggarrange(plotlist = plot_list_usc, 
-                           nrow = 2,
-                           ncol = 5)
+                            nrow = 2,
+                           ncol = 5,
+                            common.legend = TRUE,
+                           align = "v")
 
 # Save the combined plot as a PDF file
 ggsave(path = "Figures_Tables/pca",
       "pc_plots_usc.pdf",
        combined_plot_usc,
-       width = 15,
-       height = 8)
+       width = 14,
+       height = 7)
 
 ```
 
