@@ -679,6 +679,17 @@ bd_centroid <- vegan::betadisper(d = dist_matrix,
 # this shows that there is weak evidence that there is more variation within one group vs the other (nearly identical p-value to result above- 0.07)
 anova(bd_centroid)
 
+# get R2
+tidy_aov <- tidy(anova(bd_centroid))
+sum_squares_regression <- tidy_aov$sumsq[1]
+sum_squares_residuals <- tidy_aov$sumsq[2]
+
+R_squared <- sum_squares_regression /
+            (sum_squares_regression + sum_squares_residuals)
+
+R_squared # 0.01263263
+
+
 # looking at bd, we can see the urban group has a slightly higher average distance to the centroid than the rural
 # Average distance to centroid:
 #  Rural  Urban 
@@ -690,6 +701,12 @@ anova(bd_centroid)
 
 plot(bd, ellipse = TRUE, hull = FALSE)
 plot(bd_centroid, ellipse = TRUE, hull = FALSE)
+
+# urban individuals: 150
+pca %>% dplyr::filter(u_r_dist == "Urban") %>% dim()
+
+# rural individuals: 106
+pca %>% dplyr::filter(u_r_dist == "Rural") %>% dim()
 ```
 
 ## Urb = urb score
@@ -718,6 +735,18 @@ bd_centroid_usc <- vegan::betadisper(d = dist_matrix,
 # this shows that there is NOT evidence that there is more variation within one group vs the other
 anova(bd_centroid_usc)
 
+# get R2
+tidy_aov_usc <- tidy(anova(bd_centroid_usc))
+sum_squares_regression_usc <- tidy_aov_usc$sumsq[1]
+sum_squares_residuals_usc <- tidy_aov_usc$sumsq[2]
+
+R_squared_usc <- sum_squares_regression_usc /
+            (sum_squares_regression_usc + sum_squares_residuals_usc)
+
+R_squared_usc # 0.007082197
+
+
+
 # looking at bd_centroid_usc, we can see the urban group has a slightly higher average distance to the centroid than the rural
 # Average distance to centroid:
 #  Rural  Urban 
@@ -725,6 +754,12 @@ anova(bd_centroid_usc)
 
 plot(bd_usc, ellipse = TRUE, hull = FALSE)
 plot(bd_centroid_usc, ellipse = TRUE, hull = FALSE)
+
+# urban individuals: 141
+pca %>% dplyr::filter(u_r_usc == "Urban") %>% dim()
+
+# rural individuals: 115
+pca %>% dplyr::filter(u_r_usc == "Rural") %>% dim()
 ```
 
 
