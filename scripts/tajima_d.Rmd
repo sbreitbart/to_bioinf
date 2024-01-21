@@ -198,7 +198,7 @@ global_taj_plot2 <- cowplot::ggdraw(
 # add ending x axis mark
 global_taj_plot2 <- cowplot::ggdraw(
   cowplot::add_sub(global_taj_plot2, 
-                   x = 0.93,  y = 3.2, as.numeric(sum(global_taj_100k$BIN_START)),
+                   x = 0.88,  y = 3.2, as.numeric(sum(global_taj_100k$BIN_START)),
                    size = 12))
 
 
@@ -206,7 +206,7 @@ global_taj_plot2
 
 ggsave(here::here("./Figures_Tables/tajimas_d/global_taj_d_window100k.png"), 
        plot = global_taj_plot2,
-       width = 20,
+       width = 10,
        height = 10,
        units = "cm")
 
@@ -300,7 +300,7 @@ urb_taj_plot2 <- cowplot::ggdraw(
 # add ending x axis mark
 urb_taj_plot2 <- cowplot::ggdraw(
   cowplot::add_sub(urb_taj_plot2, 
-                   x = 0.93,  y = 3.2, format(as.numeric(sum(urb_taj_100k$BIN_START)), scientific = TRUE),
+                   x = 0.88,  y = 3.2, format(as.numeric(sum(urb_taj_100k$BIN_START)), scientific = TRUE),
                    size = 12))
 
 
@@ -308,7 +308,7 @@ urb_taj_plot2
 
 ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d_window100k.png"), 
        plot = urb_taj_plot2,
-       width = 20,
+       width = 10,
        height = 10,
        units = "cm")
 
@@ -403,7 +403,7 @@ rur_taj_plot2 <- cowplot::ggdraw(
 # add ending x axis mark
 rur_taj_plot2 <- cowplot::ggdraw(
   cowplot::add_sub(rur_taj_plot2, 
-                   x = 0.93,  y = 3.2, format(as.numeric(sum(rur_taj_100k$BIN_START)), scientific = TRUE),
+                   x = 0.88,  y = 3.2, format(as.numeric(sum(rur_taj_100k$BIN_START)), scientific = TRUE),
                    size = 12))
 
 
@@ -411,7 +411,7 @@ rur_taj_plot2
 
 ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_window100k.png"), 
        plot = rur_taj_plot2,
-       width = 20,
+       width = 10,
        height = 10,
        units = "cm")
 
@@ -505,7 +505,7 @@ urb_taj_plot2_usc <- cowplot::ggdraw(
 # add ending x axis mark
 urb_taj_plot2_usc <- cowplot::ggdraw(
   cowplot::add_sub(urb_taj_plot2_usc, 
-                   x = 0.93,  y = 3.2, as.numeric(sum(urb_taj_100k_usc$BIN_START)),
+                   x = 0.88,  y = 3.2, as.numeric(sum(urb_taj_100k_usc$BIN_START)),
                    size = 12))
 
 
@@ -513,7 +513,7 @@ urb_taj_plot2_usc
 
 ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d_window100k_usc.png"), 
        plot = urb_taj_plot2_usc,
-       width = 20,
+       width = 10,
        height = 10,
        units = "cm")
 
@@ -608,7 +608,7 @@ rur_taj_plot2_usc <- cowplot::ggdraw(
 # add ending x axis mark
 rur_taj_plot2_usc <- cowplot::ggdraw(
   cowplot::add_sub(rur_taj_plot2_usc, 
-                   x = 0.93,  y = 3.2, format(as.numeric(sum(rur_taj_100k_usc$BIN_START)), scientific = TRUE),
+                   x = 0.88,  y = 3.2, format(as.numeric(sum(rur_taj_100k_usc$BIN_START)), scientific = TRUE),
                    size = 12))
 
 
@@ -616,7 +616,7 @@ rur_taj_plot2_usc
 
 ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_window100k_usc.png"), 
        plot = rur_taj_plot2_usc,
-       width = 20,
+       width = 10,
        height = 10,
        units = "cm")
 
@@ -669,6 +669,15 @@ urban_1mil_ttest <- t_test_tajd(urb_taj)
 #### 100k bp
 ```{r}
 urban_100k_ttest <- t_test_tajd(urb_taj_100k)
+
+# data:  combined_data %>% dplyr::select(TajimaD) and combined_data %>% dplyr::select(simulated_value)
+# t = -7.6843, df = 1733.6, p-value = 2.558e-14
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.4308573 -0.2556369
+# sample estimates:
+#   mean of x   mean of y 
+# -0.35951650 -0.01626939
 ```
 
 ### Urb_score
@@ -680,6 +689,15 @@ urban_1mil_ttest_usc <- t_test_tajd(urb_taj_usc)
 #### 100k bp
 ```{r}
 urban_100k_ttest_usc <- t_test_tajd(urb_taj_100k_usc)
+
+# data:  combined_data %>% dplyr::select(TajimaD) and combined_data %>% dplyr::select(simulated_value)
+# t = -7.8198, df = 1729.7, p-value = 9.127e-15
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.4362091 -0.2612697
+# sample estimates:
+#  mean of x  mean of y 
+# -0.3634625 -0.0147231 
 ```
 
 ## Rural
@@ -692,6 +710,15 @@ rural_1mil_ttest <- t_test_tajd(rur_taj)
 #### 100k bp
 ```{r}
 rural_100k_ttest <- t_test_tajd(rur_taj_100k)
+
+# data:  combined_data %>% dplyr::select(TajimaD) and combined_data %>% dplyr::select(simulated_value)
+# t = -7.6723, df = 1701.6, p-value = 2.827e-14
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.4467366 -0.2648296
+# sample estimates:
+#   mean of x   mean of y 
+# -0.36714839 -0.01136528 
 ```
 
 ### Urb_score
@@ -703,8 +730,16 @@ rural_1mil_ttest_usc <- t_test_tajd(rur_taj_usc)
 #### 100k bp
 ```{r}
 rural_100k_ttest_usc <- t_test_tajd(rur_taj_100k_usc)
-```
 
+# data:  combined_data %>% dplyr::select(TajimaD) and combined_data %>% dplyr::select(simulated_value)
+# t = -7.8536, df = 1709.4, p-value = 7.082e-15
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.4481927 -0.2690658
+# sample estimates:
+#   mean of x   mean of y 
+# -0.37454920 -0.01591998 
+```
 
 # Export means with p-values
 ```{r}
@@ -726,35 +761,46 @@ tajd_table <- data.frame(
     round(mean(urb_taj_usc$TajimaD),3),
     round(mean(rur_taj_usc$TajimaD),3)
     ),
-  # TajD_window_100k = c(
-  #   round(mean(global_taj_100k$TajimaD),3),
-  #   round(mean(urb_taj_100k$TajimaD),3),
-  #   round(mean(rur_taj_100k$TajimaD),3),
-  #   round(mean(urb_taj_100k_usc$TajimaD),3),
-  #   round(mean(rur_taj_100k_usc$TajimaD),3)
-  # ),
-  p = c(
+  TajD_window_100k = c(
+    round(mean(global_taj_100k$TajimaD),3),
+    round(mean(urb_taj_100k$TajimaD),3),
+    round(mean(rur_taj_100k$TajimaD),3),
+    round(mean(urb_taj_100k_usc$TajimaD),3),
+    round(mean(rur_taj_100k_usc$TajimaD),3)
+  ),
+  p_1mil_bp = c(
     round(global_ttest$p.value, 3),
     round(urban_1mil_ttest$p.value, 3),
     round(urban_1mil_ttest_usc$p.value, 3),
     round(rural_1mil_ttest$p.value, 3),
     round(rural_1mil_ttest_usc$p.value, 3)
+  ),
+    p_100k_bp = c(
+    round(global_ttest$p.value, 3),
+    round(urban_100k_ttest$p.value, 3),
+    round(urban_100k_ttest_usc$p.value, 3),
+    round(rural_100k_ttest$p.value, 3),
+    round(rural_100k_ttest_usc$p.value, 3)
   )) %>%
-  dplyr::mutate(p = ifelse(
-      p < 0.001, 
+  dplyr::mutate(p_1mil_bp = ifelse(
+      p_1mil_bp < 0.001, 
       "<0.001",
-      p)) 
+      p_1mil_bp)) %>%
+  dplyr::mutate(p_100k_bp = ifelse(
+      p_100k_bp < 0.001, 
+      "<0.001",
+      p_100k_bp))
 
 tajd_table %>%
-  dplyr::rename("Tajima's D" = 3
-    #"Window = 1,000,000 bp" = 3,
-               # "Window = 100,000 bp" = 4
-               ) %>%
+  # dplyr::rename("Tajima's D" = 3
+  #   #"Window = 1,000,000 bp" = 3,
+  #              # "Window = 100,000 bp" = 4
+  #              ) %>%
   flextable::flextable() %>%
-  flextable::italic(i = 1, j = 4, part = "header") %>%
+  # flextable::italic(i = 1, j = 4, part = "header") %>%
   flextable::align(align = "center", i = c(1:5), part = "body") %>%
   flextable::align(align = "left", j = 1:2, part = "all") %>%
-  flextable::align(align = "center", i = 1, j = c(3:4), part = "header") %>%
+  flextable::align(align = "center", i = 1, j = c(3:6), part = "header") %>%
   flextable::autofit() %>%
   flextable::save_as_docx(path = here::here(
     "./Figures_Tables/tajimas_d/taj_d_means.docx"))
@@ -797,6 +843,15 @@ dist_1mil_ttest_UvsR <- perform_ttest_UvsR(urb_taj,
 ```{r}
 dist_100k_ttest_UvsR <- perform_ttest_UvsR(urb_taj_100k,
                               rur_taj_100k)
+
+# data:  combined_tajd[, "TajimaD.urb"] and combined_tajd["TajimaD.rur"]
+# t = 0.17085, df = 1716.3, p-value = 0.8644
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.07998265  0.09524643
+# sample estimates:
+#  mean of x  mean of y 
+# -0.3595165 -0.3671484 
 ```
 
 ## Urb_score
@@ -811,6 +866,14 @@ usc_1mil_ttest_UvsR <- perform_ttest_UvsR(urb_taj_usc,
 usc_100k_ttest_UvsR <- perform_ttest_UvsR(urb_taj_100k_usc,
                               rur_taj_100k_usc)
 
+# data:  combined_tajd[, "TajimaD.urb"] and combined_tajd["TajimaD.rur"]
+# t = 0.25043, df = 1720.7, p-value = 0.8023
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.07574213  0.09791554
+# sample estimates:
+#  mean of x  mean of y 
+# -0.3634625 -0.3745492 
 ```
 
 ## Export
@@ -858,6 +921,7 @@ export_ttests(usc_100k_ttest_UvsR)
 
 
 #### Export results in one table
+##### 1 million bp windows
 ```{r}
 tajd_table2 <- data.frame(
   Urbanization = c("Distance to City Center",
@@ -883,6 +947,35 @@ tajd_table2 %>%
   flextable::align(align = "left", j = 1, part = "all") %>%
   flextable::autofit() %>%
   flextable::save_as_docx(path = here::here(
-    "./Figures_Tables/tajimas_d/taj_d_UvsR.docx"))
+    "./Figures_Tables/tajimas_d/taj_d_UvsR_1mil_bp.docx"))
 ```
 
+
+##### 100k bp windows
+```{r}
+tajd_table3 <- data.frame(
+  Urbanization = c("Distance to City Center",
+                   "Urbanization Score"),
+  t = c(
+    round((dist_100k_ttest_UvsR$statistic),3),
+    round((usc_100k_ttest_UvsR$statistic),3)
+    ),
+  df = c(
+    round(dist_100k_ttest_UvsR$parameter, 3),
+    round(usc_100k_ttest_UvsR$parameter, 3)
+    ),
+  p = c(
+    round(dist_100k_ttest_UvsR$p.value, 3),
+    round(usc_100k_ttest_UvsR$p.value, 3)
+  )) 
+
+
+tajd_table3 %>%
+  flextable::flextable() %>%
+  flextable::italic(i = 1, j = 4, part = "header") %>%
+  flextable::align(align = "center", j = c(2:4), part = "all") %>%
+  flextable::align(align = "left", j = 1, part = "all") %>%
+  flextable::autofit() %>%
+  flextable::save_as_docx(path = here::here(
+    "./Figures_Tables/tajimas_d/taj_d_UvsR_100k_bp.docx"))
+```
