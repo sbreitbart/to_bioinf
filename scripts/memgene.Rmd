@@ -840,7 +840,7 @@ export_stats <- function(group,
   # Adj R2
   R2_adj <- paste0("Adjusted R² for model: ", 
                    round(milkweed_analysis_list$RsqAdj,
-                         3))
+                         4))
   
   
   # Extracting relevant data from the milkweed_analysis object
