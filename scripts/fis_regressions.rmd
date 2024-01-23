@@ -110,11 +110,12 @@ car::Anova(test1) # no
 ### Does the number of individuals per populations correlate with pop gen stats?
 ```{r}
 
-ggplot(diversity_all_sites, 
+ggplot(diversity_all_sites %>%
+         dplyr::filter(num_indv > 1), 
        aes(x = num_indv,
            y = fis)) + 
   geom_point() +
-  geom_smooth() +
+  geom_smooth(method = "lm") +
   ggpubr::theme_pubr()
 
 # this (and the df) shows us that populations with 1 individual all have fis = 0.
@@ -124,11 +125,11 @@ ggplot(diversity_all_sites,
 
 test1 <- glmmTMB(fis ~ num_indv,
                  diversity_all_sites %>%
-                   dplyr::filter(fis != 0))
+                   dplyr::filter(num_indv > 1))
 performance::check_model(test1)
 car::Anova(test1) # yes
 r.squaredGLMM(test1) # ~28% variance explained
-# SO I WILL add num_indivs as a random effect to these models
+# SO I WILL add num_indivs as a fixed effect to these models
 
 ```
 
@@ -138,7 +139,7 @@ r.squaredGLMM(test1) # ~28% variance explained
 ##### City_dist
 ```{r}
 
-fis_dist <- glmmTMB(fis ~ City_dist + (1|num_indv),
+fis_dist <- glmmTMB(fis ~ City_dist + num_indv,
            diversity_all_sites %>%
              dplyr::filter(fis != 0))
 
@@ -147,7 +148,7 @@ performance::check_model(fis_dist)
 
 ##### Urb_score
 ```{r}
-fis_usc <- glmmTMB(fis ~ urb_score  + (1|num_indv),
+fis_usc <- glmmTMB(fis ~ urb_score  + num_indv,
            diversity_all_sites %>%
              dplyr::filter(fis != 0))
 
@@ -156,25 +157,97 @@ performance::check_model(fis_usc)
 
 ### ANOVA & effect sizes
 ```{r}
+# urb doesn't predict FIS
+dist_anova <- car::Anova(fis_dist) 
+usc_anova <- car::Anova(fis_usc) 
 
-mod_list <- list(fis_dist,
-                 fis_usc)
-
-
-all_anovas <- do.call(rbind, create_anova_df(mod_list)) %>%
-  view
-
-# create flextable
-all_anovas %>%
-  dplyr::select(-Sig) %>%
+# export dist_anova
+Rsq_dist <- MuMIn::r.squaredGLMM(fis_dist)[1] %>%
+      round(digits = 3) %>%
+      format(nsmall = 3) %T>%
+  print
+    
+broom::tidy(dist_anova) %>%
+      dplyr::mutate(
+        "Variable" = "FIS",
+        "Rsq" = Rsq_dist
+      ) %>%
+      dplyr::rename(
+        "Chi_sq" = statistic,
+        "p" = p.value,
+        "Urbanization" = term
+      ) %>%
+      dplyr::mutate(
+        Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
+        p = format(round(p, digits = 3), nsmall = 3)
+      ) %>%
+       dplyr::mutate(
+         "p" = case_when(
+           p <= 0.001 ~ "<0.001",
+           TRUE ~ p
+         )
+      ) %>%
+      dplyr::mutate(
+        "Urbanization" = case_when(
+          Urbanization == "City_dist" ~ "Distance",
+          Urbanization == "urb_score" ~ "Urbanization Score",
+          Urbanization == "num_indv" ~ "No. Individuals",
+          TRUE ~ ""
+        )) %>%
   flextable::flextable() %>%
-  flextable::compose(i = 1, j = 3, part = "header",
+  flextable::compose(i = 1, j = 2, part = "header",
                      value = as_paragraph("Χ", as_sup("2"))) %>%
   flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("R", as_sup("2"))) %>%
-  bold(~ p <= 0.05) %>%
+  flextable::align(part = "all", j = c(2:6), align = "center") %>%
+  # bold(~ p <= 0.05) %>%
   flextable::autofit() %T>%
-  flextable::save_as_docx(path = here::here("./Figures_Tables/regressions/fis_anova.docx"))
+  flextable::save_as_docx(path = here::here("./Figures_Tables/regressions/fis_anova_dist.docx"))
+
+
+# export usc_anova
+
+Rsq_usc <- MuMIn::r.squaredGLMM(fis_usc)[1] %>%
+      round(digits = 3) %>%
+      format(nsmall = 3) %T>%
+  print
+    
+broom::tidy(usc_anova) %>%
+      dplyr::mutate(
+        "Variable" = "FIS",
+        "Rsq" = Rsq_usc
+      ) %>%
+      dplyr::rename(
+        "Chi_sq" = statistic,
+        "p" = p.value,
+        "Urbanization" = term
+      ) %>%
+      dplyr::mutate(
+        Chi_sq = format(round(Chi_sq, digits = 3), nsmall = 3),
+        p = format(round(p, digits = 3), nsmall = 3)
+      ) %>%
+       dplyr::mutate(
+         "p" = case_when(
+           p <= 0.001 ~ "<0.001",
+           TRUE ~ p
+         )
+      ) %>%
+      dplyr::mutate(
+        "Urbanization" = case_when(
+          Urbanization == "City_dist" ~ "Distance",
+          Urbanization == "urb_score" ~ "Urbanization Score",
+          Urbanization == "num_indv" ~ "No. Individuals",
+          TRUE ~ ""
+        )) %>%
+  flextable::flextable() %>%
+  flextable::compose(i = 1, j = 2, part = "header",
+                     value = as_paragraph("Χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 6, part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%
+  flextable::align(part = "all", j = c(2:6), align = "center") %>%
+  # bold(~ p <= 0.05) %>%
+  flextable::autofit() %T>%
+  flextable::save_as_docx(path = here::here("./Figures_Tables/regressions/fis_anova_usc.docx"))
 ```
 
 ### Figures
@@ -196,7 +269,7 @@ fis_dist_pred_plot <- plot(fis_dist_pred,
               # fill = "#66a182",
                alpha = 0.1
               ) +
-  xlab("Distance to City Center (km)") +
+  xlab("Distance to the City Center (km)") +
   ylab("FIS") +
   ylim(0, 0.06) +
   labs(title = "") +
@@ -268,83 +341,20 @@ ggplot(diversity_all_sites,
 
 #### Export all in one pdf
 ```{r}
-# not including indivs/pop plots
+# distance
+fis_dist_pred_plot
 
-(fis_dist_pred_plot | fis_usc_pred_plot) 
+ggsave(here::here("./Figures_Tables/regressions/fis_distance.png"),
+       width = 10,
+       height = 3.5,
+       units = "in")
 
-ggsave(here::here("./Figures_Tables/regressions/fis.png"),
+
+# urb score
+fis_usc_pred_plot
+
+ggsave(here::here("./Figures_Tables/regressions/fis_urbscore.png"),
        width = 10,
        height = 3.5,
        units = "in")
 ```
-
-# Compute means per group, w/o accounting for diffs in pop size
-## Urban
-```{r}
-# Urbanization = distance to city center
-fis_u_dist <- diversity_all_sites %>%
-             dplyr::filter(fis != 0) %>%
-  dplyr::filter(u_r_dist == "Urban") %>%
-  dplyr::select(fis) %>%
-  colMeans() %>%
-  round(4) %T>%
-  print()
-
-# Urbanization = urbanization score
-fis_u_usc <- diversity_all_sites %>%
-             dplyr::filter(fis != 0) %>%
-  dplyr::filter(u_r_usc == "Urban") %>%
-  dplyr::select(fis) %>%
-  colMeans() %>%
-  round(4) %T>%
-  print()
-```
-
-## Rural
-```{r}
-# Urbanization = distance to city center
-fis_r_dist <- diversity_all_sites %>%
-             dplyr::filter(fis != 0) %>%
-  dplyr::filter(u_r_dist == "Rural") %>%
-  dplyr::select(fis) %>%
-  colMeans() %>%
-  round(4) %T>%
-  print()
-
-# Urbanization = urbanization score
-fis_r_usc <- diversity_all_sites %>%
-             dplyr::filter(fis != 0) %>%
-  dplyr::filter(u_r_usc == "Rural") %>%
-  dplyr::select(fis) %>%
-  colMeans() %>%
-  round(4) %T>%
-  print()
-```
-
-## Put into table
-```{r}
-fis_summary <- data.frame(
-  Urbanization = c("Distance to City Center", "Urbanization Score",
-                   "Distance to City Center", "Urbanization Score"),
-  Environment = c("Urban", "Urban",
-                  "Rural", "Rural"),
-  FIS = c(fis_u_dist, fis_u_usc,
-          fis_r_dist, fis_r_usc))
-
-fis_summary_wide <- fis_summary %>%
-  pivot_wider(names_from = Environment, 
-              values_from = FIS)
-
-# Print the wide table
-print(fis_summary_wide)
-```
-
-## Export table
-```{r}
-fis_summary_wide %>%
-  flextable() %>%
-  flextable::autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/fis/FIS_means.docx"))
-
-```
-
