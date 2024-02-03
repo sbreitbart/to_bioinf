@@ -206,36 +206,33 @@ coords_utm_rur_subsamp <- create_geog_dist_matrix(
 # Create genetic distance matrices
 ```{r}
 # all individuals
-genetic_distance_matrix <- poppr::prevosti.dist(my_genind)
+genetic_distance_matrix <- dist(my_genind, method = "euclidean")
 
 # urban individuals
 ## urb = dist to CC
-genetic_distance_matrix_urb <- poppr::prevosti.dist(my_genind_urb)
+genetic_distance_matrix_urb <- dist(my_genind_urb, method = "euclidean")
 
 ## urb = urb score
-genetic_distance_matrix_urb2 <- poppr::prevosti.dist(my_genind_urb2)
+genetic_distance_matrix_urb2 <- dist(my_genind_urb2, method = "euclidean")
 
 
 # rural individuals
 ## urb = dist to CC
-genetic_distance_matrix_rur <- poppr::prevosti.dist(my_genind_rur)
+genetic_distance_matrix_rur <- dist(my_genind_rur, method = "euclidean")
 
 ## urb = urb score
-genetic_distance_matrix_rur2 <- poppr::prevosti.dist(my_genind_rur2)
+genetic_distance_matrix_rur2 <- dist(my_genind_rur2, method = "euclidean")
 
 
 # 1 individual/site
-genetic_distance_matrix_subsamp <- poppr::prevosti.dist(my_genind_subsamp)
+genetic_distance_matrix_subsamp <- dist(my_genind_subsamp, method = "euclidean")
 
 # 1 individual/site: urban
-genetic_distance_matrix_urb_subsamp <- poppr::prevosti.dist(my_genind_urb_subsamp)
+genetic_distance_matrix_urb_subsamp <- dist(my_genind_urb_subsamp, method = "euclidean")
 
 
 # 1 individual/site: rural
-genetic_distance_matrix_rur_subsamp <- poppr::prevosti.dist(my_genind_rur_subsamp)
-
-
-# "Prevosti’s distance coefficient: a measurement over all loci of the proportion of unshared alleles. The variance of this sample distance is related to the genetic diversities used in calculating F-statistics... [accurate] at small distances compared with other coefficients...", from this paper: https://journals.ashs.org/hortsci/view/journals/hortsci/41/4/article-p967E.xml?tab_body=pdf
+genetic_distance_matrix_rur_subsamp <- dist(my_genind_rur_subsamp, method = "euclidean")
 ```
 
 # Mantel correlogram (UTM)
@@ -265,8 +262,8 @@ break_points_12km <- c(0, 12000, 24000, 36000, 48000, 60000, 72000)
 ```{r}
 correlogram_utm <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix,
-  D.geo = coords_utm,
-  nperm = 1000,
+   D.geo = coords_utm,
+   nperm = 1000,
   cutoff = T,
   break.pts = break_points_2500m
    )
@@ -285,6 +282,7 @@ correlogram_utm_10km <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_10km)
+
 ```
 
 ## Urban
@@ -293,13 +291,14 @@ plot(correlogram_utm_10km)
 ```{r}
 correlogram_utm_urb <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb,
-  D.geo = coords_utm_urb,
+D.geo = coords_utm_urb,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_2500m
    )
 
 plot(correlogram_utm_urb)
+
 ```
 
 #### 3km spacing
@@ -313,32 +312,35 @@ correlogram_utm_urb_3km <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_urb_3km)
+
 ```
 
 #### 10km spacing
 ```{r}
 correlogram_utm_urb_10km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb,
-  D.geo = coords_utm_urb,
+ D.geo = coords_utm_urb,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_10km
    )
 
 plot(correlogram_utm_urb_10km)
+
 ```
 
 #### 12km spacing
 ```{r}
 correlogram_utm_urb_12km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb,
-  D.geo = coords_utm_urb,
+   D.geo = coords_utm_urb,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_12km
    )
 
 plot(correlogram_utm_urb_12km)
+
 ```
 
 ### Urb = urb score
@@ -353,45 +355,49 @@ correlogram_utm_urb2 <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_urb2)
+
 ```
 
 #### 3km spacing
 ```{r}
 correlogram_utm_urb2_3km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb2,
-  D.geo = coords_utm_urb2,
+    D.geo = coords_utm_urb2,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_3000m
    )
 
 plot(correlogram_utm_urb2_3km)
+
 ```
 
 #### 10km spacing
 ```{r}
 correlogram_utm_urb2_10km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb2,
-  D.geo = coords_utm_urb2,
+   D.geo = coords_utm_urb2,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_10km
    )
 
 plot(correlogram_utm_urb2_10km)
+
 ```
 
 #### 12km spacing
 ```{r}
 correlogram_utm_urb2_12km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb2,
-  D.geo = coords_utm_urb2,
+   D.geo = coords_utm_urb2,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_12km
    )
 
 plot(correlogram_utm_urb2_12km)
+
 ```
 
 ## Rural
@@ -407,19 +413,21 @@ correlogram_utm_rur <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_rur)
+
 ```
 
 #### 12km spacing
 ```{r}
 correlogram_utm_rur_12km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_rur,
-  D.geo = coords_utm_rur,
+   D.geo = coords_utm_rur,
   nperm = 1000,
   cutoff = T,
    break.pts = break_points_12km
    )
 
 plot(correlogram_utm_rur_12km)
+
 ```
 
 ### Urb = urb score
@@ -427,13 +435,14 @@ plot(correlogram_utm_rur_12km)
 ```{r}
 correlogram_utm_rur2 <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_rur2,
-  D.geo = coords_utm_rur2,
+ D.geo = coords_utm_rur2,
   nperm = 1000,
   cutoff = T,
    break.pts = break_points_10km
    )
 
 plot(correlogram_utm_rur2)
+
 ```
 
 #### 12km spacing
@@ -447,6 +456,7 @@ correlogram_utm_rur2_12km <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_rur2_12km)
+
 ```
 
 ## 1 individual/site
@@ -454,13 +464,14 @@ plot(correlogram_utm_rur2_12km)
 ```{r}
 correlogram_utm_subsamp <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_subsamp,
-  D.geo = coords_utm_subsamp,
+   D.geo = coords_utm_subsamp,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_2500m
    )
 
 plot(correlogram_utm_subsamp)
+
 ```
 
 ### 10km spacing
@@ -474,6 +485,7 @@ correlogram_utm_subsamp_10km <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_subsamp_10km)
+
 ```
 
 ## 1 individual/site- Urban
@@ -488,22 +500,24 @@ correlogram_utm_urb_subsamp <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_urb_subsamp)
+
 ```
 
 ### 3km spacing
 ```{r}
 correlogram_utm_urb_subsamp_3km <- vegan::mantel.correlog(
-  D.eco = genetic_distance_matrix_urb_subsamp,
-  D.geo = coords_utm_urb_subsamp,
+D.eco = genetic_distance_matrix_urb_subsamp,
+ D.geo = coords_utm_urb_subsamp,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_3000m
    )
 
 plot(correlogram_utm_urb_subsamp_3km)
+
 ```
 
-### 2.5km spacing
+### 10km spacing
 ```{r}
 correlogram_utm_urb_subsamp_10km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb_subsamp,
@@ -514,9 +528,10 @@ correlogram_utm_urb_subsamp_10km <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_urb_subsamp_10km)
+
 ```
 
-### 3km spacing
+### 12km spacing
 ```{r}
 correlogram_utm_urb_subsamp_12km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb_subsamp,
@@ -527,6 +542,7 @@ correlogram_utm_urb_subsamp_12km <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_urb_subsamp_12km)
+
 ```
 
 ## 1 individual/site- Rural
@@ -541,19 +557,21 @@ correlogram_utm_rur_subsamp <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_rur_subsamp)
+
 ```
 
 ### 12km spacing
 ```{r}
 correlogram_utm_rur_subsamp_12km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_rur_subsamp,
-  D.geo = coords_utm_rur_subsamp,
+ D.geo = coords_utm_rur_subsamp,
   nperm = 1000,
   cutoff = T,
   break.pts = break_points_12km
    )
 
 plot(correlogram_utm_rur_subsamp_12km)
+
 ```
 
 # Export
