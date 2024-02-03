@@ -63,6 +63,13 @@ gen_data_subsamp_rural <- process_vcf_data(
   )
 ```
 
+#### 1 individual/population- URBAN ONLY
+```{r}
+gen_data_subsamp_urban <- process_vcf_data(
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf")
+  )
+```
+
 ### Coordinates
 #### Function
 ```{r}
@@ -137,6 +144,15 @@ coords_subsamp_rural <- process_location_data(
 
 ```
 
+#### 1 individual/population- URBAN ONLY
+```{r}
+coords_subsamp_urban <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN.csv"))
+
+```
+
+
 ## Run analysis
 ### All individuals
 ```{r}
@@ -178,6 +194,19 @@ set.seed(1)
 if (!exists("milkweed_analysis_subsamp_rural"))
 milkweed_analysis_subsamp_rural <- mgQuick(gen_data_subsamp_rural, coords_subsamp_rural,  forwardPerm = 1000)
 # 2 significant MEMs detected (2,4)
+
+```
+
+### 1 individual per population- URBAN
+```{r}
+set.seed(1)
+if (!exists("milkweed_analysis_subsamp_urban"))
+milkweed_analysis_subsamp_urban <- mgQuick(gen_data_subsamp_urban, coords_subsamp_urban,  forwardPerm = 1000)
+# 0 significant positive MEMs detected; 
+# Forward selections of positive Moran's eigenvectors
+# ----Selected: None 
+# Forward selections of negative Moran's eigenvectors
+# ----Selected: 7, 8, 17, 23, 25, 37, 41 
 
 ```
 

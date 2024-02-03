@@ -270,7 +270,7 @@ fis_dist_pred_plot <- plot(fis_dist_pred,
                alpha = 0.1
               ) +
   xlab("Distance to the City Center (km)") +
-  ylab("FIS") +
+  ylab(expression(F[IS])) +
   ylim(0, 0.06) +
   labs(title = "") +
   theme_pubr() +
@@ -294,7 +294,7 @@ fis_usc_pred_plot <- plot(fis_usc_pred,
                alpha = 0.1
               ) +
   xlab("Urbanization Score") +
-  ylab("FIS") +
+  ylab(expression(F[IS])) +
   ylim(0, 0.06) +
   labs(title = "") +
   theme_pubr() +
@@ -345,7 +345,7 @@ ggplot(diversity_all_sites,
 fis_dist_pred_plot
 
 ggsave(here::here("./Figures_Tables/regressions/fis_distance.png"),
-       width = 10,
+       width = 5,
        height = 3.5,
        units = "in")
 
@@ -354,7 +354,7 @@ ggsave(here::here("./Figures_Tables/regressions/fis_distance.png"),
 fis_usc_pred_plot
 
 ggsave(here::here("./Figures_Tables/regressions/fis_urbscore.png"),
-       width = 10,
+       width = 5,
        height = 3.5,
        units = "in")
 ```
