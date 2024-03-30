@@ -706,3 +706,20 @@ for (file_path in file_paths) {
 
 ```
 
+
+## Extras
+```{r}
+# just for spatial K = 2
+load("sp_K2_iter10000_chains5_conStruct.results.Robj")
+
+admix.props <- conStruct.results$chain_1$MAP$admix.proportions
+
+load("sp_K2_iter10000_chains5_data.block.Robj")
+  
+make.admix.pie.plot(admix.proportions = admix.props,
+                        coords = data.block$coords,
+                        radii = 0.8,
+                        x.lim = c(-80.3,-78.8),
+                        y.lim = c(43,44.4))
+```
+
