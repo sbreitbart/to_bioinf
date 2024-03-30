@@ -211,6 +211,14 @@ milkweed_analysis_subsamp_urban <- mgQuick(gen_data_subsamp_urban, coords_subsam
 ```
 
 ## Visualize results- NOTE: the terrain basemap chunks use stamen basemaps that I can't obtain anymore. These maps aren't necessary to convey my results anymore so I'm not going to fix the code. But if I didn, I'd go to sample_site_map.rmd and use the tmap code to create the maps.
+### MOST basic plot (built-in functions)
+#### 1 individual per population- RURAL
+```{r}
+plot(coords_subsamp_rural, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords_subsamp_rural, milkweed_analysis_subsamp_rural$memgene[, 1], add.plot=TRUE, legend=TRUE)
+box()
+```
+
 ### Basic plots
 #### Function
 ```{r}
