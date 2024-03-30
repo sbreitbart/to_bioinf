@@ -867,6 +867,7 @@ cowplot::ggdraw() +
 ```
 
 ### Find Ne highs, lows
+#### Median Ne
 ```{r}
 Ne_stats <- function(Ne_df){
 
@@ -908,6 +909,40 @@ print(paste0("Most recent median Ne: ", most_recent_ne*1000))
 perc_decrease <- round(((most_recent_ne-median_ne_750YA)/median_ne_750YA ) * 100, 3)
 
 print(paste0("% decrease in Ne: ", perc_decrease))
+}
+
+```
+
+#### 97.5% conf int Ne
+```{r}
+Ne_stats_CI <- function(Ne_df){
+
+min_year <- min(Ne_df$year)  
+
+
+# find most recent 2.5% CI Ne
+most_recent_ne_2 <- Ne_df %>%
+  dplyr::filter(year == min_year) %>%
+  dplyr::select(Ne_2.5.) %>%
+  dplyr::mutate(Ne_2.5. = round(Ne_2.5., 0)) %>%
+  slice(1) %>%
+  as.numeric()
+
+# find most recent 97.5% CI Ne
+most_recent_ne_97 <- Ne_df %>%
+  dplyr::filter(year == min_year) %>%
+  dplyr::select(Ne_97.5.) %>%
+  dplyr::mutate(Ne_97.5. = round(Ne_97.5., 0)) %>%
+  slice(1) %>%
+  as.numeric()
+
+
+print(paste0("Most recent Ne CI: [",
+             most_recent_ne_2*1000,
+             ",",
+             most_recent_ne_97*1000,
+             "]"))
+
 }
 
 ```
@@ -956,6 +991,229 @@ make_ne_plot_reg_y(full_fig_1.8e8,
                    "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")
 ```
 
+#### Export main plot WITH conf intervals
+```{r}
+#max_y <- max(urb_fig_1.8e8$Ne_97.5./1000)
+max_y <- 300
+
+ggplot(
+    full_fig_1.8e8,
+    aes(x = year))  +
+
+    geom_point(aes(y = Ne_median/1000),
+               size = 0.75,
+               color = "black") +
+  
+    geom_point(aes(y = Ne_97.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+      geom_point(aes(y = Ne_2.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+     geom_line(aes(y = Ne_median/1000),
+               size = 0.75,
+               color = "black") +
+  
+    geom_line(aes(y = Ne_97.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+      geom_line(aes(y = Ne_2.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+
+    # add vertical line at 12,000 yrs (glaciers retreat)
+    geom_segment( 
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max_y),
+      color = "blue",
+      linetype = 5 ) +
+
+    # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
+      geom_segment( 
+      aes(
+        x = 1500,
+        xend = 1500,
+        y = 0,
+        yend = max_y),
+      color = "cyan",
+      linetype = "longdash") +
+    
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 30000)) +
+    scale_y_continuous(
+      #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  max_y
+                                  )
+                       ) +
+    xlab("Years ago") +
+    ylab("Median Nₑ (million individuals)") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/entirepop_conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+
+#### Export urb plot WITH conf intervals
+```{r}
+# max_y_urb <- max(urb_fig_1.8e8$Ne_97.5./1000)
+max_y_urb <- 300
+
+ggplot(
+    urb_fig_1.8e8,
+    aes(x = year))  +
+
+    geom_point(aes(y = Ne_median/1000),
+               size = 0.75,
+               color = "black") +
+  
+    geom_point(aes(y = Ne_97.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+      geom_point(aes(y = Ne_2.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+     geom_line(aes(y = Ne_median/1000),
+               size = 0.75,
+               color = "black") +
+  
+    geom_line(aes(y = Ne_97.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+      geom_line(aes(y = Ne_2.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+
+    # add vertical line at 12,000 yrs (glaciers retreat)
+    geom_segment( 
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max_y_urb),
+      color = "blue",
+      linetype = 5 ) +
+
+    # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
+      geom_segment( 
+      aes(
+        x = 1500,
+        xend = 1500,
+        y = 0,
+        yend = max_y_urb),
+      color = "cyan",
+      linetype = "longdash") +
+    
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 30000)) +
+    scale_y_continuous(
+      #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  max_y_urb
+                                  )
+                       ) +
+    xlab("Years ago") +
+    ylab("Median Nₑ (million individuals)") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/urb_conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+#### Export rur plot WITH conf intervals
+```{r}
+# max_y_rur <- max(rur_fig_1.8e8$Ne_97.5./1000)
+max_y_rur <- 300
+
+ggplot(
+    rur_fig_1.8e8,
+    aes(x = year))  +
+
+    geom_point(aes(y = Ne_median/1000),
+               size = 0.75,
+               color = "black") +
+  
+    geom_point(aes(y = Ne_97.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+      geom_point(aes(y = Ne_2.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+     geom_line(aes(y = Ne_median/1000),
+               size = 0.75,
+               color = "black") +
+  
+    geom_line(aes(y = Ne_97.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+  
+      geom_line(aes(y = Ne_2.5./1000),
+               size = 0.75,
+               color = "lightgrey") +
+
+    # add vertical line at 12,000 yrs (glaciers retreat)
+    geom_segment( 
+      aes(
+        x = 12000,
+        xend = 12000,
+        y = 0,
+        yend = max_y_rur),
+      color = "blue",
+      linetype = 5 ) +
+
+    # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
+      geom_segment( 
+      aes(
+        x = 1500,
+        xend = 1500,
+        y = 0,
+        yend = max_y_rur),
+      color = "cyan",
+      linetype = "longdash") +
+    
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 30000)) +
+    scale_y_continuous(
+      #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  max_y_rur
+                                  )
+                       ) +
+    xlab("Years ago") +
+    ylab("Median Nₑ (million individuals)") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/rur_conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
 #### Export all plots
 ```{r}
 export_all_plots(df_distCC = all_dist_1.8e8,
@@ -994,4 +1252,9 @@ Ne_stats(urb_fig_1.8e8)
 #Ne_stats(urb_fig2_1.8e8)
 Ne_stats(rur_fig_1.8e8)
 #Ne_stats(rur_fig2_1.8e8)
+
+Ne_stats_CI(full_fig_1.8e8)
+Ne_stats_CI(urb_fig_1.8e8)
+Ne_stats_CI(rur_fig_1.8e8)
+
 ```
