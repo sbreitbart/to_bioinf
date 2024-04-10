@@ -468,6 +468,107 @@ full_fig_1.8e8_1.5yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/
 
 ```
 
+### mu = 1.8x10^-8 & generation time = 2 years
+#### All sites in 1 population
+```{r}
+full_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/full/full_mmaf0.007813_mut_rate_1.8e-8_2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+#### Urban
+##### Dist to CC
+```{r}
+urb_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/urb_dist/urban_dist_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+##### Urb Score
+```{r}
+urb_fig2_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/urb_usc/urban_usc_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+#### Rural
+##### Dist to CC
+```{r}
+rur_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/rur_dist/rural_dist_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+##### Urb score
+```{r}
+rur_fig2_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/rur_usc/rural_usc_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+#### Merge dfs
+##### Urb = dist to CC
+```{r}
+all_dist_1.8e8_2yr <- dplyr::full_join(urb_fig_1.8e8_2yr %>%
+                    dplyr::mutate(Group = "Urban"),
+                  rur_fig_1.8e8_2yr %>%
+                    dplyr::mutate(Group = "Rural")) %>%
+  dplyr::full_join(.,
+                   full_fig_1.8e8_2yr %>%
+                    dplyr::mutate(Group = "Entire population"))
+
+# remove duplicate rows
+all_dist_1.8e8_2yr %<>%
+  distinct(.keep_all = TRUE)
+```
+
+
+##### Urb = urb score
+```{r}
+all_usc_1.8e8_2yr <- dplyr::full_join(urb_fig2_1.8e8_2yr %>%
+                    dplyr::mutate(Group = "Urban"),
+                  rur_fig2_1.8e8_2yr %>%
+                    dplyr::mutate(Group = "Rural")) %>%
+  dplyr::full_join(.,
+                   full_fig_1.8e8_2yr %>%
+                    dplyr::mutate(Group = "Entire population"))
+
+# remove duplicate rows
+all_usc_1.8e8_2yr %<>%
+  distinct(.keep_all = TRUE)
+```
+
+
 ### mu = 2.6x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
@@ -503,54 +604,58 @@ full_fig_2.6e8_1.5yr <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/
 # regular y axis
 make_ne_plot_reg_y <- function(df, exported_filepath){
   
-  max_y <- df %>%
-    dplyr::select(Ne_median) %>%
-    dplyr::filter(Ne_median == max(Ne_median)) %>%
-    dplyr::slice(1) %>%
-    dplyr::mutate(max = Ne_median*1.1) %>%
-    dplyr::select(max) %>%
-    as.numeric()
-  
   # full plot with red horizontal line at 500 years ago
   full_plot <- 
     ggplot(
     df,
     aes(
-      x = year,
-      y = Ne_median))  +
+      x = year))  +
 
-    geom_point(size = 0.75) +
-
+     geom_line(aes(y = Ne_median/1000),
+               size = 1,
+               color = "black",
+               linetype = "solid") +
+  
+    geom_line(aes(y = Ne_97.5./1000),
+               size = 0.5,
+               color = "black",
+              linetype = "dashed") +
+  
+      geom_line(aes(y = Ne_2.5./1000),
+               size = 0.5,
+               color = "black",
+               linetype = "dashed") +
+    
     # add vertical line at 12,000 yrs (glaciers retreat)
     geom_segment( 
       aes(
-        x = 12000,
-        xend = 12000,
+        x = 12024,
+        xend = 12024,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "blue",
       linetype = 5 ) +
 
     # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
       geom_segment( 
       aes(
-        x = 1500,
-        xend = 1500,
+        x = 1524,
+        xend = 1524,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "cyan",
       linetype = "longdash") +
     
     scale_x_continuous(labels = scales::comma,
                        limits = c(NA, 40000)) +
-    scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+    scale_y_continuous(#breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
                        limits = c(0, 
-                                  max_y
+                                  NA
                                   )
                        ) +
     xlab("Years ago") +
-    ylab("Median Nₑ (1k individuals)") +
+    ylab("Median Nₑ (million individuals)") +
     theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
@@ -567,30 +672,30 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
        # add vertical line around 700 yrs ago, when Iroquois start cultivating crops in Halton, Ontario
       geom_segment(
       aes(
-        x = 723,
-        xend = 723,
+        x = 724,
+        xend = 724,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "green",
       linetype = "longdash")  +
 
       # add vertical line ~400 yrs ago, when European diseases spread to Eastern North America
       geom_segment( 
       aes(
-        x = 423,
-        xend = 423,
+        x = 424,
+        xend = 424,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "orange",
       linetype = "twodash")   +
   
       # add vertical line ~100 yrs ago, when reforestation efforts begin in earnest
       geom_segment( 
       aes(
-        x = 123,
-        xend = 123,
+        x = 124,
+        xend = 124,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "tomato",
       linetype = "dotdash")
     
@@ -655,8 +760,8 @@ export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
     # add vertical line at 12,000 yrs (glaciers retreat)
     geom_segment( 
       aes(
-        x = 12000,
-        xend = 12000,
+        x = 12024,
+        xend = 12024,
         y = 0,
         yend = max_y_distCC),
       color = "blue",
@@ -665,8 +770,8 @@ export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
     # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
       geom_segment( 
       aes(
-        x = 1500,
-        xend = 1500,
+        x = 1524,
+        xend = 1524,
         y = 0,
         yend = max_y_distCC),
       color = "cyan",
@@ -699,8 +804,8 @@ all_plot_inset <- all_plot +
          # add vertical line around 700 yrs ago, when Iroquois start cultivating crops in Halton, Ontario
       geom_segment(
       aes(
-        x = 723,
-        xend = 723,
+        x = 724,
+        xend = 724,
         y = 0,
         yend = max_y_distCC),
       color = "green",
@@ -709,8 +814,8 @@ all_plot_inset <- all_plot +
       # add vertical line ~400 yrs ago, when European diseases spread to Eastern North America
       geom_segment( 
       aes(
-        x = 423,
-        xend = 423,
+        x = 424,
+        xend = 424,
         y = 0,
         yend = max_y_distCC),
       color = "orange",
@@ -719,8 +824,8 @@ all_plot_inset <- all_plot +
       # add vertical line ~100 yrs ago, when reforestation efforts begin in earnest
       geom_segment( 
       aes(
-        x = 123,
-        xend = 123,
+        x = 124,
+        xend = 124,
         y = 0,
         yend = max_y_distCC),
       color = "tomato",
@@ -770,8 +875,8 @@ all_plot_usc <- ggplot(df_urbscore)  +
       # add vertical line at 12,000 yrs (glaciers retreat)
     geom_segment( 
       aes(
-        x = 12000,
-        xend = 12000,
+        x = 12024,
+        xend = 12024,
         y = 0,
         yend = max_y_urbscore),
       color = "blue",
@@ -780,8 +885,8 @@ all_plot_usc <- ggplot(df_urbscore)  +
     # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
       geom_segment( 
       aes(
-        x = 1500,
-        xend = 1500,
+        x = 1524,
+        xend = 1524,
         y = 0,
         yend = max_y_urbscore),
       color = "cyan",
@@ -813,8 +918,8 @@ all_plot_inset_usc <- all_plot_usc +
          # add vertical line around 700 yrs ago, when Iroquois start cultivating crops in Halton, Ontario
       geom_segment(
       aes(
-        x = 723,
-        xend = 723,
+        x = 724,
+        xend = 724,
         y = 0,
         yend = max_y_urbscore),
       color = "green",
@@ -823,8 +928,8 @@ all_plot_inset_usc <- all_plot_usc +
       # add vertical line ~400 yrs ago, when European diseases spread to Eastern North America
       geom_segment( 
       aes(
-        x = 423,
-        xend = 423,
+        x = 424,
+        xend = 424,
         y = 0,
         yend = max_y_urbscore),
       color = "orange",
@@ -833,8 +938,8 @@ all_plot_inset_usc <- all_plot_usc +
       # add vertical line ~100 yrs ago, when reforestation efforts begin in earnest
       geom_segment( 
       aes(
-        x = 123,
-        xend = 123,
+        x = 124,
+        xend = 124,
         y = 0,
         yend = max_y_urbscore),
       color = "tomato",
@@ -991,57 +1096,46 @@ make_ne_plot_reg_y(full_fig_1.8e8,
                    "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")
 ```
 
-#### Export main plot WITH conf intervals
+#### Export DIST plots WITH conf intervals
 ##### Full plot
 ```{r}
-#max_y <- max(urb_fig_1.8e8$Ne_97.5./1000)
-max_y <- 300
-
-ggplot(
-    full_fig_1.8e8,
+dist_CIs <- ggplot(
+    all_dist_1.8e8 %>%
+      dplyr::filter(Group != "Entire population"),
     aes(x = year))  +
-
-    geom_point(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
   
-    geom_point(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+     geom_line(aes(color = Group,
+                   y = Ne_median/1000),
+               size = 1,
+               linetype = "solid") +
   
-      geom_point(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+    geom_line(aes(color = Group,
+                   y = Ne_97.5./1000),
+               size = 0.5,
+              linetype = "dashed") +
   
-     geom_line(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_line(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_line(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+      geom_line(aes(color = Group,
+                   y = Ne_2.5./1000),
+               size = 0.5,
+               linetype = "dashed") +
 
     # add vertical line at 12,000 yrs (glaciers retreat)
     geom_segment( 
       aes(
-        x = 12000,
-        xend = 12000,
+        x = 12024,
+        xend = 12024,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "blue",
       linetype = 5 ) +
 
     # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
       geom_segment( 
       aes(
-        x = 1500,
-        xend = 1500,
+        x = 1524,
+        xend = 1524,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "cyan",
       linetype = "longdash") +
     
@@ -1051,183 +1145,20 @@ ggplot(
       #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
                        limits = c(0, 
-                                  max_y
+                                  NA
                                   )
                        ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
     xlab("Years ago") +
     ylab("Median Nₑ (million individuals)") +
     theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
   
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/entirepop_conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-##### Inset
-```{r}
-max_y <- 300
-
-ggplot(
-    full_fig_1.8e8,
-    aes(x = year))  +
-
-    geom_point(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_point(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_point(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-     geom_line(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_line(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_line(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-
-
-    # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
-      geom_segment( 
-      aes(
-        x = 1500,
-        xend = 1500,
-        y = 0,
-        yend = max_y),
-      color = "cyan",
-      linetype = "longdash") +
-  
-      # add vertical line around 700 yrs ago, when Iroquois start cultivating crops in Halton, Ontario
-      geom_segment(
-      aes(
-        x = 723,
-        xend = 723,
-        y = 0,
-        yend = max_y),
-      color = "green",
-      linetype = "longdash")  +
-
-      # add vertical line ~400 yrs ago, when European diseases spread to Eastern North America
-      geom_segment( 
-      aes(
-        x = 423,
-        xend = 423,
-        y = 0,
-        yend = max_y),
-      color = "orange",
-      linetype = "twodash")   +
-  
-      # add vertical line ~100 yrs ago, when reforestation efforts begin in earnest
-      geom_segment( 
-      aes(
-        x = 123,
-        xend = 123,
-        y = 0,
-        yend = max_y),
-      color = "tomato",
-      linetype = "dotdash") +
-    
-    scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 2300)) +
-    scale_y_continuous(
-                       labels = scales::comma,
-                       limits = c(0, 
-                                  max_y
-                                  )
-                       ) +
-    xlab("Years ago") +
-    ylab("Median Nₑ (million individuals)") +
-    theme_bw() +
-    labs_pubr() +
-    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-  
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/entirepop_inset_conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-#### Export urb plot WITH conf intervals
-##### Full plot
-```{r}
-# max_y_urb <- max(urb_fig_1.8e8$Ne_97.5./1000)
-max_y_urb <- 300
-
-ggplot(
-    urb_fig_1.8e8,
-    aes(x = year))  +
-
-    geom_point(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_point(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_point(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-     geom_line(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_line(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_line(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-
-    # add vertical line at 12,000 yrs (glaciers retreat)
-    geom_segment( 
-      aes(
-        x = 12000,
-        xend = 12000,
-        y = 0,
-        yend = max_y_urb),
-      color = "blue",
-      linetype = 5 ) +
-
-    # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
-      geom_segment( 
-      aes(
-        x = 1500,
-        xend = 1500,
-        y = 0,
-        yend = max_y_urb),
-      color = "cyan",
-      linetype = "longdash") +
-    
-    scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 30000)) +
-    scale_y_continuous(
-      #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-                       labels = scales::comma,
-                       limits = c(0, 
-                                  max_y_urb
-                                  )
-                       ) +
-    xlab("Years ago") +
-    ylab("Median Nₑ (million individuals)") +
-    theme_bw() +
-    labs_pubr() +
-    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-  
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/urb_conf_ints.png",
+ggsave(plot = dist_CIs,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/conf_ints.png",
        width = 17,
        height = 9,
        units = "cm")
@@ -1235,74 +1166,67 @@ ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/urb_conf_
 
 ##### inset plot
 ```{r}
-max_y_urb <- 300
-
-ggplot(
-    urb_fig_1.8e8,
+dist_CIs_inset <- ggplot(
+    all_dist_1.8e8 %>%
+      dplyr::filter(Group != "Entire population"),
     aes(x = year))  +
 
-    geom_point(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
+     geom_line(aes(color = Group,
+                   y = Ne_median/1000),
+               size = 1,
+              # color = "black",
+               linetype = "solid") +
   
-    geom_point(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+    geom_line(aes(color = Group,
+                   y = Ne_97.5./1000),
+               size = 0.5,
+              # color = "black",
+              linetype = "dashed") +
   
-      geom_point(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-     geom_line(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_line(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_line(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+      geom_line(aes(color = Group,
+                   y = Ne_2.5./1000),
+               size = 0.5,
+             #  color = "black",
+               linetype = "dashed") +
 
 
     # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
       geom_segment( 
       aes(
-        x = 1500,
-        xend = 1500,
+        x = 1524,
+        xend = 1524,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "cyan",
       linetype = "longdash") +
   
       # add vertical line around 700 yrs ago, when Iroquois start cultivating crops in Halton, Ontario
       geom_segment(
       aes(
-        x = 723,
-        xend = 723,
+        x = 724,
+        xend = 724,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "green",
       linetype = "longdash")  +
 
       # add vertical line ~400 yrs ago, when European diseases spread to Eastern North America
       geom_segment( 
       aes(
-        x = 423,
-        xend = 423,
+        x = 424,
+        xend = 424,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "orange",
       linetype = "twodash")   +
   
       # add vertical line ~100 yrs ago, when reforestation efforts begin in earnest
       geom_segment( 
       aes(
-        x = 123,
-        xend = 123,
+        x = 124,
+        xend = 124,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "tomato",
       linetype = "dotdash") +
     
@@ -1311,72 +1235,106 @@ ggplot(
     scale_y_continuous(
                        labels = scales::comma,
                        limits = c(0, 
-                                  max_y_urb
+                                  NA
                                   )
                        ) +
+    scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
     xlab("Years ago") +
     ylab("Median Nₑ (million individuals)") +
     theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
   
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/urb_inset_conf_ints.png",
+ggsave(plot = dist_CIs_inset,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/inset_conf_ints.png",
        width = 17,
        height = 9,
        units = "cm")
 ```
 
-#### Export rur plot WITH conf intervals
+##### Full plot WITH inset
+```{r}
+dist_plot_CIs <- dist_CIs +
+
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+          legend.position = "top") +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+  
+
+  ### Plot inset (past 2300 years)
+dist_plot_CIs_inset <- dist_CIs_inset +
+
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black",
+            fill = "white",
+            size = 1),
+          legend.position = "none")
+
+  
+  
+#### Export
+ggsave(plot =
+### Overlay inset in full figure
+cowplot::ggdraw() +
+    draw_plot(dist_plot_CIs) +
+    draw_plot(dist_plot_CIs_inset,
+              x = 0.52,
+              y = 0.35, 
+              width = 0.4,
+              height = 0.45),     
+           filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/both_with_inset_CIs.png"),
+         height = 5,
+         width = 9,
+         dpi = 200)
+
+```
+
+
+#### Export URB SCORE plots WITH conf intervals
 ##### Full plot
 ```{r}
-# max_y_rur <- max(rur_fig_1.8e8$Ne_97.5./1000)
-max_y_rur <- 300
-
-ggplot(
-    rur_fig_1.8e8,
+usc_CIs <- ggplot(
+    all_usc_1.8e8 %>%
+      dplyr::filter(Group != "Entire population"),
     aes(x = year))  +
-
-    geom_point(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
   
-    geom_point(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+     geom_line(aes(color = Group,
+                   y = Ne_median/1000),
+               size = 1,
+               linetype = "solid") +
   
-      geom_point(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+    geom_line(aes(color = Group,
+                   y = Ne_97.5./1000),
+               size = 0.5,
+              linetype = "dashed") +
   
-     geom_line(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_line(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_line(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+      geom_line(aes(color = Group,
+                   y = Ne_2.5./1000),
+               size = 0.5,
+               linetype = "dashed") +
 
     # add vertical line at 12,000 yrs (glaciers retreat)
     geom_segment( 
       aes(
-        x = 12000,
-        xend = 12000,
+        x = 12024,
+        xend = 12024,
         y = 0,
-        yend = max_y_rur),
+        yend = max(Ne_97.5.)/1000),
       color = "blue",
       linetype = 5 ) +
 
     # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
       geom_segment( 
       aes(
-        x = 1500,
-        xend = 1500,
+        x = 1524,
+        xend = 1524,
         y = 0,
-        yend = max_y_rur),
+        yend = max(Ne_97.5.)/1000),
       color = "cyan",
       linetype = "longdash") +
     
@@ -1386,16 +1344,20 @@ ggplot(
       #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
                        limits = c(0, 
-                                  max_y_rur
+                                  NA
                                   )
                        ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
     xlab("Years ago") +
     ylab("Median Nₑ (million individuals)") +
     theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
   
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/rur_conf_ints.png",
+ggsave(plot = usc_CIs,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/conf_ints.png",
        width = 17,
        height = 9,
        units = "cm")
@@ -1403,73 +1365,64 @@ ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/rur_conf_
 
 ##### inset plot
 ```{r}
-max_y_rur <- 300
-
-ggplot(
-    rur_fig_1.8e8,
+usc_CIs_inset <- ggplot(
+    all_usc_1.8e8 %>%
+      dplyr::filter(Group != "Entire population"),
     aes(x = year))  +
 
-    geom_point(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
+     geom_line(aes(color = Group,
+                   y = Ne_median/1000),
+               size = 1,
+               linetype = "solid") +
   
-    geom_point(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+    geom_line(aes(color = Group,
+                   y = Ne_97.5./1000),
+               size = 0.5,
+              linetype = "dashed") +
   
-      geom_point(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-     geom_line(aes(y = Ne_median/1000),
-               size = 0.75,
-               color = "black") +
-  
-    geom_line(aes(y = Ne_97.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
-  
-      geom_line(aes(y = Ne_2.5./1000),
-               size = 0.75,
-               color = "lightgrey") +
+      geom_line(aes(color = Group,
+                   y = Ne_2.5./1000),
+               size = 0.5,
+               linetype = "dashed") +
+
 
     # add vertical line at 1500 yrs ago (corn cultivation begins around Grand River in southern Ontario)
       geom_segment( 
       aes(
-        x = 1500,
-        xend = 1500,
+        x = 1524,
+        xend = 1524,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "cyan",
       linetype = "longdash") +
   
       # add vertical line around 700 yrs ago, when Iroquois start cultivating crops in Halton, Ontario
       geom_segment(
       aes(
-        x = 723,
-        xend = 723,
+        x = 724,
+        xend = 724,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "green",
       linetype = "longdash")  +
 
       # add vertical line ~400 yrs ago, when European diseases spread to Eastern North America
       geom_segment( 
       aes(
-        x = 423,
-        xend = 423,
+        x = 424,
+        xend = 424,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "orange",
       linetype = "twodash")   +
   
       # add vertical line ~100 yrs ago, when reforestation efforts begin in earnest
       geom_segment( 
       aes(
-        x = 123,
-        xend = 123,
+        x = 124,
+        xend = 124,
         y = 0,
-        yend = max_y),
+        yend = max(Ne_97.5.)/1000),
       color = "tomato",
       linetype = "dotdash") +
     
@@ -1478,21 +1431,64 @@ ggplot(
     scale_y_continuous(
                        labels = scales::comma,
                        limits = c(0, 
-                                  max_y_rur
+                                  NA
                                   )
                        ) +
+    scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
     xlab("Years ago") +
     ylab("Median Nₑ (million individuals)") +
     theme_bw() +
     labs_pubr() +
     theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
   
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/rur_inset_conf_ints.png",
+ggsave(plot = usc_CIs_inset,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/inset_conf_ints.png",
        width = 17,
        height = 9,
        units = "cm")
 ```
 
+##### Full plot WITH inset
+```{r}
+usc_plot_CIs <- usc_CIs +
+
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+          legend.position = "top") +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+  
+
+  ### Plot inset (past 2300 years)
+usc_plot_CIs_inset <- usc_CIs_inset +
+
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black",
+            fill = "white",
+            size = 1),
+          legend.position = "none")
+
+  
+  
+#### Export
+ggsave(plot =
+### Overlay inset in full figure
+cowplot::ggdraw() +
+    draw_plot(usc_plot_CIs) +
+    draw_plot(usc_plot_CIs_inset,
+              x = 0.52,
+              y = 0.35, 
+              width = 0.4,
+              height = 0.45),     
+           filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/both_with_inset_CIs.png"),
+         height = 5,
+         width = 9,
+         dpi = 200)
+
+```
 
 #### Export all plots
 ```{r}
