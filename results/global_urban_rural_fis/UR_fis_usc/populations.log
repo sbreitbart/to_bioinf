@@ -1,0 +1,164 @@
+populations v2.62, executed 2024-01-31 20:41:40 (zlib-1.2.11)
+populations -P /home/breitba1/step08_no-IBD/output_refmap_no-IBD -O global_urban_rural_fis/UR_fis_usc --popmap /home/breitba1/step08_no-IBD/pop_map3_UR_usc.txt --vcf-all -t 8 -R 0.75 -r 0.2 --min-maf 0.05 --write-single-snp --plink
+Locus/sample distributions will be written to 'global_urban_rural_fis/UR_fis_usc/populations.log.distribs'.
+populations parameters selected:
+  Percent samples limit per population: 0.2
+  Locus Population limit: 1
+  Percent samples overall: 0.75
+  Minor allele frequency cutoff: 0.05
+  Maximum observed heterozygosity cutoff: 1
+  Applying Fst correction: none.
+  Pi/Fis kernel smoothing: off
+  F-stats kernel smoothing: off
+  Bootstrap resampling: off
+
+Parsing population map...
+The population map contained 256 samples, 2 population(s), 1 group(s).
+Working on 256 samples.
+Working on 2 population(s):
+    Urban: 1.2_1A10_sorted, 1.2_1A11_sorted, 1.2_1A1_sorted, 1.2_1A3_sorted, 1.2_1A4_sorted, 1.2_1A5_sorted, 1.2_1A8_sorted, 1.2_1B10_sorted, 
+           1.2_1B11_sorted, 1.2_1B3_sorted, 1.2_1B6_sorted, 1.2_1B8_sorted, 1.2_1B9_sorted, 1.2_1C10_sorted, 1.2_1C1_sorted, 1.2_1C2_sorted, 
+           1.2_1C3_sorted, 1.2_1C5_sorted, 1.2_1C8_sorted, 1.2_1D11_sorted, 1.2_1D2_sorted, 1.2_1D3_sorted, 1.2_1D6_sorted, 1.2_1D7_sorted, 
+           1.2_1D8_sorted, 1.2_1E10_sorted, 1.2_1E1_sorted, 1.2_1E2_sorted, 1.2_1E3_sorted, 1.2_1E8_sorted, 1.2_1F10_sorted, 1.2_1F2_sorted, 
+           1.2_1F5_sorted, 1.2_1F7_sorted, 1.2_1F8_sorted, 1.2_1F9_sorted, 1.2_1G10_sorted, 1.2_1G2_sorted, 1.2_1G5_sorted, 1.2_1G6_sorted, 
+           1.2_1G8_sorted, 1.2_1G9_sorted, 1.2_1H1_sorted, 1.2_1H2_sorted, 1.2_1H3_sorted, 1.2_1H5_sorted, 1.2_1H7_sorted, 1.2_1H8_sorted, 
+           1.2_1H9_sorted, 1.2_2A1_sorted, 1.2_2A2_sorted, 1.2_2A6_sorted, 1.2_2A9_sorted, 1.2_2B10_sorted, 1.2_2B11_sorted, 1.2_2B2_sorted, 
+           1.2_2B3_sorted, 1.2_2B4_sorted, 1.2_2B6_sorted, 1.2_2B7_sorted, 1.2_2B8_sorted, 1.2_2B9_sorted, 1.2_2C11_sorted, 1.2_2C1_sorted, 
+           1.2_2C2_sorted, 1.2_2C3_sorted, 1.2_2C4_sorted, 1.2_2C5_sorted, 1.2_2C7_sorted, 1.2_2C8_sorted, 1.2_2D10_sorted, 1.2_2D11_sorted, 
+           1.2_2D1_sorted, 1.2_2D2_sorted, 1.2_2D5_sorted, 1.2_2D7_sorted, 1.2_2D8_sorted, 1.2_2D9_sorted, 1.2_2E1_sorted, 1.2_2E2_sorted, 
+           1.2_2E3_sorted, 1.2_2E4_sorted, 1.2_2E6_sorted, 1.2_2E8_sorted, 1.2_2E9_sorted, 1.2_2F10_sorted, 1.2_2F1_sorted, 1.2_2F2_sorted, 
+           1.2_2F3_sorted, 1.2_2F5_sorted, 1.2_2F9_sorted, 1.2_2G10_sorted, 1.2_2G1_sorted, 1.2_2G3_sorted, 1.2_2G4_sorted, 1.2_2G5_sorted, 
+           1.2_2G6_sorted, 1.2_2G7_sorted, 1.2_2G9_sorted, 1.2_2H1_sorted, 1.2_2H2_sorted, 1.2_2H4_sorted, 1.2_2H5_sorted, 1.2_2H8_sorted, 
+           1.2_2H9_sorted, 3A_A11_sorted, 3A_A4_sorted, 3A_B11_sorted, 3A_B1_sorted, 3A_B2_sorted, 3A_B4_sorted, 3A_B7_sorted, 3A_C10_sorted, 
+           3A_C11_sorted, 3A_C12_sorted, 3A_C1_sorted, 3A_C3_sorted, 3A_C4_sorted, 3A_C8_sorted, 3A_D1_sorted, 3A_D3_sorted, 3A_D4_sorted, 
+           3A_D5_sorted, 3A_E12_sorted, 3A_E1_sorted, 3A_E3_sorted, 3A_E4_sorted, 3A_E5_sorted, 3A_F11_sorted, 3A_F12_sorted, 3A_F3_sorted, 
+           3A_F4_sorted, 3A_F5_sorted, 3A_F7_sorted, 3A_G12_sorted, 3A_G2_sorted, 3A_G3_sorted, 3A_G5_sorted, 3A_G7_sorted, 3A_H10_sorted, 
+           3A_H3_sorted
+    Rural: 1.2_1A2_sorted, 1.2_1A7_sorted, 1.2_1A9_sorted, 1.2_1B1_sorted, 1.2_1B2_sorted, 1.2_1B4_sorted, 1.2_1B5_sorted, 1.2_1B7_sorted, 
+           1.2_1C11_sorted, 1.2_1C4_sorted, 1.2_1C6_sorted, 1.2_1C7_sorted, 1.2_1C9_sorted, 1.2_1D10_sorted, 1.2_1D1_sorted, 1.2_1D4_sorted, 
+           1.2_1D5_sorted, 1.2_1D9_sorted, 1.2_1E11_sorted, 1.2_1E4_sorted, 1.2_1E5_sorted, 1.2_1E6_sorted, 1.2_1E7_sorted, 1.2_1F1_sorted, 
+           1.2_1F3_sorted, 1.2_1F4_sorted, 1.2_1G1_sorted, 1.2_1G4_sorted, 1.2_1G7_sorted, 1.2_1H10_sorted, 1.2_1H4_sorted, 1.2_1H6_sorted, 
+           1.2_2A10_sorted, 1.2_2A11_sorted, 1.2_2A3_sorted, 1.2_2A4_sorted, 1.2_2A5_sorted, 1.2_2A7_sorted, 1.2_2A8_sorted, 1.2_2B1_sorted, 
+           1.2_2B5_sorted, 1.2_2C6_sorted, 1.2_2C9_sorted, 1.2_2D4_sorted, 1.2_2D6_sorted, 1.2_2E10_sorted, 1.2_2E11_sorted, 1.2_2E5_sorted, 
+           1.2_2E7_sorted, 1.2_2F11_sorted, 1.2_2F4_sorted, 1.2_2F6_sorted, 1.2_2F7_sorted, 1.2_2F8_sorted, 1.2_2G2_sorted, 1.2_2G8_sorted, 
+           1.2_2H10_sorted, 1.2_2H3_sorted, 1.2_2H6_sorted, 1.2_2H7_sorted, 3A_A12_sorted, 3A_A2_sorted, 3A_A3_sorted, 3A_A5_sorted, 
+           3A_A6_sorted, 3A_A7_sorted, 3A_A8_sorted, 3A_A9_sorted, 3A_B10_sorted, 3A_B12_sorted, 3A_B3_sorted, 3A_B5_sorted, 3A_B6_sorted, 
+           3A_B8_sorted, 3A_B9_sorted, 3A_C2_sorted, 3A_C5_sorted, 3A_C6_sorted, 3A_C7_sorted, 3A_C9_sorted, 3A_D10_sorted, 3A_D11_sorted, 
+           3A_D12_sorted, 3A_D2_sorted, 3A_D6_sorted, 3A_D7_sorted, 3A_D8_sorted, 3A_D9_sorted, 3A_E10_sorted, 3A_E11_sorted, 3A_E2_sorted, 
+           3A_E6_sorted, 3A_E8_sorted, 3A_E9_sorted, 3A_F10_sorted, 3A_F1_sorted, 3A_F2_sorted, 3A_F6_sorted, 3A_F8_sorted, 3A_F9_sorted, 
+           3A_G10_sorted, 3A_G11_sorted, 3A_G1_sorted, 3A_G4_sorted, 3A_G6_sorted, 3A_G8_sorted, 3A_G9_sorted, 3A_H11_sorted, 3A_H1_sorted, 
+           3A_H2_sorted, 3A_H5_sorted, 3A_H6_sorted, 3A_H7_sorted, 3A_H8_sorted, 3A_H9_sorted
+Working on 1 group(s) of populations:
+    defaultgrp: Urban, Rural
+
+All fixed and variable sites will be written in VCF format to 'global_urban_rural_fis/UR_fis_usc/populations.all.vcf'
+Polymorphic sites in PLINK format will be written to 'global_urban_rural_fis/UR_fis_usc/populations.plink.ped'
+Raw haplotypes will be written to 'global_urban_rural_fis/UR_fis_usc/populations.haplotypes.tsv'
+Population-level summary statistics will be written to 'global_urban_rural_fis/UR_fis_usc/populations.sumstats.tsv'
+Population-level haplotype summary statistics will be written to 'global_urban_rural_fis/UR_fis_usc/populations.hapstats.tsv'
+
+Processing data in batches:
+  * load a batch of catalog loci and apply filters
+  * compute SNP- and haplotype-wise per-population statistics
+  * write the above statistics in the output files
+  * export the genotypes/haplotypes in specified format(s)
+More details in 'global_urban_rural_fis/UR_fis_usc/populations.log.distribs'.
+
+Now processing...
+AS1.0ch10 
+AS1.0ch03 
+AS1.0ch01 
+AS1.0ch04 
+AS1.0ch11 
+AS1.0ch06 
+AS1.0ch02 
+AS1.0ch08 
+AS1.0ch07 
+AS1.0ch05 
+AS1.0ch09 
+Scaff024 
+Scaff026 
+Scaff032 
+Scaff039 
+Scaff041 
+Scaff062 
+Scaff076 
+Scaff092 
+Scaff099 
+Scaff105 
+Scaff121 
+Scaff147 
+Scaff148 
+Scaff165 
+Scaff167 
+Scaff170 
+Scaff177 
+Scaff190 
+Scaff195 
+Scaff205 
+Scaff208 
+Scaff225 
+Scaff244 
+Scaff245 
+Scaff247 
+Scaff252 
+Scaff260 
+Scaff261 
+Scaff263 
+Scaff264 
+Scaff266 
+Scaff282 
+Scaff313 
+Scaff324 
+Scaff325 
+Scaff332 
+Scaff342 
+Scaff345 
+Scaff349 
+Scaff352 
+Scaff365 
+Scaff367 
+Scaff379 
+Scaff399 
+Scaff403 
+Scaff408 
+Scaff413 
+Scaff434 
+Scaff446 
+Scaff457 
+Scaff458 
+Scaff463 
+Scaff483 
+Scaff485 
+Scaff507 
+Scaff514 
+Scaff534 
+Scaff536 
+Scaff541 
+Scaff553 
+Scaff556 
+Scaff580 
+Scaff662 
+Scaff663 
+Scaff664 
+Scaff665 
+Scaff667 
+Scaff668 
+Scaff669 
+Scaff671 
+Scaff673 
+Scaff677 
+Scaff679 
+Scaff681 
+Scaff682 
+Scaff685 
+
+Removed 44830 loci that did not pass sample/population constraints from 48349 loci.
+Kept 3519 loci, composed of 259537 sites; 31061 of those sites were filtered, 973 variant sites remained.
+    131821 genomic sites, of which 101924 were covered by multiple loci (77.3%).
+Mean genotyped sites per locus: 73.74bp (stderr 0.42).
+
+Population summary statistics (more detail in populations.sumstats_summary.tsv):
+  Urban: 129.38 samples per locus; pi: 0.25457; all/variant/polymorphic sites: 259484/973/973; private alleles: 0
+  Rural: 104.49 samples per locus; pi: 0.25407; all/variant/polymorphic sites: 259484/973/973; private alleles: 0
+Populations is done.
