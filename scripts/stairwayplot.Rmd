@@ -226,6 +226,20 @@ full_fig_1e8 <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_time_1
 
 ```
 
+### mu = 1.0x10^-8 & generation time = 2 years
+#### All sites in 1 population
+```{r}
+full_fig_1e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_time_2yr/full_mmaf0.007813_mut_rate_1e-8_2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
 ### mu = 1.2x10^-8 & generation time = 1 year
 #### All sites in 1 population
 ```{r}
@@ -324,6 +338,20 @@ all_usc <- dplyr::full_join(urb_fig2 %>%
 # remove duplicate rows
 all_usc %<>%
   distinct(.keep_all = TRUE)
+```
+
+### mu = 1.2x10^-8 & generation time = 2 years
+#### All sites in 1 population
+```{r}
+full_fig_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_2yr/full_mmaf0.007813_mut_rate_1.2e-8_2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
 ```
 
 ### mu = 1.8x10^-8 & generation time = 1 year
@@ -529,6 +557,20 @@ all_usc_1.8e8_2yr %<>%
 #### All sites in 1 population
 ```{r}
 full_fig_2.6e8 <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_2.6e-8.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+
+```
+
+### mu = 2.6x10^-8 & generation time = 2 years
+#### All sites in 1 population
+```{r}
+full_fig_2.6e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/gen_time_2yr/full_mmaf0.007813_mut_rate_2.6e-8_2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
                    theta_per_site_2.5.,
                    theta_per_site_97.5.,
@@ -1002,6 +1044,14 @@ make_ne_plot_reg_y(full_fig_1e8,
                    "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1yr/full_with_inset.png")
 ```
 
+### Mu = 1.0e-8 & gen time = 2 yr
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_1e8_2yrs,
+                   "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_2yr/full_with_inset.png")
+```
+
+
 ### Mu = 1.2e-8 & gen time = 1 yr
 #### Export main plot
 ```{r}
@@ -1015,6 +1065,13 @@ export_all_plots(df_distCC = all_dist,
                  df_urbscore = all_usc,
                  mu = "1.2e-8",
                  gen_time = "1yr")
+```
+
+### Mu = 1.2e-8 & gen time = 2 yr
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_2yrs,
+                   "./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_2yr/full_with_inset.png")
 ```
 
 ### Mu = 1.8e-8 & gen time = 1 yr
@@ -1068,7 +1125,7 @@ dist_CIs <- ggplot(
       linetype = "longdash") +
     
     scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 30000)) +
+                       limits = c(NA, 40000)) +
     scale_y_continuous(
       #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
@@ -1267,7 +1324,7 @@ usc_CIs <- ggplot(
       linetype = "longdash") +
     
     scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 30000)) +
+                       limits = c(NA, 40000)) +
     scale_y_continuous(
       #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
@@ -1427,7 +1484,7 @@ export_all_plots(df_distCC = all_dist_1.8e8,
 ```
 
 
-### Mu = 1.8e-8 & gen time = 2 yrs
+### Mu = 1.8e-8 & gen time = 2 yr
 #### Export main plot
 ```{r}
 make_ne_plot_reg_y(full_fig_1.8e8_2yr,
@@ -1478,7 +1535,7 @@ dist_CIs_2yr <- ggplot(
       linetype = "longdash") +
     
     scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 30000)) +
+                       limits = c(NA, 40000)) +
     scale_y_continuous(
       #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
@@ -1677,7 +1734,7 @@ usc_CIs_2yr <- ggplot(
       linetype = "longdash") +
     
     scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 30000)) +
+                       limits = c(NA, 40000)) +
     scale_y_continuous(
       #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
                        labels = scales::comma,
@@ -1835,6 +1892,13 @@ make_ne_plot_reg_y(full_fig_2.6e8,
                    "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1yr/full_with_inset.png")
 ```
 
+### Mu = 2.6e-8 & gen time = 2 yr
+#### Export main plot
+```{r}
+make_ne_plot_reg_y(full_fig_2.6e8_2yrs,
+                   "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_2yr/full_with_inset.png")
+```
+
 ## Calculate Ne stats
 ### mu = 1.8 x 10^-8, gen time = 1 yr
 ```{r}
@@ -1847,5 +1911,19 @@ Ne_stats(rur_fig_1.8e8)
 Ne_stats_CI(full_fig_1.8e8)
 Ne_stats_CI(urb_fig_1.8e8)
 Ne_stats_CI(rur_fig_1.8e8)
+
+```
+
+### mu = 1.8 x 10^-8, gen time = 2 yr
+```{r}
+Ne_stats(full_fig_1.8e8_2yr)
+Ne_stats(urb_fig_1.8e8_2yr)
+#Ne_stats(urb_fig2_1.8e8_2yr)
+Ne_stats(rur_fig_1.8e8_2yr)
+#Ne_stats(rur_fig2_1.8e8_2yr)
+
+Ne_stats_CI(full_fig_1.8e8_2yr)
+Ne_stats_CI(urb_fig_1.8e8_2yr)
+Ne_stats_CI(rur_fig_1.8e8_2yr)
 
 ```
