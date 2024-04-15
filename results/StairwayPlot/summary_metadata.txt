@@ -1,0 +1,11 @@
+mutation_per_site: time measured in the expected number of mutation(s) per site
+n_estimation: number of estimates used
+theta_per_site_median: the median of the population size measured in 𝜃 per site
+theta_per_site_2.5.: the 2.5 percentile estimation of the population size measured in 𝜃 per site
+theta_per_site_75.5.: the 97.5 percentile estimation of the population size measured in 𝜃 per site
+**year: time measured in years
+**Ne_median: the median of the population size measured in individuals
+**Ne_2.5.: the 2.5 percentile estimation of the population size measured in individuals
+**Ne_97.5.: the 97.5 percentile estimation of the population size measured in individuals
+Ne_12.5.: the 12.5 percentile estimation of the population size measured in individuals
+Ne_87.5.: the 87.5 percentile estimation of the population size measured in individuals

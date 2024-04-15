@@ -1,0 +1,73 @@
+# Set up notebook
+## Load libraries & functions
+```{r warning=F}
+source(here::here("libraries.R"))
+source(here::here("functions.R"))
+```
+
+## Import files
+```{r}
+# pop map 3 (compared to #1 has all individuals; #2 removed 2 low-quality individuals; #3 removed 5 individuals that were related to 5 others)
+pop_map2 <- read.csv(
+  here::here("./genomic_resources/pop_map2.csv"))  %>%
+  dplyr::rename("pop_id" = "population") %>%
+  tibble::rowid_to_column( "ID") %>%
+  add_MW_IDs()
+
+# urbanization data
+urb <- read.csv(here("./clean_data/urb_metrics.csv")) 
+
+# Join two datasets
+full_popmap <- dplyr::left_join(pop_map2,
+                         urb,
+                         by = "patch_id" )
+```
+
+# Find distance between 5 sets of related individuals
+```{r}
+# Sampling site 1, individual 1, ss 2, ind 2
+
+# 36	1.2_1A6_sorted	46	1.2_1F1_sorted
+# 4	1.2_1E9_sorted	MWI004	3A_G3_sorted
+# 17	1.2_1F6_sorted	17	1.2_2F8_sorted
+# 67	1.2_2D3_sorted	MWI080	3A_F12_sorted
+# MWI037	3A_E7_sorted	MWI045	3A_E8_sorted
+
+related_inds <- full_popmap %>%
+  dplyr::filter(sample %in% c("1.2_1A6_sorted", "1.2_1F1_sorted",
+                              "1.2_1E9_sorted", "3A_G3_sorted",
+                              "1.2_1F6_sorted", "1.2_1F8_sorted",
+                              "1.2_2D3_sorted", "3A_F12_sorted",
+                              "3A_E7_sorted", "3A_E8_sorted"))
+
+# set up empty df
+distance_data <- data.frame(distance_km = numeric(), 
+                            patch_id_from = character(),
+                            patch_id_to = character())
+
+# get distances between all sites
+for (i in 1:(nrow(related_inds) - 1)) {
+  for (j in (i + 1):nrow(related_inds)) {
+    # Calculate distance in meters
+    distance_m <- geosphere::distm(cbind(
+      related_inds$lon[c(i, j)],
+      related_inds$lat[c(i, j)]))
+
+    # Convert distance to kilometers
+    distance_km <- distance_m / 1000
+
+    # add to the df
+    distance_data <- rbind(distance_data,
+                           data.frame(
+                             distance_km = distance_km,
+                             patch_id_from = related_inds$patch_id[i],
+                             patch_id_to = related_inds$patch_id[j]))
+  }
+}
+
+# remove redundant rows, cols
+distance_data %<>%
+  dplyr::filter(distance_km.1 > 0) %>%
+  dplyr::select(-distance_km.2)
+```
+
