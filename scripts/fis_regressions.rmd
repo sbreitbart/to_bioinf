@@ -339,22 +339,18 @@ ggplot(diversity_all_sites,
 
 ```
 
-#### Export all in one pdf
+#### Export
 ```{r}
 # distance
-fis_dist_pred_plot
+fis_dist_pred_plot +
+  fis_usc_pred_plot +
+  patchwork::plot_layout(axes = "keep",
+                         axis_titles = "collect_y") +
+  plot_annotation(tag_levels = 'A')
+  
 
-ggsave(here::here("./Figures_Tables/regressions/fis_distance.png"),
-       width = 5,
-       height = 3.5,
-       units = "in")
-
-
-# urb score
-fis_usc_pred_plot
-
-ggsave(here::here("./Figures_Tables/regressions/fis_urbscore.png"),
-       width = 5,
+ggsave(here::here("./Figures_Tables/regressions/fis.png"),
+       width = 9,
        height = 3.5,
        units = "in")
 ```

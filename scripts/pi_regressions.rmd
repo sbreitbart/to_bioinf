@@ -355,20 +355,15 @@ ggplot(pi_data,
 
 #### Export
 ```{r}
-# distance
-pi_dist_pred_plot
 
-ggsave(here::here("./Figures_Tables/regressions/pi_dist.png"),
-       width = 5,
-       height = 3.5,
-       units = "in")
+pi_dist_pred_plot + 
+  pi_usc_pred_plot +
+  patchwork::plot_layout(axes = "keep",
+                         axis_titles = "collect_y") +
+  plot_annotation(tag_levels = 'A')
 
-
-# urb score
-pi_usc_pred_plot
-
-ggsave(here::here("./Figures_Tables/regressions/pi_usc.png"),
-       width = 5,
+ggsave(here::here("./Figures_Tables/regressions/pi.png"),
+       width = 9,
        height = 3.5,
        units = "in")
 
