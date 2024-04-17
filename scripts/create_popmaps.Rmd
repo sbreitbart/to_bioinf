@@ -6,6 +6,7 @@ source(here::here("functions.R"))
 ```
 
 ## Import files
+### Pop map 3
 ```{r}
 # pop map 3 (compared to #1 has all individuals; #2 removed 2 low-quality individuals; #3 removed 5 individuals that were related to 5 others)
 pop_map3 <- read.csv(
@@ -16,11 +17,24 @@ pop_map3 <- read.csv(
 
 # urbanization data
 urb <- read.csv(here("./clean_data/urb_metrics.csv")) 
-```
 
 # Join two datasets
-```{r}
 full_popmap <- dplyr::left_join(pop_map3,
+                         urb,
+                         by = "patch_id" )
+```
+
+### Pop map 1
+```{r}
+# pop map 3 (compared to #1 has all individuals; #2 removed 2 low-quality individuals; #3 removed 5 individuals that were related to 5 others)
+pop_map1 <- read.csv(
+  here::here("./genomic_resources/original_sample_info/pop_map.csv"))  %>%
+  dplyr::rename("pop_id" = "population") %>%
+  tibble::rowid_to_column( "ID") %>%
+  add_MW_IDs()
+
+# Join two datasets
+full_popmap1 <- dplyr::left_join(pop_map1,
                          urb,
                          by = "patch_id" )
 ```
@@ -28,6 +42,7 @@ full_popmap <- dplyr::left_join(pop_map3,
 # Export
 ## create popmap with sample, population, and urb/rur category
 ### Urb = dist to CC
+#### Pop map 3
 ```{r}
 full_popmap %>%
   dplyr::select(1:3, lat, long, 12:15) %>%
@@ -43,7 +58,24 @@ full_popmap %>%
             col.names = FALSE)
 ```
 
+#### Pop map 1 (all individuals... includes those that were later excluded due to low quality or high IBD)
+```{r}
+full_popmap1 %>%
+  dplyr::select(1:3, lat, long, 12:15) %>%
+  arrange(ID) %>%
+  dplyr::select(sample, patch_id, u_r_dist) %>%
+
+  write.csv(., 
+            file = here::here("./clean_data/pop_maps/pop_map1_all_dist.csv"),
+          #  stdout(),
+          #  sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+```
+
 ### Urb = urb score
+#### Pop map 3
 ```{r}
 full_popmap %>%
   dplyr::select(1:3, lat, long, 12:15) %>%
@@ -58,6 +90,23 @@ full_popmap %>%
             row.names = FALSE,
             col.names = FALSE)
 ```
+
+#### Pop map 1 (all individuals... includes those that were later excluded due to low quality or high IBD)
+```{r}
+full_popmap1 %>%
+  dplyr::select(1:3, lat, long, 12:15) %>%
+  arrange(ID) %>%
+  dplyr::select(sample, patch_id, u_r_usc) %>%
+
+  write.csv(., 
+            file = here::here("./clean_data/pop_maps/pop_map1_all_usc.csv"),
+          #  stdout(),
+          #  sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+```
+
 
 ## for global fst and pi analyses
 ### urb = dist to CC

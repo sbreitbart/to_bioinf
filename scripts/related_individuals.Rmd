@@ -7,7 +7,18 @@ source(here::here("functions.R"))
 
 ## Import files
 ```{r}
-# pop map 3 (compared to #1 has all individuals; #2 removed 2 low-quality individuals; #3 removed 5 individuals that were related to 5 others)
+# pop map 3 (compared to #1 has all individuals;
+# 
+# #2 removed 2 low-quality individuals (3A_A1_sorted (MW018); 3A_A10_sorted (MWI057**));
+# 
+# #3 removed 5 individuals that were related to 5 others (1.2_1A6_sorted	MW036
+# 1.2_1E9_sorted	MW004
+# 1.2_1F6_sorted	MW017
+# 1.2_2D3_sorted	MW067
+# 3A_E7_sorted	MWI037**)
+# 
+# ** represents a site with only 1 individual; thus, removing the individual from the analysis withdrew the site as well.
+
 pop_map2 <- read.csv(
   here::here("./genomic_resources/pop_map2.csv"))  %>%
   dplyr::rename("pop_id" = "population") %>%

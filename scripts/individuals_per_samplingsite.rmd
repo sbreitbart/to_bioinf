@@ -8,7 +8,8 @@ source(here::here("functions.R"))
 ## Import data
 ### All populations
 ```{r}
-all <- read.csv(here::here("./genomic_resources/pop_map3.csv"))
+# this includes all 124 sampling sites- not just 122 sites included in analysis
+all <- read.csv(here::here("./genomic_resources/original_sample_info/pop_map.csv"))
 
 all_sum <- all %>%
   dplyr::group_by(population) %>%
@@ -18,23 +19,30 @@ all_sum <- all %>%
 ### Urban populations
 #### Urb = dist to CC
 ```{r}
-urb <- read.csv(here::here("./clean_data/pop_map3_U_dist.csv"))
+# urb <- read.csv(here::here("./clean_data/pop_maps/pop_map3_U_dist.csv"))
 
-urb_sum <- urb %>%
-  dplyr::group_by(population) %>%
+dist_cc <- read.csv(here::here("./clean_data/pop_maps/pop_map1_all_dist.csv"))
+
+urb_sum <- dist_cc %>%
+  dplyr::filter(u_r_dist == "Urban") %>%
+  dplyr::group_by(patch_id) %>%
   dplyr::summarise(n = n()) %>%
   dplyr::mutate(group = "urban")
 ```
 
 #### Urb = urb score
 ```{r}
-urb_usc <- read.delim(here::here("./clean_data/pop_map3_U_usc.txt"),
-                      header = F) %>%
-  dplyr::rename("sample" = 1,
-                "population" = 2)
+# urb_usc <- read.delim(here::here("./clean_data/pop_maps/pop_map3_U_usc.txt"),
+#                       header = F) %>%
+#   dplyr::rename("sample" = 1,
+#                 "population" = 2)
 
-urb_sum_usc <- urb_usc %>%
-  dplyr::group_by(population) %>%
+urb_sc <- read.csv(here::here("./clean_data/pop_maps/pop_map1_all_usc.csv"))
+
+  
+urb_sum_usc <- urb_sc %>%
+  dplyr::filter(u_r_usc == "Urban") %>%
+  dplyr::group_by(patch_id) %>%
   dplyr::summarise(n = n()) %>%
   dplyr::mutate(group = "urban")
 ```
@@ -42,24 +50,26 @@ urb_sum_usc <- urb_usc %>%
 ### Rural populations
 #### Urb = dist to CC
 ```{r}
-rur <- read.csv(here::here("./clean_data/pop_map3_R_dist.csv"))
+#rur <- read.csv(here::here("./clean_data/pop_maps/pop_map3_R_dist.csv"))
 
-rur_sum <- rur %>%
-  dplyr::group_by(population) %>%
+rur_sum <- dist_cc %>%
+  dplyr::filter(u_r_dist == "Rural") %>%
+  dplyr::group_by(patch_id) %>%
   dplyr::summarise(n = n()) %>%
   dplyr::mutate(group = "rural")
 ```
 
 #### Urb = urb score
 ```{r}
-rur_usc <- read.delim(here::here("./clean_data/pop_map3_R_usc.txt"),
-                      header = F) %>%
-  dplyr::rename("sample" = 1,
-                "population" = 2)
+# rur_usc <- read.delim(here::here("./clean_data/pop_maps/pop_map3_R_usc.txt"),
+#                       header = F) %>%
+#   dplyr::rename("sample" = 1,
+#                 "population" = 2)
 
 
-rur_sum_usc <- rur_usc %>%
-  dplyr::group_by(population) %>%
+rur_sum_usc <- urb_sc %>%
+  dplyr::filter(u_r_usc == "Rural") %>%
+  dplyr::group_by(patch_id) %>%
   dplyr::summarise(n = n()) %>%
   dplyr::mutate(group = "rural")
 ```
@@ -88,31 +98,10 @@ urb_rur_usc <- rbind(urb_sum_usc, rur_sum_usc) %>%
 ```
 
 # Plot & export
-## All pops
-```{r}
-
-ggplot(all_sum,
-       aes(x = as.factor(n))
-           ) +
-  geom_bar(stat = "count",
-           fill = "lightgrey",
-           color = "black") +
-  ylab("Count") +
-  xlab("Individuals per Sampling Site") +
-  theme_pubr() +
-  labs_pubr() 
-
-ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site.png", 
-       plot = last_plot(),
-       height = 12,
-       width = 20,
-       units = "cm")
-```
-
 ## Urb, rur pops
-#### Urb = dist to CC
 ```{r}
-ggplot(urb_rur,
+#### Urb = dist to CC
+dist_plot <- ggplot(urb_rur,
        aes(x = as.factor(n),
            y = n_indiv,
            fill = group)) +
@@ -120,42 +109,45 @@ ggplot(urb_rur,
            position = "dodge") +
   ylab("Count") +
   xlab("Individuals per Sampling Site") +
-  ylim(0, max(urb_rur$n_indiv)*1.1) +
+  ylim(0, 50) +
   labs_pubr() +
   theme_pubr() +
-  theme(legend.title=element_blank()) +
+    # remove legend
+  theme(legend.position = "none") +
   geom_text(aes(label = n_indiv),
             vjust = -0.2,
             position = position_dodge(.9))
+
+
+#### Urb = dist to CC
+usc_plot <- ggplot(urb_rur_usc,
+       aes(x = as.factor(n),
+           y = n_indiv,
+           fill = group)) +
+  geom_bar(stat = "identity",
+           position = "dodge") +
+  ylab("Count") +
+  xlab("Individuals per Sampling Site") +
+  ylim(0, 50) +
+  labs_pubr() +
+  theme_pubr() +
+  theme(legend.title=element_blank(),
+        legend.position = "right") +
+  geom_text(aes(label = n_indiv),
+            vjust = -0.2,
+            position = position_dodge(.9))
+
+
+dist_plot +
+  usc_plot + 
+  patchwork::plot_layout(axes = "collect_x",
+                         axis_titles = "collect") +
+  plot_annotation(tag_levels = 'A')
 
 ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site_UvsR.png", 
        plot = last_plot(),
        height = 8,
-       width = 14,
+       width = 20,
        units = "cm")
 ```
 
-#### Urb = dist to CC
-```{r}
-ggplot(urb_rur_usc,
-       aes(x = as.factor(n),
-           y = n_indiv,
-           fill = group)) +
-  geom_bar(stat = "identity",
-           position = "dodge") +
-  ylab("Count") +
-  xlab("Individuals per Sampling Site") +
-  ylim(0, max(urb_rur_usc$n_indiv)*1.1) +
-  labs_pubr() +
-  theme_pubr() +
-  theme(legend.title=element_blank()) +
-  geom_text(aes(label = n_indiv),
-            vjust = -0.2,
-            position = position_dodge(.9))
-
-ggsave("./Figures_Tables/sample_site_sizes/individuals_per_site_UvsR_usc.png", 
-       plot = last_plot(),
-       height = 8,
-       width = 14,
-       units = "cm")
-```
