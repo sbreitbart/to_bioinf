@@ -15,8 +15,16 @@ urb <- read.csv(here::here("./clean_data/urb_metrics.csv")) %>%
                 river_valley = as.factor(river_valley)
                 ) 
 
+# the commented-out all_sites included pop map 3, which excluded 2 sampling sites. The following map will show ALL 124 sampling sites- including the two that were ultimately eliminated due to removing 7 individuals from the analysis because of low quality sequencing or high IBD.
+# all_sites <- read.csv(here::here("./genomic_resources/pop_map3.csv")) %>%
+#      # rename col 1
+#   dplyr::rename(pop_id = 2) %>%
+#   dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+# ### Add "MW" to numeric populations
+#   add_MW_IDs()
 
-all_sites <- read.csv(here::here("./genomic_resources/pop_map3.csv")) %>%
+
+all_sites <- read.csv(here::here("./genomic_resources/original_sample_info/pop_map.csv")) %>%
     # rename col 1
   dplyr::rename(pop_id = 2) %>%
   dplyr::mutate(pop_id = as.factor(pop_id)) %>%
@@ -67,7 +75,10 @@ tmap_mode("plot")
 
 # get map tiles for basemap
 my_tiles = get_tiles(sites,
-                     provider = "Esri.WorldImagery",
+                    provider = "Esri.WorldImagery",
+                   #  provider = "Esri.NatGeoWorldMap",
+                  #   provider = "Esri.WorldStreetMap",
+                   #  provider = "OpenStreetMap",
                      zoom = 10,
                      crop = FALSE)
 
@@ -243,4 +254,5 @@ tm_shape(my_tiles,
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_urbscore.pdf"),
              width = 5, height = 4)
+
 ```
