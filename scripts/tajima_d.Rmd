@@ -127,13 +127,14 @@ global_taj_plot <- ggplot(global_taj,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=50, 
+           x=150, 
            y=3,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(global_taj$TajimaD),3)))
 
 global_taj_plot
@@ -147,22 +148,17 @@ global_taj_plot <- cowplot::ggdraw(
 # add ending x axis mark
 global_taj_plot <- cowplot::ggdraw(
   cowplot::add_sub(global_taj_plot, 
-                   x = 0.95,  y = 3.2, as.numeric(sum(global_taj$BIN_START)),
+                   x = 0.87,  y = 3.2, as.numeric(sum(global_taj$BIN_START)),
                    size = 12))
 
 
 global_taj_plot
 
-ggsave(here::here("./Figures_Tables/tajimas_d/global_taj_d.png"), 
-       plot = global_taj_plot,
-       width = 20,
-       height = 10,
-       units = "cm")
+
 
 mean(global_taj$TajimaD)
 sum(global_taj$BIN_START) 
 ```
-
 
 #### Window size: 100,000 bp
 ```{r}
@@ -178,13 +174,14 @@ global_taj_plot2 <- ggplot(global_taj_100k,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+  scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=120, 
+           x=400, 
            y=3.5,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(global_taj_100k$TajimaD),3)))
 
 global_taj_plot2
@@ -204,11 +201,7 @@ global_taj_plot2 <- cowplot::ggdraw(
 
 global_taj_plot2
 
-ggsave(here::here("./Figures_Tables/tajimas_d/global_taj_d_window100k.png"), 
-       plot = global_taj_plot2,
-       width = 10,
-       height = 10,
-       units = "cm")
+
 
 mean(global_taj_100k$TajimaD)
 sum(global_taj_100k$BIN_START) 
@@ -229,13 +222,14 @@ urb_taj_plot <- ggplot(urb_taj,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=50, 
+           x=150, 
            y=3,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(urb_taj$TajimaD),3)))
 
 urb_taj_plot
@@ -249,17 +243,13 @@ urb_taj_plot <- cowplot::ggdraw(
 # add ending x axis mark
 urb_taj_plot <- cowplot::ggdraw(
   cowplot::add_sub(urb_taj_plot, 
-                   x = 0.95,  y = 3.2, as.numeric(sum(urb_taj$BIN_START)),
+                    x = 0.87,  y = 3.2, as.numeric(sum(urb_taj$BIN_START)),
                    size = 12))
 
 
 urb_taj_plot
 
-ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d.png"), 
-       plot = urb_taj_plot,
-       width = 20,
-       height = 10,
-       units = "cm")
+
 
 mean(urb_taj$TajimaD)
 sum(urb_taj$BIN_START) 
@@ -280,13 +270,14 @@ urb_taj_plot2 <- ggplot(urb_taj_100k,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=120, 
+           x=400, 
            y=3.5,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(urb_taj_100k$TajimaD),3)))
 
 urb_taj_plot2
@@ -306,11 +297,7 @@ urb_taj_plot2 <- cowplot::ggdraw(
 
 urb_taj_plot2
 
-ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d_window100k.png"), 
-       plot = urb_taj_plot2,
-       width = 10,
-       height = 10,
-       units = "cm")
+
 
 mean(urb_taj_100k$TajimaD)
 sum(urb_taj_100k$BIN_START) 
@@ -332,13 +319,14 @@ rur_taj_plot <- ggplot(rur_taj,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=50, 
+           x=150, 
            y=3,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(rur_taj$TajimaD),3)))
 
 rur_taj_plot
@@ -352,17 +340,12 @@ rur_taj_plot <- cowplot::ggdraw(
 # add ending x axis mark
 rur_taj_plot <- cowplot::ggdraw(
   cowplot::add_sub(rur_taj_plot, 
-                   x = 0.95,  y = 3.2, as.numeric(sum(rur_taj$BIN_START)),
+                    x = 0.87,  y = 3.2, as.numeric(sum(rur_taj$BIN_START)),
                    size = 12))
 
 
 rur_taj_plot
 
-ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d.png"), 
-       plot = rur_taj_plot,
-       width = 20,
-       height = 10,
-       units = "cm")
 
 mean(rur_taj$TajimaD)
 sum(rur_taj$BIN_START) 
@@ -383,13 +366,14 @@ rur_taj_plot2 <- ggplot(rur_taj_100k,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=120, 
+           x=400, 
            y=3.5,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(rur_taj_100k$TajimaD),3)))
 
 rur_taj_plot2
@@ -409,11 +393,7 @@ rur_taj_plot2 <- cowplot::ggdraw(
 
 rur_taj_plot2
 
-ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_window100k.png"), 
-       plot = rur_taj_plot2,
-       width = 10,
-       height = 10,
-       units = "cm")
+
 
 mean(rur_taj_100k$TajimaD)
 sum(rur_taj_100k$BIN_START) 
@@ -434,13 +414,14 @@ urb_taj_plot_usc <- ggplot(urb_taj_usc,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=50, 
+           x=150, 
            y=3,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(urb_taj_usc$TajimaD),3)))
 
 urb_taj_plot_usc
@@ -454,17 +435,13 @@ urb_taj_plot_usc <- cowplot::ggdraw(
 # add ending x axis mark
 urb_taj_plot_usc <- cowplot::ggdraw(
   cowplot::add_sub(urb_taj_plot_usc, 
-                   x = 0.95,  y = 3.2, as.numeric(sum(urb_taj_usc$BIN_START)),
+                    x = 0.87,  y = 3.2, as.numeric(sum(urb_taj_usc$BIN_START)),
                    size = 12))
 
 
 urb_taj_plot_usc
 
-ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d_usc.png"), 
-       plot = urb_taj_plot_usc,
-       width = 20,
-       height = 10,
-       units = "cm")
+
 
 mean(urb_taj_usc$TajimaD)
 sum(urb_taj_usc$BIN_START) 
@@ -485,13 +462,14 @@ urb_taj_plot2_usc <- ggplot(urb_taj_100k_usc,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=120, 
+           x=400, 
            y=3.5,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(urb_taj_100k_usc$TajimaD),3)))
 
 urb_taj_plot2_usc
@@ -511,11 +489,7 @@ urb_taj_plot2_usc <- cowplot::ggdraw(
 
 urb_taj_plot2_usc
 
-ggsave(here::here("./Figures_Tables/tajimas_d/urb_taj_d_window100k_usc.png"), 
-       plot = urb_taj_plot2_usc,
-       width = 10,
-       height = 10,
-       units = "cm")
+
 
 mean(urb_taj_100k_usc$TajimaD)
 sum(urb_taj_100k_usc$BIN_START) 
@@ -537,13 +511,14 @@ rur_taj_plot_usc <- ggplot(rur_taj_usc,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2.1,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=50, 
+           x=150, 
            y=3,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(rur_taj_usc$TajimaD),3)))
 
 rur_taj_plot_usc
@@ -557,22 +532,17 @@ rur_taj_plot_usc <- cowplot::ggdraw(
 # add ending x axis mark
 rur_taj_plot_usc <- cowplot::ggdraw(
   cowplot::add_sub(rur_taj_plot_usc, 
-                   x = 0.95,  y = 3.2, as.numeric(sum(rur_taj_usc$BIN_START)),
+                    x = 0.87,  y = 3.2, as.numeric(sum(rur_taj_usc$BIN_START)),
                    size = 12))
 
 
 rur_taj_plot_usc
 
-ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_usc.png"), 
-       plot = rur_taj_plot_usc,
-       width = 20,
-       height = 10,
-       units = "cm")
+
 
 mean(rur_taj_usc$TajimaD)
 sum(rur_taj_usc$BIN_START) 
 ```
-
 
 #### Window size: 100,000 bp
 ```{r}
@@ -588,13 +558,14 @@ rur_taj_plot2_usc <- ggplot(rur_taj_100k_usc,
               color = "black",
              linewidth = 1.1) +
   scale_x_discrete(breaks = c(paste("AS1.0ch01", 0.0e+00), paste("Scaff685",0.0e+00))) +
+    scale_y_continuous(limits = c(-2,4)) +
   theme_pubr() +
   theme(axis.text.x = element_text(color = "white")) +
   annotate("text",
-           x=120, 
+           x=400, 
            y=3.5,
            size = 4.5,
-           label = paste("Mean Tajima's D:",
+           label = paste("Mean:",
                          round(mean(rur_taj_100k_usc$TajimaD),3)))
 
 rur_taj_plot2_usc
@@ -614,15 +585,50 @@ rur_taj_plot2_usc <- cowplot::ggdraw(
 
 rur_taj_plot2_usc
 
-ggsave(here::here("./Figures_Tables/tajimas_d/rur_taj_d_window100k_usc.png"), 
-       plot = rur_taj_plot2_usc,
-       width = 10,
-       height = 10,
-       units = "cm")
+
 
 mean(rur_taj_100k_usc$TajimaD)
 sum(rur_taj_100k_usc$BIN_START) 
 ```
+
+### All 1 mil bp
+```{r}
+global_taj_plot + 
+  urb_taj_plot + 
+  urb_taj_plot_usc + 
+  rur_taj_plot + 
+  rur_taj_plot_usc +
+  plot_annotation(tag_levels = 'A') +
+  plot_layout(ncol = 3) +
+  patchwork::plot_layout(axes = "collect_y",
+                         axis_titles = "collect_y")
+
+
+ggsave(here::here("./Figures_Tables/tajimas_d/tajd_1mil.png"),
+       width = 11,
+       height = 7,
+       units = "in")
+```
+
+### All 100k bp
+```{r}
+global_taj_plot2 + 
+  urb_taj_plot2 + 
+  urb_taj_plot2_usc + 
+  rur_taj_plot2 + 
+  rur_taj_plot2_usc +
+  plot_annotation(tag_levels = 'A') +
+  plot_layout(ncol = 3) +
+  patchwork::plot_layout(axes = "collect_y",
+                         axis_titles = "collect_y")
+
+
+ggsave(here::here("./Figures_Tables/tajimas_d/tajd_100k.png"),
+       width = 11,
+       height = 7,
+       units = "in")
+```
+
 
 # Significance testing: Are the Tajima's D values significantly different from zero?
 ## Create function
