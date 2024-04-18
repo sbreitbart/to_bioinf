@@ -1484,6 +1484,40 @@ export_all_plots(df_distCC = all_dist_1.8e8,
 ```
 
 
+#### Export main, urb, and rur plots as a composite figure
+```{r}
+main_1.8e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")))
+
+main_1.8e8_CIs_1yr_composite_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/both_with_inset_CIs.png")))
+
+main_1.8e8_CIs_1yr_composite_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/both_with_inset_CIs.png")))
+
+
+main_1.8e8_CIs_1yr_composite_plots <- gridExtra::grid.arrange(main_1.8e8_CIs_1yr_composite,
+                                                        main_1.8e8_CIs_1yr_composite_dist,
+main_1.8e8_CIs_1yr_composite_usc,
+                        layout_matrix = rbind(c(1, 1), c(2, 3)),
+             left = textGrob("A", 
+                            x = unit(12, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("B", 
+                            x = unit(0, "npc"), 
+                            y = unit(-11.5, "npc"),
+                            gp = gpar(fontsize = 12)),      
+            right = textGrob("C", 
+                            x = unit(-18.5, "npc"), 
+                            y = unit(0.43, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/main_figs_1yr.png", 
+       plot = main_1.8e8_CIs_1yr_composite_plots,
+       width = 8.6,
+       height = 4.85,
+       units = "in",
+       dpi = 400)
+```
+
 ### Mu = 1.8e-8 & gen time = 2 yr
 #### Export main plot
 ```{r}
@@ -1885,6 +1919,33 @@ cowplot::ggdraw() +
 
 ```
 
+#### Export dist and usc plots as a composite figure
+```{r}
+dist_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/both_with_inset_CIs.png")))
+
+usc_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/both_with_inset_CIs.png")))
+
+
+usc_CIs_2yr_composite_plots <- gridExtra::grid.arrange(dist_CIs_2yr_composite, 
+                        usc_CIs_2yr_composite,
+                        ncol = 1,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-26, "npc"), 
+                            y = unit(0.45, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/main_figs_UR.png", 
+       plot = usc_CIs_2yr_composite_plots,
+       width = 6,
+       height = 6.7,
+       units = "in",
+       dpi = 400)
+```
+
 ### Mu = 2.6e-8 & gen time = 1 yr
 #### Export main plot
 ```{r}
@@ -1899,6 +1960,87 @@ make_ne_plot_reg_y(full_fig_2.6e8_2yrs,
                    "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_2yr/full_with_inset.png")
 ```
 
+### Export 1yr, variable mutation rate plots as a composite figure
+```{r}
+mut1e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1yr/full_with_inset.png")))
+
+mut1.2e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_1yr/full_with_inset.png")))
+
+mut1.8e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")))
+
+mut2.6e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1yr/full_with_inset.png")))
+
+
+var_mut_CIs_1yr_composite_plots <- gridExtra::grid.arrange(mut1e8_CIs_1yr_composite, 
+                        mut1.2e8_CIs_1yr_composite,
+                        mut1.8e8_CIs_1yr_composite,
+                        mut2.6e8_CIs_1yr_composite,
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-16, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("C", 
+                            x = unit(0, "npc"), 
+                            y = unit(-12, "npc"),
+                            gp = gpar(fontsize = 12)),
+             bottom = textGrob("D", 
+                            x = unit(0.51, "npc"), 
+                            y = unit(12.4, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/main_figs_1yr_var_mut.png", 
+       plot = var_mut_CIs_1yr_composite_plots,
+       width = 8*0.9,
+       height = 6.2*0.9,
+       units = "in",
+       dpi = 400)
+```
+
+### Export 2yr, variable mutation rate plots as a composite figure
+```{r}
+mut1e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_2yr/full_with_inset.png")))
+
+mut1.2e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_2yr/full_with_inset.png")))
+
+mut1.8e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/full_with_inset.png")))
+
+mut2.6e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_2yr/full_with_inset.png")))
+
+
+var_mut_CIs_2yr_composite_plots <- gridExtra::grid.arrange(mut1e8_CIs_2yr_composite, 
+                        mut1.2e8_CIs_2yr_composite,
+                        mut1.8e8_CIs_2yr_composite,
+                        mut2.6e8_CIs_2yr_composite,
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-16, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("C", 
+                            x = unit(0, "npc"), 
+                            y = unit(-12, "npc"),
+                            gp = gpar(fontsize = 12)),
+             bottom = textGrob("D", 
+                            x = unit(0.51, "npc"), 
+                            y = unit(12.4, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/main_figs_2yr_var_mut.png", 
+       plot = var_mut_CIs_2yr_composite_plots,
+       width = 8*0.9,
+       height = 6.2*0.9,
+       units = "in",
+       dpi = 400)
+```
 ## Calculate Ne stats
 ### mu = 1.8 x 10^-8, gen time = 1 yr
 ```{r}
