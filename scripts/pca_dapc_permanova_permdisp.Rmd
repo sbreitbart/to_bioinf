@@ -68,9 +68,9 @@ cumsum(pve$pve)
 
 ## Plot, export PCA
 ### Axes 1-2
-#### Urb = dist to CC
 ```{r}
-ggplot(pca, 
+#### Urb = dist to CC
+pca_dist <- ggplot(pca, 
        aes(PC1,
            PC2,
            # col = urb_score
@@ -88,16 +88,9 @@ ggplot(pca,
   ggpubr::theme_pubr() +
   labs(fill = "    Distance to\nCity Center (km)")
 
-ggsave("pca.png",
-       path = "Figures_Tables/pca",
-       height = 10,
-       width = 10,
-       units = "cm")
-```
 
 #### Urb = urb score
-```{r}
-ggplot(pca, 
+pca_usc <- ggplot(pca, 
        aes(PC1,
            PC2,
            fill = urb_score
@@ -114,10 +107,16 @@ ggplot(pca,
   ggpubr::theme_pubr() +
   labs(fill = "Urbanization\n      Score") 
 
-ggsave("pca_usc.png",
+pca_dist +
+  pca_usc +
+  patchwork::plot_layout(axes = "collect",
+                         axis_titles = "collect") +
+  plot_annotation(tag_levels = 'A')
+
+ggsave("pca.png",
        path = "Figures_Tables/pca",
-       height = 10,
-       width = 10,
+       height = 13,
+       width = 15,
        units = "cm")
 ```
 
@@ -257,6 +256,7 @@ pop(my_genind) <- pops$population
 grp <- adegenet::find.clusters(my_genind,
     # since I've been through this and seen that the lowest BIC is for ~2 clusters, I'm making this smaller to see the detail better
                         max.n.clust = 10,
+                      #  max.n.clust = 26,
                         var.contrib = TRUE, 
                         scale = FALSE,
                         n.da = nPop(my_genind) - 1
@@ -463,8 +463,6 @@ ggsave(here::here("./Figures_Tables/dapc/k2_dapc_map.png"),
 
 
 ### Clusters = 1
-Didn't work (not going to work. DAPC can only detect at least 2 clusters, as per conversation with package developers May 2023)
-But upon revisiting in the fall, I can explore data with 1 cluster...
 #### Examine clusters
 ```{r}
 head(grp$Kstat)  # BIC scores per k
@@ -475,6 +473,35 @@ head(grp$Kstat)  # BIC scores per k
 grp$stat  # Best k based on BIC
 #     K=1 
 # 1253.28 
+```
+
+
+#### Create fig of variance explained and BIC
+```{r}
+var_exp <- rasterGrob(readPNG(here::here("./Figures_Tables/dapc/variance_expl_500by350.png")))
+
+bic <- rasterGrob(readPNG(here::here("./Figures_Tables/dapc/BIC_500by350.png")))
+
+
+dapc_plots <- gridExtra::grid.arrange(var_exp, 
+                        bic, 
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(0.95, "npc"), 
+                            y = unit(.9, "npc"),
+                          #  just = "left", 
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-15.5, "npc"), 
+                            y = unit(0.9, "npc"),
+                          #  just = "left", 
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/dapc/dapc_both.png", 
+       plot = dapc_plots,
+       width = 7, height = 2.5,
+       units = "in",
+       dpi = 300)
 ```
 
 ## Cross-validation

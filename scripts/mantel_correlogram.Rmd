@@ -96,7 +96,6 @@ vcf_rur_subsamp <- read.vcfR(
 my_genind_rur_subsamp <- vcfR2genind(vcf_rur_subsamp)
 ```
 
-
 ### Coordinates
 #### Create function: Import and create geographic distance matrix
 ```{r}
@@ -759,4 +758,73 @@ export_corr_table_fig(correlogram_utm_rur_subsamp, distance, one_indiv_rural_10k
 
 # 12 km
 export_corr_table_fig(correlogram_utm_rur_subsamp_12km, distance, one_indiv_rural_12km)
+```
+
+## Re-import images, then create composite figures
+### Distance
+```{r}
+urb_2500m_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/urban_2500m.png")))
+
+urb_10km_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/urban_10km.png")))
+
+rur_10km_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/rural_10km.png")))
+
+
+
+corr_dist_plots <- gridExtra::grid.arrange(urb_2500m_dist, 
+                        urb_10km_dist,
+                        rur_10km_dist,
+                        ncol = 3,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("B", 
+                            x = unit(1, "npc"), 
+                            y = unit(1.96, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("C", 
+                            x = unit(-9.75, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/correlogram/distance/figures/main_figs.png", 
+       plot = corr_dist_plots,
+       width = 7, height = 4,
+       units = "in",
+       dpi = 400)
+```
+
+### Urb score
+```{r}
+urb_2500m_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/urban_2500m.png")))
+
+urb_10km_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/urban_10km.png")))
+
+rur_10km_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/rural_10km.png")))
+
+
+
+corr_usc_plots <- gridExtra::grid.arrange(urb_2500m_usc, 
+                        urb_10km_usc,
+                        rur_10km_usc,
+                        ncol = 3,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("B", 
+                            x = unit(1, "npc"), 
+                            y = unit(1.96, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("C", 
+                            x = unit(-9.75, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/correlogram/urb_score/figures/main_figs.png", 
+       plot = corr_usc_plots,
+       width = 7, height = 4,
+       units = "in",
+       dpi = 400)
 ```
