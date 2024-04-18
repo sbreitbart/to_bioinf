@@ -1,15 +1,7 @@
 # Set up notebook
 ## Load libraries & functions
 ```{r}
-# install.packages("conStruct")
-library(here)
-library(tidyverse)
-library(magrittr)
-library(conStruct)
-# install.packages("fields")
-library(fields)
-library(parallel)
-
+source("libraries.R")
 source("functions.R")
 ```
 
@@ -721,5 +713,32 @@ make.admix.pie.plot(admix.proportions = admix.props,
                         radii = 0.8,
                         x.lim = c(-80.3,-78.8),
                         y.lim = c(43,44.4))
+```
+
+
+## Composite figure (xvalidation and layer contribution plot)
+```{r}
+xval_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/conStruct/xvalidation.png")))
+
+laycontr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/conStruct/layer_contributions_spatial.png")))
+
+
+conStruct_composite_plots <- gridExtra::grid.arrange(xval_composite, laycontr_composite,
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-13, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/conStruct/main_figs.png", 
+       plot = conStruct_composite_plots,
+       width = 6,
+       height = 1.8*1.2,
+       units = "in",
+       dpi = 400)
 ```
 

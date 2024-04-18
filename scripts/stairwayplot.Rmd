@@ -2041,6 +2041,7 @@ ggsave("./Figures_Tables/Stairway_plot/main_figs_2yr_var_mut.png",
        units = "in",
        dpi = 400)
 ```
+
 ## Calculate Ne stats
 ### mu = 1.8 x 10^-8, gen time = 1 yr
 ```{r}
