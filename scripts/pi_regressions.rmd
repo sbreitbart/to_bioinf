@@ -137,9 +137,14 @@ pi_data %>%
   dplyr::group_by(round(num_indv, 0)) %>%
   dplyr::summarise(pi_per_groupsize = mean(pi))
 
+```
+
+## Clean data
+### Pi
+```{r}
+# remove sites with 1 individuals based on high variance explained, analysis in chunk above
 pi_data %<>%
   dplyr::filter(num_indv > 1)
-
 ```
 
 ## Urbanization is continuous
