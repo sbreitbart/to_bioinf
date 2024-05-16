@@ -77,6 +77,7 @@ my_genind_subsamp <- vcfR2genind(vcf_subsamp)
 
 
 #### 1 individual/population- URBAN ONLY
+##### Urb = dist to CC
 ```{r}
 # vcf
 vcf_urb_subsamp <- read.vcfR(
@@ -86,7 +87,18 @@ vcf_urb_subsamp <- read.vcfR(
 my_genind_urb_subsamp <- vcfR2genind(vcf_urb_subsamp)
 ```
 
+##### Urb = urb score
+```{r}
+# vcf
+vcf_urb_subsamp2 <- read.vcfR(
+  here::here("./clean_data/filtered_vcfs/1indiv_per_pop_mmaf0.05_variant_sites_URBAN_usc.recode.vcf"), verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_urb_subsamp2 <- vcfR2genind(vcf_urb_subsamp2)
+```
+
 #### 1 individual/population- RURAL ONLY
+##### Urb = dist to CC
 ```{r}
 # vcf
 vcf_rur_subsamp <- read.vcfR(
@@ -94,6 +106,16 @@ vcf_rur_subsamp <- read.vcfR(
 
 ## Convert vcf to genind object
 my_genind_rur_subsamp <- vcfR2genind(vcf_rur_subsamp)
+```
+
+##### Urb = urb score
+```{r}
+# vcf
+vcf_rur_subsamp2 <- read.vcfR(
+  here::here("./clean_data/filtered_vcfs/1indiv_per_pop_mmaf0.05_variant_sites_RURAL_usc.recode.vcf"), verbose = FALSE)
+
+## Convert vcf to genind object
+my_genind_rur_subsamp2 <- vcfR2genind(vcf_rur_subsamp2)
 ```
 
 ### Coordinates
@@ -189,25 +211,41 @@ coords_utm_subsamp <- create_geog_dist_matrix(
 
 
 #### 1 individual/population- URBAN ONLY
+##### Urb = dist to CC
 ```{r}
 coords_utm_urb_subsamp <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
   "./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN.csv")
 ```
 
+##### Urb = urb score
+```{r}
+coords_utm_urb_subsamp2 <- create_geog_dist_matrix(
+  "./clean_data/urb_metrics.csv", 
+  "./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN_usc.csv")
+```
+
 #### 1 individual/population- RURAL ONLY
+##### Urb = dist to CC
 ```{r}
 coords_utm_rur_subsamp <- create_geog_dist_matrix(
   "./clean_data/urb_metrics.csv",
   "./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.csv")
 ```
 
+##### Urb = urb score
+```{r}
+coords_utm_rur_subsamp2 <- create_geog_dist_matrix(
+  "./clean_data/urb_metrics.csv",
+  "./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL_usc.csv") 
+```
+
 # Create genetic distance matrices
 ```{r}
-# all individuals
+# all individuals-----
 genetic_distance_matrix <- dist(my_genind, method = "euclidean")
 
-# urban individuals
+# urban individuals-----
 ## urb = dist to CC
 genetic_distance_matrix_urb <- dist(my_genind_urb, method = "euclidean")
 
@@ -215,7 +253,7 @@ genetic_distance_matrix_urb <- dist(my_genind_urb, method = "euclidean")
 genetic_distance_matrix_urb2 <- dist(my_genind_urb2, method = "euclidean")
 
 
-# rural individuals
+# rural individuals-----
 ## urb = dist to CC
 genetic_distance_matrix_rur <- dist(my_genind_rur, method = "euclidean")
 
@@ -223,15 +261,23 @@ genetic_distance_matrix_rur <- dist(my_genind_rur, method = "euclidean")
 genetic_distance_matrix_rur2 <- dist(my_genind_rur2, method = "euclidean")
 
 
-# 1 individual/site
+# 1 individual/site-----
 genetic_distance_matrix_subsamp <- dist(my_genind_subsamp, method = "euclidean")
 
-# 1 individual/site: urban
+# 1 individual/site: urban-----
+## urb = dist to CC
 genetic_distance_matrix_urb_subsamp <- dist(my_genind_urb_subsamp, method = "euclidean")
 
+## urb = urb score
+genetic_distance_matrix_urb_subsamp2 <- dist(my_genind_urb_subsamp2, method = "euclidean")
 
-# 1 individual/site: rural
+
+# 1 individual/site: rural-----
+## urb = dist to CC
 genetic_distance_matrix_rur_subsamp <- dist(my_genind_rur_subsamp, method = "euclidean")
+
+## urb = urb score
+genetic_distance_matrix_rur_subsamp2 <- dist(my_genind_rur_subsamp2, method = "euclidean")
 ```
 
 # Mantel correlogram (UTM)
@@ -488,7 +534,8 @@ plot(correlogram_utm_subsamp_10km)
 ```
 
 ## 1 individual/site- Urban
-### 2.5km spacing
+### Urb = dist to CC
+#### 2.5km spacing
 ```{r}
 correlogram_utm_urb_subsamp <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb_subsamp,
@@ -502,7 +549,7 @@ plot(correlogram_utm_urb_subsamp)
 
 ```
 
-### 3km spacing
+#### 3km spacing
 ```{r}
 correlogram_utm_urb_subsamp_3km <- vegan::mantel.correlog(
 D.eco = genetic_distance_matrix_urb_subsamp,
@@ -516,7 +563,7 @@ plot(correlogram_utm_urb_subsamp_3km)
 
 ```
 
-### 10km spacing
+#### 10km spacing
 ```{r}
 correlogram_utm_urb_subsamp_10km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb_subsamp,
@@ -530,7 +577,7 @@ plot(correlogram_utm_urb_subsamp_10km)
 
 ```
 
-### 12km spacing
+#### 12km spacing
 ```{r}
 correlogram_utm_urb_subsamp_12km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_urb_subsamp,
@@ -544,8 +591,66 @@ plot(correlogram_utm_urb_subsamp_12km)
 
 ```
 
+### Urb = urb score
+#### 2.5km spacing
+```{r}
+correlogram_utm_urb_subsamp2 <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb_subsamp2,
+  D.geo = coords_utm_urb_subsamp2,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_2500m
+   )
+
+plot(correlogram_utm_urb_subsamp2)
+
+```
+
+#### 3km spacing
+```{r}
+correlogram_utm_urb_subsamp2_3km <- vegan::mantel.correlog(
+D.eco = genetic_distance_matrix_urb_subsamp2,
+ D.geo = coords_utm_urb_subsamp2,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_3000m
+   )
+
+plot(correlogram_utm_urb_subsamp2_3km)
+
+```
+
+#### 10km spacing
+```{r}
+correlogram_utm_urb_subsamp2_10km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb_subsamp2,
+  D.geo = coords_utm_urb_subsamp2,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_10km
+   )
+
+plot(correlogram_utm_urb_subsamp2_10km)
+
+```
+
+#### 12km spacing
+```{r}
+correlogram_utm_urb_subsamp2_12km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_urb_subsamp2,
+  D.geo = coords_utm_urb_subsamp2,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_12km
+   )
+
+plot(correlogram_utm_urb_subsamp2_12km)
+
+```
+
 ## 1 individual/site- Rural
-### 10km spacing
+### Urb = dist to CC
+#### 10km spacing
 ```{r}
 correlogram_utm_rur_subsamp <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_rur_subsamp,
@@ -559,7 +664,7 @@ plot(correlogram_utm_rur_subsamp)
 
 ```
 
-### 12km spacing
+#### 12km spacing
 ```{r}
 correlogram_utm_rur_subsamp_12km <- vegan::mantel.correlog(
   D.eco = genetic_distance_matrix_rur_subsamp,
@@ -570,6 +675,35 @@ correlogram_utm_rur_subsamp_12km <- vegan::mantel.correlog(
    )
 
 plot(correlogram_utm_rur_subsamp_12km)
+
+```
+
+### Urb = urb score
+#### 10km spacing
+```{r}
+correlogram_utm_rur_subsamp2 <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_rur_subsamp2,
+  D.geo = coords_utm_rur_subsamp2,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_10km
+   )
+
+plot(correlogram_utm_rur_subsamp2)
+
+```
+
+#### 12km spacing
+```{r}
+correlogram_utm_rur_subsamp2_12km <- vegan::mantel.correlog(
+  D.eco = genetic_distance_matrix_rur_subsamp2,
+ D.geo = coords_utm_rur_subsamp2,
+  nperm = 1000,
+  cutoff = T,
+  break.pts = break_points_12km
+   )
+
+plot(correlogram_utm_rur_subsamp2_12km)
 
 ```
 
@@ -737,6 +871,7 @@ export_corr_table_fig(correlogram_utm_subsamp_10km, all, one_indiv_10km)
 ```
 
 ## 1 individual/site: Urban
+### Urb = dist to CC
 ```{r}
 # 2.5 km
 export_corr_table_fig(correlogram_utm_urb_subsamp, distance, one_indiv_urban_2500m)
@@ -751,7 +886,23 @@ export_corr_table_fig(correlogram_utm_urb_subsamp_10km, distance, one_indiv_urba
 export_corr_table_fig(correlogram_utm_urb_subsamp_12km, distance, one_indiv_urban_12km)
 ```
 
+### Urb = urb score
+```{r}
+# 2.5 km
+export_corr_table_fig(correlogram_utm_urb_subsamp2, urb_score, one_indiv_urban_2500m_urbscore)
+
+# 3 km
+export_corr_table_fig(correlogram_utm_urb_subsamp2_3km, urb_score, one_indiv_urban_3km_urbscore)
+
+# 10 km
+export_corr_table_fig(correlogram_utm_urb_subsamp2_10km, urb_score, one_indiv_urban_10km_urbscore)
+
+# 12 km
+export_corr_table_fig(correlogram_utm_urb_subsamp2_12km, urb_score, one_indiv_urban_12km_urbscore)
+```
+
 ## 1 individual/site: Rural
+### Urb = dist to CC
 ```{r}
 # 10 km
 export_corr_table_fig(correlogram_utm_rur_subsamp, distance, one_indiv_rural_10km)
@@ -760,8 +911,18 @@ export_corr_table_fig(correlogram_utm_rur_subsamp, distance, one_indiv_rural_10k
 export_corr_table_fig(correlogram_utm_rur_subsamp_12km, distance, one_indiv_rural_12km)
 ```
 
+### Urb = urb score
+```{r}
+# 10 km
+export_corr_table_fig(correlogram_utm_rur_subsamp2, urb_score, one_indiv_rural_10km_urbscore)
+
+# 12 km
+export_corr_table_fig(correlogram_utm_rur_subsamp2_12km, urb_score, one_indiv_rural_12km_urbscore)
+```
+
 ## Re-import images, then create composite figures
 ### Distance
+#### All individuals
 ```{r}
 urb_2500m_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/urban_2500m.png")))
 
@@ -795,7 +956,42 @@ ggsave("./Figures_Tables/correlogram/distance/figures/main_figs.png",
        dpi = 400)
 ```
 
+#### 1 individual/pop
+```{r}
+urb_2500m_dist2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/one_indiv_urban_2500m.png")))
+
+urb_10km_dist2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/one_indiv_urban_10km.png")))
+
+rur_10km_dist2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/one_indiv_rural_10km.png")))
+
+
+
+corr_dist_plots2 <- gridExtra::grid.arrange(urb_2500m_dist2, 
+                        urb_10km_dist2,
+                        rur_10km_dist2,
+                        ncol = 3,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("B", 
+                            x = unit(1, "npc"), 
+                            y = unit(1.96, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("C", 
+                            x = unit(-9.75, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/correlogram/distance/figures/main_figs_1indiv_per_pop.png", 
+       plot = corr_dist_plots2,
+       width = 7, height = 4,
+       units = "in",
+       dpi = 400)
+```
+
 ### Urb score
+#### All individuals
 ```{r}
 urb_2500m_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/urban_2500m.png")))
 
@@ -824,6 +1020,40 @@ corr_usc_plots <- gridExtra::grid.arrange(urb_2500m_usc,
 
 ggsave("./Figures_Tables/correlogram/urb_score/figures/main_figs.png", 
        plot = corr_usc_plots,
+       width = 7, height = 4,
+       units = "in",
+       dpi = 400)
+```
+
+#### 1 individual/pop
+```{r}
+urb_2500m_usc2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/one_indiv_urban_2500m_urbscore.png")))
+
+urb_10km_usc2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/one_indiv_urban_10km_urbscore.png")))
+
+rur_10km_usc2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/one_indiv_rural_10km_urbscore.png")))
+
+
+
+corr_usc_plots2 <- gridExtra::grid.arrange(urb_2500m_usc2, 
+                        urb_10km_usc2,
+                        rur_10km_usc2,
+                        ncol = 3,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("B", 
+                            x = unit(1, "npc"), 
+                            y = unit(1.96, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("C", 
+                            x = unit(-9.75, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/correlogram/urb_score/figures/main_figs_1indiv_per_pop.png", 
+       plot = corr_usc_plots2,
        width = 7, height = 4,
        units = "in",
        dpi = 400)
