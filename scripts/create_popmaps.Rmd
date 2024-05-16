@@ -495,6 +495,7 @@ uniques %>%
 ```
 
 ### Urban only
+#### Urb = dist to CC
 ```{r}
 uniques_urb <- full_popmap %>%
   arrange(ID) %>%
@@ -519,7 +520,33 @@ uniques_urb %>%
             file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN.csv"))
 ```
 
+#### Urb = urb score
+```{r}
+uniques_urb_usc <- full_popmap %>%
+  arrange(ID) %>%
+  group_by(pop_id) %>%
+  slice(1) %>%
+  ungroup() %>% 
+  dplyr::filter(u_r_usc == "Urban") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, pop_id)
+
+uniques_urb_usc %>%
+  write.table(., 
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN_usc.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+uniques_urb_usc %>%
+  write_csv(., 
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN_usc.csv"))
+```
+
 ### Rural only
+#### Urb = dist to CC
 ```{r}
 uniques_rur <- full_popmap %>%
   arrange(ID) %>%
@@ -544,6 +571,31 @@ uniques_rur %>%
             file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.csv"))
 ```
 
+
+#### Urb = urb score
+```{r}
+uniques_rur_usc <- full_popmap %>%
+  arrange(ID) %>%
+  group_by(pop_id) %>%
+  slice(1) %>%
+  ungroup() %>% 
+  dplyr::filter(u_r_usc == "Rural") %>%
+  arrange(ID) %>%
+  dplyr::select(sample, pop_id)
+
+uniques_rur_usc %>%
+  write.table(., 
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL_usc.txt"),
+            stdout(),
+            sep='\t',
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
+
+uniques_rur_usc %>%
+  write_csv(., 
+            file = here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL_usc.csv"))
+```
 
 ## for all pops with >1 individual
 ### All individuals
