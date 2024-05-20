@@ -36,16 +36,32 @@ gen_data <- process_vcf_data(here::here("./clean_data/stacks_output/output_popul
 ```
 
 #### JUST URBAN individuals
+##### urb = dist to CC
 ```{r}
 gen_data_urban <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
+##### urb = urb score
+```{r}
+gen_data_urban_usc <- process_vcf_data(
+  here::here("./clean_data/filtered_vcfs/urban_pops_usc_mmaf0.05_variant_sites.recode.vcf")
+  )
+```
+
 #### JUST RURAL individuals
+##### urb = dist to CC
 ```{r}
 gen_data_rural <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf")
+  )
+```
+
+##### urb = urb score
+```{r}
+gen_data_rural_usc <- process_vcf_data(
+  here::here("./clean_data/filtered_vcfs/rural_pops_usc_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
@@ -56,17 +72,64 @@ gen_data_subsamp <- process_vcf_data(
   )
 ```
 
+#### 1 individual/population- URBAN ONLY
+##### urb = dist to CC
+```{r}
+gen_data_subsamp_urban <- process_vcf_data(
+  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf")
+  )
+```
+
+##### urb = urb score
+```{r}
+# gen_data_subsamp_urban_usc <- process_vcf_data(
+#   here::here("./clean_data/filtered_vcfs/1indiv_per_pop_mmaf0.05_variant_sites_URBAN_usc.recode.vcf")
+#   )
+
+# locus "26386:21:+.0" doesn't have a paired "26386:21:+.1" locus, so I'll remove it from the vcf manually because, otherwise, this function won't work (Error: memgene:  Alleles matrix must have paired columns (i.e. diploid genotypes)
+
+ # Read vcf file, convert to genind
+gen_data_subsamp_urban_usc <- vcfR2genind(read.vcfR(here::here("./clean_data/filtered_vcfs/1indiv_per_pop_mmaf0.05_variant_sites_URBAN_usc.recode.vcf"), verbose = FALSE))
+  
+
+# ID locus to remove
+locus_to_remove <- "26386:21:+"  
+
+# remove locus from tab
+gen_data_subsamp_urban_usc@tab <- gen_data_subsamp_urban_usc$tab[, -1019]  
+
+# remove locus from all.names
+gen_data_subsamp_urban_usc@all.names <- lapply(gen_data_subsamp_urban_usc@all.names, function(x) x[x != locus_to_remove])
+
+# find index of locus to remove
+allele_index <- which(unlist(gen_data_subsamp_urban_usc@all.names) == locus_to_remove)
+    
+# remove locus from loc.fac
+gen_data_subsamp_urban_usc@loc.fac <- gen_data_subsamp_urban_usc@loc.fac[-allele_index]
+
+  
+# Tidy up colnames (remove periods)
+inputdata1 <- gen_data_subsamp_urban_usc$tab
+colnames(inputdata1) <- gsub("\\.", "_", colnames(inputdata1))
+  
+  
+## Produce a proportion of shared alleles genetic distance matrix using the convenience wrapper function provided with the package
+gen_data_subsamp_urban_usc <- codomToPropShared(as.data.frame(inputdata1),
+                                missingData = NA)
+```
+
 #### 1 individual/population- RURAL ONLY
+##### urb = dist to CC
 ```{r}
 gen_data_subsamp_rural <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_RURAL.recode.vcf")
   )
 ```
 
-#### 1 individual/population- URBAN ONLY
+##### urb = urb score
 ```{r}
-gen_data_subsamp_urban <- process_vcf_data(
-  here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf")
+gen_data_subsamp_rural_usc <- process_vcf_data(
+  here::here("./clean_data/filtered_vcfs/1indiv_per_pop_mmaf0.05_variant_sites_RURAL_usc.recode.vcf")
   )
 ```
 
@@ -112,6 +175,7 @@ coords <- process_location_data(
 ```
 
 #### All URBAN individuals
+##### urb = dist to CC
 ```{r}
 coords_urban <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -120,11 +184,29 @@ coords_urban <- process_location_data(
 # I converted the pop_map3_U_dist.txt into csv, then removed the "MW" prefixes so that the function would work
 ```
 
+##### urb = urb score
+```{r}
+coords_urban_usc <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_maps/pop_map3_U_usc.csv"))
+
+# I converted the pop_map3_U_dist.txt into csv, then removed the "MW" prefixes so that the function would work
+```
+
 #### All RURAL individuals
+##### urb = dist to CC
 ```{r}
 coords_rural <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
   here::here("./clean_data/pop_maps/pop_map3_R_dist.csv"))
+
+```
+
+##### urb = urb score
+```{r}
+coords_rural_usc <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_maps/pop_map3_R_usc.csv"))
 
 ```
 
@@ -137,6 +219,7 @@ coords_subsamp <- process_location_data(
 ```
 
 #### 1 individual/population- RURAL ONLY
+##### urb = dist to CC
 ```{r}
 coords_subsamp_rural <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -144,11 +227,28 @@ coords_subsamp_rural <- process_location_data(
 
 ```
 
+##### urb = urb score
+```{r}
+coords_subsamp_rural_usc <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL_usc.csv"))
+
+```
+
 #### 1 individual/population- URBAN ONLY
+##### urb = dist to CC
 ```{r}
 coords_subsamp_urban <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
   here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN.csv"))
+
+```
+
+##### urb = urb score
+```{r}
+coords_subsamp_urban_usc <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_URBAN_usc.csv"))
 
 ```
 
@@ -163,6 +263,7 @@ milkweed_analysis <- mgQuick(gen_data, coords, forwardPerm = 1000)
 ```
 
 ### Just URBAN individuals
+#### Urb = dist to CC
 ```{r}
 set.seed(1)
 if (!exists("milkweed_analysis_urban"))
@@ -171,11 +272,30 @@ milkweed_analysis_urban <- mgQuick(gen_data_urban, coords_urban, forwardPerm = 1
 # No significant MEMs detected
 ```
 
+#### Urb = urb score
+```{r}
+set.seed(1)
+if (!exists("milkweed_analysis_urban_usc"))
+milkweed_analysis_urban_usc <- mgQuick(gen_data_urban_usc, coords_urban_usc, forwardPerm = 1000)
+
+# No significant MEMs detected
+```
+
 ### Just RURAL individuals
+#### Urb = dist to CC
 ```{r}
 set.seed(1)
 if (!exists("milkweed_analysis_rural"))
 milkweed_analysis_rural <- mgQuick(gen_data_rural, coords_rural,  forwardPerm = 1000)
+
+# No significant MEMs detected
+```
+
+#### Urb = urb score
+```{r}
+set.seed(1)
+if (!exists("milkweed_analysis_rural_usc"))
+milkweed_analysis_rural_usc <- mgQuick(gen_data_rural_usc, coords_rural_usc,  forwardPerm = 1000)
 
 # No significant MEMs detected
 ```
@@ -188,16 +308,8 @@ milkweed_analysis_subsamp <- mgQuick(gen_data_subsamp, coords_subsamp,  forwardP
 # No significant MEMs detected
 ```
 
-### 1 individual per population- RURAL
-```{r}
-set.seed(1)
-if (!exists("milkweed_analysis_subsamp_rural"))
-milkweed_analysis_subsamp_rural <- mgQuick(gen_data_subsamp_rural, coords_subsamp_rural,  forwardPerm = 1000)
-# 2 significant MEMs detected (2,4)
-
-```
-
 ### 1 individual per population- URBAN
+#### Urb = dist to CC
 ```{r}
 set.seed(1)
 if (!exists("milkweed_analysis_subsamp_urban"))
@@ -207,6 +319,34 @@ milkweed_analysis_subsamp_urban <- mgQuick(gen_data_subsamp_urban, coords_subsam
 # ----Selected: None 
 # Forward selections of negative Moran's eigenvectors
 # ----Selected: 7, 8, 17, 23, 25, 37, 41 
+
+```
+
+#### Urb = urb score
+```{r}
+set.seed(1)
+if (!exists("milkweed_analysis_subsamp_urban_usc"))
+milkweed_analysis_subsamp_urban_usc <- mgQuick(gen_data_subsamp_urban_usc, coords_subsamp_urban_usc,  forwardPerm = 1000)
+# 0 significant MEMs detected
+
+```
+
+### 1 individual per population- RURAL
+#### Urb = dist to CC
+```{r}
+set.seed(1)
+if (!exists("milkweed_analysis_subsamp_rural"))
+milkweed_analysis_subsamp_rural <- mgQuick(gen_data_subsamp_rural, coords_subsamp_rural,  forwardPerm = 1000)
+# 2 significant MEMs detected (2,4)
+
+```
+
+#### Urb = urb score
+```{r}
+set.seed(1)
+if (!exists("milkweed_analysis_subsamp_rural_usc"))
+milkweed_analysis_subsamp_rural_usc <- mgQuick(gen_data_subsamp_rural_usc, coords_subsamp_rural_usc,  forwardPerm = 1000)
+# 4 significant MEMs detected (3, 4, 8, 14)
 
 ```
 
@@ -942,7 +1082,15 @@ export_stats("all_indiv",
 ```
 
 ### 1 individual/population- RURAL
+#### Urb = dist to CC
 ```{r}
 export_stats("rural_subsamp",
              milkweed_analysis_subsamp_rural)
 ```
+
+#### Urb = urb score
+```{r}
+export_stats("rural_subsamp_usc",
+             milkweed_analysis_subsamp_rural_usc)
+```
+
