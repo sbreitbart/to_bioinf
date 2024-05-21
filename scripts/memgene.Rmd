@@ -5,30 +5,9 @@ source(here::here("libraries.R"))
 source(here::here("functions.R"))
 ```
 
-# Milkweed data
+# Memgene analysis
 ## Import files
 ### Genetic data
-#### Function
-```{r}
-process_vcf_data <- function(vcf_filepath) {
-  
-  # Read vcf file
-  vcf <- read.vcfR(vcf_filepath, verbose = FALSE)
-  
-  # Convert vcf to genind object
-  my_genind <- vcfR2genind(vcf)
-  
-  # Tidy up colnames (remove periods)
-  inputdata1 <- my_genind$tab
-  colnames(inputdata1) <- gsub("\\.", "_", colnames(inputdata1))
-  
-  ## Produce a proportion of shared alleles genetic distance matrix using the convenience wrapper function provided with the package
-  gen_data <- codomToPropShared(as.data.frame(inputdata1), missingData = NA)
-  
-  return(gen_data)
-}
-```
-
 #### All individuals
 ```{r}
 gen_data <- process_vcf_data(here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"))
@@ -134,38 +113,6 @@ gen_data_subsamp_rural_usc <- process_vcf_data(
 ```
 
 ### Coordinates
-#### Function
-```{r}
-process_location_data <- function(urb_filepath, pop_map_filepath) {
-  
-  # lat/longs of sampling sites
-  urb <- read.csv(urb_filepath)
-  
-  # sampling site IDs and genetic sample names
-  coords <- read.csv(pop_map_filepath) %>%
-    
-    # if population doesn't start with "MWI", it should start with "MW"
-  # rename col 1
-    dplyr::rename(pop_id = 2) %>%
-    dplyr::mutate(pop_id = as.factor(pop_id)) %>%
-    
-    # take entries with numeric populations and add "MW" as prefix
-    add_MW_IDs() %>%
-
-    # left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
-    left_join(., urb, by = "patch_id") %>%
-    dplyr::mutate(patch_id = as.factor(patch_id),
-                  pop_id = as.factor(pop_id)) %>%
-    dplyr::select(c(1,2,6,7)) %>%
-    dplyr::rename("y" = 3,
-                  "x" = 4) %>%
-    dplyr::arrange(sample) %>%
-    dplyr::select("x", "y")
-  
-  return(coords)
-  }
-```
-
 #### All individuals
 ```{r}
 coords <- process_location_data(
@@ -260,6 +207,11 @@ coords_subsamp_urban_usc <- process_location_data(
 set.seed(1)
 if (!exists("milkweed_analysis"))
 milkweed_analysis <- mgQuick(gen_data, coords, forwardPerm = 1000)
+
+# Forward selections of positive Moran's eigenvectors
+# ----Selected: 2, 3, 4, 5, 6, 12, 14, 16, 17, 18, 19, 20, 21, 28, 29, 34, 39, 40, 42, 45 
+# Forward selections of negative Moran's eigenvectors
+# ----Selected: None 
 ```
 
 ### Just URBAN individuals
@@ -350,16 +302,31 @@ milkweed_analysis_subsamp_rural_usc <- mgQuick(gen_data_subsamp_rural_usc, coord
 
 ```
 
-## Visualize results- NOTE: the terrain basemap chunks use stamen basemaps that I can't obtain anymore. These maps aren't necessary to convey my results anymore so I'm not going to fix the code. But if I didn, I'd go to sample_site_map.rmd and use the tmap code to create the maps.
+## Visualize results
 ### MOST basic plot (built-in functions)
+#### All individuals
+```{r}
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords, milkweed_analysis$memgene[, 1], add.plot=TRUE, legend=TRUE)
+box()
+```
+
 #### 1 individual per population- RURAL
+##### Urb = dist to CC
 ```{r}
 plot(coords_subsamp_rural, type="n", xlab="", ylab="", axes=FALSE)
 mgMap(coords_subsamp_rural, milkweed_analysis_subsamp_rural$memgene[, 1], add.plot=TRUE, legend=TRUE)
 box()
 ```
 
-### Basic plots
+##### Urb = urb score
+```{r}
+plot(coords_subsamp_rural_usc, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords_subsamp_rural_usc, milkweed_analysis_subsamp_rural_usc$memgene[, 1], add.plot=TRUE, legend=TRUE)
+box()
+```
+
+### Basic plots: 1 plot per memgene variable
 #### Function
 ```{r}
 basic_plot_mems <- function(group, # e.g., all_indiv
@@ -521,25 +488,31 @@ basic_plot_mems("all_indiv",
 ```
 
 #### 1 individual/population- RURAL
+##### Urb = dist to CC
 ```{r}
 # Moran's Eigenvectors 2,4
-basic_plot_mems("subsamp_rural",
+basic_plot_mems("rural_subsamp",
                 coords_subsamp_rural,
                 milkweed_analysis_subsamp_rural)
+```
+
+##### Urb = urb score
+```{r}
+# Moran's Eigenvectors 3, 4, 8, 14
+basic_plot_mems("rural_subsamp_usc",
+                coords_subsamp_rural_usc,
+                milkweed_analysis_subsamp_rural_usc)
 ```
 
 ### Plots with terrain basemap
 #### Code for each var
 ```{r}
-basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
-              zoom = 11,
-                          maptype = 'terrain',
-                          source = 'stamen'),
-        darken = c(0.3, "white"))
-```
+# basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
+#               zoom = 11,
+#                           maptype = 'terrain',
+#                           source = 'stamen'),
+#         darken = c(0.3, "white"))
 
-#### Functions
-```{r}
 # create mem1, mem2, and mem3 objects-----
 create_mem <- function(milkweed_analysis_list,
                        coords_df,
@@ -556,6 +529,91 @@ create_mem <- function(milkweed_analysis_list,
   return(mem)
 
 }
+
+# create MEM dfs (all indiv)-----
+mem1 <- create_mem(milkweed_analysis_subsamp_rural, coords_subsamp_rural, 1) %>%
+  dplyr::mutate("mem" = "Memgene Variable 1")
+mem2 <- create_mem(milkweed_analysis_subsamp_rural, coords_subsamp_rural, 2) %>%
+  dplyr::mutate("mem" = "Memgene Variable 2")
+mem3 <- create_mem(milkweed_analysis_subsamp_rural, coords_subsamp_rural, 3) %>%
+  dplyr::mutate("mem" = "Memgene Variable 3")
+
+mems <- full_join(mem1, mem2) %>%
+  full_join(., mem3)
+
+
+# make map-----
+
+# Convert the dataframe to an sf object
+sites <- sf::st_as_sf(mems,
+                  coords = c("x", "y"),
+                  crs = 4326)
+
+# Define the bounding box, then convert to sf object
+bbox <- st_bbox(c(
+  xmin = -80.4,
+  ymin = 42.25,
+  xmax = -78.4,
+  ymax = 44.3),
+  crs = st_crs(4326)) %>%
+   st_as_sfc()
+
+
+tmap_mode("plot")
+
+# get map tiles for basemap
+my_tiles = get_tiles(bbox,
+                    provider = "Esri.WorldImagery",
+                     zoom = 8,
+                     crop = FALSE)
+
+# basemap
+tm_shape(my_tiles,
+         raster.downsample = TRUE ) +
+  tm_rgb(alpha = 0.45) +
+  tm_layout(bg.color = "white") + 
+  tm_grid(lines = F,
+          x = c(-80.5, -80, -79.5, -79, -78.5 )) +
+  # sample sites
+  tm_shape(shp = sites,
+           bbox = bbox) +
+  tm_bubbles(col = "var",
+             size = "abs_val",
+             scale = 0.5,
+             palette = "RdYlBu",
+             title.col = "Value",
+		         legend.col.show = TRUE,
+		         legend.size.show = FALSE
+         ) +
+  tm_facets(by = "mem",
+            ncol = 2,
+            free.scales = TRUE,
+            scale.factor = 1.4,
+            inside.original.bbox = TRUE) +
+  
+  # layout
+  tm_layout(frame = TRUE,
+           legend.title.size = 1.2,
+         legend.outside.size = 0.25,
+         legend.text.size = 0.95,
+          inner.margins = c(0.0, 0.0, 0.0, 0.0),
+          legend.outside = TRUE,
+         panel.label.size = 0.5
+          ) +
+  tm_compass(type = "4star",
+             size = 0.7,
+             position = c(0.7, 0.2)) +
+  tm_scale_bar(position = c(0.6, 0))
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/mem1_test_facets.pdf"),
+             width = 16, height = 6)
+
+```
+
+#### Functions
+```{r}
+
 
 
 # create terrain plots-----
@@ -663,10 +721,6 @@ terrain_plot_mems <- function(group, # e.g., all_indiv
 
 #### All individuals
 ```{r}
-# create MEM dfs
-mem1 <- create_mem(milkweed_analysis, coords, 1)
-mem2 <- create_mem(milkweed_analysis, coords, 2)
-mem3 <- create_mem(milkweed_analysis, coords, 3)
 
 # create maps
 terrain_plot_mems("all_indiv",
@@ -1009,72 +1063,6 @@ combine_mems("subsamp_rural",
 
 
 ## Export stats
-### Function
-```{r}
-export_stats <- function(group,
-                         milkweed_analysis_list){
-  
-  # Adj R2
-  R2_adj <- paste0("Adjusted R² for model: ", 
-                   round(milkweed_analysis_list$RsqAdj,
-                         4))
-  
-  
-  # Extracting relevant data from the milkweed_analysis object
-  whichSelectedPos <- milkweed_analysis_list$whichSelectedPos
-  memgene_values <- milkweed_analysis_list$mem$valuesMEM
-  sdev_values <- milkweed_analysis_list$sdev
-  
-  # Calculating R-squared values per MEMGENE variable
-  r_squared_list <- milkweed_analysis_list$sdev/sum(milkweed_analysis_list$sdev)
-  
-  r2_df <- as.data.frame(r_squared_list) %>%
-    rownames_to_column("MEMGENE_var") %>%
-    slice(1:length(whichSelectedPos)) %>%
-    dplyr::rename(R_squared = r_squared_list)
-  
-  
-  # Creating the dataframe
-  mg_table <- data.frame(
-    MEMGENE_variable = 1:length(whichSelectedPos),
-    Moran_Eigenvector = whichSelectedPos,
-    R_squared = r2_df$R_squared) %>%
-    dplyr::mutate(R_squared = round(R_squared, 3)) %>%
-    dplyr::mutate(R_squared = ifelse(
-      R_squared < 0.001, 
-      "<0.001",
-      R_squared)) %>%
-    rownames_to_column(var = "Row") %>%
-    dplyr::select(-Row) %>%
-    dplyr::rename("MEMGENE Variable" = 1,
-                  "Moran's Eigenvector" = 2,
-                  "R2" = 3)
-  
-
-  mg_table %>%
-    flextable() %>%
-    flextable::align(., align = "center", part = "all") %>%
-    flextable::compose(i = 1,
-                       j = 3,
-                       part = "header",
-                       value = as_paragraph("R", as_sup("2"))) %>%
-    footnote(.,
-             i = 1, j = 1,
-            value = as_paragraph(
-              R2_adj),
-            ref_symbols = c(" "),
-            part = "header") %>%
-    flextable::autofit() %>%
-    flextable::save_as_docx(.,
-                            path = paste0("./Figures_Tables/memgene/",
-                                          group,
-                                          "/memgene_stats_",
-                                          today(),
-                                          ".docx"))
-  
-}
-```
-
 ### All individuals
 ```{r}
 export_stats("all_indiv",

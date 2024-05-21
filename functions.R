@@ -211,3 +211,253 @@ perc_decrease <- function(predicted_pi_df){
                   round(perc_decrease, 3),
                   "%"))
 }
+
+# Memgene functions-----
+ 
+# Import vcf and create memgene input file
+process_vcf_data <- function(vcf_filepath) {
+
+# Read vcf file
+vcf <- read.vcfR(vcf_filepath, verbose = FALSE)
+
+# Convert vcf to genind object
+my_genind <- vcfR2genind(vcf)
+
+# Tidy up colnames (remove periods)
+inputdata1 <- my_genind$tab
+colnames(inputdata1) <- gsub("\\.", "_", colnames(inputdata1))
+
+## Produce a proportion of shared alleles genetic distance matrix using the convenience wrapper function provided with the package
+gen_data <- codomToPropShared(as.data.frame(inputdata1), missingData = NA)
+
+return(gen_data)
+}
+
+# Create coordinates file
+process_location_data <- function(urb_filepath, pop_map_filepath) {
+  
+  # lat/longs of sampling sites
+  urb <- read.csv(urb_filepath)
+  
+  # sampling site IDs and genetic sample names
+  coords <- read.csv(pop_map_filepath) %>%
+    
+    # if population doesn't start with "MWI", it should start with "MW"
+    # rename col 1
+    dplyr::rename(pop_id = 2) %>%
+    dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+    
+    # take entries with numeric populations and add "MW" as prefix
+    add_MW_IDs() %>%
+    
+    # left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+    left_join(., urb, by = "patch_id") %>%
+    dplyr::mutate(patch_id = as.factor(patch_id),
+                  pop_id = as.factor(pop_id)) %>%
+    dplyr::select(c(1,2,6,7)) %>%
+    dplyr::rename("y" = 3,
+                  "x" = 4) %>%
+    dplyr::arrange(sample) %>%
+    dplyr::select("x", "y")
+  
+  return(coords)
+}
+
+# Export statistics
+export_stats <- function(group,
+                         milkweed_analysis_list){
+  
+  # Adj R2
+  R2_adj <- paste0("Adjusted R² for model: ", 
+                   round(milkweed_analysis_list$RsqAdj,
+                         4))
+  
+  
+  # Extracting relevant data from the milkweed_analysis object
+  whichSelectedPos <- milkweed_analysis_list$whichSelectedPos
+  memgene_values <- milkweed_analysis_list$mem$valuesMEM
+  sdev_values <- milkweed_analysis_list$sdev
+  
+  # Calculating R-squared values per MEMGENE variable
+  r_squared_list <- milkweed_analysis_list$sdev/sum(milkweed_analysis_list$sdev)
+  
+  r2_df <- as.data.frame(r_squared_list) %>%
+    rownames_to_column("MEMGENE_var") %>%
+    slice(1:length(whichSelectedPos)) %>%
+    dplyr::rename(R_squared = r_squared_list)
+  
+  
+  # Creating the dataframe
+  mg_table <- data.frame(
+    MEMGENE_variable = 1:length(whichSelectedPos),
+    Moran_Eigenvector = whichSelectedPos,
+    R_squared = r2_df$R_squared) %>%
+    dplyr::mutate(R_squared = round(R_squared, 3)) %>%
+    dplyr::mutate(R_squared = ifelse(
+      R_squared < 0.001, 
+      "<0.001",
+      R_squared)) %>%
+    rownames_to_column(var = "Row") %>%
+    dplyr::select(-Row) %>%
+    dplyr::rename("MEMGENE Variable" = 1,
+                  "Moran's Eigenvector" = 2,
+                  "R2" = 3)
+  
+  
+  mg_table %>%
+    flextable() %>%
+    flextable::align(., align = "center", part = "all") %>%
+    flextable::compose(i = 1,
+                       j = 3,
+                       part = "header",
+                       value = as_paragraph("R", as_sup("2"))) %>%
+    footnote(.,
+             i = 1, j = 1,
+             value = as_paragraph(
+               R2_adj),
+             ref_symbols = c(" "),
+             part = "header") %>%
+    flextable::autofit() %>%
+    flextable::save_as_docx(.,
+                            path = paste0("./Figures_Tables/memgene/",
+                                          group,
+                                          "/memgene_stats_",
+                                          today(),
+                                          ".docx"))
+  
+}
+# Mantel correlogram functions-----
+
+# Import and create geographic distance matrix
+create_geog_dist_matrix <- function(vcf_filepath,
+                                    pop_map_filepath){
+  # lat/longs of sampling sites
+  urb <- read.csv(here::here(vcf_filepath))
+  
+  # sampling site IDs and genetic sample names
+  coords <- read.csv(here(pop_map_filepath)) %>%
+    
+    # if population doesn't start with "MWI", it should start with "MW"
+    # rename col 1
+    dplyr::rename(pop_id = 2) %>%
+    dplyr::mutate(pop_id = as.factor(pop_id)) %>%
+    
+    # take entries with numeric populations and add "MW" as prefix
+    add_MW_IDs() %>%
+    
+    # left vs. full join because some populations in urb_clean weren't genotyped due to lack of material
+    left_join(., urb, by = "patch_id") %>%
+    dplyr::mutate(patch_id = as.factor(patch_id),
+                  pop_id = as.factor(pop_id)) %>%
+    dplyr::select(c(1,2,6,7)) %>%
+    dplyr::rename("y" = 3,
+                  "x" = 4) %>%
+    dplyr::arrange(sample) %>%
+    dplyr::select("x", "y")
+  
+  # convert lat/longs to UTM
+  coordinates(coords) <- c("x", "y")
+  proj4string(coords) <- CRS("+proj=longlat +datum=WGS84")
+  
+  res <- spTransform(coords,
+                     CRS("+proj=utm +zone=17 ellps=WGS84"))
+  
+  coords_utm <- res@coords %>%
+    as.data.frame()
+  
+  # create distance matrix (Euclidean)
+  geographical_distance_matrix_utm <- dist(coords_utm)
+  
+  return(geographical_distance_matrix_utm)
+}
+
+# Export figures and tables
+export_corr_table_fig <- function(correlogram_object,
+                                  dist_or_usc,
+                                  output_file_name){
+  
+  # export table
+  filepath_table <- paste0(
+    "./Figures_Tables/correlogram/",
+    deparse(substitute(dist_or_usc)),
+    "/tables/",
+    deparse(substitute(output_file_name)),
+    ".docx")
+  
+  correlogram_object %>%
+    purrr::pluck("mantel.res") %>%
+    as.data.frame() %>%
+    dplyr::select("class.index", "n.dist", "Mantel.cor", "Pr(corrected)") %>%
+    drop_na() %>%
+    round(3) %>%
+    dplyr::mutate(class.index = round(class.index, 0)) %>%
+    dplyr::rename("Distance Class (m)" = 1,
+                  "N" = 2,
+                  "Mantel r" = 3,
+                  "p" = 4) %>%
+    dplyr::mutate(p = if_else(
+      p < 0.001,
+      "<0.001",
+      as.character(p)
+    )) %>%
+    flextable() %>%
+    align(align = "center",
+          part = "all") %>%
+    flextable::bold(i = ~ p <= 0.05, j = 4) %>%
+    flextable::italic(i = 1, j = 4, part = "header") %>%
+    flextable::autofit() %>%
+    save_as_docx(path = here::here(filepath_table))
+  
+  
+  # export figure
+  filepath_fig <- paste0(
+    "./Figures_Tables/correlogram/",
+    deparse(substitute(dist_or_usc)),
+    "/figures/",
+    deparse(substitute(output_file_name)),
+    ".png")
+  
+  # create df
+  corr_data <- correlogram_object %>%
+    purrr::pluck("mantel.res") %>%
+    as.data.frame() %>%
+    dplyr::mutate(Significant = if_else(
+      `Pr(corrected)` < 0.05,
+      "Significant",
+      "Not_significant"
+    ))  %>%
+    drop_na()
+  
+  # plot
+  ggplot(corr_data,
+         aes(x = class.index/1000,
+             y = Mantel.cor)) +
+    geom_line() +
+    geom_point(aes(shape = Significant,
+                   fill = Significant),
+               size = 2.5) +
+    geom_hline(yintercept = 0,
+               linetype = "dotted") +
+    scale_shape_manual(values = c(21,22)) +
+    scale_fill_manual(values = c("white", "black" )) +
+    labs(x = "Class Index (km)",
+         y = expression(paste("Mantel ", italic(r)))) +
+    ggpubr::theme_pubr(legend = "none")
+  ggrepel::geom_text_repel(
+    seed = 1,
+    data = corr_data %>%
+      dplyr::filter(Significant == "Significant"),
+    aes(x = class.index/1000,
+        y = Mantel.cor,
+        label = class.index/1000),
+    nudge_x = 2,
+    nudge_y = -0.01,
+    direction = "both"
+  )
+  
+  ggsave(plot = last_plot(),
+         filename = here::here(filepath_fig),
+         height = 3,
+         width = 4)
+  
+}
