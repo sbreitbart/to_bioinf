@@ -639,25 +639,25 @@ var3_all_indiv <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/all_in
 memgene_all_indiv_plots <- gridExtra::grid.arrange(var1_all_indiv, 
                         var2_all_indiv,
                         var3_all_indiv,
-                        ncol = 3,
+                        ncol = 2,
              left = textGrob("A", 
-                            x = unit(1.75, "npc"), 
+                            x = unit(2.5, "npc"), 
                             y = unit(0.98, "npc"),
                             gp = gpar(fontsize = 12)),
-             center = textGrob("B", 
-                            x = unit(1.1, "npc"), 
-                            y = unit(1.96, "npc"),
-                            gp = gpar(fontsize = 12)),
-             right = textGrob("C", 
-                            x = unit(-8.35, "npc"), 
+             right = textGrob("B", 
+                            x = unit(-12.6, "npc"), 
                             y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("C", 
+                            x = unit(-0.9, "npc"), 
+                            y = unit(0.95, "npc"),
                             gp = gpar(fontsize = 12)))
 
 ggsave("./Figures_Tables/memgene/all_indiv/main_figs.png", 
        plot = memgene_all_indiv_plots,
-       width = 6.5, height = 3.5,
+       width = 6.5, height = 3.5*1.5,
        units = "in",
-       dpi = 400)
+       dpi = 700)
 ```
 
 ### 1 indiv/pop: RURAL
@@ -682,9 +682,9 @@ memgene_subsamp_rural_plots <- gridExtra::grid.arrange(var1_subsamp_rural,
 
 ggsave("./Figures_Tables/memgene/rural_subsamp/main_figs.png", 
        plot = memgene_subsamp_rural_plots,
-       width = 6.5, height = 3.5,
+       width = 6.5*1.5, height = 3.5*1.5,
        units = "in",
-       dpi = 400)
+       dpi = 700)
 ```
 
 #### Urb = urb score
@@ -699,25 +699,25 @@ var3_subsamp_rural_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/memgen
 memgene_subsamp_rural_usc_plots <- gridExtra::grid.arrange(var1_subsamp_rural_usc, 
                         var2_subsamp_rural_usc,
                         var3_subsamp_rural_usc,
-                        ncol = 3,
+                        ncol = 2,
              left = textGrob("A", 
-                            x = unit(1.75, "npc"), 
+                            x = unit(2.5, "npc"), 
                             y = unit(0.98, "npc"),
                             gp = gpar(fontsize = 12)),
-             center = textGrob("B", 
-                            x = unit(1.1, "npc"), 
-                            y = unit(1.96, "npc"),
-                            gp = gpar(fontsize = 12)),
-             right = textGrob("C", 
-                            x = unit(-8.35, "npc"), 
+             right = textGrob("B", 
+                            x = unit(-12.6, "npc"), 
                             y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("C", 
+                            x = unit(-0.9, "npc"), 
+                            y = unit(0.95, "npc"),
                             gp = gpar(fontsize = 12)))
 
 ggsave("./Figures_Tables/memgene/rural_subsamp_usc/main_figs.png", 
        plot = memgene_subsamp_rural_usc_plots,
-       width = 6.5, height = 3.5,
+       width = 6.5, height = 3.5*1.5,
        units = "in",
-       dpi = 400)
+       dpi = 700)
 ```
 
 # Export stats
