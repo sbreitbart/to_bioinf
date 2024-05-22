@@ -228,7 +228,8 @@ inputdata1 <- my_genind$tab
 colnames(inputdata1) <- gsub("\\.", "_", colnames(inputdata1))
 
 ## Produce a proportion of shared alleles genetic distance matrix using the convenience wrapper function provided with the package
-gen_data <- codomToPropShared(as.data.frame(inputdata1), missingData = NA)
+gen_data <- codomToPropShared(as.data.frame(inputdata1),
+                              missingData = NA)
 
 return(gen_data)
 }
@@ -262,6 +263,103 @@ process_location_data <- function(urb_filepath, pop_map_filepath) {
   
   return(coords)
 }
+
+# Create terrain map
+## create mem1, mem2, mem3, etc. objects
+create_mem <- function(memgene_list,
+                       coords_df,
+                       mem_number #e.g., 1, 2, or 3
+){
+  
+  mem <- memgene_list$memgene[, mem_number] %>%
+    as.data.frame() %>%
+    dplyr::rename("var" = 1) %>%
+    cbind(coords_df) %>%
+    dplyr::mutate("negative" = ifelse(var < 0, "negative", "positive")) %>%
+    dplyr::mutate("abs_val" = abs(var))
+  
+  return(mem)
+  
+}
+
+## make map
+memgene_terrain_map <- function(mems_df,
+                                mem_num, # e.g. "1"
+                                group # e.g. "rural_subsamp"
+){
+  
+  # Convert the dataframe to an sf object
+  sites <- sf::st_as_sf(mems_df,
+                        coords = c("x", "y"),
+                        crs = 4326)
+  
+  # Define the bounding box, then convert to sf object
+  bbox <- st_bbox(c(
+    xmin = -80.3,
+    ymin = 43.1,
+    xmax = -78.7,
+    ymax = 44.25),
+    crs = st_crs(4326)) %>%
+    st_as_sfc()
+  
+  
+  tmap_mode("plot")
+  
+  # get map tiles for basemap
+  my_tiles = get_tiles(bbox,
+                       provider = "Esri.WorldImagery",
+                       zoom = 9,
+                       crop = TRUE)
+  
+  # create map
+  tm1 <- tm_shape(my_tiles,
+                  raster.downsample = TRUE ) +
+    tm_rgb(alpha = 0.45) +
+    tm_layout(bg.color = "white") + 
+    tm_grid(lines = F,
+            x = c(-80.5, -80, -79.5, -79, -78.5 )) +
+    # sample sites
+    tm_shape(shp = sites %>%
+               dplyr::filter(mem == paste0("Memgene Variable ", mem_num)),
+             bbox = bbox) +
+    tm_bubbles(col = "var",
+               size = "abs_val",
+               palette = "RdYlBu",
+               style = "cont",
+               midpoint = 0,
+               title.col = paste0("Memgene\nVariable ", mem_num),
+               legend.col.show = TRUE,
+               legend.size.show = FALSE
+    ) +
+    
+    # layout
+    tm_layout(frame = TRUE,
+              legend.position = c("right", "bottom"),
+              legend.bg.alpha = 0.5,
+              legend.bg.color = "white",
+              legend.title.size = 0.9,
+              legend.text.size = 0.7,
+              inner.margins = c(0.0, 0.0, 0.0, 0.0)
+    ) +
+    tm_compass(type = "4star",
+               size = 2,
+               #  position = c(0.05, 0.8)) +
+               position = c(0.55, 0.05)) +
+    tm_scale_bar(position = c(0.15, 0))
+  
+  # export
+  tmap_save(tm1,
+            filename =
+              paste0("./Figures_Tables/memgene/",
+                     group,
+                     "/memgene_terrain_var",
+                     mem_num,
+                     "_",
+                     group,
+                     ".png"),
+            width = 1300, height = 950, dpi = 300)
+}
+
 
 # Export statistics
 export_stats <- function(group,

@@ -5,61 +5,60 @@ source(here::here("libraries.R"))
 source(here::here("functions.R"))
 ```
 
-# Memgene analysis
-## Import files
-### Genetic data
-#### All individuals
+# Import files
+## Genetic data
+### All individuals
 ```{r}
 gen_data <- process_vcf_data(here::here("./clean_data/stacks_output/output_populations_no-IBD/mmaf0.05_R0.75/populations.snps.vcf"))
 
 ```
 
-#### JUST URBAN individuals
-##### urb = dist to CC
+### JUST URBAN individuals
+#### urb = dist to CC
 ```{r}
 gen_data_urban <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/urban_pops_dist_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
-##### urb = urb score
+#### urb = urb score
 ```{r}
 gen_data_urban_usc <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/urban_pops_usc_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
-#### JUST RURAL individuals
-##### urb = dist to CC
+### JUST RURAL individuals
+#### urb = dist to CC
 ```{r}
 gen_data_rural <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/rural_pops_dist_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
-##### urb = urb score
+#### urb = urb score
 ```{r}
 gen_data_rural_usc <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/rural_pops_usc_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
-#### 1 individual/population
+### 1 individual/population
 ```{r}
 gen_data_subsamp <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites.recode.vcf")
   )
 ```
 
-#### 1 individual/population- URBAN ONLY
-##### urb = dist to CC
+### 1 individual/population- URBAN ONLY
+#### urb = dist to CC
 ```{r}
 gen_data_subsamp_urban <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_URBAN.recode.vcf")
   )
 ```
 
-##### urb = urb score
+#### urb = urb score
 ```{r}
 # gen_data_subsamp_urban_usc <- process_vcf_data(
 #   here::here("./clean_data/filtered_vcfs/1indiv_per_pop_mmaf0.05_variant_sites_URBAN_usc.recode.vcf")
@@ -97,23 +96,23 @@ gen_data_subsamp_urban_usc <- codomToPropShared(as.data.frame(inputdata1),
                                 missingData = NA)
 ```
 
-#### 1 individual/population- RURAL ONLY
-##### urb = dist to CC
+### 1 individual/population- RURAL ONLY
+#### urb = dist to CC
 ```{r}
 gen_data_subsamp_rural <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/1indiv_per_mmaf0.05_variant_sites_RURAL.recode.vcf")
   )
 ```
 
-##### urb = urb score
+#### urb = urb score
 ```{r}
 gen_data_subsamp_rural_usc <- process_vcf_data(
   here::here("./clean_data/filtered_vcfs/1indiv_per_pop_mmaf0.05_variant_sites_RURAL_usc.recode.vcf")
   )
 ```
 
-### Coordinates
-#### All individuals
+## Coordinates
+### All individuals
 ```{r}
 coords <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -121,8 +120,8 @@ coords <- process_location_data(
 
 ```
 
-#### All URBAN individuals
-##### urb = dist to CC
+### All URBAN individuals
+#### urb = dist to CC
 ```{r}
 coords_urban <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -131,7 +130,7 @@ coords_urban <- process_location_data(
 # I converted the pop_map3_U_dist.txt into csv, then removed the "MW" prefixes so that the function would work
 ```
 
-##### urb = urb score
+#### urb = urb score
 ```{r}
 coords_urban_usc <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -140,8 +139,8 @@ coords_urban_usc <- process_location_data(
 # I converted the pop_map3_U_dist.txt into csv, then removed the "MW" prefixes so that the function would work
 ```
 
-#### All RURAL individuals
-##### urb = dist to CC
+### All RURAL individuals
+#### urb = dist to CC
 ```{r}
 coords_rural <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -149,7 +148,7 @@ coords_rural <- process_location_data(
 
 ```
 
-##### urb = urb score
+#### urb = urb score
 ```{r}
 coords_rural_usc <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -157,7 +156,7 @@ coords_rural_usc <- process_location_data(
 
 ```
 
-#### 1 individual/population
+### 1 individual/population
 ```{r}
 coords_subsamp <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -165,25 +164,8 @@ coords_subsamp <- process_location_data(
 
 ```
 
-#### 1 individual/population- RURAL ONLY
-##### urb = dist to CC
-```{r}
-coords_subsamp_rural <- process_location_data(
-  here::here("./clean_data/urb_metrics.csv"),
-  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.csv"))
-
-```
-
-##### urb = urb score
-```{r}
-coords_subsamp_rural_usc <- process_location_data(
-  here::here("./clean_data/urb_metrics.csv"),
-  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL_usc.csv"))
-
-```
-
-#### 1 individual/population- URBAN ONLY
-##### urb = dist to CC
+### 1 individual/population- URBAN ONLY
+#### urb = dist to CC
 ```{r}
 coords_subsamp_urban <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -191,7 +173,7 @@ coords_subsamp_urban <- process_location_data(
 
 ```
 
-##### urb = urb score
+#### urb = urb score
 ```{r}
 coords_subsamp_urban_usc <- process_location_data(
   here::here("./clean_data/urb_metrics.csv"),
@@ -200,13 +182,30 @@ coords_subsamp_urban_usc <- process_location_data(
 ```
 
 
-## Run analysis
-### All individuals
+### 1 individual/population- RURAL ONLY
+#### urb = dist to CC
+```{r}
+coords_subsamp_rural <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL.csv"))
+
+```
+
+#### urb = urb score
+```{r}
+coords_subsamp_rural_usc <- process_location_data(
+  here::here("./clean_data/urb_metrics.csv"),
+  here::here("./clean_data/pop_maps/pop_map3_1indiv_per_pop_RURAL_usc.csv"))
+
+```
+
+# Run memgene analysis
+## All individuals
 ```{r}
 ## Run the MEMGENE analysis
 set.seed(1)
-if (!exists("milkweed_analysis"))
-milkweed_analysis <- mgQuick(gen_data, coords, forwardPerm = 1000)
+if (!exists("memgene_all"))
+memgene_all <- mgQuick(gen_data, coords, forwardPerm = 1000)
 
 # Forward selections of positive Moran's eigenvectors
 # ----Selected: 2, 3, 4, 5, 6, 12, 14, 16, 17, 18, 19, 20, 21, 28, 29, 34, 39, 40, 42, 45 
@@ -214,58 +213,58 @@ milkweed_analysis <- mgQuick(gen_data, coords, forwardPerm = 1000)
 # ----Selected: None 
 ```
 
-### Just URBAN individuals
-#### Urb = dist to CC
+## Just URBAN individuals
+### Urb = dist to CC
 ```{r}
 set.seed(1)
-if (!exists("milkweed_analysis_urban"))
-milkweed_analysis_urban <- mgQuick(gen_data_urban, coords_urban, forwardPerm = 1000)
+if (!exists("memgene_urban"))
+memgene_urban <- mgQuick(gen_data_urban, coords_urban, forwardPerm = 1000)
 
 # No significant MEMs detected
 ```
 
-#### Urb = urb score
+### Urb = urb score
 ```{r}
 set.seed(1)
-if (!exists("milkweed_analysis_urban_usc"))
-milkweed_analysis_urban_usc <- mgQuick(gen_data_urban_usc, coords_urban_usc, forwardPerm = 1000)
+if (!exists("memgene_urban_usc"))
+memgene_urban_usc <- mgQuick(gen_data_urban_usc, coords_urban_usc, forwardPerm = 1000)
 
 # No significant MEMs detected
 ```
 
-### Just RURAL individuals
-#### Urb = dist to CC
+## Just RURAL individuals
+### Urb = dist to CC
 ```{r}
 set.seed(1)
-if (!exists("milkweed_analysis_rural"))
-milkweed_analysis_rural <- mgQuick(gen_data_rural, coords_rural,  forwardPerm = 1000)
+if (!exists("memgene_rural"))
+memgene_rural <- mgQuick(gen_data_rural, coords_rural,  forwardPerm = 1000)
 
 # No significant MEMs detected
 ```
 
-#### Urb = urb score
+### Urb = urb score
 ```{r}
 set.seed(1)
-if (!exists("milkweed_analysis_rural_usc"))
-milkweed_analysis_rural_usc <- mgQuick(gen_data_rural_usc, coords_rural_usc,  forwardPerm = 1000)
+if (!exists("memgene_rural_usc"))
+memgene_rural_usc <- mgQuick(gen_data_rural_usc, coords_rural_usc,  forwardPerm = 1000)
 
 # No significant MEMs detected
 ```
 
-### 1 individual per population
+## 1 individual per population
 ```{r}
 set.seed(1)
-if (!exists("milkweed_analysis_subsamp"))
-milkweed_analysis_subsamp <- mgQuick(gen_data_subsamp, coords_subsamp,  forwardPerm = 1000)
+if (!exists("memgene_subsamp"))
+memgene_subsamp <- mgQuick(gen_data_subsamp, coords_subsamp,  forwardPerm = 1000)
 # No significant MEMs detected
 ```
 
-### 1 individual per population- URBAN
-#### Urb = dist to CC
+## 1 individual per population- URBAN
+### Urb = dist to CC
 ```{r}
 set.seed(1)
-if (!exists("milkweed_analysis_subsamp_urban"))
-milkweed_analysis_subsamp_urban <- mgQuick(gen_data_subsamp_urban, coords_subsamp_urban,  forwardPerm = 1000)
+if (!exists("memgene_subsamp_urban"))
+memgene_subsamp_urban <- mgQuick(gen_data_subsamp_urban, coords_subsamp_urban,  forwardPerm = 1000)
 # 0 significant positive MEMs detected; 
 # Forward selections of positive Moran's eigenvectors
 # ----Selected: None 
@@ -274,64 +273,64 @@ milkweed_analysis_subsamp_urban <- mgQuick(gen_data_subsamp_urban, coords_subsam
 
 ```
 
-#### Urb = urb score
+### Urb = urb score
 ```{r}
 set.seed(1)
-if (!exists("milkweed_analysis_subsamp_urban_usc"))
-milkweed_analysis_subsamp_urban_usc <- mgQuick(gen_data_subsamp_urban_usc, coords_subsamp_urban_usc,  forwardPerm = 1000)
+if (!exists("memgene_subsamp_urban_usc"))
+memgene_subsamp_urban_usc <- mgQuick(gen_data_subsamp_urban_usc, coords_subsamp_urban_usc,  forwardPerm = 1000)
 # 0 significant MEMs detected
 
+```
+
+## 1 individual per population- RURAL
+### Urb = dist to CC
+```{r}
+set.seed(1)
+if (!exists("memgene_subsamp_rural"))
+memgene_subsamp_rural <- mgQuick(gen_data_subsamp_rural, coords_subsamp_rural,  forwardPerm = 1000)
+# 2 significant MEMs detected (2,4)
+
+```
+
+### Urb = urb score
+```{r}
+set.seed(1)
+if (!exists("memgene_subsamp_rural_usc"))
+memgene_subsamp_rural_usc <- mgQuick(gen_data_subsamp_rural_usc, coords_subsamp_rural_usc,  forwardPerm = 1000)
+# 4 significant MEMs detected (3, 4, 8, 14)
+
+```
+
+# Visualize, export maps
+## MOST basic plot (built-in functions)
+### All individuals
+```{r}
+plot(coords, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords, memgene_all$memgene[, 1], add.plot=TRUE, legend=TRUE)
+box()
 ```
 
 ### 1 individual per population- RURAL
 #### Urb = dist to CC
 ```{r}
-set.seed(1)
-if (!exists("milkweed_analysis_subsamp_rural"))
-milkweed_analysis_subsamp_rural <- mgQuick(gen_data_subsamp_rural, coords_subsamp_rural,  forwardPerm = 1000)
-# 2 significant MEMs detected (2,4)
-
+plot(coords_subsamp_rural, type="n", xlab="", ylab="", axes=FALSE)
+mgMap(coords_subsamp_rural, memgene_subsamp_rural$memgene[, 1], add.plot=TRUE, legend=TRUE)
+box()
 ```
 
 #### Urb = urb score
 ```{r}
-set.seed(1)
-if (!exists("milkweed_analysis_subsamp_rural_usc"))
-milkweed_analysis_subsamp_rural_usc <- mgQuick(gen_data_subsamp_rural_usc, coords_subsamp_rural_usc,  forwardPerm = 1000)
-# 4 significant MEMs detected (3, 4, 8, 14)
-
-```
-
-## Visualize results
-### MOST basic plot (built-in functions)
-#### All individuals
-```{r}
-plot(coords, type="n", xlab="", ylab="", axes=FALSE)
-mgMap(coords, milkweed_analysis$memgene[, 1], add.plot=TRUE, legend=TRUE)
-box()
-```
-
-#### 1 individual per population- RURAL
-##### Urb = dist to CC
-```{r}
-plot(coords_subsamp_rural, type="n", xlab="", ylab="", axes=FALSE)
-mgMap(coords_subsamp_rural, milkweed_analysis_subsamp_rural$memgene[, 1], add.plot=TRUE, legend=TRUE)
-box()
-```
-
-##### Urb = urb score
-```{r}
 plot(coords_subsamp_rural_usc, type="n", xlab="", ylab="", axes=FALSE)
-mgMap(coords_subsamp_rural_usc, milkweed_analysis_subsamp_rural_usc$memgene[, 1], add.plot=TRUE, legend=TRUE)
+mgMap(coords_subsamp_rural_usc, memgene_subsamp_rural_usc$memgene[, 1], add.plot=TRUE, legend=TRUE)
 box()
 ```
 
-### Basic plots: 1 plot per memgene variable
-#### Function
+## Basic plots: 1 plot per memgene variable (for 3 vars)
+### Function
 ```{r}
 basic_plot_mems <- function(group, # e.g., all_indiv
                             coords_df, 
-                            milkweed_analysis_list
+                            memgene_list
                             ){
   
   # MEM1-----
@@ -351,7 +350,7 @@ png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
 plot(coords_df, type="n", xlab="", ylab="", axes=FALSE)
 #base_map
 mgMap(coords_df,
-      milkweed_analysis_list$memgene[, 1], 
+      memgene_list$memgene[, 1], 
       add.plot=TRUE,
       legend=TRUE)
 box()
@@ -374,7 +373,7 @@ png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
 
 plot(coords_df, type="n", xlab="", ylab="", axes=FALSE)
 mgMap(coords_df,
-      milkweed_analysis_list$memgene[, 1], 
+      memgene_list$memgene[, 1], 
       add.plot=TRUE,
       legend=FALSE)
 box()
@@ -399,7 +398,7 @@ png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
 plot(coords_df, type="n", xlab="", ylab="", axes=FALSE)
 #base_map
 mgMap(coords_df,
-      milkweed_analysis_list$memgene[, 2], 
+      memgene_list$memgene[, 2], 
       add.plot=TRUE,
       legend=TRUE)
 box()
@@ -422,7 +421,7 @@ png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
 
 plot(coords_df, type="n", xlab="", ylab="", axes=FALSE)
 mgMap(coords_df,
-      milkweed_analysis_list$memgene[, 2], 
+      memgene_list$memgene[, 2], 
       add.plot=TRUE,
       legend=FALSE)
 box()
@@ -446,7 +445,7 @@ png(#here::here("./Figures_Tables/memgene/memgene_legend.png"),
 plot(coords_df, type="n", xlab="", ylab="", axes=FALSE)
 #base_map
 mgMap(coords_df,
-      milkweed_analysis_list$memgene[, 3], 
+      memgene_list$memgene[, 3], 
       add.plot=TRUE,
       legend=TRUE)
 box()
@@ -469,7 +468,7 @@ png(#here::here("./Figures_Tables/memgene/memgene_no_legend.png"),
 
 plot(coords_df, type="n", xlab="", ylab="", axes=FALSE)
 mgMap(coords_df,
-      milkweed_analysis_list$memgene[, 3], 
+      memgene_list$memgene[, 3], 
       add.plot=TRUE,
       legend=FALSE)
 box()
@@ -479,606 +478,265 @@ dev.off()
 }
 ```
 
-#### All individuals
+### All individuals
 ```{r}
 # Moran's Eigenvectors 12,20,5
 basic_plot_mems("all_indiv",
                 coords,
-                milkweed_analysis)
-```
-
-#### 1 individual/population- RURAL
-##### Urb = dist to CC
-```{r}
-# Moran's Eigenvectors 2,4
-basic_plot_mems("rural_subsamp",
-                coords_subsamp_rural,
-                milkweed_analysis_subsamp_rural)
-```
-
-##### Urb = urb score
-```{r}
-# Moran's Eigenvectors 3, 4, 8, 14
-basic_plot_mems("rural_subsamp_usc",
-                coords_subsamp_rural_usc,
-                milkweed_analysis_subsamp_rural_usc)
-```
-
-### Plots with terrain basemap
-#### Code for each var
-```{r}
-# basemap_terrain <- ggmap(get_map(location = c(-80.5, 43.2, -78.5, 44.25), 
-#               zoom = 11,
-#                           maptype = 'terrain',
-#                           source = 'stamen'),
-#         darken = c(0.3, "white"))
-
-# create mem1, mem2, and mem3 objects-----
-create_mem <- function(milkweed_analysis_list,
-                       coords_df,
-                       mem_number #e.g., 1, 2, or 3
-                       ){
-  
-  mem <- milkweed_analysis_list$memgene[, mem_number] %>%
-  as.data.frame() %>%
-  dplyr::rename("var" = 1) %>%
-  cbind(coords_df) %>%
-  dplyr::mutate("negative" = ifelse(var < 0, "negative", "positive")) %>%
-  dplyr::mutate("abs_val" = abs(var))
-  
-  return(mem)
-
-}
-
-# create MEM dfs (all indiv)-----
-mem1 <- create_mem(milkweed_analysis_subsamp_rural, coords_subsamp_rural, 1) %>%
-  dplyr::mutate("mem" = "Memgene Variable 1")
-mem2 <- create_mem(milkweed_analysis_subsamp_rural, coords_subsamp_rural, 2) %>%
-  dplyr::mutate("mem" = "Memgene Variable 2")
-mem3 <- create_mem(milkweed_analysis_subsamp_rural, coords_subsamp_rural, 3) %>%
-  dplyr::mutate("mem" = "Memgene Variable 3")
-
-mems <- full_join(mem1, mem2) %>%
-  full_join(., mem3)
-
-
-# make map-----
-
-# Convert the dataframe to an sf object
-sites <- sf::st_as_sf(mems,
-                  coords = c("x", "y"),
-                  crs = 4326)
-
-# Define the bounding box, then convert to sf object
-bbox <- st_bbox(c(
-  xmin = -80.4,
-  ymin = 42.25,
-  xmax = -78.4,
-  ymax = 44.3),
-  crs = st_crs(4326)) %>%
-   st_as_sfc()
-
-
-tmap_mode("plot")
-
-# get map tiles for basemap
-my_tiles = get_tiles(bbox,
-                    provider = "Esri.WorldImagery",
-                     zoom = 8,
-                     crop = FALSE)
-
-# basemap
-tm_shape(my_tiles,
-         raster.downsample = TRUE ) +
-  tm_rgb(alpha = 0.45) +
-  tm_layout(bg.color = "white") + 
-  tm_grid(lines = F,
-          x = c(-80.5, -80, -79.5, -79, -78.5 )) +
-  # sample sites
-  tm_shape(shp = sites,
-           bbox = bbox) +
-  tm_bubbles(col = "var",
-             size = "abs_val",
-             scale = 0.5,
-             palette = "RdYlBu",
-             title.col = "Value",
-		         legend.col.show = TRUE,
-		         legend.size.show = FALSE
-         ) +
-  tm_facets(by = "mem",
-            ncol = 2,
-            free.scales = TRUE,
-            scale.factor = 1.4,
-            inside.original.bbox = TRUE) +
-  
-  # layout
-  tm_layout(frame = TRUE,
-           legend.title.size = 1.2,
-         legend.outside.size = 0.25,
-         legend.text.size = 0.95,
-          inner.margins = c(0.0, 0.0, 0.0, 0.0),
-          legend.outside = TRUE,
-         panel.label.size = 0.5
-          ) +
-  tm_compass(type = "4star",
-             size = 0.7,
-             position = c(0.7, 0.2)) +
-  tm_scale_bar(position = c(0.6, 0))
-
-# Export
-dev.copy2pdf(file = here::here("./Figures_Tables/mem1_test_facets.pdf"),
-             width = 16, height = 6)
-
-```
-
-#### Functions
-```{r}
-
-
-
-# create terrain plots-----
-terrain_plot_mems <- function(group, # e.g., all_indiv
-                              coords_df, 
-                              milkweed_analysis_list,
-                              mem1_df,
-                              mem2_df,
-                              mem3_df
-){
-
-  for (i in 1:3) {
-    
-    mem_df <- get(paste0("mem", i, "_df"))  # Access mem1_df, mem2_df, mem3_df dynamically
-    
-    
-    # with legend
-    # black/white discrete-----
-    basemap_terrain +
-      geom_point(data = mem_df,
-                 mapping = aes(x = x,
-                               y = y, 
-                               fill = negative,
-                               #    size = abs(var)),
-                               size = abs_val),
-                 shape = 21) +
-      labs(x = 'Longitude', y = 'Latitude',
-           fill = paste0("MEMgene\nvariable ", i),
-           size = paste0("MEMgene\nvariable ", i)) +
-      scale_fill_manual(values = c("#333333", "white")) +
-      scale_size_continuous(limits = c(0, 0.15))
-    
-    ggsave(filename =
-             paste0("./Figures_Tables/memgene/",
-                    group,
-                    "/memgene_terrain_bw_var",
-               i,
-               "_",
-               today(),
-               ".png"),
-           plot = last_plot(),
-           width = 15,
-        height = 10,
-        units = "cm")
-
-    
-    # black/white gradient, instead of discrete-----
-    basemap_terrain +
-      geom_point(data = mem_df,
-                 mapping = aes(x = x,
-                               y = y,
-                               fill = var,
-                               size = abs_val),
-                 shape = 21) +
-      labs(x = 'Longitude', y = 'Latitude',
-           fill = paste0("MEMgene\nvariable ", i),
-           size = paste0("MEMgene\nvariable ", i)) +
-      scale_fill_gradient(high = "white", low = "black",
-                          limits = c(-0.15, 0.1),
-                          breaks = c(-0.15, 0, 0.1)) +
-      scale_size_continuous(limits = c(0, 0.14)) +
-      guides(size = FALSE)
-
-      ggsave(filename =
-               paste0("./Figures_Tables/memgene/",
-                    group,
-               "/memgene_terrain_greyscale_var",
-               i,
-               "_",
-               today(),
-               ".png"),
-           plot = last_plot(),
-           width = 15,
-        height = 10,
-        units = "cm")
-
-    # colors: plasma, unidirectional size scale-----
-    basemap_terrain +
-      geom_point(data = mem_df,
-                 mapping = aes(x = x,
-                               y = y,
-                               fill = var),
-                 shape = 21,
-                 size = 3) +
-      labs(x = 'Longitude', y = 'Latitude',
-           fill = paste0("MEMgene\nvariable ", i)) +  scale_fill_viridis(option = "plasma")
-
-    ggsave(filename =
-             paste0("./Figures_Tables/memgene/",
-                    group,
-                    "/memgene_terrain_color_var",
-               i,
-               "_",
-               group,
-               today(),
-               ".png"),
-           plot = last_plot(),
-           width = 15,
-        height = 10,
-        units = "cm")
-
-  }
-}
-```
-
-#### All individuals
-```{r}
-
-# create maps
-terrain_plot_mems("all_indiv",
-                            coords, 
-                            milkweed_analysis,
-                            mem1,
-                            mem2,
-                            mem3)
-```
-
-#### 1 individual/population- RURAL
-```{r}
-# create MEM dfs
-mem1_subsamp_rural <- create_mem(milkweed_analysis_subsamp_rural,
-                          coords_subsamp_rural, 1)
-mem2_subsamp_rural <- create_mem(milkweed_analysis_subsamp_rural,
-                          coords_subsamp_rural, 2)
-mem3_subsamp_rural <- create_mem(milkweed_analysis_subsamp_rural,
-                          coords_subsamp_rural, 3)
-
-# create maps
-terrain_plot_mems("subsamp_rural",
-                            coords_subsamp_rural, 
-                            milkweed_analysis_subsamp_rural,
-                            mem1_subsamp_rural,
-                            mem2_subsamp_rural,
-                            mem3_subsamp_rural)
-```
-
-
-### map ALL combined significant memgene variables
-#### Function
-```{r}
-sig_combined_mem_plot <- function(group,
-                                  coords_df,
-                                  milkweed_analysis_list
-                                  ){
-  
-  total_var <- apply(milkweed_analysis_list$memSelected, 1, sum) %>%
-  as.data.frame() %>%
-  dplyr::rename("var" = 1)
-
-# sum all SGS explained by all significant memgene variables
-# Combine 'var' from 'total_var' with 'coords'
-spatial_data <- data.frame(var = total_var$var,
-                           coords_df)
-
-# map with colors-----
-basemap_terrain +
-  geom_point(data = spatial_data,
-             mapping = aes(x = x,
-                           y = y, 
-                           fill = var,
-                           size = var),
-             shape = 21,
-             color = "black",
-             ) +
-  labs(x = 'Longitude', y = 'Latitude',
-       fill = "Variation") +
-  scale_fill_viridis(option="plasma") + 
-  guides(size = FALSE) 
-
-ggsave(last_plot(),
-       file =  paste0("./Figures_Tables/memgene/",
-                      group,
-                      "/memgene_allMEMs_", today(), ".png"),
-       width = 19,
-       height = 19,
-       units = "cm")
-
-# colors: black/white, big to little (0) to big circles-----
-
-basemap_terrain +
-  geom_point(data = spatial_data,
-             mapping = aes(x = x,
-                           y = y, 
-                           fill = ifelse(var < 0, "negative", "positive"),
-                           size = abs(var)),
-             shape = 21#,
-            # color = "black"
-            ) +
-  labs(x = 'Longitude', y = 'Latitude',
-       size = "Variation",
-       fill = "Variation") +
-  scale_fill_manual(values = c("negative" = "darkgrey",
-                               "positive" = "white")) +
-  scale_size_continuous(
-    range = c(1.5, 12 * max(abs(spatial_data$var))), 
-    limits = c(0, max(abs(spatial_data$var)))) 
-
-ggsave(last_plot(),
-       file =  paste0("./Figures_Tables/memgene/",
-                      group,
-                      "/memgene_allMEMs_BW_", today(), ".png"),
-       width = 19,
-       height = 19,
-       units = "cm")
-
-}
-```
-
-#### All individuals
-```{r}
-sig_combined_mem_plot("all_indiv",
-                            coords, 
-                            milkweed_analysis)
-```
-
-#### 1 individual/population- RURAL
-```{r}
-sig_combined_mem_plot("subsamp_rural",
-                            coords_subsamp_rural, 
-                            milkweed_analysis_subsamp_rural)
-```
-
-
-### Rescaling, then combine MEMs from 0-255
-#### Rescale
-```{r}
-mems <- list(mem1, mem2, mem3,
-            # mem1_urban, mem2_urban, mem3_urban,
-           #  mem1_subsamp, mem2_subsamp, mem3_subsamp
-             mem1_subsamp_rural, mem2_subsamp_rural, mem3_subsamp_rural
-             )
-
-# rescale mems from 0-255
-rescale_var_to_255 <- function(df) {
-  df %>%
-    mutate(mem_255 = scales::rescale(var, to = c(0, 255)))
-}
-
-# map the function to each element of the list
-mems <- purrr::map(mems, rescale_var_to_255)
-
-names(mems) <- list("mem1", "mem2", "mem3",
-            # "mem1_urban", "mem2_urban", "mem3_urban",
-            # "mem1_subsamp", "mem2_subsamp", "mem3_subsamp")
-             "mem1_subsamp_rural", "mem2_subsamp_rural", "mem3_subsamp_rural")
-
-list2env(mems, globalenv())
-```
-
-#### Create individual maps for top 3 MEMs
-##### Function
-```{r}
-rescale_mems <- function(group,
-                         milkweed_analysis_list,
-                         mem1_df,
-                         mem2_df,
-                         mem3_df){
-  
-  # plot with colors: plasma, unidirectional size scale
-  
-      # MEM1-----
-    basemap_terrain +
-    geom_point(data = mem1_df,
-             mapping = aes(x = x,
-                           y = y,
-                           fill = mem_255),
-             shape = 21,
-             size = 3) +
-  labs(x = 'Longitude', y = 'Latitude',
-       fill = paste0("MEMGENE\nvariable 1"),
-       caption = paste0("Moran's Eigenvector: ",
-         milkweed_analysis_list$whichSelectedPos[1])) +
-  scale_fill_gradient(low = "white",
-                      high = "red") 
-    
-
-    ggsave(filename = paste0("./Figures_Tables/memgene/",
-                             group,
-"/memgene_terrain_color_255_var1_",
-           today(),
-           ".png"),
-           plot = last_plot(),
-    width = 15,
-    height = 10,
-    units = "cm")
-    
-      # MEM2-----
-    basemap_terrain +
-    geom_point(data = mem2_df,
-             mapping = aes(x = x,
-                           y = y,
-                           fill = mem_255),
-             shape = 21,
-             size = 3) +
-  labs(x = 'Longitude', y = 'Latitude',
-       fill = paste0("MEMGENE\nvariable 2"),
-       caption = paste0("Moran's Eigenvector: ",
-         milkweed_analysis_list$whichSelectedPos[2])) +
-  scale_fill_gradient(low = "white",
-                      high = "green") 
-    
-
-    ggsave(filename = paste0("./Figures_Tables/memgene/",
-                             group,
-"/memgene_terrain_color_255_var2_",
-           today(),
-           ".png"),
-           plot = last_plot(),
-    width = 15,
-    height = 10,
-    units = "cm")
-    
-      # MEM3-----
-    basemap_terrain +
-    geom_point(data = mem3_df,
-             mapping = aes(x = x,
-                           y = y,
-                           fill = mem_255),
-             shape = 21,
-             size = 3) +
-  labs(x = 'Longitude', y = 'Latitude',
-       fill = paste0("MEMGENE\nvariable 3"),
-       caption = paste0("Moran's Eigenvector: ",
-         milkweed_analysis_list$whichSelectedPos[3])) +
-  scale_fill_gradient(low = "white",
-                      high = "blue") 
-    
-
-    ggsave(filename = paste0("./Figures_Tables/memgene/",
-                             group,
-"/memgene_terrain_color_255_var3_",
-           today(),
-           ".png"),
-           plot = last_plot(),
-    width = 15,
-    height = 10,
-    units = "cm")
-
-}
-```
-
-##### All individuals
-```{r}
-rescale_mems("all_indiv",
-             milkweed_analysis,
-             mem1,
-             mem2,
-             mem3)
-```
-
-##### 1 individual/population- RURAL
-```{r}
-rescale_mems("subsamp_rural",
-             milkweed_analysis_subsamp_rural,
-             mem1_subsamp_rural,
-             mem2_subsamp_rural,
-             mem3_subsamp_rural)
-
-```
-
-#### Combine top 3 MEMs into one figure
-##### Function
-```{r}
-combine_mems <- function(group,
-                         milkweed_analysis_list,
-                         mem1_df,
-                         mem2_df,
-                         mem3_df){
-  
-  make_color_df <- function(df, color){
-    df %>%
-    dplyr::select(x,y,mem_255) %>%
-    dplyr::rename_with(~color, mem_255) %>%
-    dplyr::mutate(ID = row_number())
-  }
-
-  red_data <- make_color_df(mem1_df, "red")
-  green_data <- make_color_df(mem2_df, "green")
-  blue_data <- make_color_df(mem3_df, "blue")
-
-  color_data <- inner_join(red_data,
-                        green_data,
-                        by = c("x","y","ID")) %>%
-  inner_join(.,
-             blue_data,
-             by = c("x","y","ID")) %>%
-  dplyr::select(ID, x, y, red, green, blue)
-
-  color_data$color <- rgb(color_data$red,
-                        color_data$green, 
-                        color_data$blue,
-                        maxColorValue = 255)
-
-
-  basemap_terrain +
-    geom_point(data = color_data,
-             mapping = aes(x = x,
-                           y = y,
-                           fill = color),
-             shape = 21,
-             size = 3) +
-  labs(x = 'Longitude', y = 'Latitude',
-       fill = "MEMGENE\nvariables 1-3",
-       caption = paste0("Moran's Eigenvectors: ",
-         milkweed_analysis_list$whichSelectedPos[1],
-         ", ",
-         milkweed_analysis_list$whichSelectedPos[2],
-         ", ",
-         milkweed_analysis_list$whichSelectedPos[3]
-         ))  +
-    scale_fill_identity()
-
-    ggsave(filename = paste0("./Figures_Tables/memgene/",
-                             group,
-"/memgene_terrain_color_255_vars1_to_3",
-           today(),
-           ".png"),
-           plot = last_plot(),
-    width = 15,
-    height = 10,
-    units = "cm")
-    
-}
-```
-
-##### All individuals
-```{r}
-combine_mems("all_indiv",
-             milkweed_analysis,
-                         mem1,
-                         mem2,
-                         mem3)
-
-# good visualization of color space in 3D: https://www.whydomath.org/node/wavlets/images/rgbcube.jpg
-```
-
-##### 1 individual/population- RURAL
-```{r}
-combine_mems("subsamp_rural",
-             milkweed_analysis_subsamp_rural,
-                         mem1_subsamp_rural,
-                         mem2_subsamp_rural,
-                         mem3_subsamp_rural)
-
-# good visualization of color space in 3D: https://www.whydomath.org/node/wavlets/images/rgbcube.jpg
-```
-
-
-## Export stats
-### All individuals
-```{r}
-export_stats("all_indiv",
-             milkweed_analysis)
+                memgene_all)
 ```
 
 ### 1 individual/population- RURAL
 #### Urb = dist to CC
 ```{r}
-export_stats("rural_subsamp",
-             milkweed_analysis_subsamp_rural)
+# Moran's Eigenvectors 2,4
+basic_plot_mems("rural_subsamp",
+                coords_subsamp_rural,
+                memgene_subsamp_rural)
 ```
 
 #### Urb = urb score
 ```{r}
+# Moran's Eigenvectors 3, 4, 8, 14
+basic_plot_mems("rural_subsamp_usc",
+                coords_subsamp_rural_usc,
+                memgene_subsamp_rural_usc)
+```
+
+## Plots with terrain basemap
+### All individuals
+```{r}
+# will do this for first 3 memgene vars (i.e., those which explain the most variation in spatial patterns)... there are 20 total, though
+
+# create MEM dfs-----
+mem1_all <- create_mem(
+  memgene_all,
+  coords,
+  1) %>%
+  dplyr::mutate("mem" = "Memgene Variable 1")
+
+mem2_all <- create_mem(
+  memgene_all,
+  coords,
+  2) %>%
+  dplyr::mutate("mem" = "Memgene Variable 2")
+
+mem3_all <- create_mem(
+  memgene_all,
+  coords,
+  3) %>%
+  dplyr::mutate("mem" = "Memgene Variable 3")
+
+mems_all <- full_join(mem1_all,
+                                mem2_all) %>%
+  dplyr::full_join(., mem3_all) 
+
+
+# make, export maps (4 memgene variables)-----
+memgene_terrain_map(mems_all,
+                    "1",
+                    "all_indiv")
+
+memgene_terrain_map(mems_all,
+                    "2",
+                    "all_indiv")
+
+memgene_terrain_map(mems_all,
+                    "3",
+                    "all_indiv")
+
+```
+
+### 1 individual/population- RURAL
+#### Urb = dist to CC
+```{r}
+# create MEM dfs-----
+mem1_subsamp_rural <- create_mem(memgene_subsamp_rural,
+                                 coords_subsamp_rural,
+                                 1) %>%
+  dplyr::mutate("mem" = "Memgene Variable 1")
+
+mem2_subsamp_rural <- create_mem(memgene_subsamp_rural,
+                                 coords_subsamp_rural,
+                                 2) %>%
+  dplyr::mutate("mem" = "Memgene Variable 2")
+
+mems_subsamp_rural <- full_join(mem1_subsamp_rural,
+                                mem2_subsamp_rural)
+
+
+# make, export maps (2 memgene variables)-----
+memgene_terrain_map(mems_subsamp_rural,
+                    "1",
+                    "rural_subsamp")
+
+memgene_terrain_map(mems_subsamp_rural,
+                    "2",
+                    "rural_subsamp")
+```
+
+#### Urb = urb score
+```{r}
+# create MEM dfs-----
+mem1_subsamp_rural_usc <- create_mem(
+  memgene_subsamp_rural_usc,
+  coords_subsamp_rural_usc,
+  1) %>%
+  dplyr::mutate("mem" = "Memgene Variable 1")
+
+mem2_subsamp_rural_usc <- create_mem(
+  memgene_subsamp_rural_usc,
+  coords_subsamp_rural_usc,
+  2) %>%
+  dplyr::mutate("mem" = "Memgene Variable 2")
+
+mem3_subsamp_rural_usc <- create_mem(
+  memgene_subsamp_rural_usc,
+  coords_subsamp_rural_usc,
+  3) %>%
+  dplyr::mutate("mem" = "Memgene Variable 3")
+
+mem4_subsamp_rural_usc <- create_mem(
+  memgene_subsamp_rural_usc,
+  coords_subsamp_rural_usc,
+  4) %>%
+  dplyr::mutate("mem" = "Memgene Variable 4")
+
+mems_subsamp_rural_usc <- full_join(mem1_subsamp_rural_usc,
+                                mem2_subsamp_rural_usc) %>%
+  dplyr::full_join(., mem3_subsamp_rural_usc) %>%
+  dplyr::full_join(., mem4_subsamp_rural_usc)
+
+
+# make, export maps (4 memgene variables)-----
+memgene_terrain_map(mems_subsamp_rural_usc,
+                    "1",
+                    "rural_subsamp_usc")
+
+memgene_terrain_map(mems_subsamp_rural_usc,
+                    "2",
+                    "rural_subsamp_usc")
+
+memgene_terrain_map(mems_subsamp_rural_usc,
+                    "3",
+                    "rural_subsamp_usc")
+
+memgene_terrain_map(mems_subsamp_rural_usc,
+                    "4",
+                    "rural_subsamp_usc")
+```
+
+## Re-import terrain maps, then create composite figures
+### All individuals
+```{r}
+var1_all_indiv <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/all_indiv/memgene_terrain_var1_all_indiv.png")))
+
+var2_all_indiv <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/all_indiv/memgene_terrain_var2_all_indiv.png")))
+
+var3_all_indiv <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/all_indiv/memgene_terrain_var3_all_indiv.png")))
+
+
+memgene_all_indiv_plots <- gridExtra::grid.arrange(var1_all_indiv, 
+                        var2_all_indiv,
+                        var3_all_indiv,
+                        ncol = 3,
+             left = textGrob("A", 
+                            x = unit(1.75, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("B", 
+                            x = unit(1.1, "npc"), 
+                            y = unit(1.96, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("C", 
+                            x = unit(-8.35, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/memgene/all_indiv/main_figs.png", 
+       plot = memgene_all_indiv_plots,
+       width = 6.5, height = 3.5,
+       units = "in",
+       dpi = 400)
+```
+
+### 1 indiv/pop: RURAL
+#### Urb = dist to CC
+```{r}
+var1_subsamp_rural <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/rural_subsamp/memgene_terrain_var1_rural_subsamp.png")))
+
+var2_subsamp_rural <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/rural_subsamp/memgene_terrain_var2_rural_subsamp.png")))
+
+
+memgene_subsamp_rural_plots <- gridExtra::grid.arrange(var1_subsamp_rural, 
+                        var2_subsamp_rural,
+                        ncol = 3,
+             left = textGrob("A", 
+                            x = unit(1.95, "npc"), 
+                            y = unit(0.75, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("B", 
+                            x = unit(-0.89, "npc"), 
+                            y = unit(0.75, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/memgene/rural_subsamp/main_figs.png", 
+       plot = memgene_subsamp_rural_plots,
+       width = 6.5, height = 3.5,
+       units = "in",
+       dpi = 400)
+```
+
+#### Urb = urb score
+```{r}
+var1_subsamp_rural_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/rural_subsamp_usc/memgene_terrain_var1_rural_subsamp_usc.png")))
+
+var2_subsamp_rural_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/rural_subsamp_usc/memgene_terrain_var2_rural_subsamp_usc.png")))
+
+var3_subsamp_rural_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/rural_subsamp_usc/memgene_terrain_var3_rural_subsamp_usc.png")))
+
+
+memgene_subsamp_rural_usc_plots <- gridExtra::grid.arrange(var1_subsamp_rural_usc, 
+                        var2_subsamp_rural_usc,
+                        var3_subsamp_rural_usc,
+                        ncol = 3,
+             left = textGrob("A", 
+                            x = unit(1.75, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)),
+             center = textGrob("B", 
+                            x = unit(1.1, "npc"), 
+                            y = unit(1.96, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("C", 
+                            x = unit(-8.35, "npc"), 
+                            y = unit(0.98, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/memgene/rural_subsamp_usc/main_figs.png", 
+       plot = memgene_subsamp_rural_usc_plots,
+       width = 6.5, height = 3.5,
+       units = "in",
+       dpi = 400)
+```
+
+# Export stats
+## All individuals
+```{r}
+export_stats("all_indiv",
+             memgene_all)
+```
+
+## 1 individual/population- RURAL
+### Urb = dist to CC
+```{r}
+export_stats("rural_subsamp",
+             memgene_subsamp_rural)
+```
+
+### Urb = urb score
+```{r}
 export_stats("rural_subsamp_usc",
-             milkweed_analysis_subsamp_rural_usc)
+             memgene_subsamp_rural_usc)
 ```
 

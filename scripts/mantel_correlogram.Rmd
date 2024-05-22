@@ -782,9 +782,9 @@ export_corr_table_fig(correlogram_utm_rur_subsamp2, urb_score, one_indiv_rural_1
 export_corr_table_fig(correlogram_utm_rur_subsamp2_12km, urb_score, one_indiv_rural_12km_urbscore)
 ```
 
-## Re-import images, then create composite figures
-### Distance
-#### All individuals
+# Re-import images, then create composite figures
+## Distance
+### All individuals
 ```{r}
 urb_2500m_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/urban_2500m.png")))
 
@@ -818,7 +818,7 @@ ggsave("./Figures_Tables/correlogram/distance/figures/main_figs.png",
        dpi = 400)
 ```
 
-#### 1 individual/pop
+### 1 individual/pop
 ```{r}
 urb_2500m_dist2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/distance/figures/one_indiv_urban_2500m.png")))
 
@@ -852,8 +852,8 @@ ggsave("./Figures_Tables/correlogram/distance/figures/main_figs_1indiv_per_pop.p
        dpi = 400)
 ```
 
-### Urb score
-#### All individuals
+## Urb score
+### All individuals
 ```{r}
 urb_2500m_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/urban_2500m.png")))
 
@@ -887,7 +887,7 @@ ggsave("./Figures_Tables/correlogram/urb_score/figures/main_figs.png",
        dpi = 400)
 ```
 
-#### 1 individual/pop
+### 1 individual/pop
 ```{r}
 urb_2500m_usc2 <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/urb_score/figures/one_indiv_urban_2500m_urbscore.png")))
 
