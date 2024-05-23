@@ -920,3 +920,54 @@ ggsave("./Figures_Tables/correlogram/urb_score/figures/main_figs_1indiv_per_pop.
        units = "in",
        dpi = 400)
 ```
+## All individuals
+```{r}
+all_2500m <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/all/figures/all_indiv_2500m.png")))
+
+all_10km <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/all/figures/all_indiv_10km.png")))
+
+
+corr_all_plots <- gridExtra::grid.arrange(all_2500m, 
+                        all_10km,
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.82, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-9.75, "npc"), 
+                            y = unit(0.82, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/correlogram/all/figures/main_figs_all.png", 
+       plot = corr_all_plots,
+       width = 7*(2/3), height = 4*(2/3),
+       units = "in",
+       dpi = 700)
+```
+
+### 1 individual/pop
+```{r}
+one_2500m <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/all/figures/one_indiv_2500m.png")))
+
+one_10km <- rasterGrob(readPNG(here::here("./Figures_Tables/correlogram/all/figures/one_indiv_10km.png")))
+
+
+corr_one_plots <- gridExtra::grid.arrange(one_2500m, 
+                        one_10km,
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.82, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-9.75, "npc"), 
+                            y = unit(0.82, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/correlogram/all/figures/main_figs_one_indiv.png", 
+       plot = corr_one_plots,
+       width = 7*(2/3), height = 4*(2/3),
+       units = "in",
+       dpi = 700)
+```

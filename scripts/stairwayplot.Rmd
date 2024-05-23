@@ -4,216 +4,9 @@
 source("libraries.R")
 ```
 
-# Create sfs
-## Load vcf2sfs code
-```{r}
-# can't install this package so copied the R code into my own file, load it
-
-source(here::here("./scripts/vcf2sfs_code.R"))
-```
-
-## get path to vcf
-```{r}
-vcf_address <- here::here("./results/pi_fst_TajD_estimates/pi/global_pi/global_pi_vcf-all/populations.all.vcf")
-```
-
-## Notes for understanding vcfR::maf()'s output
-
-*Each row is a locus.
-*nAllele = the number of different alleles sequenced at this
- locus. At most, it's 2n = 261*2=522 because it's a diploid-
- so there's at most 2 alleles per locus for each individual.
- It can drop to numbers like 50 if only, for example,
- 50/2n=50/2*261=50/522=~10% of the loci were sequenced.
-*Count = the number of times a specific allele was seen at
- this locus.
-*Frequency = Count/nAlleles to give the total frequency of
- that specific allele.
-
-There can be bars in the 1 bins on the x axis because of
- missing values. Some loci were only sequenced in a few of
- the individuals (depending on R), so if an allele was seen
- only once but its locus was sequenced in only ~25% of
- individuals, it could still have a frequency >0.05 and
- wind up in the "1 individual" bin.
-
-This holds up because the mmaf = 0.05, R = 1 plot should
- have no missing data and a min minor allele frequency of
- 5%, so the first individual should show up at
- 0.05*2n=0.05*2*261=26 individuals. It does.
- 
-## Read the VCF file and the popmap file and create a gt object
-### SFS for all individuals in 1 population
-```{r}
-mygt <- vcf2gt(vcf_address,
-               here::here("./genomic_resources/pop_map3_all1pop_for_sfs.txt"))
-
-# look at all unique populations
-unique(mygt$popmap)
-```
-
-### SFS for URBAN or RURAL individuals in 1 population
-#### Urbanization = dist to CC
-```{r}
-mygt_urb <- vcf2gt(vcf_address,
-               here::here("./clean_data/pop_maps/pop_map3_UR_dist.txt"))
-
-# look at all unique populations
-unique(mygt_urb$popmap)
-```
-
-#### Urbanization = urbanization score
-```{r}
-mygt_urb2 <- vcf2gt(vcf_address,
-               here::here("./clean_data/pop_maps/pop_map3_UR_usc.txt"))
-
-# look at all unique populations
-unique(mygt_urb2$popmap)
-```
-
-## Create sfs
-### SFS for all individuals in 1 population
-```{r}
-sfs <- gt2sfs.raw(mygt,
-           "1") %>%
-        as.data.frame() %>%
-  dplyr::filter(X1 != 0) %T>%
-  write_delim(here::here("./clean_data/sfs/sfs.txt"))
-
-```
-
-### SFS for URBAN individuals in 1 population
-#### Urbanization = dist to CC
-```{r}
-sfs_urb <- gt2sfs.raw(mygt_urb,
-           "Urban") %>%
-        as.data.frame() %>%
-  dplyr::filter(Urban != 0) %T>%
-  write_delim(here::here("./clean_data/sfs/sfs_urban.txt"))
-
-```
-
-#### Urbanization = urbanization score
-```{r}
-sfs_urb2 <- gt2sfs.raw(mygt_urb2,
-           "Urban") %>%
-        as.data.frame() %>%
-  dplyr::filter(Urban != 0) %T>%
-  write_delim(here::here("./clean_data/sfs/sfs_urban_urbscore.txt"))
-
-```
-
-### SFS for RURAL individuals in 1 population
-#### Urbanization = dist to CC
-```{r}
-sfs_rur <- gt2sfs.raw(mygt_urb,
-           "Rural") %>%
-        as.data.frame() %>%
-  dplyr::filter(Rural != 0) %T>%
-  write_delim(here::here("./clean_data/sfs/sfs_rural.txt"))
-
-```
-
-#### Urbanization = urbanization score
-```{r}
-sfs_rur2 <- gt2sfs.raw(mygt_urb2,
-           "Rural") %>%
-        as.data.frame() %>%
-  dplyr::filter(Rural != 0) %T>%
-  write_delim(here::here("./clean_data/sfs/sfs_rural_urbscore.txt"))
-
-```
-
-## Prepare to export sfs
-### SFS for all individuals in 1 population
-```{r}
-# get freqs for SFS
-freqs_for_stairwayplot <- sfs %>%
-                   dplyr::select(Freq) %>%
-  pull()
-
-
-freqs_string <- paste(freqs_for_stairwayplot,
-                      collapse = " ")
-
-# Write the string to a txt file
-writeLines(freqs_string,
-           here::here("./clean_data/sfs/sfs_freqs.txt"))
-
-# length of SFS
-length(freqs_for_stairwayplot)
-```
-
-### SFS for URBAN individuals in 1 population
-#### Urbanization = dist to CC
-```{r}
-# get freqs for SFS
-sfs_urb %>%
-  dplyr::select(Freq) %>%
-  pull() %>%
-  paste(collapse = " ") %T>%
-# Write the string to a txt file
-  writeLines(here::here("./clean_data/sfs/sfs_freqs_urb.txt"))
-
-# length of SFS
-length(sfs_urb %>%
-  dplyr::select(Freq) %>%
-  pull())
-```
-
-#### Urbanization = urbanization score
-```{r}
-# get freqs for SFS
-sfs_urb2 %>%
-  dplyr::select(Freq) %>%
-  pull() %>%
-  paste(collapse = " ") %T>%
-# Write the string to a txt file
-  writeLines(here::here("./clean_data/sfs/sfs_freqs_urb_urbscore.txt"))
-
-# length of SFS
-length(sfs_urb2 %>%
-  dplyr::select(Freq) %>%
-  pull())
-```
-
-### SFS for RURAL individuals in 1 population
-#### Urbanization = dist to CC
-```{r}
-# get freqs for SFS
-sfs_rur %>%
-  dplyr::select(Freq) %>%
-  pull() %>%
-  paste(collapse = " ") %T>%
-# Write the string to a txt file
-  writeLines(here::here("./clean_data/sfs/sfs_freqs_rur.txt"))
-
-# length of SFS
-length(sfs_rur %>%
-  dplyr::select(Freq) %>%
-  pull())
-```
-
-#### Urbanization = urbanization score
-```{r}
-# get freqs for SFS
-sfs_rur2 %>%
-  dplyr::select(Freq) %>%
-  pull() %>%
-  paste(collapse = " ") %T>%
-# Write the string to a txt file
-  writeLines(here::here("./clean_data/sfs/sfs_freqs_rur_urbscore.txt"))
-
-# length of SFS
-length(sfs_rur2 %>%
-  dplyr::select(Freq) %>%
-  pull())
-```
-
-# Stairway Plot figures
-## Import stairway plot data
-### mu = 1.0x10^-8 & generation time = 1 year
-#### All sites in 1 population
+# Import data
+## mu = 1.0x10^-8 & generation time = 1 year
+### All sites in 1 population
 ```{r}
 full_fig_1e8 <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -226,8 +19,8 @@ full_fig_1e8 <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_time_1
 
 ```
 
-### mu = 1.0x10^-8 & generation time = 2 years
-#### All sites in 1 population
+## mu = 1.0x10^-8 & generation time = 2 years
+### All sites in 1 population
 ```{r}
 full_fig_1e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_time_2yr/full_mmaf0.007813_mut_rate_1e-8_2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -240,8 +33,8 @@ full_fig_1e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_1e-8/gen_t
 
 ```
 
-### mu = 1.2x10^-8 & generation time = 1 year
-#### All sites in 1 population
+## mu = 1.2x10^-8 & generation time = 1 year
+### All sites in 1 population
 ```{r}
 full_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/full_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -254,8 +47,8 @@ full_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr
 
 ```
 
-#### Urban
-##### Dist to CC
+### Urban
+#### Dist to CC
 ```{r}
 urb_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -268,7 +61,7 @@ urb_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/
 
 ```
 
-##### Urb Score
+#### Urb Score
 ```{r}
 urb_fig2 <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/urban_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -281,8 +74,8 @@ urb_fig2 <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr
 
 ```
 
-#### Rural
-##### Dist to CC
+### Rural
+#### Dist to CC
 ```{r}
 rur_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_dist_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -295,7 +88,7 @@ rur_fig <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/
 
 ```
 
-##### Urb score
+#### Urb score
 ```{r}
 rur_fig2 <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr/rural_usc_mmaf0.007813.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -308,8 +101,8 @@ rur_fig2 <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_1yr
 
 ```
 
-#### Merge dfs
-##### Urb = dist to CC
+### Merge dfs
+#### Urb = dist to CC
 ```{r}
 all_dist <- dplyr::full_join(urb_fig %>%
                     dplyr::mutate(Group = "Urban"),
@@ -325,7 +118,7 @@ all_dist %<>%
 ```
 
 
-##### Urb = urb score
+#### Urb = urb score
 ```{r}
 all_usc <- dplyr::full_join(urb_fig2 %>%
                     dplyr::mutate(Group = "Urban"),
@@ -340,8 +133,8 @@ all_usc %<>%
   distinct(.keep_all = TRUE)
 ```
 
-### mu = 1.2x10^-8 & generation time = 2 years
-#### All sites in 1 population
+## mu = 1.2x10^-8 & generation time = 2 years
+### All sites in 1 population
 ```{r}
 full_fig_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_time_2yr/full_mmaf0.007813_mut_rate_1.2e-8_2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -354,8 +147,8 @@ full_fig_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_1.2e-8/gen_tim
 
 ```
 
-### mu = 1.8x10^-8 & generation time = 1 year
-#### All sites in 1 population
+## mu = 1.8x10^-8 & generation time = 1 year
+### All sites in 1 population
 ```{r}
 full_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -368,8 +161,8 @@ full_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_ti
 
 ```
 
-#### Urban
-##### Dist to CC
+### Urban
+#### Dist to CC
 ```{r}
 urb_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -382,7 +175,7 @@ urb_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_tim
 
 ```
 
-##### Urb Score
+#### Urb Score
 ```{r}
 urb_fig2_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/urban_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -395,8 +188,8 @@ urb_fig2_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_ti
 
 ```
 
-#### Rural
-##### Dist to CC
+### Rural
+#### Dist to CC
 ```{r}
 rur_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_dist_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -409,7 +202,7 @@ rur_fig_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_tim
 
 ```
 
-##### Urb score
+#### Urb score
 ```{r}
 rur_fig2_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_1yr/rural_usc_mmaf0.007813_mut_rate_1.8e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -422,8 +215,8 @@ rur_fig2_1.8e8 <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_ti
 
 ```
 
-#### Merge dfs
-##### Urb = dist to CC
+### Merge dfs
+#### Urb = dist to CC
 ```{r}
 all_dist_1.8e8 <- dplyr::full_join(urb_fig_1.8e8 %>%
                     dplyr::mutate(Group = "Urban"),
@@ -439,7 +232,7 @@ all_dist_1.8e8 %<>%
 ```
 
 
-##### Urb = urb score
+#### Urb = urb score
 ```{r}
 all_usc_1.8e8 <- dplyr::full_join(urb_fig2_1.8e8 %>%
                     dplyr::mutate(Group = "Urban"),
@@ -454,8 +247,8 @@ all_usc_1.8e8 %<>%
   distinct(.keep_all = TRUE)
 ```
 
-### mu = 1.8x10^-8 & generation time = 2 years
-#### All sites in 1 population
+## mu = 1.8x10^-8 & generation time = 2 years
+### All sites in 1 population
 ```{r}
 full_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/full/full_mmaf0.007813_mut_rate_1.8e-8_2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -468,8 +261,8 @@ full_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/ge
 
 ```
 
-#### Urban
-##### Dist to CC
+### Urban
+#### Dist to CC
 ```{r}
 urb_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/urb_dist/urban_dist_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -482,7 +275,7 @@ urb_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen
 
 ```
 
-##### Urb Score
+#### Urb Score
 ```{r}
 urb_fig2_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/urb_usc/urban_usc_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -495,8 +288,8 @@ urb_fig2_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/ge
 
 ```
 
-#### Rural
-##### Dist to CC
+### Rural
+#### Dist to CC
 ```{r}
 rur_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/rur_dist/rural_dist_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -509,7 +302,7 @@ rur_fig_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen
 
 ```
 
-##### Urb score
+#### Urb score
 ```{r}
 rur_fig2_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/rur_usc/rural_usc_mmaf0.007813_mut_rate_1.8e-8_gt2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -522,8 +315,8 @@ rur_fig2_1.8e8_2yr <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/ge
 
 ```
 
-#### Merge dfs
-##### Urb = dist to CC
+### Merge dfs
+#### Urb = dist to CC
 ```{r}
 all_dist_1.8e8_2yr <- dplyr::full_join(urb_fig_1.8e8_2yr %>%
                     dplyr::mutate(Group = "Urban"),
@@ -538,7 +331,7 @@ all_dist_1.8e8_2yr %<>%
   distinct(.keep_all = TRUE)
 ```
 
-##### Urb = urb score
+#### Urb = urb score
 ```{r}
 all_usc_1.8e8_2yr <- dplyr::full_join(urb_fig2_1.8e8_2yr %>%
                     dplyr::mutate(Group = "Urban"),
@@ -553,8 +346,8 @@ all_usc_1.8e8_2yr %<>%
   distinct(.keep_all = TRUE)
 ```
 
-### mu = 2.6x10^-8 & generation time = 1 year
-#### All sites in 1 population
+## mu = 2.6x10^-8 & generation time = 1 year
+### All sites in 1 population
 ```{r}
 full_fig_2.6e8 <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/gen_time_1yr/full_mmaf0.007813_mut_rate_2.6e-8.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -567,8 +360,8 @@ full_fig_2.6e8 <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/gen_ti
 
 ```
 
-### mu = 2.6x10^-8 & generation time = 2 years
-#### All sites in 1 population
+## mu = 2.6x10^-8 & generation time = 2 years
+### All sites in 1 population
 ```{r}
 full_fig_2.6e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/gen_time_2yr/full_mmaf0.007813_mut_rate_2.6e-8_2yrs.final.summary")) %>%
   dplyr::select(-c(theta_per_site_median,
@@ -581,6 +374,7 @@ full_fig_2.6e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/g
 
 ```
 
+# Create figures
 ## Create functions
 ### Export plots
 #### All, urban, and rural separately
@@ -2042,8 +1836,8 @@ ggsave("./Figures_Tables/Stairway_plot/main_figs_2yr_var_mut.png",
        dpi = 400)
 ```
 
-## Calculate Ne stats
-### mu = 1.8 x 10^-8, gen time = 1 yr
+# Calculate Ne stats
+## mu = 1.8 x 10^-8, gen time = 1 yr
 ```{r}
 Ne_stats(full_fig_1.8e8)
 Ne_stats(urb_fig_1.8e8)
@@ -2057,7 +1851,7 @@ Ne_stats_CI(rur_fig_1.8e8)
 
 ```
 
-### mu = 1.8 x 10^-8, gen time = 2 yr
+## mu = 1.8 x 10^-8, gen time = 2 yr
 ```{r}
 Ne_stats(full_fig_1.8e8_2yr)
 Ne_stats(urb_fig_1.8e8_2yr)
