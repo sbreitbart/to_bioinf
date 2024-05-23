@@ -506,7 +506,7 @@ basic_plot_mems("rural_subsamp_usc",
 ## Plots with terrain basemap
 ### All individuals
 ```{r}
-# will do this for first 3 memgene vars (i.e., those which explain the most variation in spatial patterns)... there are 20 total, though
+# will do this for first 4 memgene vars (i.e., those which explain the most variation in spatial patterns)... there are 20 total, though
 
 # create MEM dfs-----
 mem1_all <- create_mem(
@@ -527,9 +527,16 @@ mem3_all <- create_mem(
   3) %>%
   dplyr::mutate("mem" = "Memgene Variable 3")
 
+mem4_all <- create_mem(
+  memgene_all,
+  coords,
+  4) %>%
+  dplyr::mutate("mem" = "Memgene Variable 4")
+
 mems_all <- full_join(mem1_all,
                                 mem2_all) %>%
-  dplyr::full_join(., mem3_all) 
+  dplyr::full_join(., mem3_all) %>%
+  dplyr::full_join(., mem4_all) 
 
 
 # make, export maps (4 memgene variables)-----
@@ -543,6 +550,10 @@ memgene_terrain_map(mems_all,
 
 memgene_terrain_map(mems_all,
                     "3",
+                    "all_indiv")
+
+memgene_terrain_map(mems_all,
+                    "4",
                     "all_indiv")
 
 ```
@@ -635,22 +646,29 @@ var2_all_indiv <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/all_in
 
 var3_all_indiv <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/all_indiv/memgene_terrain_var3_all_indiv.png")))
 
+var4_all_indiv <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/all_indiv/memgene_terrain_var4_all_indiv.png")))
+
 
 memgene_all_indiv_plots <- gridExtra::grid.arrange(var1_all_indiv, 
                         var2_all_indiv,
                         var3_all_indiv,
+                        var4_all_indiv,
                         ncol = 2,
              left = textGrob("A", 
-                            x = unit(2.5, "npc"), 
-                            y = unit(0.98, "npc"),
+                            x = unit(2.55, "npc"), 
+                            y = unit(0.96, "npc"),
                             gp = gpar(fontsize = 12)),
              right = textGrob("B", 
                             x = unit(-12.6, "npc"), 
-                            y = unit(0.98, "npc"),
+                            y = unit(0.96, "npc"),
                             gp = gpar(fontsize = 12)),
-             center = textGrob("C", 
-                            x = unit(-0.9, "npc"), 
-                            y = unit(0.95, "npc"),
+             bottom = textGrob("C", 
+                            x = unit(0.06, "npc"), 
+                            y = unit(12, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("D", 
+                            x = unit(0.56, "npc"), 
+                            y = unit(-11, "npc"),
                             gp = gpar(fontsize = 12)))
 
 ggsave("./Figures_Tables/memgene/all_indiv/main_figs.png", 
@@ -695,22 +713,29 @@ var2_subsamp_rural_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/memgen
 
 var3_subsamp_rural_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/rural_subsamp_usc/memgene_terrain_var3_rural_subsamp_usc.png")))
 
+var4_subsamp_rural_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/memgene/rural_subsamp_usc/memgene_terrain_var4_rural_subsamp_usc.png")))
+
 
 memgene_subsamp_rural_usc_plots <- gridExtra::grid.arrange(var1_subsamp_rural_usc, 
                         var2_subsamp_rural_usc,
                         var3_subsamp_rural_usc,
+                        var4_subsamp_rural_usc,
                         ncol = 2,
              left = textGrob("A", 
-                            x = unit(2.5, "npc"), 
-                            y = unit(0.98, "npc"),
+                            x = unit(2.55, "npc"), 
+                            y = unit(0.96, "npc"),
                             gp = gpar(fontsize = 12)),
              right = textGrob("B", 
                             x = unit(-12.6, "npc"), 
-                            y = unit(0.98, "npc"),
+                            y = unit(0.96, "npc"),
                             gp = gpar(fontsize = 12)),
-             center = textGrob("C", 
-                            x = unit(-0.9, "npc"), 
-                            y = unit(0.95, "npc"),
+             bottom = textGrob("C", 
+                            x = unit(0.06, "npc"), 
+                            y = unit(12, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("D", 
+                            x = unit(0.56, "npc"), 
+                            y = unit(-11, "npc"),
                             gp = gpar(fontsize = 12)))
 
 ggsave("./Figures_Tables/memgene/rural_subsamp_usc/main_figs.png", 
