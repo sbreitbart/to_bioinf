@@ -2,6 +2,7 @@
 ## load libraries
 ```{r}
 source("libraries.R")
+source("functions.R")
 ```
 
 # Import data
@@ -376,8 +377,7 @@ full_fig_2.6e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/g
 
 # Create figures
 ## Create functions
-### Export plots
-#### All, urban, and rural separately
+### Export all, urban, and rural separately
 ```{r}
 # regular y axis
 make_ne_plot_reg_y <- function(df, exported_filepath){
@@ -496,7 +496,7 @@ make_ne_plot_reg_y <- function(df, exported_filepath){
 }
 ```
 
-#### All plots together
+### Export all plots together
 ```{r}
 export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
   
@@ -747,87 +747,6 @@ cowplot::ggdraw() +
          width = 9,
          dpi = 200)
 }
-```
-
-### Find Ne highs, lows
-#### Median Ne
-```{r}
-Ne_stats <- function(Ne_df){
-
-max_ne <- max(Ne_df$Ne_median)  
-
-# find year of max Ne
-max_ne_years <- Ne_df %>%
-  dplyr::filter(Ne_median == max_ne) %>%
-   dplyr::select(year) %>%
-   dplyr::mutate(year = round(year, 0))
-
-print(paste0("Years of max Ne: ", max_ne_years))
-
-
-# find median Ne around 750 years ago
-median_ne_750YA <- Ne_df %>%
-  dplyr::filter(year > 750 & year < 751) %>%
-  dplyr::select(Ne_median) %>%
-  dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
-  slice(1) %>%
-  as.numeric()
-
-print(paste0("Median Ne ~750 years ago: ", median_ne_750YA*1000))
-
-min_year <- min(Ne_df$year)  
-
-# find most recent median Ne
-most_recent_ne <- Ne_df %>%
-  dplyr::filter(year == min_year) %>%
-  dplyr::select(Ne_median) %>%
-  dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
-  slice(1) %>%
-  as.numeric()
-
-print(paste0("Most recent median Ne: ", most_recent_ne*1000))
-
-
-# find % decrease from max to min
-perc_decrease <- round(((most_recent_ne-median_ne_750YA)/median_ne_750YA ) * 100, 3)
-
-print(paste0("% decrease in Ne: ", perc_decrease))
-}
-
-```
-
-#### 97.5% conf int Ne
-```{r}
-Ne_stats_CI <- function(Ne_df){
-
-min_year <- min(Ne_df$year)  
-
-
-# find most recent 2.5% CI Ne
-most_recent_ne_2 <- Ne_df %>%
-  dplyr::filter(year == min_year) %>%
-  dplyr::select(Ne_2.5.) %>%
-  dplyr::mutate(Ne_2.5. = round(Ne_2.5., 0)) %>%
-  slice(1) %>%
-  as.numeric()
-
-# find most recent 97.5% CI Ne
-most_recent_ne_97 <- Ne_df %>%
-  dplyr::filter(year == min_year) %>%
-  dplyr::select(Ne_97.5.) %>%
-  dplyr::mutate(Ne_97.5. = round(Ne_97.5., 0)) %>%
-  slice(1) %>%
-  as.numeric()
-
-
-print(paste0("Most recent Ne CI: [",
-             most_recent_ne_2*1000,
-             ",",
-             most_recent_ne_97*1000,
-             "]"))
-
-}
-
 ```
 
 ## Export plots
@@ -1862,5 +1781,150 @@ Ne_stats(rur_fig_1.8e8_2yr)
 Ne_stats_CI(full_fig_1.8e8_2yr)
 Ne_stats_CI(urb_fig_1.8e8_2yr)
 Ne_stats_CI(rur_fig_1.8e8_2yr)
+
+```
+
+# Create table with Helene's breakpoint analysis
+## Create original output table
+```{r}
+##        year.l year.u rate.est rate.CI.95.l rate.CI.95.u
+## slope1   2017   2018 -1.78375     -1.67883     -1.89273
+## slope2   2010   2017 -0.26525     -0.25766     -0.27288
+## slope3   1975   2010 -0.04738     -0.04599     -0.04876
+## slope4   1825   1975 -0.00726     -0.00701     -0.00752
+## slope5   1644   1825 -0.00330     -0.00299     -0.00360
+## slope6   1226   1644 -0.00068     -0.00055     -0.00082
+## slope7   -113   1226 -0.00010     -0.00008     -0.00013
+## slope8  -5762   -113  0.00002      0.00002      0.00001
+## slope9 -12981  -5762  0.00014      0.00014      0.00013
+
+breakpoint_table <- data.frame(
+  "Start" = as.numeric(c(2017,
+                       2010,
+                       1975,
+                       1825,
+                       1644,
+                       1226,
+                       -113,
+                       -5762,
+                       -12981)),
+  "End" = as.numeric(c(2018,
+                     2017,
+                     2010,
+                     1975,
+                     1825,
+                     1644,
+                     1226,
+                     -113,
+                     -5762)),
+  "Rate" = as.numeric(c(-1.78375,
+                      -0.26525,
+                      -0.04738,
+                      -0.00726,
+                      -0.00330,
+                      -0.00068,
+                      -0.00010,
+                      0.00002,
+                      0.00014)),
+  "CI_Lower" = as.numeric(c(-1.67883,
+                                -0.25766,
+                                -0.04599,
+                                -0.00701,
+                                -0.00299,
+                                -0.00055,
+                                -0.00008,
+                                0.00002,
+                                0.00014)),
+  "CI_Upper" = as.numeric(c(-1.89273,
+                                -0.27288,
+                                -0.04876,
+                                -0.00752,
+                                -0.00360,
+                                -0.00082,
+                                -0.00013,
+                                0.00001,
+                                0.00013)),
+  
+  # and add historical interpretation
+  "Historical_Interpretation" = as.character(c("Conservation groups (e.g., Suzuki Foundation) encourage Toronto residents to plant milkweed",
+                                               "\"",
+                                               "Urban expansion in Toronto",
+                                               "Colonization and settlement by Europeans; rural expansion",
+                                               "European diseases decimate Indigenous populations",
+                                               "Indigenous agriculture grows",
+                                               "Indigenous populations present",
+                                               "\"",
+                                               "Glaciers retreat; climate warms; Indigenous populations present")))
+```
+
+## Add Ne and other table elements
+```{r}
+# Add Ne from the Start of the period to the table
+
+# first, get Starting Nes
+start_ne_yrs <- breakpoint_table %>%
+  dplyr::select(Start)
+
+# Get median Nes and year from output data, then convert year from years ago to BCE/AD system
+all_ne <- full_fig_1.8e8_2yr %>%
+  dplyr::select(c(year, Ne_median)) %>%
+  dplyr::distinct() %>%
+  dplyr::mutate(years_ago = year) %>% 
+  dplyr::mutate(year = year*(-1) + 2019) # data collected in 2018 or 2019
+
+# find Ne in output data closest to period Start (as long as it's equal or later than Start time)
+output_Start_Nes <- fuzzyjoin::difference_inner_join(
+  start_ne_yrs, all_ne,
+  by = c("Start" = "year"),
+  max_dist = 10) %>%
+  dplyr::filter(year >= Start) %>%
+  dplyr::group_by(Start) %>%
+  dplyr::filter(abs(Start - year) == min(abs(Start - year))) %>%
+  dplyr::ungroup()
+
+# Add output Start Nes to breakpoint table
+breakpoint_table %<>%
+  dplyr::left_join(.,
+                   output_Start_Nes %>%
+                     dplyr::select(-year),
+                   by = "Start") %>%
+  dplyr::rename(Start_median_Ne = Ne_median) %>%
+  dplyr::mutate(years_from_2019 = 2019 - Start) %>%
+  dplyr::select(years_from_2019, Start, Start_median_Ne, End:Historical_Interpretation) %>%
+  dplyr::mutate(Start = as.factor(Start),
+                End = as.factor(End) # remove commas
+             #   ,Period = paste0(Start, " - ", End)
+                ) %>%
+#  dplyr::relocate(Period, .before = "Start") %>%
+  
+  # round numeric columns to 3 digits unless if <0.001... then convert to scientific format
+  dplyr::mutate(across(where(is.numeric),
+                ~ if_else(abs(.) < 0.001,
+                          formatC(.,
+                                  format = "e",
+                                  digits = 2),
+                          as.character(round(., 3))))) %>%
+  dplyr::mutate(Start_median_Ne = as.numeric(Start_median_Ne)) %>%
+  dplyr::rename('95% CI\n (Lower)' = "CI_Lower",
+                '95% CI\n (Upper)' = "CI_Upper",
+                'Historical Interpretation' = "Historical_Interpretation",
+                'Years ago' = "years_from_2019")
+```
+
+## Make, export flextable
+```{r}
+breakpoint_table %>%
+  flextable::flextable() %>%
+  flextable::compose(j = "Start_median_Ne",
+                     part = "header", 
+                     value = as_paragraph("Start N", as_sub("e"))) %>%
+  flextable::align(part = "all",
+                   j = c(1:6),
+                   align = "center") %>%
+  flextable::autofit() %>%
+  flextable::width(j = 8,
+                   width = 2.15,
+                   unit = "in") %>%
+  flextable::save_as_docx(path = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/breakpoint_table.docx"))
 
 ```

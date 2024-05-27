@@ -559,3 +559,79 @@ export_corr_table_fig <- function(correlogram_object,
          width = 4)
   
 }
+# Stairway Plot functions-----
+
+## Find Ne highs, lows
+### Median Ne
+Ne_stats <- function(Ne_df){
+  
+  max_ne <- max(Ne_df$Ne_median)  
+  
+  # find year of max Ne
+  max_ne_years <- Ne_df %>%
+    dplyr::filter(Ne_median == max_ne) %>%
+    dplyr::select(year) %>%
+    dplyr::mutate(year = round(year, 0))
+  
+  print(paste0("Years of max Ne: ", max_ne_years))
+  
+  
+  # find median Ne around 750 years ago
+  median_ne_750YA <- Ne_df %>%
+    dplyr::filter(year > 750 & year < 751) %>%
+    dplyr::select(Ne_median) %>%
+    dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
+    slice(1) %>%
+    as.numeric()
+  
+  print(paste0("Median Ne ~750 years ago: ", median_ne_750YA*1000))
+  
+  min_year <- min(Ne_df$year)  
+  
+  # find most recent median Ne
+  most_recent_ne <- Ne_df %>%
+    dplyr::filter(year == min_year) %>%
+    dplyr::select(Ne_median) %>%
+    dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
+    slice(1) %>%
+    as.numeric()
+  
+  print(paste0("Most recent median Ne: ", most_recent_ne*1000))
+  
+  
+  # find % decrease from max to min
+  perc_decrease <- round(((most_recent_ne-median_ne_750YA)/median_ne_750YA ) * 100, 3)
+  
+  print(paste0("% decrease in Ne: ", perc_decrease))
+}
+
+### 97.5% conf int Ne
+Ne_stats_CI <- function(Ne_df){
+  
+  min_year <- min(Ne_df$year)  
+  
+  
+  # find most recent 2.5% CI Ne
+  most_recent_ne_2 <- Ne_df %>%
+    dplyr::filter(year == min_year) %>%
+    dplyr::select(Ne_2.5.) %>%
+    dplyr::mutate(Ne_2.5. = round(Ne_2.5., 0)) %>%
+    slice(1) %>%
+    as.numeric()
+  
+  # find most recent 97.5% CI Ne
+  most_recent_ne_97 <- Ne_df %>%
+    dplyr::filter(year == min_year) %>%
+    dplyr::select(Ne_97.5.) %>%
+    dplyr::mutate(Ne_97.5. = round(Ne_97.5., 0)) %>%
+    slice(1) %>%
+    as.numeric()
+  
+  
+  print(paste0("Most recent Ne CI: [",
+               most_recent_ne_2*1000,
+               ",",
+               most_recent_ne_97*1000,
+               "]"))
+  
+}
