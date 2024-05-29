@@ -635,3 +635,241 @@ Ne_stats_CI <- function(Ne_df){
                "]"))
   
 }
+
+## Export plots
+### All, urban, and rural separately
+make_ne_plot <- function(df, exported_filepath){
+  
+  # full plot with red horizontal line at 500 years ago
+  full_plot <- 
+    ggplot(
+      df,
+      aes(
+        x = year))  +
+    
+    # add vertical lines at breakpoints
+    geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+               #   color = "lightgreen",
+               color = plasma(9, begin = 0.15, end = 0.9),
+               width = 50,
+               linetype = "D3") +
+    
+    # add median Ne and CIs
+    geom_line(aes(y = Ne_median/1000),
+              linewidth = 1,
+              color = "black",
+              linetype = "solid") +
+    
+    geom_line(aes(y = Ne_97.5./1000),
+              linewidth = 0.5,
+              color = "black",
+              linetype = "dashed") +
+    
+    geom_line(aes(y = Ne_2.5./1000),
+              linewidth = 0.5,
+              color = "black",
+              linetype = "dashed") +
+    
+    
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_continuous(#breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+      labels = scales::comma,
+      limits = c(0, 
+                 NA
+      )
+    ) +
+    xlab("Years ago") +
+    ylab("Median Nₑ (million individuals)") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+  ### Plot inset (past 2300 years)
+  full_inset <- 
+    full_plot +
+    scale_x_continuous(limits = c(NA, 2300),
+                       labels = scales::comma) +
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black", fill = "white", size = 1))
+  
+  
+  ### Overlay inset in full figure
+  cowplot::ggdraw() +
+    draw_plot(full_plot) +
+    draw_plot(full_inset,
+              x = 0.5,
+              y = 0.4, 
+              width = 0.4,
+              height = 0.5)
+  
+  
+  #### Export
+  ggsave(filename = here::here(exported_filepath),
+         height = 5,
+         width = 8,
+         dpi = 200)
+}
+
+### All plots together
+export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
+  
+  # All plots will have regular y axis
+  
+  # first, find maximum y axis values
+  max_y_distCC <- df_distCC %>%
+    dplyr::select(Ne_median) %>%
+    dplyr::filter(Ne_median == max(Ne_median)) %>%
+    dplyr::slice(1) %>%
+    dplyr::mutate(max = Ne_median*1.1) %>%
+    dplyr::select(max) %>%
+    as.numeric()
+  
+  max_y_urbscore <- df_urbscore %>%
+    dplyr::select(Ne_median) %>%
+    dplyr::filter(Ne_median == max(Ne_median)) %>%
+    dplyr::slice(1) %>%
+    dplyr::mutate(max = Ne_median*1.1) %>%
+    dplyr::select(max) %>%
+    as.numeric()
+  
+  # DISTANCE TO CC-----
+  exported_filename_distCC <- paste0("./Figures_Tables/Stairway_plot/mu_",
+                                     mu,
+                                     "/gen_time_",
+                                     gen_time,
+                                     "/distance",
+                                     "/all_with_inset.png")
+  
+  all_plot <- ggplot(df_distCC)  +
+    
+    # add vertical lines at breakpoints
+    geom_vline(xintercept =
+                 as.vector(as.numeric(breakpoint_table$`Years ago`)),
+               color = plasma(9, begin = 0.15, end = 0.9),
+               width = 50,
+               linetype = "D3") +
+    
+    # add median Ne
+    geom_point(aes(x = year,
+                   y = Ne_median,
+                   color = Group),
+               size = 0.25) +
+    
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  max_y_distCC
+                       )) +
+    xlab("Years ago") +
+    ylab("Median Nₑ (1k individuals)") +
+    theme_bw() +
+    labs_pubr() +
+    scale_color_grey() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+          legend.position = "top") +
+    # make legend point size larger
+    guides(colour = guide_legend(
+      override.aes = list(size=3)))
+  
+  
+  ### Plot inset (past 2300 years)
+  all_plot_inset <- all_plot +
+    scale_x_continuous(limits = c(NA, 2300),
+                       labels = scales::comma) +
+    
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black",
+            fill = "white",
+            size = 1),
+          legend.position = "none")
+  
+  #### Export
+  ggsave(plot =
+           ### Overlay inset in full figure
+           cowplot::ggdraw() +
+           draw_plot(all_plot) +
+           draw_plot(all_plot_inset,
+                     x = 0.55,
+                     y = 0.3, 
+                     width = 0.4,
+                     height = 0.5),     
+         filename = here::here(exported_filename_distCC),
+         height = 5,
+         width = 9,
+         dpi = 200)
+  
+  
+  # URBANIZATION SCORE-----
+  
+  exported_filename_urbscore <- paste0("./Figures_Tables/Stairway_plot/mu_",
+                                       mu,
+                                       "/gen_time_",
+                                       gen_time,
+                                       "/urb_score",
+                                       "/all_with_inset.png")
+  
+  all_plot_usc <- ggplot(df_urbscore)  +
+    
+    # add vertical lines at breakpoints
+    geom_vline(xintercept =
+                 as.vector(as.numeric(breakpoint_table$`Years ago`)),
+               color = plasma(9, begin = 0.15, end = 0.9),
+               width = 50,
+               linetype = "D3") +
+    
+    # add median Ne
+    geom_point(aes(x = year,
+                   y = Ne_median,
+                   color = Group),
+               size = 0.25) +
+    
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  max_y_urbscore)) +
+    xlab("Years ago") +
+    ylab("Median Nₑ (1k individuals)") +
+    theme_bw() +
+    labs_pubr() +
+    scale_color_grey() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+          legend.position = "top") +
+    # make legend point size larger
+    guides(colour = guide_legend(
+      override.aes = list(size=3)))
+  
+  
+  ### Plot inset (past 2300 years)
+  all_plot_inset_usc <- all_plot_usc +
+    scale_x_continuous(limits = c(NA, 2300),
+                       labels = scales::comma) +
+    
+    theme(axis.title = element_blank(),
+          plot.background = element_rect(
+            colour = "black",
+            fill = "white",
+            size = 1),
+          legend.position = "none")
+  
+  #### Export
+  ggsave(plot =
+           ### Overlay inset in full figure
+           cowplot::ggdraw() +
+           draw_plot(all_plot_usc) +
+           draw_plot(all_plot_inset_usc,
+                     x = 0.55,
+                     y = 0.3, 
+                     width = 0.4,
+                     height = 0.5),     
+         filename = here::here(exported_filename_urbscore),
+         height = 5,
+         width = 9,
+         dpi = 200)
+}

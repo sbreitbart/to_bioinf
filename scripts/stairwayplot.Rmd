@@ -375,1103 +375,8 @@ full_fig_2.6e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/g
 
 ```
 
-# Create figures
-## Create functions
-### Export all, urban, and rural separately
-```{r}
-# regular y axis
-make_ne_plot_reg_y <- function(df, exported_filepath){
-  
-  # full plot with red horizontal line at 500 years ago
-  full_plot <- 
-    ggplot(
-    df,
-    aes(
-      x = year))  +
-
-    # add vertical lines at breakpoints
-      geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-              #   color = "lightgreen",
-                 color = plasma(9, begin = 0.15, end = 0.9),
-                 width = 50,
-                 linetype = "D3") +
-    
-    # add median Ne and CIs
-     geom_line(aes(y = Ne_median/1000),
-               size = 1,
-               color = "black",
-               linetype = "solid") +
-  
-    geom_line(aes(y = Ne_97.5./1000),
-               size = 0.5,
-               color = "black",
-              linetype = "dashed") +
-  
-      geom_line(aes(y = Ne_2.5./1000),
-               size = 0.5,
-               color = "black",
-               linetype = "dashed") +
-
-    
-    scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 40000)) +
-    scale_y_continuous(#breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-                       labels = scales::comma,
-                       limits = c(0, 
-                                  NA
-                                  )
-                       ) +
-    xlab("Years ago") +
-    ylab("Median Nₑ (million individuals)") +
-    theme_bw() +
-    labs_pubr() +
-    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-  
-  ### Plot inset (past 2300 years)
-  full_inset <- 
-    full_plot +
-    scale_x_continuous(limits = c(NA, 2300),
-                       labels = scales::comma) +
-    theme(axis.title = element_blank(),
-          plot.background = element_rect(
-            colour = "black", fill = "white", size = 1))
-    
-  
-  ### Overlay inset in full figure
-  cowplot::ggdraw() +
-    draw_plot(full_plot) +
-    draw_plot(full_inset,
-              x = 0.5,
-              y = 0.4, 
-              width = 0.4,
-              height = 0.5)
-  
-  
-  #### Export
-  ggsave(filename = here::here(exported_filepath),
-         height = 5,
-         width = 8,
-         dpi = 200)
-}
-
-```
-
-### Export all plots together
-```{r}
-export_all_plots <- function(df_distCC, df_urbscore, mu, gen_time){
-  
-  # All plots will have regular y axis
-  
-  # first, find maximum y axis values
-    max_y_distCC <- df_distCC %>%
-    dplyr::select(Ne_median) %>%
-    dplyr::filter(Ne_median == max(Ne_median)) %>%
-    dplyr::slice(1) %>%
-    dplyr::mutate(max = Ne_median*1.1) %>%
-    dplyr::select(max) %>%
-    as.numeric()
-    
-    max_y_urbscore <- df_urbscore %>%
-    dplyr::select(Ne_median) %>%
-    dplyr::filter(Ne_median == max(Ne_median)) %>%
-    dplyr::slice(1) %>%
-    dplyr::mutate(max = Ne_median*1.1) %>%
-    dplyr::select(max) %>%
-    as.numeric()
-  
-  # DISTANCE TO CC-----
-  exported_filename_distCC <- paste0("./Figures_Tables/Stairway_plot/mu_",
-                              mu,
-                              "/gen_time_",
-                              gen_time,
-                              "/distance",
-                              "/all_with_inset.png")
-  
-  all_plot <- ggplot(df_distCC)  +
-
-   # add vertical lines at breakpoints
-      geom_vline(xintercept =
-                   as.vector(as.numeric(breakpoint_table$`Years ago`)),
-                 color = plasma(9, begin = 0.15, end = 0.9),
-                 width = 50,
-                 linetype = "D3") +
-    
-    # add median Ne
-    geom_point(aes(x = year,
-                   y = Ne_median,
-                   color = Group),
-               size = 0.25) +
-  
-      scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 40000)) +
-    scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-                       labels = scales::comma,
-                       limits = c(0, 
-                                  max_y_distCC
-                                  )) +
-    xlab("Years ago") +
-    ylab("Median Nₑ (1k individuals)") +
-    theme_bw() +
-    labs_pubr() +
-  scale_color_grey() +
-    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
-          legend.position = "top") +
-  # make legend point size larger
-  guides(colour = guide_legend(
-    override.aes = list(size=3)))
-  
-
-  ### Plot inset (past 2300 years)
-all_plot_inset <- all_plot +
-    scale_x_continuous(limits = c(NA, 2300),
-                       labels = scales::comma) +
-  
-    theme(axis.title = element_blank(),
-          plot.background = element_rect(
-            colour = "black",
-            fill = "white",
-            size = 1),
-          legend.position = "none")
-
-#### Export
- ggsave(plot =
-         ### Overlay inset in full figure
-         cowplot::ggdraw() +
-         draw_plot(all_plot) +
-         draw_plot(all_plot_inset,
-                   x = 0.55,
-                   y = 0.3, 
-                   width = 0.4,
-                   height = 0.5),     
-       filename = here::here(exported_filename_distCC),
-       height = 5,
-       width = 9,
-       dpi = 200)
-
-
-  # URBANIZATION SCORE-----
-
- exported_filename_urbscore <- paste0("./Figures_Tables/Stairway_plot/mu_",
-                                      mu,
-                                      "/gen_time_",
-                                      gen_time,
-                                      "/urb_score",
-                                      "/all_with_inset.png")
- 
- all_plot_usc <- ggplot(df_urbscore)  +
-   
-   # add vertical lines at breakpoints
-      geom_vline(xintercept =
-                   as.vector(as.numeric(breakpoint_table$`Years ago`)),
-                 color = plasma(9, begin = 0.15, end = 0.9),
-                 width = 50,
-                 linetype = "D3") +
-    
-    # add median Ne
-   geom_point(aes(x = year,
-                  y = Ne_median,
-                  color = Group),
-              size = 0.25) +
-  
-    scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 40000)) +
-    scale_y_continuous(breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-                       labels = scales::comma,
-                       limits = c(0, 
-                                  max_y_urbscore)) +
-    xlab("Years ago") +
-    ylab("Median Nₑ (1k individuals)") +
-  theme_bw() +
-    labs_pubr() +
-  scale_color_grey() +
-    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
-          legend.position = "top") +
-  # make legend point size larger
-  guides(colour = guide_legend(
-    override.aes = list(size=3)))
-  
-
-  ### Plot inset (past 2300 years)
-all_plot_inset_usc <- all_plot_usc +
-    scale_x_continuous(limits = c(NA, 2300),
-                       labels = scales::comma) +
-  
-    theme(axis.title = element_blank(),
-          plot.background = element_rect(
-            colour = "black",
-            fill = "white",
-            size = 1),
-          legend.position = "none")
-
-#### Export
-ggsave(plot =
-         ### Overlay inset in full figure
-         cowplot::ggdraw() +
-         draw_plot(all_plot_usc) +
-         draw_plot(all_plot_inset_usc,
-                   x = 0.55,
-                   y = 0.3, 
-                   width = 0.4,
-                   height = 0.5),     
-       filename = here::here(exported_filename_urbscore),
-       height = 5,
-       width = 9,
-       dpi = 200)
-}
-```
-
-## Export plots
-### Mu = 1.0e-8 & gen time = 1 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig_1e8,
-                   "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1yr/full_with_inset.png")
-```
-
-### Mu = 1.0e-8 & gen time = 2 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig_1e8_2yrs,
-                   "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_2yr/full_with_inset.png")
-```
-
-
-### Mu = 1.2e-8 & gen time = 1 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig,
-                   "./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_1yr/full_with_inset.png")
-```
-
-#### Export all plots
-```{r}
-export_all_plots(df_distCC = all_dist,
-                 df_urbscore = all_usc,
-                 mu = "1.2e-8",
-                 gen_time = "1yr")
-```
-
-### Mu = 1.2e-8 & gen time = 2 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig_2yrs,
-                   "./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_2yr/full_with_inset.png")
-```
-
-### Mu = 1.8e-8 & gen time = 1 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig_1.8e8,
-                   "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")
-```
-
-#### Export DIST plots WITH conf intervals
-##### Full plot
-```{r}
-dist_CIs <- ggplot(
-    all_dist_1.8e8 %>%
-      dplyr::filter(Group != "Entire population"),
-    aes(x = year))  +
-  
-      # add vertical lines at breakpoints
-      geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-                 color = plasma(9, begin = 0.15, end = 0.9),
-                 width = 50,
-                 linetype = "D3") +
-    
-    # add median Ne and CIs
-     geom_line(aes(color = Group,
-                   y = Ne_median/1000),
-               size = 1,
-               linetype = "solid") +
-  
-    geom_line(aes(color = Group,
-                   y = Ne_97.5./1000),
-               size = 0.5,
-              linetype = "dashed") +
-  
-      geom_line(aes(color = Group,
-                   y = Ne_2.5./1000),
-               size = 0.5,
-               linetype = "dashed") +
-
-    
-    scale_x_continuous(labels = scales::comma,
-                       limits = c(NA, 40000)) +
-    scale_y_continuous(
-      #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-                       labels = scales::comma,
-                       limits = c(0, 
-                                  NA
-                                  )
-                       ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-    xlab("Years ago") +
-    ylab("Median Nₑ (million individuals)") +
-    theme_bw() +
-    labs_pubr() +
-    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-  
-ggsave(plot = dist_CIs,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### inset plot
-```{r}
-dist_CIs_inset <- ggplot(
-  all_dist_1.8e8 %>%
-    dplyr::filter(Group != "Entire population"),
-  aes(x = year))  +
-  
-  # add vertical lines at breakpoints
-  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-             color = plasma(9, begin = 0.15, end = 0.9),
-             width = 50,
-             linetype = "D3") +
-  
-  # add median Ne and CIs
-  geom_line(aes(color = Group,
-                y = Ne_median/1000),
-            size = 1,
-            # color = "black",
-            linetype = "solid") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_97.5./1000),
-            size = 0.5,
-            # color = "black",
-            linetype = "dashed") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_2.5./1000),
-            size = 0.5,
-            #  color = "black",
-            linetype = "dashed") +
-  
-  scale_x_continuous(labels = scales::comma,
-                     limits = c(NA, 2300)) +
-  scale_y_continuous(
-    labels = scales::comma,
-    limits = c(0, 
-               NA
-    )
-  ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-  xlab("Years ago") +
-  ylab("Median Nₑ (million individuals)") +
-  theme_bw() +
-  labs_pubr() +
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-
-ggsave(plot = dist_CIs_inset,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/inset_conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### Full plot WITH inset
-```{r}
-dist_plot_CIs <- dist_CIs +
-  
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
-        legend.position = "top") +
-  # make legend point size larger
-  guides(colour = guide_legend(
-    override.aes = list(size=3)))
-
-
-### Plot inset (past 2300 years)
-dist_plot_CIs_inset <- dist_CIs_inset +
-  
-  theme(axis.title = element_blank(),
-        plot.background = element_rect(
-          colour = "black",
-          fill = "white",
-          size = 1),
-        legend.position = "none")
-
-
-
-#### Export
-ggsave(plot =
-         ### Overlay inset in full figure
-         cowplot::ggdraw() +
-         draw_plot(dist_plot_CIs) +
-         draw_plot(dist_plot_CIs_inset,
-                   x = 0.52,
-                   y = 0.35, 
-                   width = 0.4,
-                   height = 0.45),     
-       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/both_with_inset_CIs.png"),
-       height = 5,
-       width = 9,
-       dpi = 200)
-
-```
-
-
-#### Export URB SCORE plots WITH conf intervals
-##### Full plot
-```{r}
-usc_CIs <- ggplot(
-  all_usc_1.8e8 %>%
-    dplyr::filter(Group != "Entire population"),
-  aes(x = year))  +
-  
-        # add vertical lines at breakpoints
-      geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-                 color = plasma(9, begin = 0.15, end = 0.9),
-                 width = 50,
-                 linetype = "D3") +
-    
-    # add median Ne and CIs
-  geom_line(aes(color = Group,
-                y = Ne_median/1000),
-            size = 1,
-            linetype = "solid") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_97.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_2.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  scale_x_continuous(labels = scales::comma,
-                     limits = c(NA, 40000)) +
-  scale_y_continuous(
-    #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-    labels = scales::comma,
-    limits = c(0, 
-               NA
-    )
-  ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-  xlab("Years ago") +
-  ylab("Median Nₑ (million individuals)") +
-  theme_bw() +
-  labs_pubr() +
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-
-ggsave(plot = usc_CIs,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### inset plot
-```{r}
-usc_CIs_inset <- ggplot(
-  all_usc_1.8e8 %>%
-    dplyr::filter(Group != "Entire population"),
-  aes(x = year))  +
-  
-  # add vertical lines at breakpoints
-  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-             color = plasma(9, begin = 0.15, end = 0.9),
-             width = 50,
-             linetype = "D3") +
-  
-  # add median Ne and CIs
-  geom_line(aes(color = Group,
-                y = Ne_median/1000),
-            size = 1,
-            linetype = "solid") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_97.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_2.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  
-  scale_x_continuous(labels = scales::comma,
-                     limits = c(NA, 2300)) +
-  scale_y_continuous(
-    labels = scales::comma,
-    limits = c(0, 
-               NA
-    )
-  ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-  xlab("Years ago") +
-  ylab("Median Nₑ (million individuals)") +
-  theme_bw() +
-  labs_pubr() +
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-
-ggsave(plot = usc_CIs_inset,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/inset_conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### Full plot WITH inset
-```{r}
-usc_plot_CIs <- usc_CIs +
-  
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
-        legend.position = "top") +
-  # make legend point size larger
-  guides(colour = guide_legend(
-    override.aes = list(size=3)))
-
-
-### Plot inset (past 2300 years)
-usc_plot_CIs_inset <- usc_plot_CIs +
-  
-  theme(axis.title = element_blank(),
-        plot.background = element_rect(
-          colour = "black",
-          fill = "white",
-          size = 1),
-        legend.position = "none")
-
-
-#### Export
-ggsave(plot =
-         ### Overlay inset in full figure
-         cowplot::ggdraw() +
-         draw_plot(usc_plot_CIs) +
-         draw_plot(usc_plot_CIs_inset,
-                   x = 0.52,
-                   y = 0.35, 
-                   width = 0.4,
-                   height = 0.45),     
-       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/both_with_inset_CIs.png"),
-       height = 5,
-       width = 9,
-       dpi = 200)
-
-```
-
-#### Export all plots
-```{r}
-export_all_plots(df_distCC = all_dist_1.8e8,
-                 df_urbscore = all_usc_1.8e8,
-                 mu = "1.8e-8",
-                 gen_time = "1yr")
-```
-
-#### Export main, urb, and rur plots as a composite figure
-```{r}
-main_1.8e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")))
-
-main_1.8e8_CIs_1yr_composite_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/both_with_inset_CIs.png")))
-
-main_1.8e8_CIs_1yr_composite_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/both_with_inset_CIs.png")))
-
-
-main_1.8e8_CIs_1yr_composite_plots <- gridExtra::grid.arrange(main_1.8e8_CIs_1yr_composite,
-                                                        main_1.8e8_CIs_1yr_composite_dist,
-main_1.8e8_CIs_1yr_composite_usc,
-                        layout_matrix = rbind(c(1, 1), c(2, 3)),
-             left = textGrob("A", 
-                            x = unit(12, "npc"), 
-                            y = unit(0.95, "npc"),
-                            gp = gpar(fontsize = 12)),
-             top = textGrob("B", 
-                            x = unit(0, "npc"), 
-                            y = unit(-11.5, "npc"),
-                            gp = gpar(fontsize = 12)),      
-            right = textGrob("C", 
-                            x = unit(-18.5, "npc"), 
-                            y = unit(0.43, "npc"),
-                            gp = gpar(fontsize = 12)))
-
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/main_figs_1yr.png", 
-       plot = main_1.8e8_CIs_1yr_composite_plots,
-       width = 8.6,
-       height = 4.85,
-       units = "in",
-       dpi = 400)
-```
-
-### Mu = 1.8e-8 & gen time = 2 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig_1.8e8_2yr,
-                   "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/full_with_inset.png")
-```
-
-#### Export DIST plots WITH conf intervals
-##### Full plot
-```{r}
-dist_CIs_2yr <- ggplot(
-  all_dist_1.8e8_2yr %>%
-    dplyr::filter(Group != "Entire population"),
-  aes(x = year))  +
-  
-  # add vertical lines at breakpoints
-  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-             #   color = "lightgreen",
-             color = plasma(9, begin = 0.15, end = 0.9),
-             width = 50,
-             linetype = "D3") +
-  
-  # add median Ne and CIs
-  geom_line(aes(color = Group,
-                y = Ne_median/1000),
-            size = 1,
-            linetype = "solid") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_97.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_2.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  
-  scale_x_continuous(labels = scales::comma,
-                     limits = c(NA, 40000)) +
-  scale_y_continuous(
-    #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-    labels = scales::comma,
-    limits = c(0, 
-               NA
-    )
-  ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-  xlab("Years ago") +
-  ylab("Median Nₑ (million individuals)") +
-  theme_bw() +
-  labs_pubr() +
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-
-ggsave(plot = dist_CIs_2yr,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### inset plot
-```{r}
-dist_CIs_inset_2yr <- ggplot(
-  all_dist_1.8e8_2yr %>%
-    dplyr::filter(Group != "Entire population"),
-  aes(x = year))  +
-  
-  # add vertical lines at breakpoints
-  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-             #   color = "lightgreen",
-             color = plasma(9, begin = 0.15, end = 0.9),
-             width = 50,
-             linetype = "D3") +
-  
-  # add median Ne and CIs
-  geom_line(aes(color = Group,
-                y = Ne_median/1000),
-            size = 1,
-            # color = "black",
-            linetype = "solid") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_97.5./1000),
-            size = 0.5,
-            # color = "black",
-            linetype = "dashed") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_2.5./1000),
-            size = 0.5,
-            #  color = "black",
-            linetype = "dashed") +
-  
-  
-  scale_x_continuous(labels = scales::comma,
-                     limits = c(NA, 2300)) +
-  scale_y_continuous(
-    labels = scales::comma,
-    limits = c(0, 
-               NA
-    )
-  ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-  xlab("Years ago") +
-  ylab("Median Nₑ (million individuals)") +
-  theme_bw() +
-  labs_pubr() +
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-
-ggsave(plot = dist_CIs_inset_2yr,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/inset_conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### Full plot WITH inset
-```{r}
-dist_plot_CIs_2yr <- dist_CIs_2yr +
-  
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
-        legend.position = "top") +
-  # make legend point size larger
-  guides(colour = guide_legend(
-    override.aes = list(size=3)))
-
-
-### Plot inset (past 2300 years)
-dist_plot_CIs_inset_2yr <- dist_CIs_inset_2yr +
-  
-  theme(axis.title = element_blank(),
-        plot.background = element_rect(
-          colour = "black",
-          fill = "white",
-          size = 1),
-        legend.position = "none")
-
-
-#### Export
-ggsave(plot =
-         ### Overlay inset in full figure
-         cowplot::ggdraw() +
-         draw_plot(dist_plot_CIs_2yr) +
-         draw_plot(dist_plot_CIs_inset_2yr,
-                   x = 0.6,
-                   y = 0.37, 
-                   width = 0.34,
-                   height = 0.45),     
-       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/both_with_inset_CIs.png"),
-       height = 5,
-       width = 9,
-       dpi = 200)
-```
-
-
-#### Export URB SCORE plots WITH conf intervals
-##### Full plot
-```{r}
-usc_CIs_2yr <- ggplot(
-  all_usc_1.8e8_2yr %>%
-    dplyr::filter(Group != "Entire population"),
-  aes(x = year))  +
-  
-  # add vertical lines at breakpoints
-  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-             #   color = "lightgreen",
-             color = plasma(9, begin = 0.15, end = 0.9),
-             width = 50,
-             linetype = "D3") +
-  
-  # add median Ne and CIs
-  geom_line(aes(color = Group,
-                y = Ne_median/1000),
-            size = 1,
-            linetype = "solid") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_97.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_2.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  scale_x_continuous(labels = scales::comma,
-                     limits = c(NA, 40000)) +
-  scale_y_continuous(
-    #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
-    labels = scales::comma,
-    limits = c(0, 
-               NA
-    )
-  ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-  xlab("Years ago") +
-  ylab("Median Nₑ (million individuals)") +
-  theme_bw() +
-  labs_pubr() +
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-
-ggsave(plot = usc_CIs_2yr,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### inset plot
-```{r}
-usc_CIs_inset_2yr <- ggplot(
-  all_usc_1.8e8_2yr %>%
-    dplyr::filter(Group != "Entire population"),
-  aes(x = year))  +
-  
-  # add vertical lines at breakpoints
-  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
-             #   color = "lightgreen",
-             color = plasma(9, begin = 0.15, end = 0.9),
-             width = 50,
-             linetype = "D3") +
-  
-  # add median Ne and CIs
-  geom_line(aes(color = Group,
-                y = Ne_median/1000),
-            size = 1,
-            linetype = "solid") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_97.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  geom_line(aes(color = Group,
-                y = Ne_2.5./1000),
-            size = 0.5,
-            linetype = "dashed") +
-  
-  scale_x_continuous(labels = scales::comma,
-                     limits = c(NA, 2300)) +
-  scale_y_continuous(
-    labels = scales::comma,
-    limits = c(0, 
-               NA
-    )
-  ) +
-  scale_color_manual(name = "Group", 
-                     labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
-  xlab("Years ago") +
-  ylab("Median Nₑ (million individuals)") +
-  theme_bw() +
-  labs_pubr() +
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
-
-ggsave(plot = usc_CIs_inset_2yr,
-       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/inset_conf_ints.png",
-       width = 17,
-       height = 9,
-       units = "cm")
-```
-
-##### Full plot WITH inset
-```{r}
-usc_plot_CIs_2yr <- usc_CIs_2yr +
-  
-  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
-        legend.position = "top") +
-  # make legend point size larger
-  guides(colour = guide_legend(
-    override.aes = list(size=3)))
-
-
-### Plot inset (past 2300 years)
-usc_plot_CIs_inset_2yr <- usc_CIs_inset_2yr +
-  
-  theme(axis.title = element_blank(),
-        plot.background = element_rect(
-          colour = "black",
-          fill = "white",
-          size = 1),
-        legend.position = "none")
-
-
-
-#### Export
-ggsave(plot =
-         ### Overlay inset in full figure
-         cowplot::ggdraw() +
-         draw_plot(usc_plot_CIs_2yr) +
-         draw_plot(usc_plot_CIs_inset_2yr,
-                   x = 0.6,
-                   y = 0.37, 
-                   width = 0.34,
-                   height = 0.45),    
-       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/both_with_inset_CIs.png"),
-       height = 5,
-       width = 9,
-       dpi = 200)
-
-```
-
-#### Export dist and usc plots as a composite figure
-```{r}
-dist_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/both_with_inset_CIs.png")))
-
-usc_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/both_with_inset_CIs.png")))
-
-
-usc_CIs_2yr_composite_plots <- gridExtra::grid.arrange(dist_CIs_2yr_composite, 
-                        usc_CIs_2yr_composite,
-                        ncol = 1,
-             left = textGrob("A", 
-                            x = unit(1, "npc"), 
-                            y = unit(0.95, "npc"),
-                            gp = gpar(fontsize = 12)),
-             right = textGrob("B", 
-                            x = unit(-26, "npc"), 
-                            y = unit(0.45, "npc"),
-                            gp = gpar(fontsize = 12)))
-
-ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/main_figs_UR.png", 
-       plot = usc_CIs_2yr_composite_plots,
-       width = 6,
-       height = 6.7,
-       units = "in",
-       dpi = 400)
-```
-
-### Mu = 2.6e-8 & gen time = 1 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig_2.6e8,
-                   "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1yr/full_with_inset.png")
-```
-
-### Mu = 2.6e-8 & gen time = 2 yr
-#### Export main plot
-```{r}
-make_ne_plot_reg_y(full_fig_2.6e8_2yrs,
-                   "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_2yr/full_with_inset.png")
-```
-
-### Export 1yr, variable mutation rate plots as a composite figure
-```{r}
-mut1e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1yr/full_with_inset.png")))
-
-mut1.2e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_1yr/full_with_inset.png")))
-
-mut1.8e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")))
-
-mut2.6e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1yr/full_with_inset.png")))
-
-
-var_mut_CIs_1yr_composite_plots <- gridExtra::grid.arrange(mut1e8_CIs_1yr_composite, 
-                        mut1.2e8_CIs_1yr_composite,
-                        mut1.8e8_CIs_1yr_composite,
-                        mut2.6e8_CIs_1yr_composite,
-                        ncol = 2,
-             left = textGrob("A", 
-                            x = unit(1, "npc"), 
-                            y = unit(0.95, "npc"),
-                            gp = gpar(fontsize = 12)),
-             right = textGrob("B", 
-                            x = unit(-16, "npc"), 
-                            y = unit(0.95, "npc"),
-                            gp = gpar(fontsize = 12)),
-             top = textGrob("C", 
-                            x = unit(0, "npc"), 
-                            y = unit(-12, "npc"),
-                            gp = gpar(fontsize = 12)),
-             bottom = textGrob("D", 
-                            x = unit(0.51, "npc"), 
-                            y = unit(12.4, "npc"),
-                            gp = gpar(fontsize = 12)))
-
-ggsave("./Figures_Tables/Stairway_plot/main_figs_1yr_var_mut.png", 
-       plot = var_mut_CIs_1yr_composite_plots,
-       width = 8*0.9,
-       height = 6.2*0.9,
-       units = "in",
-       dpi = 400)
-```
-
-### Export 2yr, variable mutation rate plots as a composite figure
-```{r}
-mut1e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_2yr/full_with_inset.png")))
-
-mut1.2e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_2yr/full_with_inset.png")))
-
-mut1.8e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/full_with_inset.png")))
-
-mut2.6e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_2yr/full_with_inset.png")))
-
-
-var_mut_CIs_2yr_composite_plots <- gridExtra::grid.arrange(mut1e8_CIs_2yr_composite, 
-                        mut1.2e8_CIs_2yr_composite,
-                        mut1.8e8_CIs_2yr_composite,
-                        mut2.6e8_CIs_2yr_composite,
-                        ncol = 2,
-             left = textGrob("A", 
-                            x = unit(1, "npc"), 
-                            y = unit(0.95, "npc"),
-                            gp = gpar(fontsize = 12)),
-             right = textGrob("B", 
-                            x = unit(-16, "npc"), 
-                            y = unit(0.95, "npc"),
-                            gp = gpar(fontsize = 12)),
-             top = textGrob("C", 
-                            x = unit(0, "npc"), 
-                            y = unit(-12, "npc"),
-                            gp = gpar(fontsize = 12)),
-             bottom = textGrob("D", 
-                            x = unit(0.51, "npc"), 
-                            y = unit(12.4, "npc"),
-                            gp = gpar(fontsize = 12)))
-
-ggsave("./Figures_Tables/Stairway_plot/main_figs_2yr_var_mut.png", 
-       plot = var_mut_CIs_2yr_composite_plots,
-       width = 8*0.9,
-       height = 6.2*0.9,
-       units = "in",
-       dpi = 400)
-```
-
-# Calculate Ne stats
-## mu = 1.8 x 10^-8, gen time = 1 yr
-```{r}
-Ne_stats(full_fig_1.8e8)
-Ne_stats(urb_fig_1.8e8)
-#Ne_stats(urb_fig2_1.8e8)
-Ne_stats(rur_fig_1.8e8)
-#Ne_stats(rur_fig2_1.8e8)
-
-Ne_stats_CI(full_fig_1.8e8)
-Ne_stats_CI(urb_fig_1.8e8)
-Ne_stats_CI(rur_fig_1.8e8)
-
-```
-
-## mu = 1.8 x 10^-8, gen time = 2 yr
-```{r}
-Ne_stats(full_fig_1.8e8_2yr)
-Ne_stats(urb_fig_1.8e8_2yr)
-#Ne_stats(urb_fig2_1.8e8_2yr)
-Ne_stats(rur_fig_1.8e8_2yr)
-#Ne_stats(rur_fig2_1.8e8_2yr)
-
-Ne_stats_CI(full_fig_1.8e8_2yr)
-Ne_stats_CI(urb_fig_1.8e8_2yr)
-Ne_stats_CI(rur_fig_1.8e8_2yr)
-
-```
-
 # Create table with Helene's breakpoint analysis
+Adding this here because this requires data to be imported first, and the following plots need this breakpoint table to be created first.
 ## Create original output table
 ```{r}
 ##        year.l year.u rate.est rate.CI.95.l rate.CI.95.u
@@ -1613,5 +518,853 @@ breakpoint_table %>%
                    width = 2.15,
                    unit = "in") %>%
   flextable::save_as_docx(path = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/breakpoint_table.docx"))
+
+```
+
+# Create figures
+## Export plots
+### Mu = 1.0e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig_1e8,
+                   "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1yr/full_with_inset.png")
+```
+
+### Mu = 1.0e-8 & gen time = 2 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig_1e8_2yrs,
+                   "./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_2yr/full_with_inset.png")
+```
+
+
+### Mu = 1.2e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig,
+                   "./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_1yr/full_with_inset.png")
+```
+
+#### Export all plots
+```{r}
+export_all_plots(df_distCC = all_dist,
+                 df_urbscore = all_usc,
+                 mu = "1.2e-8",
+                 gen_time = "1yr")
+```
+
+### Mu = 1.2e-8 & gen time = 2 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig_2yrs,
+                   "./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_2yr/full_with_inset.png")
+```
+
+### Mu = 1.8e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig_1.8e8,
+                   "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")
+```
+
+#### Export DIST plots WITH conf intervals
+##### Full plot
+```{r}
+dist_CIs <- ggplot(
+    all_dist_1.8e8 %>%
+      dplyr::filter(Group != "Entire population"),
+    aes(x = year))  +
+  
+      # add vertical lines at breakpoints
+      geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+                 color = plasma(9, begin = 0.15, end = 0.9),
+                 linetype = "D3") +
+    
+    # add median Ne and CIs
+     geom_line(aes(color = Group,
+                   y = Ne_median/1000),
+               linewidth = 1,
+               linetype = "solid") +
+  
+    geom_line(aes(color = Group,
+                   y = Ne_97.5./1000),
+               linewidth = 0.5,
+              linetype = "dashed") +
+  
+      geom_line(aes(color = Group,
+                   y = Ne_2.5./1000),
+               linewidth = 0.5,
+               linetype = "dashed") +
+
+    
+    scale_x_continuous(labels = scales::comma,
+                       limits = c(NA, 40000)) +
+    scale_y_continuous(
+      #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+                       labels = scales::comma,
+                       limits = c(0, 
+                                  NA
+                                  )
+                       ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+    xlab("Years ago") +
+    ylab("Median Nₑ (million individuals)") +
+    theme_bw() +
+    labs_pubr() +
+    theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+  
+ggsave(plot = dist_CIs,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### inset plot
+```{r}
+dist_CIs_inset <- ggplot(
+  all_dist_1.8e8 %>%
+    dplyr::filter(Group != "Entire population"),
+  aes(x = year))  +
+  
+  # add vertical lines at breakpoints
+  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+             color = plasma(9, begin = 0.15, end = 0.9),
+             linetype = "D3") +
+  
+  # add median Ne and CIs
+  geom_line(aes(color = Group,
+                y = Ne_median/1000),
+            linewidth = 1,
+            # color = "black",
+            linetype = "solid") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_97.5./1000),
+            linewidth = 0.5,
+            # color = "black",
+            linetype = "dashed") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_2.5./1000),
+            linewidth = 0.5,
+            #  color = "black",
+            linetype = "dashed") +
+  
+  scale_x_continuous(labels = scales::comma,
+                     limits = c(NA, 2300)) +
+  scale_y_continuous(
+    labels = scales::comma,
+    limits = c(0, 
+               NA
+    )
+  ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+  xlab("Years ago") +
+  ylab("Median Nₑ (million individuals)") +
+  theme_bw() +
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+
+ggsave(plot = dist_CIs_inset,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/inset_conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### Full plot WITH inset
+```{r}
+dist_plot_CIs <- dist_CIs +
+  
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+        legend.position = "top") +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+
+
+### Plot inset (past 2300 years)
+dist_plot_CIs_inset <- dist_CIs_inset +
+  
+  theme(axis.title = element_blank(),
+        plot.background = element_rect(
+          colour = "black",
+          fill = "white",
+          size = 1),
+        legend.position = "none")
+
+
+
+#### Export
+ggsave(plot =
+         ### Overlay inset in full figure
+         cowplot::ggdraw() +
+         draw_plot(dist_plot_CIs) +
+         draw_plot(dist_plot_CIs_inset,
+                   x = 0.52,
+                   y = 0.35, 
+                   width = 0.4,
+                   height = 0.45),     
+       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/both_with_inset_CIs.png"),
+       height = 5,
+       width = 9,
+       dpi = 200)
+
+```
+
+#### Export URB SCORE plots WITH conf intervals
+##### Full plot
+```{r}
+usc_CIs <- ggplot(
+  all_usc_1.8e8 %>%
+    dplyr::filter(Group != "Entire population"),
+  aes(x = year))  +
+  
+        # add vertical lines at breakpoints
+      geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+                 color = plasma(9, begin = 0.15, end = 0.9),
+                 linetype = "D3") +
+    
+    # add median Ne and CIs
+  geom_line(aes(color = Group,
+                y = Ne_median/1000),
+            linewidth = 1,
+            linetype = "solid") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_97.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_2.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  scale_x_continuous(labels = scales::comma,
+                     limits = c(NA, 40000)) +
+  scale_y_continuous(
+    #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+    labels = scales::comma,
+    limits = c(0, 
+               NA
+    )
+  ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+  xlab("Years ago") +
+  ylab("Median Nₑ (million individuals)") +
+  theme_bw() +
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+
+ggsave(plot = usc_CIs,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### inset plot
+```{r}
+usc_CIs_inset <- ggplot(
+  all_usc_1.8e8 %>%
+    dplyr::filter(Group != "Entire population"),
+  aes(x = year))  +
+  
+  # add vertical lines at breakpoints
+  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+             color = plasma(9, begin = 0.15, end = 0.9),
+             
+             linetype = "D3") +
+  
+  # add median Ne and CIs
+  geom_line(aes(color = Group,
+                y = Ne_median/1000),
+            linewidth = 1,
+            linetype = "solid") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_97.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_2.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  
+  scale_x_continuous(labels = scales::comma,
+                     limits = c(NA, 2300)) +
+  scale_y_continuous(
+    labels = scales::comma,
+    limits = c(0, 
+               NA
+    )
+  ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+  xlab("Years ago") +
+  ylab("Median Nₑ (million individuals)") +
+  theme_bw() +
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+
+ggsave(plot = usc_CIs_inset,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/inset_conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### Full plot WITH inset
+```{r}
+usc_plot_CIs <- usc_CIs +
+  
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+        legend.position = "top") +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+
+
+### Plot inset (past 2300 years)
+usc_plot_CIs_inset <- usc_CIs_inset +
+  
+  theme(axis.title = element_blank(),
+        plot.background = element_rect(
+          colour = "black",
+          fill = "white",
+          size = 1),
+        legend.position = "none")
+
+
+#### Export
+ggsave(plot =
+         ### Overlay inset in full figure
+         cowplot::ggdraw() +
+         draw_plot(usc_plot_CIs) +
+         draw_plot(usc_plot_CIs_inset,
+                   x = 0.52,
+                   y = 0.35, 
+                   width = 0.4,
+                   height = 0.45),     
+       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/both_with_inset_CIs.png"),
+       height = 5,
+       width = 9,
+       dpi = 200)
+
+```
+
+#### Export all plots
+```{r}
+export_all_plots(df_distCC = all_dist_1.8e8,
+                 df_urbscore = all_usc_1.8e8,
+                 mu = "1.8e-8",
+                 gen_time = "1yr")
+```
+
+#### Export main, urb, and rur plots as a composite figure
+```{r}
+main_1.8e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")))
+
+main_1.8e8_CIs_1yr_composite_dist <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/distance/both_with_inset_CIs.png")))
+
+main_1.8e8_CIs_1yr_composite_usc <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/urb_score/both_with_inset_CIs.png")))
+
+
+main_1.8e8_CIs_1yr_composite_plots <- gridExtra::grid.arrange(main_1.8e8_CIs_1yr_composite,
+                                                        main_1.8e8_CIs_1yr_composite_dist,
+main_1.8e8_CIs_1yr_composite_usc,
+                        layout_matrix = rbind(c(1, 1), c(2, 3)),
+             left = textGrob("A", 
+                            x = unit(12, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("B", 
+                            x = unit(0, "npc"), 
+                            y = unit(-11.5, "npc"),
+                            gp = gpar(fontsize = 12)),      
+            right = textGrob("C", 
+                            x = unit(-18.5, "npc"), 
+                            y = unit(0.43, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/main_figs_1yr.png", 
+       plot = main_1.8e8_CIs_1yr_composite_plots,
+       width = 8.6,
+       height = 4.85,
+       units = "in",
+       dpi = 400)
+```
+
+### Mu = 1.8e-8 & gen time = 2 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig_1.8e8_2yr,
+                   "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/full_with_inset.png")
+```
+
+#### Export DIST plots WITH conf intervals
+##### Full plot
+```{r}
+dist_CIs_2yr <- ggplot(
+  all_dist_1.8e8_2yr %>%
+    dplyr::filter(Group != "Entire population"),
+  aes(x = year))  +
+  
+  # add vertical lines at breakpoints
+  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+             #   color = "lightgreen",
+             color = plasma(9, begin = 0.15, end = 0.9),
+             
+             linetype = "D3") +
+  
+  # add median Ne and CIs
+  geom_line(aes(color = Group,
+                y = Ne_median/1000),
+            linewidth = 1,
+            linetype = "solid") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_97.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_2.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  
+  scale_x_continuous(labels = scales::comma,
+                     limits = c(NA, 40000)) +
+  scale_y_continuous(
+    #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+    labels = scales::comma,
+    limits = c(0, 
+               NA
+    )
+  ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+  xlab("Years ago") +
+  ylab("Median Nₑ (million individuals)") +
+  theme_bw() +
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+
+ggsave(plot = dist_CIs_2yr,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### inset plot
+```{r}
+dist_CIs_inset_2yr <- ggplot(
+  all_dist_1.8e8_2yr %>%
+    dplyr::filter(Group != "Entire population"),
+  aes(x = year))  +
+  
+  # add vertical lines at breakpoints
+  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+             #   color = "lightgreen",
+             color = plasma(9, begin = 0.15, end = 0.9),
+             
+             linetype = "D3") +
+  
+  # add median Ne and CIs
+  geom_line(aes(color = Group,
+                y = Ne_median/1000),
+            linewidth = 1,
+            # color = "black",
+            linetype = "solid") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_97.5./1000),
+            linewidth = 0.5,
+            # color = "black",
+            linetype = "dashed") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_2.5./1000),
+            linewidth = 0.5,
+            #  color = "black",
+            linetype = "dashed") +
+  
+  
+  scale_x_continuous(labels = scales::comma,
+                     limits = c(NA, 2300)) +
+  scale_y_continuous(
+    labels = scales::comma,
+    limits = c(0, 
+               NA
+    )
+  ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+  xlab("Years ago") +
+  ylab("Median Nₑ (million individuals)") +
+  theme_bw() +
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+
+ggsave(plot = dist_CIs_inset_2yr,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/inset_conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### Full plot WITH inset
+```{r}
+dist_plot_CIs_2yr <- dist_CIs_2yr +
+  
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+        legend.position = "top") +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+
+
+### Plot inset (past 2300 years)
+dist_plot_CIs_inset_2yr <- dist_CIs_inset_2yr +
+  
+  theme(axis.title = element_blank(),
+        plot.background = element_rect(
+          colour = "black",
+          fill = "white",
+          size = 1),
+        legend.position = "none")
+
+
+#### Export
+ggsave(plot =
+         ### Overlay inset in full figure
+         cowplot::ggdraw() +
+         draw_plot(dist_plot_CIs_2yr) +
+         draw_plot(dist_plot_CIs_inset_2yr,
+                   x = 0.6,
+                   y = 0.37, 
+                   width = 0.34,
+                   height = 0.45),     
+       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/both_with_inset_CIs.png"),
+       height = 5,
+       width = 9,
+       dpi = 200)
+```
+
+
+#### Export URB SCORE plots WITH conf intervals
+##### Full plot
+```{r}
+usc_CIs_2yr <- ggplot(
+  all_usc_1.8e8_2yr %>%
+    dplyr::filter(Group != "Entire population"),
+  aes(x = year))  +
+  
+  # add vertical lines at breakpoints
+  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+             #   color = "lightgreen",
+             color = plasma(9, begin = 0.15, end = 0.9),
+             
+             linetype = "D3") +
+  
+  # add median Ne and CIs
+  geom_line(aes(color = Group,
+                y = Ne_median/1000),
+            linewidth = 1,
+            linetype = "solid") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_97.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_2.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  scale_x_continuous(labels = scales::comma,
+                     limits = c(NA, 40000)) +
+  scale_y_continuous(
+    #breaks=c(0, 25000, 50000, 75000, 100000, 125000, 150000),
+    labels = scales::comma,
+    limits = c(0, 
+               NA
+    )
+  ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+  xlab("Years ago") +
+  ylab("Median Nₑ (million individuals)") +
+  theme_bw() +
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+
+ggsave(plot = usc_CIs_2yr,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### inset plot
+```{r}
+usc_CIs_inset_2yr <- ggplot(
+  all_usc_1.8e8_2yr %>%
+    dplyr::filter(Group != "Entire population"),
+  aes(x = year))  +
+  
+  # add vertical lines at breakpoints
+  geom_vline(xintercept = as.vector(as.numeric(breakpoint_table$`Years ago`)),
+             #   color = "lightgreen",
+             color = plasma(9, begin = 0.15, end = 0.9),
+             
+             linetype = "D3") +
+  
+  # add median Ne and CIs
+  geom_line(aes(color = Group,
+                y = Ne_median/1000),
+            linewidth = 1,
+            linetype = "solid") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_97.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  geom_line(aes(color = Group,
+                y = Ne_2.5./1000),
+            linewidth = 0.5,
+            linetype = "dashed") +
+  
+  scale_x_continuous(labels = scales::comma,
+                     limits = c(NA, 2300)) +
+  scale_y_continuous(
+    labels = scales::comma,
+    limits = c(0, 
+               NA
+    )
+  ) +
+  scale_color_manual(name = "Group", 
+                     labels=c('Rural', 'Urban'),
+                     values=c('grey', 'black')) +
+  xlab("Years ago") +
+  ylab("Median Nₑ (million individuals)") +
+  theme_bw() +
+  labs_pubr() +
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"))
+
+ggsave(plot = usc_CIs_inset_2yr,
+       filename = "./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/inset_conf_ints.png",
+       width = 17,
+       height = 9,
+       units = "cm")
+```
+
+##### Full plot WITH inset
+```{r}
+usc_plot_CIs_2yr <- usc_CIs_2yr +
+  
+  theme(plot.margin = unit(c(0.5,1,0.5,0.5), "cm"),
+        legend.position = "top") +
+  # make legend point size larger
+  guides(colour = guide_legend(
+    override.aes = list(size=3)))
+
+
+### Plot inset (past 2300 years)
+usc_plot_CIs_inset_2yr <- usc_CIs_inset_2yr +
+  
+  theme(axis.title = element_blank(),
+        plot.background = element_rect(
+          colour = "black",
+          fill = "white",
+          size = 1),
+        legend.position = "none")
+
+
+
+#### Export
+ggsave(plot =
+         ### Overlay inset in full figure
+         cowplot::ggdraw() +
+         draw_plot(usc_plot_CIs_2yr) +
+         draw_plot(usc_plot_CIs_inset_2yr,
+                   x = 0.6,
+                   y = 0.37, 
+                   width = 0.34,
+                   height = 0.45),    
+       filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/both_with_inset_CIs.png"),
+       height = 5,
+       width = 9,
+       dpi = 200)
+
+```
+
+#### Export dist and usc plots as a composite figure
+```{r}
+dist_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/distance/both_with_inset_CIs.png")))
+
+usc_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/urb_score/both_with_inset_CIs.png")))
+
+
+usc_CIs_2yr_composite_plots <- gridExtra::grid.arrange(dist_CIs_2yr_composite, 
+                        usc_CIs_2yr_composite,
+                        ncol = 1,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-26, "npc"), 
+                            y = unit(0.45, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/main_figs_UR.png", 
+       plot = usc_CIs_2yr_composite_plots,
+       width = 6,
+       height = 6.7,
+       units = "in",
+       dpi = 400)
+```
+
+### Mu = 2.6e-8 & gen time = 1 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig_2.6e8,
+                   "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1yr/full_with_inset.png")
+```
+
+### Mu = 2.6e-8 & gen time = 2 yr
+#### Export main plot
+```{r}
+make_ne_plot(full_fig_2.6e8_2yrs,
+                   "./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_2yr/full_with_inset.png")
+```
+
+### Export 1yr, variable mutation rate plots as a composite figure
+```{r}
+mut1e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_1yr/full_with_inset.png")))
+
+mut1.2e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_1yr/full_with_inset.png")))
+
+mut1.8e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_1yr/full_with_inset.png")))
+
+mut2.6e8_CIs_1yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_1yr/full_with_inset.png")))
+
+
+var_mut_CIs_1yr_composite_plots <- gridExtra::grid.arrange(mut1e8_CIs_1yr_composite, 
+                        mut1.2e8_CIs_1yr_composite,
+                        mut1.8e8_CIs_1yr_composite,
+                        mut2.6e8_CIs_1yr_composite,
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-16, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("C", 
+                            x = unit(0, "npc"), 
+                            y = unit(-12, "npc"),
+                            gp = gpar(fontsize = 12)),
+             bottom = textGrob("D", 
+                            x = unit(0.51, "npc"), 
+                            y = unit(12.4, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/main_figs_1yr_var_mut.png", 
+       plot = var_mut_CIs_1yr_composite_plots,
+       width = 8*0.9,
+       height = 6.2*0.9,
+       units = "in",
+       dpi = 400)
+```
+
+### Export 2yr, variable mutation rate plots as a composite figure
+```{r}
+mut1e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1e-8/gen_time_2yr/full_with_inset.png")))
+
+mut1.2e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.2e-8/gen_time_2yr/full_with_inset.png")))
+
+mut1.8e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/full_with_inset.png")))
+
+mut2.6e8_CIs_2yr_composite <- rasterGrob(readPNG(here::here("./Figures_Tables/Stairway_plot/mu_2.6e-8/gen_time_2yr/full_with_inset.png")))
+
+
+var_mut_CIs_2yr_composite_plots <- gridExtra::grid.arrange(mut1e8_CIs_2yr_composite, 
+                        mut1.2e8_CIs_2yr_composite,
+                        mut1.8e8_CIs_2yr_composite,
+                        mut2.6e8_CIs_2yr_composite,
+                        ncol = 2,
+             left = textGrob("A", 
+                            x = unit(1, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             right = textGrob("B", 
+                            x = unit(-16, "npc"), 
+                            y = unit(0.95, "npc"),
+                            gp = gpar(fontsize = 12)),
+             top = textGrob("C", 
+                            x = unit(0, "npc"), 
+                            y = unit(-12, "npc"),
+                            gp = gpar(fontsize = 12)),
+             bottom = textGrob("D", 
+                            x = unit(0.51, "npc"), 
+                            y = unit(12.4, "npc"),
+                            gp = gpar(fontsize = 12)))
+
+ggsave("./Figures_Tables/Stairway_plot/main_figs_2yr_var_mut.png", 
+       plot = var_mut_CIs_2yr_composite_plots,
+       width = 8*0.9,
+       height = 6.2*0.9,
+       units = "in",
+       dpi = 400)
+```
+
+# Calculate Ne stats
+## mu = 1.8 x 10^-8, gen time = 1 yr
+```{r}
+Ne_stats(full_fig_1.8e8)
+Ne_stats(urb_fig_1.8e8)
+#Ne_stats(urb_fig2_1.8e8)
+Ne_stats(rur_fig_1.8e8)
+#Ne_stats(rur_fig2_1.8e8)
+
+Ne_stats_CI(full_fig_1.8e8)
+Ne_stats_CI(urb_fig_1.8e8)
+Ne_stats_CI(rur_fig_1.8e8)
+
+```
+
+## mu = 1.8 x 10^-8, gen time = 2 yr
+```{r}
+Ne_stats(full_fig_1.8e8_2yr)
+Ne_stats(urb_fig_1.8e8_2yr)
+#Ne_stats(urb_fig2_1.8e8_2yr)
+Ne_stats(rur_fig_1.8e8_2yr)
+#Ne_stats(rur_fig2_1.8e8_2yr)
+
+Ne_stats_CI(full_fig_1.8e8_2yr)
+Ne_stats_CI(urb_fig_1.8e8_2yr)
+Ne_stats_CI(rur_fig_1.8e8_2yr)
 
 ```
