@@ -576,15 +576,15 @@ Ne_stats <- function(Ne_df){
   print(paste0("Years of max Ne: ", max_ne_years))
   
   
-  # find median Ne around 750 years ago
-  median_ne_750YA <- Ne_df %>%
-    dplyr::filter(year > 750 & year < 751) %>%
+  # find median Ne around 793 years ago (a breakpoint)
+  median_ne_793YA <- Ne_df %>%
+    dplyr::filter(year > 793 & year < 794) %>%
     dplyr::select(Ne_median) %>%
     dplyr::mutate(Ne_median = round(Ne_median, 0)) %>%
     slice(1) %>%
     as.numeric()
   
-  print(paste0("Median Ne ~750 years ago: ", median_ne_750YA*1000))
+  print(paste0("Median Ne ~793 years ago: ", median_ne_793YA*1000))
   
   min_year <- min(Ne_df$year)  
   
@@ -600,7 +600,7 @@ Ne_stats <- function(Ne_df){
   
   
   # find % decrease from max to min
-  perc_decrease <- round(((most_recent_ne-median_ne_750YA)/median_ne_750YA ) * 100, 3)
+  perc_decrease <- round(((most_recent_ne-median_ne_793YA)/median_ne_793YA ) * 100, 3)
   
   print(paste0("% decrease in Ne: ", perc_decrease))
 }
