@@ -18,6 +18,10 @@
 
 `pops_MORE_THAN_1indiv_per_pop_mmaf0.05_variant_sites`...: See first file's description to understand main filtering parameters for these files. The main difference is that, for these files, only sampling sites with at least 1 individual present were included in the analysis.
 
+`1indiv_per_pop_mmaf0.05_variant_sites_RURAL_usc`...: See first file's description. The only difference is that this vcf only used rural sampling sites (based on urbanization score).
+
+`1indiv_per_pop_mmaf0.05_variant_sites_URBAN_usc`...: See first file's description. The only difference is that this vcf only used urban sampling sites (based on urbanization score).
+
 `rural_pops_dist_mmaf0.05_variant_sites`...: See first file's description to understand main filtering parameters for these files. Here, the filtering only kept sampling sites that were considered rural based on distance to the city center.
 
 `rural_pops_usc_mmaf0.05_variant_sites`...: See previous file's description to understand main filtering parameters for these files. Here, the filtering only kept sampling sites that were considered rural based on Urbanization Score.

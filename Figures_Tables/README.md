@@ -22,13 +22,9 @@ This folder contains figures and tables from the Mantel correlogram analysis.
 
 This folder contains figures from the DAPC analysis.
 
-### fis
-
-This folder contains a table with mean FIS values for urban and rural groups.
-
 ### fst
 
-This folder contains tables showing hierarchical F-statistics generated with `hierfstat` and manually.
+This folder contains tables showing hierarchical F-statistics generated with `hierfstat`, Hudson's fst, and manually.
 
 ### gen_diversity
 
@@ -36,7 +32,7 @@ This folder contains a table showing Watterson's theta and pi values for differe
 
 ### memgene
 
-This folder contains figures and tables generated with `MEMGENE`. "all_indiv" shows results for the entire dataset (all individuals were included) and "subsamp_rural" shows results when only 1 individual for every rural sampling site (based on distance to the city center) was used as the input dataset. The other datasets evaluated showed no significant MEMs (i.e., no spatial genetic structure was detected).
+This folder contains figures and tables generated with `MEMGENE`. "all_indiv" shows results for the entire dataset (all individuals were included); "rural_subsamp" shows results when only 1 individual for every rural sampling site (based on distance to the city center) was used as the input dataset; "rural_subsamp" shows results when only 1 individual for every rural sampling site (based on urbanization score) was used as the input dataset.
 
 ### pca
 
@@ -64,7 +60,7 @@ This folder contains figures showing how many individuals were sampled at each s
 
 ### Stairway_plot
 
-This folder contains demographic modelling plots for various mutation rates, as well as historical human population trends for Toronto, Ontario, and Canada, to contextualize the former plots.
+This folder contains demographic modelling plots for various mutation rates and generation times, plus breakpoint analysis for the main model.
 
 ### tajimas_d
 

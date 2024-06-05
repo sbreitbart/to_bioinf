@@ -1,4 +1,4 @@
-# Subdirectory: raw_data
+# Subdirectory: clean_data
 
 ## Folder description
 
@@ -6,9 +6,6 @@
 
 This folder contains vcfs that were originally created with the Stacks `populations` script and later filtered to keep only specific individuals.
 
-### human_pop_data
-
-This folder contains cleaned historical human population data for Toronto, Ontario, and Canada. Plotted in the "plot_human_population.Rmd" script.
 
 ### pop_maps
 

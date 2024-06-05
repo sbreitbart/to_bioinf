@@ -441,7 +441,7 @@ breakpoint_table <- data.frame(
   "Historical_Interpretation" = as.character(c("Conservation groups (e.g., Suzuki Foundation) encourage Toronto residents to plant milkweed",
                                                "\"",
                                                "Urban expansion in Toronto",
-                                               "Colonization and settlement by Europeans; rural expansion",
+                                               "Colonization and settlement by Europeans; urban and rural expansion",
                                                "European diseases decimate Indigenous populations",
                                                "Indigenous agriculture grows",
                                                "Indigenous populations present",
@@ -481,6 +481,8 @@ breakpoint_table %<>%
                      dplyr::select(-year),
                    by = "Start") %>%
   dplyr::rename(Start_median_Ne = Ne_median) %>%
+  # multiply Start_median_Ne x 1000 because Ne is in multiples of 1000
+  dplyr::mutate(Start_median_Ne = Start_median_Ne * 1000) %>%
   dplyr::mutate(years_from_2019 = 2019 - Start) %>%
   dplyr::select(years_from_2019, Start, Start_median_Ne, End:Historical_Interpretation) %>%
   dplyr::mutate(Start = as.factor(Start),
