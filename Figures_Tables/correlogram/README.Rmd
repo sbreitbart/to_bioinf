@@ -1,0 +1,16 @@
+# Subdirectory: correlogram
+
+## Folder description
+
+### all
+
+This folder contains correlograms created with all sampling sites.
+
+### distance
+
+This folder contains correlograms created based on only urban or rural sampling sites, when urbanization was based on distance to the city center.
+
+### urb_score
+
+This folder contains correlograms created based on only urban or rural sampling sites, when urbanization was based on urbanization score.
+

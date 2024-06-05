@@ -497,7 +497,7 @@ dapc_plots <- gridExtra::grid.arrange(var_exp,
                           #  just = "left", 
                             gp = gpar(fontsize = 12)))
 
-ggsave("./Figures_Tables/dapc/dapc_both.png", 
+ggsave("./Figures_Tables/dapc/dapc_both_k1.png", 
        plot = dapc_plots,
        width = 7, height = 2.5,
        units = "in",
