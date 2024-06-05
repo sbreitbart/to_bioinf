@@ -11,10 +11,6 @@ This folder contains vcfs that were originally created with the Stacks `populati
 
 This folder contains population maps ("pop maps") used in Stacks `populations` scripts to filter out specific individuals/sampling sites based on, for example, urban/rural designation.
 
-### radish
-
-This folder contains intermediate files generated during `radish` analysis ("radish.Rmd").
-
 ### sfs
 
 This folder contains site frequency spectrum data used for demographic modelling with Stairway Plot. Created in the "StairwayPlot.Rmd" script.

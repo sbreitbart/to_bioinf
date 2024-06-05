@@ -42,10 +42,6 @@ This folder contains figures and tables of the PCA results.
 
 This folder contains figures and tables of the permanova and permdisp analyses.
 
-### radish
-
-This folder contains figures and tables of `radish` analyses.
-
 ### regressions
 
 This folder contains figures and tables showing regressions and ANOVA showing how different population genetic parameters vary with urbanization.
