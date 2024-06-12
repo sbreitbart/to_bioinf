@@ -1,0 +1,6 @@
+# Variant positions
+# Pop ID	Private	Num_Indv	Var	StdErr	P	Var	StdErr	Obs_Het	Var	StdErr	Obs_Hom	Var	StdErr	Exp_Het	Var	StdErr	Exp_Hom	Var	StdErr	Pi	Var	StdErr	Fis	Var	StdErr
+defaultpop	0	201.40282	1989.34085	0.83768	0.92843	0.01028	0.00190	0.07908	0.01280	0.00212	0.92092	0.01280	0.00212	0.11234	0.01663	0.00242	0.88766	0.01663	0.00242	0.11263	0.01671	0.00243	0.32188	0.11726	0.83768
+# All positions (variant and fixed)
+# Pop ID	Private	Sites	Variant_Sites	Polymorphic_Sites	%Polymorphic_Loci	Num_Indv	Var	StdErr	P	Var	StdErr	Obs_Het	Var	StdErr	Obs_Hom	Var	StdErr	Exp_Het	Var	StdErr	Exp_Hom	Var	StdErr	Pi	Var	StdErr	Fis	Var	StdErr
+defaultpop	0	352769	2835	2835	0.80364	218.91442	1664.32560	0.06869	0.99942	0.00012	0.00002	0.00064	0.00015	0.00002	0.99936	0.00015	0.00002	0.00090	0.00023	0.00003	0.99910	0.00023	0.00003	0.00091	0.00024	0.00003	0.00259	0.00177	0.06869
