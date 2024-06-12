@@ -1,0 +1,254 @@
+populations v2.62, executed 2023-06-15 22:34:32 (zlib-1.2.11)
+populations -P output_refmap_no-IBD -O U_dist_fst_vcf-all --popmap pop_map3_U_dist.txt --vcf-all -t 8 -R 0.75 -r 0.2 --min-maf 0.05 --write-single-snp --plink
+Locus/sample distributions will be written to 'U_dist_fst_vcf-all/populations.log.distribs'.
+populations parameters selected:
+  Percent samples limit per population: 0.2
+  Locus Population limit: 1
+  Percent samples overall: 0.75
+  Minor allele frequency cutoff: 0.05
+  Maximum observed heterozygosity cutoff: 1
+  Applying Fst correction: none.
+  Pi/Fis kernel smoothing: off
+  F-stats kernel smoothing: off
+  Bootstrap resampling: off
+
+Parsing population map...
+The population map contained 150 samples, 62 population(s), 1 group(s).
+Working on 150 samples.
+Working on 62 population(s):
+    MW067: 1.2_1A10_sorted, 1.2_1G8_sorted, 1.2_1H7_sorted, 1.2_2H4_sorted
+    MW079: 1.2_1A11_sorted, 1.2_1D11_sorted, 1.2_1E2_sorted, 1.2_2F1_sorted, 1.2_2G9_sorted
+    MW040: 1.2_1A1_sorted, 1.2_1H3_sorted, 1.2_2B9_sorted, 1.2_2G7_sorted
+    MW002: 1.2_1A3_sorted, 1.2_1G5_sorted, 1.2_2C3_sorted, 1.2_2F9_sorted, 3A_G2_sorted
+    MW012: 1.2_1A4_sorted, 1.2_1C8_sorted, 1.2_1F2_sorted, 1.2_1H5_sorted, 1.2_2C2_sorted
+    MW013: 1.2_1A5_sorted, 1.2_1B11_sorted, 1.2_2D7_sorted
+    MW030: 1.2_1A8_sorted, 1.2_1B3_sorted, 1.2_1C1_sorted, 1.2_2E2_sorted
+    MW028: 1.2_1B10_sorted, 1.2_2D5_sorted
+    MW004: 1.2_1B2_sorted, 1.2_1F4_sorted, 1.2_2A4_sorted, 1.2_2H3_sorted
+    MW051: 1.2_1B6_sorted, 3A_C3_sorted
+    MW056: 1.2_1B8_sorted, 1.2_1E3_sorted, 1.2_2G1_sorted
+    MW057: 1.2_1B9_sorted, 1.2_1D8_sorted, 1.2_2D1_sorted, 1.2_2G6_sorted, 1.2_2H2_sorted
+    MW027: 1.2_1C10_sorted, 1.2_1G9_sorted, 1.2_2E6_sorted
+    MW077: 1.2_1C3_sorted, 1.2_1D2_sorted, 1.2_1F9_sorted, 1.2_1G10_sorted, 1.2_2A1_sorted
+    MW039: 1.2_1C5_sorted, 1.2_1F10_sorted, 1.2_2B8_sorted, 1.2_2E9_sorted, 1.2_2F10_sorted
+    MW001: 1.2_1C6_sorted, 1.2_1D10_sorted, 1.2_1E6_sorted, 1.2_2C6_sorted, 1.2_2G8_sorted
+    MW072: 1.2_1D3_sorted, 1.2_2B2_sorted, 1.2_2D2_sorted, 1.2_2E4_sorted, 1.2_2H5_sorted
+    MW062: 1.2_1D6_sorted, 1.2_1D7_sorted, 1.2_2A6_sorted, 1.2_2E1_sorted, 1.2_2H1_sorted
+    MW016: 1.2_1E8_sorted
+    MW061: 1.2_1F5_sorted, 1.2_2E3_sorted, 3A_C1_sorted
+    MW068: 1.2_1F7_sorted, 1.2_2B4_sorted, 1.2_2E8_sorted, 1.2_2F3_sorted, 1.2_2H9_sorted
+    MW029: 1.2_1F8_sorted, 1.2_2C7_sorted, 1.2_2D9_sorted
+    MW014: 1.2_1G2_sorted, 1.2_2B11_sorted, 1.2_2C5_sorted, 1.2_2G5_sorted, 1.2_2H8_sorted
+    MW042: 1.2_1G6_sorted, 1.2_2F5_sorted
+    MW003: 1.2_1H10_sorted, 1.2_2A10_sorted, 1.2_2C9_sorted, 1.2_2H10_sorted
+    MW031: 1.2_1H1_sorted, 1.2_2A9_sorted, 1.2_2C4_sorted, 1.2_2D8_sorted, 1.2_2F2_sorted
+    MW015: 1.2_1H2_sorted, 1.2_2C1_sorted, 3A_D1_sorted, 3A_E1_sorted
+    MW011: 1.2_1H8_sorted, 1.2_2C11_sorted, 3A_B2_sorted, 3A_D3_sorted
+    MW064: 1.2_1H9_sorted, 1.2_2B3_sorted, 1.2_2G10_sorted
+    MW069: 1.2_2A2_sorted, 1.2_2B10_sorted
+    MW074: 1.2_2B7_sorted, 1.2_2D11_sorted, 1.2_2G3_sorted
+    MW041: 1.2_2C8_sorted, 1.2_2G4_sorted
+    MWI067: 3A_A11_sorted
+    MWI007: 3A_A4_sorted
+    MW026: 3A_B1_sorted
+    MWI008: 3A_B4_sorted
+    MWI077: 3A_C12_sorted
+    MWI009: 3A_C4_sorted
+    MWI078: 3A_D12_sorted
+    MWI010: 3A_D4_sorted
+    MWI019: 3A_D5_sorted
+    MWI036: 3A_D7_sorted
+    MWI071: 3A_E11_sorted
+    MWI079: 3A_E12_sorted
+    MWI001: 3A_E3_sorted
+    MWI011: 3A_E4_sorted
+    MWI020: 3A_E5_sorted
+    MWI062: 3A_F10_sorted
+    MWI072: 3A_F11_sorted
+    MWI080: 3A_F12_sorted
+    MWI003: 3A_F3_sorted
+    MWI014: 3A_F4_sorted
+    MWI022: 3A_F5_sorted
+    MWI038: 3A_F7_sorted
+    MWI063: 3A_G10_sorted
+    UTSC: 3A_G12_sorted
+    MWI004: 3A_G3_sorted
+    MWI015: 3A_G4_sorted
+    MWI023: 3A_G5_sorted
+    MWI039: 3A_G7_sorted
+    MWI066: 3A_H10_sorted
+    MWI005: 3A_H3_sorted
+Working on 1 group(s) of populations:
+    defaultgrp: MW067, MW079, MW040, MW002, MW012, MW013, MW030, MW028, MW004, MW051, MW056, MW057, MW027, MW077, MW039, MW001, MW072, MW062, MW016, MW061, MW068, MW029, MW014, MW042, MW003, MW031, MW015, MW011, MW064, MW069, MW074, MW041, MWI067, MWI007, MW026, MWI008, MWI077, MWI009, MWI078, MWI010, MWI019, MWI036, MWI071, MWI079, MWI001, MWI011, MWI020, MWI062, MWI072, MWI080, MWI003, MWI014, MWI022, MWI038, MWI063, UTSC, MWI004, MWI015, MWI023, MWI039, MWI066, MWI005
+
+All fixed and variable sites will be written in VCF format to 'U_dist_fst_vcf-all/populations.all.vcf'
+Polymorphic sites in PLINK format will be written to 'U_dist_fst_vcf-all/populations.plink.ped'
+Raw haplotypes will be written to 'U_dist_fst_vcf-all/populations.haplotypes.tsv'
+Population-level summary statistics will be written to 'U_dist_fst_vcf-all/populations.sumstats.tsv'
+Population-level haplotype summary statistics will be written to 'U_dist_fst_vcf-all/populations.hapstats.tsv'
+
+Processing data in batches:
+  * load a batch of catalog loci and apply filters
+  * compute SNP- and haplotype-wise per-population statistics
+  * write the above statistics in the output files
+  * export the genotypes/haplotypes in specified format(s)
+More details in 'U_dist_fst_vcf-all/populations.log.distribs'.
+
+Now processing...
+AS1.0ch10 
+AS1.0ch03 
+AS1.0ch01 
+AS1.0ch04 
+AS1.0ch11 
+AS1.0ch06 
+AS1.0ch02 
+AS1.0ch08 
+AS1.0ch07 
+AS1.0ch05 
+AS1.0ch09 
+Scaff022 
+Scaff024 
+Scaff026 
+Scaff032 
+Scaff039 
+Scaff041 
+Scaff062 
+Scaff076 
+Scaff092 
+Scaff099 
+Scaff105 
+Scaff121 
+Scaff147 
+Scaff148 
+Scaff165 
+Scaff167 
+Scaff170 
+Scaff177 
+Scaff190 
+Scaff195 
+Scaff205 
+Scaff208 
+Scaff244 
+Scaff245 
+Scaff247 
+Scaff252 
+Scaff260 
+Scaff261 
+Scaff263 
+Scaff264 
+Scaff266 
+Scaff282 
+Scaff313 
+Scaff324 
+Scaff325 
+Scaff332 
+Scaff342 
+Scaff345 
+Scaff349 
+Scaff352 
+Scaff365 
+Scaff367 
+Scaff379 
+Scaff399 
+Scaff403 
+Scaff408 
+Scaff413 
+Scaff434 
+Scaff446 
+Scaff457 
+Scaff458 
+Scaff463 
+Scaff483 
+Scaff485 
+Scaff507 
+Scaff514 
+Scaff534 
+Scaff536 
+Scaff541 
+Scaff553 
+Scaff556 
+Scaff580 
+Scaff662 
+Scaff663 
+Scaff664 
+Scaff665 
+Scaff667 
+Scaff668 
+Scaff669 
+Scaff671 
+Scaff673 
+Scaff677 
+Scaff679 
+Scaff681 
+Scaff682 
+Scaff685 
+
+Removed 44844 loci that did not pass sample/population constraints from 48349 loci.
+Kept 3505 loci, composed of 258609 sites; 25622 of those sites were filtered, 1019 variant sites remained.
+    131908 genomic sites, of which 101675 were covered by multiple loci (77.1%).
+Mean genotyped sites per locus: 73.77bp (stderr 0.42).
+
+Population summary statistics (more detail in populations.sumstats_summary.tsv):
+  MW067: 3.7071 samples per locus; pi: 0.21042; all/variant/polymorphic sites: 257917/1014/524; private alleles: 0
+  MW079: 4.6163 samples per locus; pi: 0.23749; all/variant/polymorphic sites: 258193/1019/669; private alleles: 0
+  MW040: 3.6473 samples per locus; pi: 0.23535; all/variant/polymorphic sites: 258141/1018/574; private alleles: 0
+  MW002: 4.6644 samples per locus; pi: 0.24084; all/variant/polymorphic sites: 258266/1019/665; private alleles: 0
+  MW012: 4.6722 samples per locus; pi: 0.21918; all/variant/polymorphic sites: 258172/1019/596; private alleles: 0
+  MW013: 2.7925 samples per locus; pi: 0.21839; all/variant/polymorphic sites: 257852/1017/476; private alleles: 0
+  MW030: 3.6794 samples per locus; pi: 0.22046; all/variant/polymorphic sites: 257959/1017/545; private alleles: 0
+  MW028: 1.864 samples per locus; pi: 0.22807; all/variant/polymorphic sites: 257294/1007/401; private alleles: 0
+  MW004: 3.7576 samples per locus; pi: 0.23543; all/variant/polymorphic sites: 258134/1019/585; private alleles: 0
+  MW051: 1.8833 samples per locus; pi: 0.21596; all/variant/polymorphic sites: 257245/1011/374; private alleles: 0
+  MW056: 2.6621 samples per locus; pi: 0.22056; all/variant/polymorphic sites: 257457/1015/478; private alleles: 0
+  MW057: 4.6192 samples per locus; pi: 0.23666; all/variant/polymorphic sites: 258180/1019/645; private alleles: 0
+  MW027: 2.811 samples per locus; pi: 0.22546; all/variant/polymorphic sites: 258029/1016/493; private alleles: 0
+  MW077: 4.4406 samples per locus; pi: 0.20853; all/variant/polymorphic sites: 257790/1019/549; private alleles: 0
+  MW039: 4.6506 samples per locus; pi: 0.24729; all/variant/polymorphic sites: 258118/1019/674; private alleles: 0
+  MW001: 4.4122 samples per locus; pi: 0.21284; all/variant/polymorphic sites: 258107/1019/539; private alleles: 0
+  MW072: 4.6149 samples per locus; pi: 0.23372; all/variant/polymorphic sites: 258124/1018/616; private alleles: 0
+  MW062: 4.5231 samples per locus; pi: 0.23373; all/variant/polymorphic sites: 258098/1019/623; private alleles: 0
+  MW016: 1 samples per locus; pi: 0.20391; all/variant/polymorphic sites: 247778/819/167; private alleles: 0
+  MW061: 2.8223 samples per locus; pi: 0.21672; all/variant/polymorphic sites: 257628/1013/470; private alleles: 0
+  MW068: 4.5574 samples per locus; pi: 0.20327; all/variant/polymorphic sites: 258084/1019/542; private alleles: 0
+  MW029: 2.6992 samples per locus; pi: 0.22962; all/variant/polymorphic sites: 257467/1014/484; private alleles: 0
+  MW014: 4.6241 samples per locus; pi: 0.24893; all/variant/polymorphic sites: 258144/1019/674; private alleles: 0
+  MW042: 1.8988 samples per locus; pi: 0.18932; all/variant/polymorphic sites: 256927/1008/327; private alleles: 0
+  MW003: 3.53 samples per locus; pi: 0.19509; all/variant/polymorphic sites: 257921/1015/482; private alleles: 0
+  MW031: 4.6232 samples per locus; pi: 0.23642; all/variant/polymorphic sites: 258177/1019/658; private alleles: 0
+  MW015: 3.5629 samples per locus; pi: 0.24748; all/variant/polymorphic sites: 257748/1018/604; private alleles: 0
+  MW011: 3.6067 samples per locus; pi: 0.21287; all/variant/polymorphic sites: 257963/1017/521; private alleles: 0
+  MW064: 2.8236 samples per locus; pi: 0.2308; all/variant/polymorphic sites: 257621/1015/509; private alleles: 0
+  MW069: 1.9113 samples per locus; pi: 0.19558; all/variant/polymorphic sites: 257293/1003/341; private alleles: 0
+  MW074: 2.6181 samples per locus; pi: 0.2125; all/variant/polymorphic sites: 255403/995/451; private alleles: 0
+  MW041: 1.9015 samples per locus; pi: 0.23448; all/variant/polymorphic sites: 256979/1015/421; private alleles: 0
+  MWI067: 1 samples per locus; pi: 0.19604; all/variant/polymorphic sites: 251725/959/188; private alleles: 0
+  MWI007: 1 samples per locus; pi: 0.20761; all/variant/polymorphic sites: 242048/973/202; private alleles: 0
+  MW026: 1 samples per locus; pi: 0.21421; all/variant/polymorphic sites: 251443/957/205; private alleles: 0
+  MWI008: 1 samples per locus; pi: 0.17346; all/variant/polymorphic sites: 253114/957/166; private alleles: 0
+  MWI077: 1 samples per locus; pi: 0.20709; all/variant/polymorphic sites: 247367/903/187; private alleles: 0
+  MWI009: 1 samples per locus; pi: 0.19729; all/variant/polymorphic sites: 220759/811/160; private alleles: 0
+  MWI078: 1 samples per locus; pi: 0.23085; all/variant/polymorphic sites: 252912/966/223; private alleles: 0
+  MWI010: 1 samples per locus; pi: 0.20661; all/variant/polymorphic sites: 253953/968/200; private alleles: 0
+  MWI019: 1 samples per locus; pi: 0.20842; all/variant/polymorphic sites: 241717/950/198; private alleles: 0
+  MWI036: 1 samples per locus; pi: 0.22002; all/variant/polymorphic sites: 249849/959/211; private alleles: 0
+  MWI071: 1 samples per locus; pi: 0.18397; all/variant/polymorphic sites: 249948/973/179; private alleles: 0
+  MWI079: 1 samples per locus; pi: 0.2205; all/variant/polymorphic sites: 246707/966/213; private alleles: 0
+  MWI001: 1 samples per locus; pi: 0.19099; all/variant/polymorphic sites: 247552/932/178; private alleles: 0
+  MWI011: 1 samples per locus; pi: 0.18258; all/variant/polymorphic sites: 251870/953/174; private alleles: 0
+  MWI020: 1 samples per locus; pi: 0.18367; all/variant/polymorphic sites: 217055/882/162; private alleles: 0
+  MWI062: 1 samples per locus; pi: 0.24426; all/variant/polymorphic sites: 250998/958/234; private alleles: 0
+  MWI072: 1 samples per locus; pi: 0.20847; all/variant/polymorphic sites: 244517/945/197; private alleles: 0
+  MWI080: 1 samples per locus; pi: 0.1777; all/variant/polymorphic sites: 237701/861/153; private alleles: 0
+  MWI003: 1 samples per locus; pi: 0.18911; all/variant/polymorphic sites: 249438/973/184; private alleles: 0
+  MWI014: 1 samples per locus; pi: 0.22085; all/variant/polymorphic sites: 250083/969/214; private alleles: 0
+  MWI022: 1 samples per locus; pi: 0.20022; all/variant/polymorphic sites: 205037/889/178; private alleles: 0
+  MWI038: 1 samples per locus; pi: 0.19979; all/variant/polymorphic sites: 249769/941/188; private alleles: 0
+  MWI063: 1 samples per locus; pi: 0.19355; all/variant/polymorphic sites: 252438/961/186; private alleles: 0
+  UTSC: 1 samples per locus; pi: 0.19595; all/variant/polymorphic sites: 242986/939/184; private alleles: 0
+  MWI004: 1 samples per locus; pi: 0.225; all/variant/polymorphic sites: 242749/800/180; private alleles: 0
+  MWI015: 1 samples per locus; pi: 0.22092; all/variant/polymorphic sites: 237022/937/207; private alleles: 0
+  MWI023: 1 samples per locus; pi: 0.19547; all/variant/polymorphic sites: 253422/972/190; private alleles: 0
+  MWI039: 1 samples per locus; pi: 0.19456; all/variant/polymorphic sites: 247849/956/186; private alleles: 0
+  MWI066: 1 samples per locus; pi: 0.20672; all/variant/polymorphic sites: 208384/774/160; private alleles: 0
+  MWI005: 1 samples per locus; pi: 0.20021; all/variant/polymorphic sites: 231291/964/193; private alleles: 0
+Populations is done.

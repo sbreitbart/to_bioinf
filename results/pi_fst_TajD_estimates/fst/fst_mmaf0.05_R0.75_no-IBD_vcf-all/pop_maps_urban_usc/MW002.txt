@@ -1,5 +1,0 @@
-1.2_1A3_sorted
-1.2_1G5_sorted
-1.2_2C3_sorted
-1.2_2F9_sorted
-3A_G2_sorted

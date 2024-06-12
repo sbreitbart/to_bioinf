@@ -1,4 +1,0 @@
-1.2_1A10_sorted
-1.2_1G8_sorted
-1.2_1H7_sorted
-1.2_2H4_sorted
