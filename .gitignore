@@ -10,9 +10,5 @@ GBS-PreProcess-master
 genome_Asyriaca
 old
 populations_no-IBD_vcf-all_mainfiles
-R_dist_fst_vcf-all
 surface1.rds
 surface2.RData
-.ipynb_checkpoints
-Hudson_fst.ipynb
-hudson_fst_script.py
