@@ -1,0 +1,1843 @@
+# Note: Individual distributions can be extracted using the `stacks-dist-extract` utility.
+#       e.g. `stacks-dist-extract populations.log.distribs dist_name`
+
+BEGIN batch_progress
+AS1.0ch10: analyzed 313 loci; filtered 3027 loci; 3340 loci seen.
+    11065 genomic sites, of which 8752 were covered by multiple loci (79.1%).
+AS1.0ch03: analyzed 445 loci; filtered 3527 loci; 3972 loci seen.
+    15506 genomic sites, of which 11762 were covered by multiple loci (75.9%).
+AS1.0ch01: analyzed 519 loci; filtered 4991 loci; 5510 loci seen.
+    18102 genomic sites, of which 15438 were covered by multiple loci (85.3%).
+AS1.0ch04: analyzed 354 loci; filtered 3977 loci; 4331 loci seen.
+    12314 genomic sites, of which 10075 were covered by multiple loci (81.8%).
+AS1.0ch11: analyzed 261 loci; filtered 2921 loci; 3182 loci seen.
+    9220 genomic sites, of which 7210 were covered by multiple loci (78.2%).
+AS1.0ch06: analyzed 330 loci; filtered 3226 loci; 3556 loci seen.
+    11773 genomic sites, of which 8975 were covered by multiple loci (76.2%).
+AS1.0ch02: analyzed 428 loci; filtered 3548 loci; 3976 loci seen.
+    16095 genomic sites, of which 12191 were covered by multiple loci (75.7%).
+AS1.0ch08: analyzed 383 loci; filtered 3714 loci; 4097 loci seen.
+    12649 genomic sites, of which 10337 were covered by multiple loci (81.7%).
+AS1.0ch07: analyzed 492 loci; filtered 4421 loci; 4913 loci seen.
+    16633 genomic sites, of which 14136 were covered by multiple loci (85.0%).
+AS1.0ch05: analyzed 447 loci; filtered 3520 loci; 3967 loci seen.
+    15842 genomic sites, of which 12811 were covered by multiple loci (80.9%).
+AS1.0ch09: analyzed 289 loci; filtered 1967 loci; 2256 loci seen.
+    10384 genomic sites, of which 7972 were covered by multiple loci (76.8%).
+Scaff022: analyzed 1 loci; filtered 17 loci; 18 loci seen.
+    55 genomic sites, of which 0 were covered by multiple loci (0.0%).
+Scaff024: analyzed 28 loci; filtered 158 loci; 186 loci seen.
+    972 genomic sites, of which 766 were covered by multiple loci (78.8%).
+Scaff026: analyzed 7 loci; filtered 44 loci; 51 loci seen.
+    247 genomic sites, of which 138 were covered by multiple loci (55.9%).
+Scaff032: analyzed 2 loci; filtered 31 loci; 33 loci seen.
+    77 genomic sites, of which 72 were covered by multiple loci (93.5%).
+Scaff039: analyzed 14 loci; filtered 41 loci; 55 loci seen.
+    462 genomic sites, of which 418 were covered by multiple loci (90.5%).
+Scaff040: analyzed 1 loci; filtered 27 loci; 28 loci seen.
+    101 genomic sites, of which 0 were covered by multiple loci (0.0%).
+Scaff041: analyzed 2 loci; filtered 93 loci; 95 loci seen.
+    104 genomic sites, of which 43 were covered by multiple loci (41.3%).
+Scaff062: analyzed 2 loci; filtered 52 loci; 54 loci seen.
+    111 genomic sites, of which 109 were covered by multiple loci (98.2%).
+Scaff076: analyzed 4 loci; filtered 9 loci; 13 loci seen.
+    111 genomic sites, of which 110 were covered by multiple loci (99.1%).
+Scaff086: analyzed 1 loci; filtered 34 loci; 35 loci seen.
+    53 genomic sites, of which 0 were covered by multiple loci (0.0%).
+Scaff092: analyzed 4 loci; filtered 15 loci; 19 loci seen.
+    165 genomic sites, of which 142 were covered by multiple loci (86.1%).
+Scaff099: analyzed 2 loci; filtered 7 loci; 9 loci seen.
+    47 genomic sites, of which 38 were covered by multiple loci (80.9%).
+Scaff102: analyzed 2 loci; filtered 7 loci; 9 loci seen.
+    30 genomic sites, of which 30 were covered by multiple loci (100.0%).
+Scaff105: analyzed 2 loci; filtered 25 loci; 27 loci seen.
+    103 genomic sites, of which 67 were covered by multiple loci (65.0%).
+Scaff121: analyzed 2 loci; filtered 63 loci; 65 loci seen.
+    91 genomic sites, of which 28 were covered by multiple loci (30.8%).
+Scaff147: analyzed 2 loci; filtered 11 loci; 13 loci seen.
+    36 genomic sites, of which 34 were covered by multiple loci (94.4%).
+Scaff148: analyzed 12 loci; filtered 93 loci; 105 loci seen.
+    319 genomic sites, of which 298 were covered by multiple loci (93.4%).
+Scaff165: analyzed 2 loci; filtered 26 loci; 28 loci seen.
+    59 genomic sites, of which 57 were covered by multiple loci (96.6%).
+Scaff167: analyzed 2 loci; filtered 20 loci; 22 loci seen.
+    47 genomic sites, of which 25 were covered by multiple loci (53.2%).
+Scaff170: analyzed 3 loci; filtered 14 loci; 17 loci seen.
+    113 genomic sites, of which 72 were covered by multiple loci (63.7%).
+Scaff177: analyzed 2 loci; filtered 54 loci; 56 loci seen.
+    35 genomic sites, of which 33 were covered by multiple loci (94.3%).
+Scaff190: analyzed 4 loci; filtered 45 loci; 49 loci seen.
+    180 genomic sites, of which 116 were covered by multiple loci (64.4%).
+Scaff195: analyzed 4 loci; filtered 19 loci; 23 loci seen.
+    128 genomic sites, of which 106 were covered by multiple loci (82.8%).
+Scaff205: analyzed 2 loci; filtered 58 loci; 60 loci seen.
+    71 genomic sites, of which 65 were covered by multiple loci (91.5%).
+Scaff208: analyzed 2 loci; filtered 23 loci; 25 loci seen.
+    57 genomic sites, of which 55 were covered by multiple loci (96.5%).
+Scaff225: analyzed 2 loci; filtered 25 loci; 27 loci seen.
+    74 genomic sites, of which 55 were covered by multiple loci (74.3%).
+Scaff244: analyzed 2 loci; filtered 27 loci; 29 loci seen.
+    91 genomic sites, of which 87 were covered by multiple loci (95.6%).
+Scaff245: analyzed 4 loci; filtered 19 loci; 23 loci seen.
+    192 genomic sites, of which 183 were covered by multiple loci (95.3%).
+Scaff247: analyzed 2 loci; filtered 17 loci; 19 loci seen.
+    137 genomic sites, of which 84 were covered by multiple loci (61.3%).
+Scaff252: analyzed 2 loci; filtered 13 loci; 15 loci seen.
+    110 genomic sites, of which 68 were covered by multiple loci (61.8%).
+Scaff260: analyzed 2 loci; filtered 9 loci; 11 loci seen.
+    67 genomic sites, of which 64 were covered by multiple loci (95.5%).
+Scaff261: analyzed 2 loci; filtered 29 loci; 31 loci seen.
+    67 genomic sites, of which 60 were covered by multiple loci (89.6%).
+Scaff263: analyzed 3 loci; filtered 16 loci; 19 loci seen.
+    63 genomic sites, of which 57 were covered by multiple loci (90.5%).
+Scaff264: analyzed 2 loci; filtered 20 loci; 22 loci seen.
+    98 genomic sites, of which 96 were covered by multiple loci (98.0%).
+Scaff266: analyzed 2 loci; filtered 22 loci; 24 loci seen.
+    80 genomic sites, of which 74 were covered by multiple loci (92.5%).
+Scaff282: analyzed 3 loci; filtered 26 loci; 29 loci seen.
+    85 genomic sites, of which 75 were covered by multiple loci (88.2%).
+Scaff313: analyzed 4 loci; filtered 38 loci; 42 loci seen.
+    101 genomic sites, of which 99 were covered by multiple loci (98.0%).
+Scaff324: analyzed 6 loci; filtered 16 loci; 22 loci seen.
+    180 genomic sites, of which 163 were covered by multiple loci (90.6%).
+Scaff325: analyzed 2 loci; filtered 23 loci; 25 loci seen.
+    67 genomic sites, of which 63 were covered by multiple loci (94.0%).
+Scaff332: analyzed 2 loci; filtered 43 loci; 45 loci seen.
+    104 genomic sites, of which 102 were covered by multiple loci (98.1%).
+Scaff342: analyzed 3 loci; filtered 25 loci; 28 loci seen.
+    104 genomic sites, of which 58 were covered by multiple loci (55.8%).
+Scaff345: analyzed 4 loci; filtered 54 loci; 58 loci seen.
+    193 genomic sites, of which 182 were covered by multiple loci (94.3%).
+Scaff349: analyzed 2 loci; filtered 36 loci; 38 loci seen.
+    28 genomic sites, of which 26 were covered by multiple loci (92.9%).
+Scaff352: analyzed 2 loci; filtered 21 loci; 23 loci seen.
+    73 genomic sites, of which 55 were covered by multiple loci (75.3%).
+Scaff365: analyzed 6 loci; filtered 54 loci; 60 loci seen.
+    192 genomic sites, of which 173 were covered by multiple loci (90.1%).
+Scaff367: analyzed 2 loci; filtered 26 loci; 28 loci seen.
+    39 genomic sites, of which 37 were covered by multiple loci (94.9%).
+Scaff370: analyzed 2 loci; filtered 7 loci; 9 loci seen.
+    61 genomic sites, of which 37 were covered by multiple loci (60.7%).
+Scaff379: analyzed 9 loci; filtered 24 loci; 33 loci seen.
+    230 genomic sites, of which 201 were covered by multiple loci (87.4%).
+Scaff399: analyzed 2 loci; filtered 23 loci; 25 loci seen.
+    106 genomic sites, of which 104 were covered by multiple loci (98.1%).
+Scaff403: analyzed 2 loci; filtered 36 loci; 38 loci seen.
+    31 genomic sites, of which 28 were covered by multiple loci (90.3%).
+Scaff408: analyzed 2 loci; filtered 21 loci; 23 loci seen.
+    85 genomic sites, of which 55 were covered by multiple loci (64.7%).
+Scaff413: analyzed 2 loci; filtered 17 loci; 19 loci seen.
+    50 genomic sites, of which 38 were covered by multiple loci (76.0%).
+Scaff434: analyzed 2 loci; filtered 33 loci; 35 loci seen.
+    84 genomic sites, of which 72 were covered by multiple loci (85.7%).
+Scaff446: analyzed 4 loci; filtered 21 loci; 25 loci seen.
+    193 genomic sites, of which 184 were covered by multiple loci (95.3%).
+Scaff457: analyzed 2 loci; filtered 14 loci; 16 loci seen.
+    103 genomic sites, of which 101 were covered by multiple loci (98.1%).
+Scaff458: analyzed 2 loci; filtered 17 loci; 19 loci seen.
+    81 genomic sites, of which 69 were covered by multiple loci (85.2%).
+Scaff463: analyzed 2 loci; filtered 30 loci; 32 loci seen.
+    54 genomic sites, of which 52 were covered by multiple loci (96.3%).
+Scaff471: analyzed 2 loci; filtered 19 loci; 21 loci seen.
+    106 genomic sites, of which 106 were covered by multiple loci (100.0%).
+Scaff483: analyzed 5 loci; filtered 13 loci; 18 loci seen.
+    113 genomic sites, of which 97 were covered by multiple loci (85.8%).
+Scaff485: analyzed 2 loci; filtered 23 loci; 25 loci seen.
+    91 genomic sites, of which 55 were covered by multiple loci (60.4%).
+Scaff507: analyzed 3 loci; filtered 4 loci; 7 loci seen.
+    110 genomic sites, of which 110 were covered by multiple loci (100.0%).
+Scaff514: analyzed 3 loci; filtered 22 loci; 25 loci seen.
+    47 genomic sites, of which 46 were covered by multiple loci (97.9%).
+Scaff525: analyzed 3 loci; filtered 18 loci; 21 loci seen.
+    110 genomic sites, of which 110 were covered by multiple loci (100.0%).
+Scaff534: analyzed 2 loci; filtered 16 loci; 18 loci seen.
+    42 genomic sites, of which 40 were covered by multiple loci (95.2%).
+Scaff536: analyzed 2 loci; filtered 26 loci; 28 loci seen.
+    91 genomic sites, of which 85 were covered by multiple loci (93.4%).
+Scaff541: analyzed 2 loci; filtered 12 loci; 14 loci seen.
+    123 genomic sites, of which 38 were covered by multiple loci (30.9%).
+Scaff553: analyzed 5 loci; filtered 20 loci; 25 loci seen.
+    125 genomic sites, of which 110 were covered by multiple loci (88.0%).
+Scaff556: analyzed 4 loci; filtered 20 loci; 24 loci seen.
+    71 genomic sites, of which 68 were covered by multiple loci (95.8%).
+Scaff580: analyzed 8 loci; filtered 44 loci; 52 loci seen.
+    134 genomic sites, of which 130 were covered by multiple loci (97.0%).
+Scaff623: analyzed 1 loci; filtered 10 loci; 11 loci seen.
+    42 genomic sites, of which 0 were covered by multiple loci (0.0%).
+Scaff633: analyzed 2 loci; filtered 12 loci; 14 loci seen.
+    61 genomic sites, of which 37 were covered by multiple loci (60.7%).
+Scaff651: analyzed 2 loci; filtered 73 loci; 75 loci seen.
+    67 genomic sites, of which 46 were covered by multiple loci (68.7%).
+Scaff662: analyzed 4 loci; filtered 29 loci; 33 loci seen.
+    160 genomic sites, of which 127 were covered by multiple loci (79.4%).
+Scaff663: analyzed 33 loci; filtered 115 loci; 148 loci seen.
+    898 genomic sites, of which 750 were covered by multiple loci (83.5%).
+Scaff664: analyzed 41 loci; filtered 95 loci; 136 loci seen.
+    1253 genomic sites, of which 1125 were covered by multiple loci (89.8%).
+Scaff665: analyzed 22 loci; filtered 50 loci; 72 loci seen.
+    417 genomic sites, of which 374 were covered by multiple loci (89.7%).
+Scaff667: analyzed 5 loci; filtered 19 loci; 24 loci seen.
+    130 genomic sites, of which 126 were covered by multiple loci (96.9%).
+Scaff668: analyzed 9 loci; filtered 35 loci; 44 loci seen.
+    317 genomic sites, of which 278 were covered by multiple loci (87.7%).
+Scaff669: analyzed 57 loci; filtered 971 loci; 1028 loci seen.
+    2025 genomic sites, of which 1904 were covered by multiple loci (94.0%).
+Scaff671: analyzed 5 loci; filtered 116 loci; 121 loci seen.
+    165 genomic sites, of which 138 were covered by multiple loci (83.6%).
+Scaff673: analyzed 4 loci; filtered 58 loci; 62 loci seen.
+    204 genomic sites, of which 128 were covered by multiple loci (62.7%).
+Scaff677: analyzed 50 loci; filtered 631 loci; 681 loci seen.
+    1527 genomic sites, of which 1336 were covered by multiple loci (87.5%).
+Scaff679: analyzed 2 loci; filtered 31 loci; 33 loci seen.
+    50 genomic sites, of which 48 were covered by multiple loci (96.0%).
+Scaff681: analyzed 15 loci; filtered 151 loci; 166 loci seen.
+    525 genomic sites, of which 484 were covered by multiple loci (92.2%).
+Scaff682: analyzed 21 loci; filtered 239 loci; 260 loci seen.
+    831 genomic sites, of which 775 were covered by multiple loci (93.3%).
+Scaff685: analyzed 7 loci; filtered 69 loci; 76 loci seen.
+    215 genomic sites, of which 203 were covered by multiple loci (94.4%).
+END batch_progress
+
+BEGIN samples_per_loc_prefilters
+# Distribution of valid samples matched to a catalog locus prior to filtering.
+n_samples	n_loci
+1	22439
+2	7146
+3	2948
+4	2560
+5	904
+6	1313
+7	394
+8	652
+9	216
+10	376
+11	130
+12	255
+13	92
+14	200
+15	97
+16	157
+17	72
+18	125
+19	73
+20	86
+21	57
+22	73
+23	57
+24	82
+25	68
+26	56
+27	41
+28	68
+29	49
+30	58
+31	49
+32	59
+33	48
+34	47
+35	55
+36	42
+37	44
+38	45
+39	55
+40	46
+41	33
+42	41
+43	35
+44	31
+45	44
+46	38
+47	27
+48	39
+49	35
+50	33
+51	35
+52	26
+53	31
+54	29
+55	37
+56	34
+57	24
+58	33
+59	34
+60	24
+61	21
+62	42
+63	28
+64	27
+65	23
+66	20
+67	34
+68	19
+69	21
+70	28
+71	22
+72	31
+73	26
+74	27
+75	28
+76	22
+77	21
+78	27
+79	18
+80	22
+81	19
+82	24
+83	28
+84	24
+85	26
+86	21
+87	21
+88	26
+89	24
+90	18
+91	33
+92	19
+93	18
+94	22
+95	23
+96	22
+97	24
+98	25
+99	20
+100	21
+101	16
+102	12
+103	30
+104	24
+105	16
+106	25
+107	30
+108	31
+109	15
+110	29
+111	23
+112	29
+113	25
+114	26
+115	18
+116	26
+117	28
+118	27
+119	24
+120	24
+121	19
+122	21
+123	23
+124	17
+125	19
+126	12
+127	17
+128	23
+129	23
+130	21
+131	17
+132	27
+133	19
+134	22
+135	12
+136	23
+137	14
+138	17
+139	17
+140	19
+141	25
+142	21
+143	20
+144	15
+145	15
+146	20
+147	23
+148	20
+149	18
+150	19
+151	16
+152	31
+153	20
+154	20
+155	22
+156	20
+157	18
+158	23
+159	20
+160	22
+161	23
+162	23
+163	10
+164	20
+165	13
+166	28
+167	16
+168	18
+169	18
+170	16
+171	15
+172	12
+173	13
+174	16
+175	22
+176	17
+177	21
+178	20
+179	26
+180	17
+181	24
+182	19
+183	18
+184	26
+185	19
+186	19
+187	22
+188	12
+189	24
+190	24
+191	29
+192	25
+193	27
+194	28
+195	16
+196	16
+197	25
+198	23
+199	23
+200	27
+201	30
+202	24
+203	17
+204	12
+205	21
+206	29
+207	20
+208	25
+209	22
+210	26
+211	15
+212	24
+213	15
+214	22
+215	22
+216	28
+217	25
+218	27
+219	27
+220	18
+221	31
+222	27
+223	23
+224	24
+225	28
+226	31
+227	27
+228	28
+229	21
+230	35
+231	24
+232	25
+233	29
+234	45
+235	36
+236	33
+237	31
+238	35
+239	30
+240	21
+241	27
+242	37
+243	35
+244	29
+245	30
+246	37
+247	37
+248	49
+249	44
+250	48
+251	57
+252	59
+253	73
+254	100
+255	134
+256	1480
+END samples_per_loc_prefilters
+
+BEGIN missing_samples_per_loc_prefilters
+# Distribution of missing samples for each catalog locus prior to filtering.
+Absent samples at locus	Count
+0	1480
+1	134
+2	100
+3	73
+4	59
+5	57
+6	48
+7	44
+8	49
+9	37
+10	37
+11	30
+12	29
+13	35
+14	37
+15	27
+16	21
+17	30
+18	35
+19	31
+20	33
+21	36
+22	45
+23	29
+24	25
+25	24
+26	35
+27	21
+28	28
+29	27
+30	31
+31	28
+32	24
+33	23
+34	27
+35	31
+36	18
+37	27
+38	27
+39	25
+40	28
+41	22
+42	22
+43	15
+44	24
+45	15
+46	26
+47	22
+48	25
+49	20
+50	29
+51	21
+52	12
+53	17
+54	24
+55	30
+56	27
+57	23
+58	23
+59	25
+60	16
+61	16
+62	28
+63	27
+64	25
+65	29
+66	24
+67	24
+68	12
+69	22
+70	19
+71	19
+72	26
+73	18
+74	19
+75	24
+76	17
+77	26
+78	20
+79	21
+80	17
+81	22
+82	16
+83	13
+84	12
+85	15
+86	16
+87	18
+88	18
+89	16
+90	28
+91	13
+92	20
+93	10
+94	23
+95	23
+96	22
+97	20
+98	23
+99	18
+100	20
+101	22
+102	20
+103	20
+104	31
+105	16
+106	19
+107	18
+108	20
+109	23
+110	20
+111	15
+112	15
+113	20
+114	21
+115	25
+116	19
+117	17
+118	17
+119	14
+120	23
+121	12
+122	22
+123	19
+124	27
+125	17
+126	21
+127	23
+128	23
+129	17
+130	12
+131	19
+132	17
+133	23
+134	21
+135	19
+136	24
+137	24
+138	27
+139	28
+140	26
+141	18
+142	26
+143	25
+144	29
+145	23
+146	29
+147	15
+148	31
+149	30
+150	25
+151	16
+152	24
+153	30
+154	12
+155	16
+156	21
+157	20
+158	25
+159	24
+160	22
+161	23
+162	22
+163	18
+164	19
+165	33
+166	18
+167	24
+168	26
+169	21
+170	21
+171	26
+172	24
+173	28
+174	24
+175	19
+176	22
+177	18
+178	27
+179	21
+180	22
+181	28
+182	27
+183	26
+184	31
+185	22
+186	28
+187	21
+188	19
+189	34
+190	20
+191	23
+192	27
+193	28
+194	42
+195	21
+196	24
+197	34
+198	33
+199	24
+200	34
+201	37
+202	29
+203	31
+204	26
+205	35
+206	33
+207	35
+208	39
+209	27
+210	38
+211	44
+212	31
+213	35
+214	41
+215	33
+216	46
+217	55
+218	45
+219	44
+220	42
+221	55
+222	47
+223	48
+224	59
+225	49
+226	58
+227	49
+228	68
+229	41
+230	56
+231	68
+232	82
+233	57
+234	73
+235	57
+236	86
+237	73
+238	125
+239	72
+240	157
+241	97
+242	200
+243	92
+244	255
+245	130
+246	376
+247	216
+248	652
+249	394
+250	1313
+251	904
+252	2560
+253	2948
+254	7146
+255	22439
+END missing_samples_per_loc_prefilters
+
+BEGIN snps_per_loc_prefilters
+# Distribution of the number of SNPs per catalog locus prior to filtering.
+n_snps	n_loci
+0	36571
+1	3569
+2	1553
+3	955
+4	701
+5	634
+6	520
+7	442
+8	398
+9	318
+10	268
+11	269
+12	252
+13	200
+14	205
+15	180
+16	131
+17	123
+18	124
+19	114
+20	90
+21	87
+22	67
+23	62
+24	72
+25	52
+26	48
+27	37
+28	32
+29	21
+30	26
+31	24
+32	30
+33	15
+34	14
+35	10
+36	18
+37	15
+38	16
+39	8
+40	11
+41	9
+42	8
+43	6
+44	8
+45	8
+46	7
+47	3
+48	4
+49	2
+50	1
+51	3
+52	2
+53	1
+54	1
+55	1
+56	1
+58	1
+61	1
+END snps_per_loc_prefilters
+
+BEGIN samples_per_loc_postfilters
+# Distribution of valid samples matched to a catalog locus after filtering.
+n_samples	n_loci
+128	23
+129	23
+130	21
+131	17
+132	27
+133	19
+134	22
+135	12
+136	23
+137	14
+138	17
+139	17
+140	19
+141	25
+142	21
+143	20
+144	15
+145	15
+146	20
+147	23
+148	20
+149	18
+150	19
+151	16
+152	31
+153	20
+154	20
+155	22
+156	20
+157	18
+158	23
+159	20
+160	22
+161	23
+162	23
+163	10
+164	20
+165	13
+166	28
+167	16
+168	18
+169	18
+170	16
+171	15
+172	12
+173	13
+174	16
+175	22
+176	17
+177	21
+178	20
+179	26
+180	17
+181	24
+182	19
+183	18
+184	26
+185	19
+186	19
+187	22
+188	12
+189	24
+190	24
+191	29
+192	25
+193	27
+194	28
+195	16
+196	16
+197	25
+198	23
+199	23
+200	27
+201	30
+202	24
+203	17
+204	12
+205	21
+206	29
+207	20
+208	25
+209	22
+210	26
+211	15
+212	24
+213	15
+214	22
+215	22
+216	28
+217	25
+218	27
+219	27
+220	18
+221	31
+222	27
+223	23
+224	24
+225	28
+226	31
+227	27
+228	28
+229	21
+230	35
+231	24
+232	25
+233	29
+234	45
+235	36
+236	33
+237	31
+238	35
+239	30
+240	21
+241	27
+242	37
+243	35
+244	29
+245	30
+246	37
+247	37
+248	49
+249	44
+250	48
+251	57
+252	59
+253	73
+254	100
+255	134
+256	1480
+END samples_per_loc_postfilters
+
+BEGIN missing_samples_per_loc_postfilters
+# Distribution of missing samples for each catalog locus after filtering.
+Absent samples at locus	Count
+0	1480
+1	134
+2	100
+3	73
+4	59
+5	57
+6	48
+7	44
+8	49
+9	37
+10	37
+11	30
+12	29
+13	35
+14	37
+15	27
+16	21
+17	30
+18	35
+19	31
+20	33
+21	36
+22	45
+23	29
+24	25
+25	24
+26	35
+27	21
+28	28
+29	27
+30	31
+31	28
+32	24
+33	23
+34	27
+35	31
+36	18
+37	27
+38	27
+39	25
+40	28
+41	22
+42	22
+43	15
+44	24
+45	15
+46	26
+47	22
+48	25
+49	20
+50	29
+51	21
+52	12
+53	17
+54	24
+55	30
+56	27
+57	23
+58	23
+59	25
+60	16
+61	16
+62	28
+63	27
+64	25
+65	29
+66	24
+67	24
+68	12
+69	22
+70	19
+71	19
+72	26
+73	18
+74	19
+75	24
+76	17
+77	26
+78	20
+79	21
+80	17
+81	22
+82	16
+83	13
+84	12
+85	15
+86	16
+87	18
+88	18
+89	16
+90	28
+91	13
+92	20
+93	10
+94	23
+95	23
+96	22
+97	20
+98	23
+99	18
+100	20
+101	22
+102	20
+103	20
+104	31
+105	16
+106	19
+107	18
+108	20
+109	23
+110	20
+111	15
+112	15
+113	20
+114	21
+115	25
+116	19
+117	17
+118	17
+119	14
+120	23
+121	12
+122	22
+123	19
+124	27
+125	17
+126	21
+127	23
+128	23
+END missing_samples_per_loc_postfilters
+
+BEGIN snps_per_loc_postfilters
+# Distribution of the number of SNPs per catalog locus (after filtering).
+n_snps	n_loci
+0	1946
+1	2835
+END snps_per_loc_postfilters
+
+BEGIN loci_per_sample_prefilters
+# Number of loci per individual sample (before filtering).
+sample	n_loci	present_loci	missing_loci	frequency_missing
+1.2_1A10_sorted	48349	4888	43461	0.8989
+1.2_1A11_sorted	48349	6435	41914	0.8669
+1.2_1A1_sorted	48349	4568	43781	0.9055
+1.2_1A3_sorted	48349	5659	42690	0.8830
+1.2_1A4_sorted	48349	5762	42587	0.8808
+1.2_1A5_sorted	48349	6028	42321	0.8753
+1.2_1A8_sorted	48349	5052	43297	0.8955
+1.2_1B10_sorted	48349	5458	42891	0.8871
+1.2_1B11_sorted	48349	4436	43913	0.9083
+1.2_1B3_sorted	48349	4812	43537	0.9005
+1.2_1B6_sorted	48349	5457	42892	0.8871
+1.2_1B8_sorted	48349	5139	43210	0.8937
+1.2_1B9_sorted	48349	5825	42524	0.8795
+1.2_1C10_sorted	48349	5763	42586	0.8808
+1.2_1C1_sorted	48349	5251	43098	0.8914
+1.2_1C2_sorted	48349	5514	42835	0.8860
+1.2_1C3_sorted	48349	5119	43230	0.8941
+1.2_1C5_sorted	48349	5350	42999	0.8893
+1.2_1C8_sorted	48349	6020	42329	0.8755
+1.2_1D11_sorted	48349	5817	42532	0.8797
+1.2_1D2_sorted	48349	3748	44601	0.9225
+1.2_1D3_sorted	48349	4634	43715	0.9042
+1.2_1D6_sorted	48349	4757	43592	0.9016
+1.2_1D7_sorted	48349	5393	42956	0.8885
+1.2_1D8_sorted	48349	5537	42812	0.8855
+1.2_1E10_sorted	48349	5088	43261	0.8948
+1.2_1E1_sorted	48349	5409	42940	0.8881
+1.2_1E2_sorted	48349	5433	42916	0.8876
+1.2_1E3_sorted	48349	5368	42981	0.8890
+1.2_1E8_sorted	48349	5973	42376	0.8765
+1.2_1F10_sorted	48349	5496	42853	0.8863
+1.2_1F2_sorted	48349	5896	42453	0.8781
+1.2_1F5_sorted	48349	5222	43127	0.8920
+1.2_1F7_sorted	48349	5645	42704	0.8832
+1.2_1F8_sorted	48349	5350	42999	0.8893
+1.2_1F9_sorted	48349	5989	42360	0.8761
+1.2_1G10_sorted	48349	4914	43435	0.8984
+1.2_1G2_sorted	48349	5561	42788	0.8850
+1.2_1G5_sorted	48349	5280	43069	0.8908
+1.2_1G6_sorted	48349	5855	42494	0.8789
+1.2_1G8_sorted	48349	5772	42577	0.8806
+1.2_1G9_sorted	48349	4774	43575	0.9013
+1.2_1H1_sorted	48349	4748	43601	0.9018
+1.2_1H2_sorted	48349	5731	42618	0.8815
+1.2_1H3_sorted	48349	5495	42854	0.8863
+1.2_1H5_sorted	48349	5224	43125	0.8920
+1.2_1H7_sorted	48349	4730	43619	0.9022
+1.2_1H8_sorted	48349	5510	42839	0.8860
+1.2_1H9_sorted	48349	5074	43275	0.8951
+1.2_2A1_sorted	48349	5669	42680	0.8827
+1.2_2A2_sorted	48349	5450	42899	0.8873
+1.2_2A6_sorted	48349	5363	42986	0.8891
+1.2_2A9_sorted	48349	5140	43209	0.8937
+1.2_2B10_sorted	48349	5971	42378	0.8765
+1.2_2B11_sorted	48349	4097	44252	0.9153
+1.2_2B2_sorted	48349	5448	42901	0.8873
+1.2_2B3_sorted	48349	4906	43443	0.8985
+1.2_2B4_sorted	48349	6084	42265	0.8742
+1.2_2B6_sorted	48349	5650	42699	0.8831
+1.2_2B7_sorted	48349	5351	42998	0.8893
+1.2_2B8_sorted	48349	4494	43855	0.9071
+1.2_2B9_sorted	48349	4051	44298	0.9162
+1.2_2C11_sorted	48349	5877	42472	0.8784
+1.2_2C1_sorted	48349	5268	43081	0.8910
+1.2_2C2_sorted	48349	4504	43845	0.9068
+1.2_2C3_sorted	48349	6171	42178	0.8724
+1.2_2C4_sorted	48349	4570	43779	0.9055
+1.2_2C5_sorted	48349	4649	43700	0.9038
+1.2_2C7_sorted	48349	4706	43643	0.9027
+1.2_2C8_sorted	48349	6035	42314	0.8752
+1.2_2D10_sorted	48349	4966	43383	0.8973
+1.2_2D11_sorted	48349	4937	43412	0.8979
+1.2_2D1_sorted	48349	3668	44681	0.9241
+1.2_2D2_sorted	48349	5018	43331	0.8962
+1.2_2D5_sorted	48349	6295	42054	0.8698
+1.2_2D7_sorted	48349	5616	42733	0.8838
+1.2_2D8_sorted	48349	5035	43314	0.8959
+1.2_2D9_sorted	48349	5356	42993	0.8892
+1.2_2E1_sorted	48349	4067	44282	0.9159
+1.2_2E2_sorted	48349	5569	42780	0.8848
+1.2_2E3_sorted	48349	5223	43126	0.8920
+1.2_2E4_sorted	48349	4907	43442	0.8985
+1.2_2E6_sorted	48349	5666	42683	0.8828
+1.2_2E8_sorted	48349	4216	44133	0.9128
+1.2_2E9_sorted	48349	5997	42352	0.8760
+1.2_2F10_sorted	48349	5128	43221	0.8939
+1.2_2F1_sorted	48349	4931	43418	0.8980
+1.2_2F2_sorted	48349	4945	43404	0.8977
+1.2_2F3_sorted	48349	5788	42561	0.8803
+1.2_2F5_sorted	48349	5755	42594	0.8810
+1.2_2F9_sorted	48349	5719	42630	0.8817
+1.2_2G10_sorted	48349	5470	42879	0.8869
+1.2_2G1_sorted	48349	4419	43930	0.9086
+1.2_2G3_sorted	48349	3741	44608	0.9226
+1.2_2G4_sorted	48349	6210	42139	0.8716
+1.2_2G5_sorted	48349	4952	43397	0.8976
+1.2_2G6_sorted	48349	5904	42445	0.8779
+1.2_2G7_sorted	48349	5718	42631	0.8817
+1.2_2G9_sorted	48349	6019	42330	0.8755
+1.2_2H1_sorted	48349	4783	43566	0.9011
+1.2_2H2_sorted	48349	5018	43331	0.8962
+1.2_2H4_sorted	48349	5261	43088	0.8912
+1.2_2H5_sorted	48349	4899	43450	0.8987
+1.2_2H8_sorted	48349	5381	42968	0.8887
+1.2_2H9_sorted	48349	4242	44107	0.9123
+3A_A11_sorted	48349	5928	42421	0.8774
+3A_A4_sorted	48349	5211	43138	0.8922
+3A_B11_sorted	48349	5593	42756	0.8843
+3A_B1_sorted	48349	6107	42242	0.8737
+3A_B2_sorted	48349	4957	43392	0.8975
+3A_B4_sorted	48349	5930	42419	0.8774
+3A_B7_sorted	48349	4581	43768	0.9053
+3A_C10_sorted	48349	5899	42450	0.8780
+3A_C11_sorted	48349	5708	42641	0.8819
+3A_C12_sorted	48349	5424	42925	0.8878
+3A_C1_sorted	48349	6206	42143	0.8716
+3A_C3_sorted	48349	5395	42954	0.8884
+3A_C4_sorted	48349	4719	43630	0.9024
+3A_C8_sorted	48349	5633	42716	0.8835
+3A_D1_sorted	48349	5161	43188	0.8933
+3A_D3_sorted	48349	4812	43537	0.9005
+3A_D4_sorted	48349	7200	41149	0.8511
+3A_D5_sorted	48349	4839	43510	0.8999
+3A_E12_sorted	48349	5907	42442	0.8778
+3A_E1_sorted	48349	5508	42841	0.8861
+3A_E3_sorted	48349	5262	43087	0.8912
+3A_E4_sorted	48349	5639	42710	0.8834
+3A_E5_sorted	48349	3755	44594	0.9223
+3A_F11_sorted	48349	5051	43298	0.8955
+3A_F12_sorted	48349	4829	43520	0.9001
+3A_F3_sorted	48349	6026	42323	0.8754
+3A_F4_sorted	48349	5544	42805	0.8853
+3A_F5_sorted	48349	3866	44483	0.9200
+3A_F7_sorted	48349	5778	42571	0.8805
+3A_G12_sorted	48349	5015	43334	0.8963
+3A_G2_sorted	48349	5397	42952	0.8884
+3A_G3_sorted	48349	6003	42346	0.8758
+3A_G5_sorted	48349	6406	41943	0.8675
+3A_G7_sorted	48349	5220	43129	0.8920
+3A_H10_sorted	48349	4035	44314	0.9165
+3A_H3_sorted	48349	4387	43962	0.9093
+1.2_1A2_sorted	48349	6404	41945	0.8675
+1.2_1A7_sorted	48349	5206	43143	0.8923
+1.2_1A9_sorted	48349	4769	43580	0.9014
+1.2_1B1_sorted	48349	5122	43227	0.8941
+1.2_1B2_sorted	48349	6478	41871	0.8660
+1.2_1B4_sorted	48349	4599	43750	0.9049
+1.2_1B5_sorted	48349	6034	42315	0.8752
+1.2_1B7_sorted	48349	4851	43498	0.8997
+1.2_1C11_sorted	48349	4741	43608	0.9019
+1.2_1C4_sorted	48349	4355	43994	0.9099
+1.2_1C6_sorted	48349	6344	42005	0.8688
+1.2_1C7_sorted	48349	4487	43862	0.9072
+1.2_1C9_sorted	48349	4692	43657	0.9030
+1.2_1D10_sorted	48349	4625	43724	0.9043
+1.2_1D1_sorted	48349	6147	42202	0.8729
+1.2_1D4_sorted	48349	5169	43180	0.8931
+1.2_1D5_sorted	48349	5319	43030	0.8900
+1.2_1D9_sorted	48349	5107	43242	0.8944
+1.2_1E11_sorted	48349	5849	42500	0.8790
+1.2_1E4_sorted	48349	4427	43922	0.9084
+1.2_1E5_sorted	48349	4641	43708	0.9040
+1.2_1E6_sorted	48349	4682	43667	0.9032
+1.2_1E7_sorted	48349	5864	42485	0.8787
+1.2_1F1_sorted	48349	5960	42389	0.8767
+1.2_1F3_sorted	48349	4583	43766	0.9052
+1.2_1F4_sorted	48349	5120	43229	0.8941
+1.2_1G1_sorted	48349	5256	43093	0.8913
+1.2_1G4_sorted	48349	4894	43455	0.8988
+1.2_1G7_sorted	48349	4465	43884	0.9077
+1.2_1H10_sorted	48349	4173	44176	0.9137
+1.2_1H4_sorted	48349	5231	43118	0.8918
+1.2_1H6_sorted	48349	5193	43156	0.8926
+1.2_2A10_sorted	48349	4959	43390	0.8974
+1.2_2A11_sorted	48349	5257	43092	0.8913
+1.2_2A3_sorted	48349	6042	42307	0.8750
+1.2_2A4_sorted	48349	5805	42544	0.8799
+1.2_2A5_sorted	48349	5984	42365	0.8762
+1.2_2A7_sorted	48349	4601	43748	0.9048
+1.2_2A8_sorted	48349	7044	41305	0.8543
+1.2_2B1_sorted	48349	5780	42569	0.8805
+1.2_2B5_sorted	48349	4411	43938	0.9088
+1.2_2C6_sorted	48349	4244	44105	0.9122
+1.2_2C9_sorted	48349	5303	43046	0.8903
+1.2_2D4_sorted	48349	5860	42489	0.8788
+1.2_2D6_sorted	48349	5795	42554	0.8801
+1.2_2E10_sorted	48349	5501	42848	0.8862
+1.2_2E11_sorted	48349	5451	42898	0.8873
+1.2_2E5_sorted	48349	4563	43786	0.9056
+1.2_2E7_sorted	48349	5085	43264	0.8948
+1.2_2F11_sorted	48349	6384	41965	0.8680
+1.2_2F4_sorted	48349	5469	42880	0.8869
+1.2_2F6_sorted	48349	5426	42923	0.8878
+1.2_2F7_sorted	48349	4987	43362	0.8969
+1.2_2F8_sorted	48349	5371	42978	0.8889
+1.2_2G2_sorted	48349	5412	42937	0.8881
+1.2_2G8_sorted	48349	5514	42835	0.8860
+1.2_2H10_sorted	48349	5281	43068	0.8908
+1.2_2H3_sorted	48349	5180	43169	0.8929
+1.2_2H6_sorted	48349	5325	43024	0.8899
+1.2_2H7_sorted	48349	4859	43490	0.8995
+3A_A12_sorted	48349	5483	42866	0.8866
+3A_A2_sorted	48349	4987	43362	0.8969
+3A_A3_sorted	48349	5742	42607	0.8812
+3A_A5_sorted	48349	5300	43049	0.8904
+3A_A6_sorted	48349	4875	43474	0.8992
+3A_A7_sorted	48349	6122	42227	0.8734
+3A_A8_sorted	48349	5966	42383	0.8766
+3A_A9_sorted	48349	5777	42572	0.8805
+3A_B10_sorted	48349	5524	42825	0.8857
+3A_B12_sorted	48349	4882	43467	0.8990
+3A_B3_sorted	48349	5381	42968	0.8887
+3A_B5_sorted	48349	5811	42538	0.8798
+3A_B6_sorted	48349	5540	42809	0.8854
+3A_B8_sorted	48349	6063	42286	0.8746
+3A_B9_sorted	48349	5315	43034	0.8901
+3A_C2_sorted	48349	5061	43288	0.8953
+3A_C5_sorted	48349	5976	42373	0.8764
+3A_C6_sorted	48349	5748	42601	0.8811
+3A_C7_sorted	48349	4520	43829	0.9065
+3A_C9_sorted	48349	6214	42135	0.8715
+3A_D10_sorted	48349	6315	42034	0.8694
+3A_D11_sorted	48349	7203	41146	0.8510
+3A_D12_sorted	48349	6284	42065	0.8700
+3A_D2_sorted	48349	6107	42242	0.8737
+3A_D6_sorted	48349	5191	43158	0.8926
+3A_D7_sorted	48349	5777	42572	0.8805
+3A_D8_sorted	48349	7006	41343	0.8551
+3A_D9_sorted	48349	4770	43579	0.9013
+3A_E10_sorted	48349	7212	41137	0.8508
+3A_E11_sorted	48349	6648	41701	0.8625
+3A_E2_sorted	48349	5308	43041	0.8902
+3A_E6_sorted	48349	6096	42253	0.8739
+3A_E8_sorted	48349	5883	42466	0.8783
+3A_E9_sorted	48349	5002	43347	0.8965
+3A_F10_sorted	48349	5868	42481	0.8786
+3A_F1_sorted	48349	4905	43444	0.8986
+3A_F2_sorted	48349	5611	42738	0.8839
+3A_F6_sorted	48349	6041	42308	0.8751
+3A_F8_sorted	48349	5238	43111	0.8917
+3A_F9_sorted	48349	4760	43589	0.9015
+3A_G10_sorted	48349	6177	42172	0.8722
+3A_G11_sorted	48349	5269	43080	0.8910
+3A_G1_sorted	48349	5391	42958	0.8885
+3A_G4_sorted	48349	4807	43542	0.9006
+3A_G6_sorted	48349	5532	42817	0.8856
+3A_G8_sorted	48349	5323	43026	0.8899
+3A_G9_sorted	48349	3995	44354	0.9174
+3A_H11_sorted	48349	4990	43359	0.8968
+3A_H1_sorted	48349	5790	42559	0.8802
+3A_H2_sorted	48349	6159	42190	0.8726
+3A_H5_sorted	48349	4235	44114	0.9124
+3A_H6_sorted	48349	4109	44240	0.9150
+3A_H7_sorted	48349	4532	43817	0.9063
+3A_H8_sorted	48349	4803	43546	0.9007
+3A_H9_sorted	48349	2955	45394	0.9389
+END loci_per_sample_prefilters
+
+BEGIN loci_per_sample
+# Number of loci per individual sample (after filtering).
+sample	n_loci	present_loci	missing_loci	frequency_missing
+1.2_1A10_sorted	4781	3862	919	0.1922
+1.2_1A11_sorted	4781	4522	259	0.0542
+1.2_1A1_sorted	4781	3793	988	0.2067
+1.2_1A3_sorted	4781	4250	531	0.1111
+1.2_1A4_sorted	4781	4363	418	0.0874
+1.2_1A5_sorted	4781	4418	363	0.0759
+1.2_1A8_sorted	4781	4002	779	0.1629
+1.2_1B10_sorted	4781	4283	498	0.1042
+1.2_1B11_sorted	4781	3651	1130	0.2364
+1.2_1B3_sorted	4781	3891	890	0.1862
+1.2_1B6_sorted	4781	4286	495	0.1035
+1.2_1B8_sorted	4781	4128	653	0.1366
+1.2_1B9_sorted	4781	4367	414	0.0866
+1.2_1C10_sorted	4781	4382	399	0.0835
+1.2_1C1_sorted	4781	4149	632	0.1322
+1.2_1C2_sorted	4781	4282	499	0.1044
+1.2_1C3_sorted	4781	4148	633	0.1324
+1.2_1C5_sorted	4781	4188	593	0.1240
+1.2_1C8_sorted	4781	4405	376	0.0786
+1.2_1D11_sorted	4781	4272	509	0.1065
+1.2_1D2_sorted	4781	3168	1613	0.3374
+1.2_1D3_sorted	4781	3800	981	0.2052
+1.2_1D6_sorted	4781	3880	901	0.1885
+1.2_1D7_sorted	4781	4322	459	0.0960
+1.2_1D8_sorted	4781	4377	404	0.0845
+1.2_1E10_sorted	4781	4102	679	0.1420
+1.2_1E1_sorted	4781	4166	615	0.1286
+1.2_1E2_sorted	4781	4191	590	0.1234
+1.2_1E3_sorted	4781	4242	539	0.1127
+1.2_1E8_sorted	4781	4312	469	0.0981
+1.2_1F10_sorted	4781	4053	728	0.1523
+1.2_1F2_sorted	4781	4433	348	0.0728
+1.2_1F5_sorted	4781	4136	645	0.1349
+1.2_1F7_sorted	4781	4279	502	0.1050
+1.2_1F8_sorted	4781	4077	704	0.1472
+1.2_1F9_sorted	4781	4339	442	0.0924
+1.2_1G10_sorted	4781	3937	844	0.1765
+1.2_1G2_sorted	4781	4226	555	0.1161
+1.2_1G5_sorted	4781	4129	652	0.1364
+1.2_1G6_sorted	4781	4400	381	0.0797
+1.2_1G8_sorted	4781	4388	393	0.0822
+1.2_1G9_sorted	4781	3946	835	0.1746
+1.2_1H1_sorted	4781	3845	936	0.1958
+1.2_1H2_sorted	4781	4339	442	0.0924
+1.2_1H3_sorted	4781	4276	505	0.1056
+1.2_1H5_sorted	4781	4176	605	0.1265
+1.2_1H7_sorted	4781	3818	963	0.2014
+1.2_1H8_sorted	4781	4195	586	0.1226
+1.2_1H9_sorted	4781	4029	752	0.1573
+1.2_2A1_sorted	4781	4033	748	0.1565
+1.2_2A2_sorted	4781	4240	541	0.1132
+1.2_2A6_sorted	4781	4203	578	0.1209
+1.2_2A9_sorted	4781	4188	593	0.1240
+1.2_2B10_sorted	4781	4421	360	0.0753
+1.2_2B11_sorted	4781	3534	1247	0.2608
+1.2_2B2_sorted	4781	4221	560	0.1171
+1.2_2B3_sorted	4781	4040	741	0.1550
+1.2_2B4_sorted	4781	4323	458	0.0958
+1.2_2B6_sorted	4781	4365	416	0.0870
+1.2_2B7_sorted	4781	4091	690	0.1443
+1.2_2B8_sorted	4781	3756	1025	0.2144
+1.2_2B9_sorted	4781	3488	1293	0.2704
+1.2_2C11_sorted	4781	4340	441	0.0922
+1.2_2C1_sorted	4781	4136	645	0.1349
+1.2_2C2_sorted	4781	3766	1015	0.2123
+1.2_2C3_sorted	4781	4373	408	0.0853
+1.2_2C4_sorted	4781	3805	976	0.2041
+1.2_2C5_sorted	4781	3844	937	0.1960
+1.2_2C7_sorted	4781	3855	926	0.1937
+1.2_2C8_sorted	4781	4376	405	0.0847
+1.2_2D10_sorted	4781	3845	936	0.1958
+1.2_2D11_sorted	4781	3877	904	0.1891
+1.2_2D1_sorted	4781	3191	1590	0.3326
+1.2_2D2_sorted	4781	4099	682	0.1426
+1.2_2D5_sorted	4781	4524	257	0.0538
+1.2_2D7_sorted	4781	4356	425	0.0889
+1.2_2D8_sorted	4781	4114	667	0.1395
+1.2_2D9_sorted	4781	4258	523	0.1094
+1.2_2E1_sorted	4781	3461	1320	0.2761
+1.2_2E2_sorted	4781	4259	522	0.1092
+1.2_2E3_sorted	4781	4137	644	0.1347
+1.2_2E4_sorted	4781	4058	723	0.1512
+1.2_2E6_sorted	4781	4345	436	0.0912
+1.2_2E8_sorted	4781	3592	1189	0.2487
+1.2_2E9_sorted	4781	4208	573	0.1198
+1.2_2F10_sorted	4781	4174	607	0.1270
+1.2_2F1_sorted	4781	4012	769	0.1608
+1.2_2F2_sorted	4781	4005	776	0.1623
+1.2_2F3_sorted	4781	4249	532	0.1113
+1.2_2F5_sorted	4781	4438	343	0.0717
+1.2_2F9_sorted	4781	4398	383	0.0801
+1.2_2G10_sorted	4781	4324	457	0.0956
+1.2_2G1_sorted	4781	3695	1086	0.2271
+1.2_2G3_sorted	4781	3041	1740	0.3639
+1.2_2G4_sorted	4781	4417	364	0.0761
+1.2_2G5_sorted	4781	4015	766	0.1602
+1.2_2G6_sorted	4781	4358	423	0.0885
+1.2_2G7_sorted	4781	4320	461	0.0964
+1.2_2G9_sorted	4781	4382	399	0.0835
+1.2_2H1_sorted	4781	3982	799	0.1671
+1.2_2H2_sorted	4781	4029	752	0.1573
+1.2_2H4_sorted	4781	4038	743	0.1554
+1.2_2H5_sorted	4781	3903	878	0.1836
+1.2_2H8_sorted	4781	4221	560	0.1171
+1.2_2H9_sorted	4781	3601	1180	0.2468
+3A_A11_sorted	4781	4393	388	0.0812
+3A_A4_sorted	4781	4062	719	0.1504
+3A_B11_sorted	4781	4252	529	0.1106
+3A_B1_sorted	4781	4434	347	0.0726
+3A_B2_sorted	4781	3782	999	0.2090
+3A_B4_sorted	4781	4450	331	0.0692
+3A_B7_sorted	4781	3553	1228	0.2569
+3A_C10_sorted	4781	4365	416	0.0870
+3A_C11_sorted	4781	4320	461	0.0964
+3A_C12_sorted	4781	4216	565	0.1182
+3A_C1_sorted	4781	4297	484	0.1012
+3A_C3_sorted	4781	4310	471	0.0985
+3A_C4_sorted	4781	3641	1140	0.2384
+3A_C8_sorted	4781	4173	608	0.1272
+3A_D1_sorted	4781	4185	596	0.1247
+3A_D3_sorted	4781	3902	879	0.1839
+3A_D4_sorted	4781	4504	277	0.0579
+3A_D5_sorted	4781	3972	809	0.1692
+3A_E12_sorted	4781	4238	543	0.1136
+3A_E1_sorted	4781	4236	545	0.1140
+3A_E3_sorted	4781	4229	552	0.1155
+3A_E4_sorted	4781	4339	442	0.0924
+3A_E5_sorted	4781	3393	1388	0.2903
+3A_F11_sorted	4781	4051	730	0.1527
+3A_F12_sorted	4781	3949	832	0.1740
+3A_F3_sorted	4781	4297	484	0.1012
+3A_F4_sorted	4781	4356	425	0.0889
+3A_F5_sorted	4781	3198	1583	0.3311
+3A_F7_sorted	4781	4338	443	0.0927
+3A_G12_sorted	4781	4060	721	0.1508
+3A_G2_sorted	4781	4213	568	0.1188
+3A_G3_sorted	4781	4244	537	0.1123
+3A_G5_sorted	4781	4508	273	0.0571
+3A_G7_sorted	4781	4179	602	0.1259
+3A_H10_sorted	4781	3300	1481	0.3098
+3A_H3_sorted	4781	3695	1086	0.2271
+1.2_1A2_sorted	4781	4494	287	0.0600
+1.2_1A7_sorted	4781	4114	667	0.1395
+1.2_1A9_sorted	4781	3916	865	0.1809
+1.2_1B1_sorted	4781	4092	689	0.1441
+1.2_1B2_sorted	4781	4478	303	0.0634
+1.2_1B4_sorted	4781	3506	1275	0.2667
+1.2_1B5_sorted	4781	4454	327	0.0684
+1.2_1B7_sorted	4781	3929	852	0.1782
+1.2_1C11_sorted	4781	3942	839	0.1755
+1.2_1C4_sorted	4781	3684	1097	0.2294
+1.2_1C6_sorted	4781	4487	294	0.0615
+1.2_1C7_sorted	4781	3709	1072	0.2242
+1.2_1C9_sorted	4781	3743	1038	0.2171
+1.2_1D10_sorted	4781	3704	1077	0.2253
+1.2_1D1_sorted	4781	4510	271	0.0567
+1.2_1D4_sorted	4781	4139	642	0.1343
+1.2_1D5_sorted	4781	4162	619	0.1295
+1.2_1D9_sorted	4781	3972	809	0.1692
+1.2_1E11_sorted	4781	4390	391	0.0818
+1.2_1E4_sorted	4781	3698	1083	0.2265
+1.2_1E5_sorted	4781	3899	882	0.1845
+1.2_1E6_sorted	4781	3699	1082	0.2263
+1.2_1E7_sorted	4781	4274	507	0.1060
+1.2_1F1_sorted	4781	4373	408	0.0853
+1.2_1F3_sorted	4781	3800	981	0.2052
+1.2_1F4_sorted	4781	4153	628	0.1314
+1.2_1G1_sorted	4781	4156	625	0.1307
+1.2_1G4_sorted	4781	4056	725	0.1516
+1.2_1G7_sorted	4781	3721	1060	0.2217
+1.2_1H10_sorted	4781	3486	1295	0.2709
+1.2_1H4_sorted	4781	4218	563	0.1178
+1.2_1H6_sorted	4781	4119	662	0.1385
+1.2_2A10_sorted	4781	3971	810	0.1694
+1.2_2A11_sorted	4781	3995	786	0.1644
+1.2_2A3_sorted	4781	4185	596	0.1247
+1.2_2A4_sorted	4781	4106	675	0.1412
+1.2_2A5_sorted	4781	4404	377	0.0789
+1.2_2A7_sorted	4781	3203	1578	0.3301
+1.2_2A8_sorted	4781	4486	295	0.0617
+1.2_2B1_sorted	4781	4272	509	0.1065
+1.2_2B5_sorted	4781	3638	1143	0.2391
+1.2_2C6_sorted	4781	3548	1233	0.2579
+1.2_2C9_sorted	4781	4284	497	0.1040
+1.2_2D4_sorted	4781	4271	510	0.1067
+1.2_2D6_sorted	4781	4364	417	0.0872
+1.2_2E10_sorted	4781	4166	615	0.1286
+1.2_2E11_sorted	4781	4243	538	0.1125
+1.2_2E5_sorted	4781	3720	1061	0.2219
+1.2_2E7_sorted	4781	4056	725	0.1516
+1.2_2F11_sorted	4781	4479	302	0.0632
+1.2_2F4_sorted	4781	4273	508	0.1063
+1.2_2F6_sorted	4781	4290	491	0.1027
+1.2_2F7_sorted	4781	4024	757	0.1583
+1.2_2F8_sorted	4781	4233	548	0.1146
+1.2_2G2_sorted	4781	4160	621	0.1299
+1.2_2G8_sorted	4781	4243	538	0.1125
+1.2_2H10_sorted	4781	4307	474	0.0991
+1.2_2H3_sorted	4781	4154	627	0.1311
+1.2_2H6_sorted	4781	4128	653	0.1366
+1.2_2H7_sorted	4781	4009	772	0.1615
+3A_A12_sorted	4781	4111	670	0.1401
+3A_A2_sorted	4781	4052	729	0.1525
+3A_A3_sorted	4781	4218	563	0.1178
+3A_A5_sorted	4781	4106	675	0.1412
+3A_A6_sorted	4781	3941	840	0.1757
+3A_A7_sorted	4781	4442	339	0.0709
+3A_A8_sorted	4781	4439	342	0.0715
+3A_A9_sorted	4781	4262	519	0.1086
+3A_B10_sorted	4781	4341	440	0.0920
+3A_B12_sorted	4781	3934	847	0.1772
+3A_B3_sorted	4781	4082	699	0.1462
+3A_B5_sorted	4781	4250	531	0.1111
+3A_B6_sorted	4781	4182	599	0.1253
+3A_B8_sorted	4781	4306	475	0.0994
+3A_B9_sorted	4781	4204	577	0.1207
+3A_C2_sorted	4781	4005	776	0.1623
+3A_C5_sorted	4781	4415	366	0.0766
+3A_C6_sorted	4781	4322	459	0.0960
+3A_C7_sorted	4781	3488	1293	0.2704
+3A_C9_sorted	4781	4435	346	0.0724
+3A_D10_sorted	4781	4468	313	0.0655
+3A_D11_sorted	4781	4563	218	0.0456
+3A_D12_sorted	4781	4478	303	0.0634
+3A_D2_sorted	4781	4502	279	0.0584
+3A_D6_sorted	4781	3821	960	0.2008
+3A_D7_sorted	4781	4321	460	0.0962
+3A_D8_sorted	4781	4547	234	0.0489
+3A_D9_sorted	4781	3854	927	0.1939
+3A_E10_sorted	4781	4526	255	0.0533
+3A_E11_sorted	4781	4308	473	0.0989
+3A_E2_sorted	4781	4117	664	0.1389
+3A_E6_sorted	4781	4482	299	0.0625
+3A_E8_sorted	4781	4382	399	0.0835
+3A_E9_sorted	4781	3982	799	0.1671
+3A_F10_sorted	4781	4384	397	0.0830
+3A_F1_sorted	4781	3994	787	0.1646
+3A_F2_sorted	4781	4409	372	0.0778
+3A_F6_sorted	4781	4433	348	0.0728
+3A_F8_sorted	4781	4214	567	0.1186
+3A_F9_sorted	4781	3839	942	0.1970
+3A_G10_sorted	4781	4469	312	0.0653
+3A_G11_sorted	4781	4158	623	0.1303
+3A_G1_sorted	4781	4257	524	0.1096
+3A_G4_sorted	4781	3885	896	0.1874
+3A_G6_sorted	4781	4252	529	0.1106
+3A_G8_sorted	4781	4151	630	0.1318
+3A_G9_sorted	4781	3374	1407	0.2943
+3A_H11_sorted	4781	4001	780	0.1631
+3A_H1_sorted	4781	4236	545	0.1140
+3A_H2_sorted	4781	4313	468	0.0979
+3A_H5_sorted	4781	3576	1205	0.2520
+3A_H6_sorted	4781	3377	1404	0.2937
+3A_H7_sorted	4781	3756	1025	0.2144
+3A_H8_sorted	4781	3830	951	0.1989
+3A_H9_sorted	4781	2506	2275	0.4758
+END loci_per_sample
+
+BEGIN variant_sites_per_sample
+# Number of variant sites per individual sample (after filtering).
+sample	n_sites	present_sites	missing_sites	frequency_missing
+1.2_1A10_sorted	2835	2452	383	0.1351
+1.2_1A11_sorted	2835	2544	291	0.1026
+1.2_1A1_sorted	2835	2091	744	0.2624
+1.2_1A3_sorted	2835	2554	281	0.0991
+1.2_1A4_sorted	2835	2422	413	0.1457
+1.2_1A5_sorted	2835	2420	415	0.1464
+1.2_1A8_sorted	2835	2399	436	0.1538
+1.2_1B10_sorted	2835	2054	781	0.2755
+1.2_1B11_sorted	2835	1882	953	0.3362
+1.2_1B3_sorted	2835	2089	746	0.2631
+1.2_1B6_sorted	2835	2487	348	0.1228
+1.2_1B8_sorted	2835	2379	456	0.1608
+1.2_1B9_sorted	2835	2492	343	0.1210
+1.2_1C10_sorted	2835	2373	462	0.1630
+1.2_1C1_sorted	2835	2339	496	0.1750
+1.2_1C2_sorted	2835	2447	388	0.1369
+1.2_1C3_sorted	2835	2292	543	0.1915
+1.2_1C5_sorted	2835	2131	704	0.2483
+1.2_1C8_sorted	2835	2475	360	0.1270
+1.2_1D11_sorted	2835	2279	556	0.1961
+1.2_1D2_sorted	2835	1848	987	0.3481
+1.2_1D3_sorted	2835	2151	684	0.2413
+1.2_1D6_sorted	2835	2194	641	0.2261
+1.2_1D7_sorted	2835	2486	349	0.1231
+1.2_1D8_sorted	2835	2520	315	0.1111
+1.2_1E10_sorted	2835	2372	463	0.1633
+1.2_1E1_sorted	2835	2291	544	0.1919
+1.2_1E2_sorted	2835	2186	649	0.2289
+1.2_1E3_sorted	2835	2196	639	0.2254
+1.2_1E8_sorted	2835	1730	1105	0.3898
+1.2_1F10_sorted	2835	2225	610	0.2152
+1.2_1F2_sorted	2835	2530	305	0.1076
+1.2_1F5_sorted	2835	2324	511	0.1802
+1.2_1F7_sorted	2835	2100	735	0.2593
+1.2_1F8_sorted	2835	2367	468	0.1651
+1.2_1F9_sorted	2835	2384	451	0.1591
+1.2_1G10_sorted	2835	2328	507	0.1788
+1.2_1G2_sorted	2835	2180	655	0.2310
+1.2_1G5_sorted	2835	2155	680	0.2399
+1.2_1G6_sorted	2835	2445	390	0.1376
+1.2_1G8_sorted	2835	2140	695	0.2451
+1.2_1G9_sorted	2835	2267	568	0.2004
+1.2_1H1_sorted	2835	2262	573	0.2021
+1.2_1H2_sorted	2835	2033	802	0.2829
+1.2_1H3_sorted	2835	2474	361	0.1273
+1.2_1H5_sorted	2835	2328	507	0.1788
+1.2_1H7_sorted	2835	2162	673	0.2374
+1.2_1H8_sorted	2835	2328	507	0.1788
+1.2_1H9_sorted	2835	2359	476	0.1679
+1.2_2A1_sorted	2835	1570	1265	0.4462
+1.2_2A2_sorted	2835	2481	354	0.1249
+1.2_2A6_sorted	2835	2328	507	0.1788
+1.2_2A9_sorted	2835	2304	531	0.1873
+1.2_2B10_sorted	2835	2518	317	0.1118
+1.2_2B11_sorted	2835	2039	796	0.2808
+1.2_2B2_sorted	2835	2090	745	0.2628
+1.2_2B3_sorted	2835	2331	504	0.1778
+1.2_2B4_sorted	2835	2421	414	0.1460
+1.2_2B6_sorted	2835	2483	352	0.1242
+1.2_2B7_sorted	2835	1660	1175	0.4145
+1.2_2B8_sorted	2835	2322	513	0.1810
+1.2_2B9_sorted	2835	1987	848	0.2991
+1.2_2C11_sorted	2835	2464	371	0.1309
+1.2_2C1_sorted	2835	2193	642	0.2265
+1.2_2C2_sorted	2835	2101	734	0.2589
+1.2_2C3_sorted	2835	2223	612	0.2159
+1.2_2C4_sorted	2835	2347	488	0.1721
+1.2_2C5_sorted	2835	2302	533	0.1880
+1.2_2C7_sorted	2835	1658	1177	0.4152
+1.2_2C8_sorted	2835	2404	431	0.1520
+1.2_2D10_sorted	2835	2312	523	0.1845
+1.2_2D11_sorted	2835	2266	569	0.2007
+1.2_2D1_sorted	2835	1846	989	0.3489
+1.2_2D2_sorted	2835	2379	456	0.1608
+1.2_2D5_sorted	2835	2531	304	0.1072
+1.2_2D7_sorted	2835	2359	476	0.1679
+1.2_2D8_sorted	2835	2386	449	0.1584
+1.2_2D9_sorted	2835	2388	447	0.1577
+1.2_2E1_sorted	2835	1849	986	0.3478
+1.2_2E2_sorted	2835	2236	599	0.2113
+1.2_2E3_sorted	2835	2472	363	0.1280
+1.2_2E4_sorted	2835	2434	401	0.1414
+1.2_2E6_sorted	2835	2474	361	0.1273
+1.2_2E8_sorted	2835	2278	557	0.1965
+1.2_2E9_sorted	2835	2312	523	0.1845
+1.2_2F10_sorted	2835	2412	423	0.1492
+1.2_2F1_sorted	2835	1906	929	0.3277
+1.2_2F2_sorted	2835	1912	923	0.3256
+1.2_2F3_sorted	2835	1820	1015	0.3580
+1.2_2F5_sorted	2835	2516	319	0.1125
+1.2_2F9_sorted	2835	2511	324	0.1143
+1.2_2G10_sorted	2835	2336	499	0.1760
+1.2_2G1_sorted	2835	1644	1191	0.4201
+1.2_2G3_sorted	2835	1684	1151	0.4060
+1.2_2G4_sorted	2835	2298	537	0.1894
+1.2_2G5_sorted	2835	2382	453	0.1598
+1.2_2G6_sorted	2835	2484	351	0.1238
+1.2_2G7_sorted	2835	2399	436	0.1538
+1.2_2G9_sorted	2835	2484	351	0.1238
+1.2_2H1_sorted	2835	1900	935	0.3298
+1.2_2H2_sorted	2835	2362	473	0.1668
+1.2_2H4_sorted	2835	2200	635	0.2240
+1.2_2H5_sorted	2835	2063	772	0.2723
+1.2_2H8_sorted	2835	2427	408	0.1439
+1.2_2H9_sorted	2835	1953	882	0.3111
+3A_A11_sorted	2835	2457	378	0.1333
+3A_A4_sorted	2835	2449	386	0.1362
+3A_B11_sorted	2835	2291	544	0.1919
+3A_B1_sorted	2835	2458	377	0.1330
+3A_B2_sorted	2835	1818	1017	0.3587
+3A_B4_sorted	2835	2524	311	0.1097
+3A_B7_sorted	2835	1880	955	0.3369
+3A_C10_sorted	2835	2002	833	0.2938
+3A_C11_sorted	2835	2533	302	0.1065
+3A_C12_sorted	2835	2052	783	0.2762
+3A_C1_sorted	2835	2498	337	0.1189
+3A_C3_sorted	2835	2464	371	0.1309
+3A_C4_sorted	2835	1640	1195	0.4215
+3A_C8_sorted	2835	1742	1093	0.3855
+3A_D1_sorted	2835	2120	715	0.2522
+3A_D3_sorted	2835	2144	691	0.2437
+3A_D4_sorted	2835	2516	319	0.1125
+3A_D5_sorted	2835	2381	454	0.1601
+3A_E12_sorted	2835	2548	287	0.1012
+3A_E1_sorted	2835	1774	1061	0.3743
+3A_E3_sorted	2835	2098	737	0.2600
+3A_E4_sorted	2835	2500	335	0.1182
+3A_E5_sorted	2835	1868	967	0.3411
+3A_F11_sorted	2835	2420	415	0.1464
+3A_F12_sorted	2835	1886	949	0.3347
+3A_F3_sorted	2835	2430	405	0.1429
+3A_F4_sorted	2835	2491	344	0.1213
+3A_F5_sorted	2835	1934	901	0.3178
+3A_F7_sorted	2835	2256	579	0.2042
+3A_G12_sorted	2835	2305	530	0.1869
+3A_G2_sorted	2835	2456	379	0.1337
+3A_G3_sorted	2835	1632	1203	0.4243
+3A_G5_sorted	2835	2516	319	0.1125
+3A_G7_sorted	2835	2510	325	0.1146
+3A_H10_sorted	2835	1496	1339	0.4723
+3A_H3_sorted	2835	2420	415	0.1464
+1.2_1A2_sorted	2835	2270	565	0.1993
+1.2_1A7_sorted	2835	2421	414	0.1460
+1.2_1A9_sorted	2835	2164	671	0.2367
+1.2_1B1_sorted	2835	2324	511	0.1802
+1.2_1B2_sorted	2835	2575	260	0.0917
+1.2_1B4_sorted	2835	2115	720	0.2540
+1.2_1B5_sorted	2835	2433	402	0.1418
+1.2_1B7_sorted	2835	1669	1166	0.4113
+1.2_1C11_sorted	2835	2059	776	0.2737
+1.2_1C4_sorted	2835	2269	566	0.1996
+1.2_1C6_sorted	2835	2509	326	0.1150
+1.2_1C7_sorted	2835	2151	684	0.2413
+1.2_1C9_sorted	2835	2000	835	0.2945
+1.2_1D10_sorted	2835	2029	806	0.2843
+1.2_1D1_sorted	2835	2563	272	0.0959
+1.2_1D4_sorted	2835	2274	561	0.1979
+1.2_1D5_sorted	2835	2355	480	0.1693
+1.2_1D9_sorted	2835	2154	681	0.2402
+1.2_1E11_sorted	2835	2391	444	0.1566
+1.2_1E4_sorted	2835	1855	980	0.3457
+1.2_1E5_sorted	2835	2377	458	0.1616
+1.2_1E6_sorted	2835	1563	1272	0.4487
+1.2_1E7_sorted	2835	2443	392	0.1383
+1.2_1F1_sorted	2835	2373	462	0.1630
+1.2_1F3_sorted	2835	1552	1283	0.4526
+1.2_1F4_sorted	2835	2373	462	0.1630
+1.2_1G1_sorted	2835	2014	821	0.2896
+1.2_1G4_sorted	2835	1708	1127	0.3975
+1.2_1G7_sorted	2835	2259	576	0.2032
+1.2_1H10_sorted	2835	1561	1274	0.4494
+1.2_1H4_sorted	2835	2172	663	0.2339
+1.2_1H6_sorted	2835	2147	688	0.2427
+1.2_2A10_sorted	2835	1877	958	0.3379
+1.2_2A11_sorted	2835	2297	538	0.1898
+1.2_2A3_sorted	2835	2007	828	0.2921
+1.2_2A4_sorted	2835	2387	448	0.1580
+1.2_2A5_sorted	2835	2458	377	0.1330
+1.2_2A7_sorted	2835	1688	1147	0.4046
+1.2_2A8_sorted	2835	2344	491	0.1732
+1.2_2B1_sorted	2835	2260	575	0.2028
+1.2_2B5_sorted	2835	2179	656	0.2314
+1.2_2C6_sorted	2835	1786	1049	0.3700
+1.2_2C9_sorted	2835	2233	602	0.2123
+1.2_2D4_sorted	2835	2502	333	0.1175
+1.2_2D6_sorted	2835	2469	366	0.1291
+1.2_2E10_sorted	2835	2490	345	0.1217
+1.2_2E11_sorted	2835	2377	458	0.1616
+1.2_2E5_sorted	2835	1436	1399	0.4935
+1.2_2E7_sorted	2835	2062	773	0.2727
+1.2_2F11_sorted	2835	2331	504	0.1778
+1.2_2F4_sorted	2835	2183	652	0.2300
+1.2_2F6_sorted	2835	2413	422	0.1489
+1.2_2F7_sorted	2835	2150	685	0.2416
+1.2_2F8_sorted	2835	2318	517	0.1824
+1.2_2G2_sorted	2835	2327	508	0.1792
+1.2_2G8_sorted	2835	2437	398	0.1404
+1.2_2H10_sorted	2835	2443	392	0.1383
+1.2_2H3_sorted	2835	2269	566	0.1996
+1.2_2H6_sorted	2835	1805	1030	0.3633
+1.2_2H7_sorted	2835	2213	622	0.2194
+3A_A12_sorted	2835	2412	423	0.1492
+3A_A2_sorted	2835	2452	383	0.1351
+3A_A3_sorted	2835	2386	449	0.1584
+3A_A5_sorted	2835	2472	363	0.1280
+3A_A6_sorted	2835	2389	446	0.1573
+3A_A7_sorted	2835	2503	332	0.1171
+3A_A8_sorted	2835	2565	270	0.0952
+3A_A9_sorted	2835	1711	1124	0.3965
+3A_B10_sorted	2835	2493	342	0.1206
+3A_B12_sorted	2835	2416	419	0.1478
+3A_B3_sorted	2835	1572	1263	0.4455
+3A_B5_sorted	2835	2473	362	0.1277
+3A_B6_sorted	2835	2506	329	0.1160
+3A_B8_sorted	2835	1641	1194	0.4212
+3A_B9_sorted	2835	1656	1179	0.4159
+3A_C2_sorted	2835	2148	687	0.2423
+3A_C5_sorted	2835	2485	350	0.1235
+3A_C6_sorted	2835	2460	375	0.1323
+3A_C7_sorted	2835	1811	1024	0.3612
+3A_C9_sorted	2835	1929	906	0.3196
+3A_D10_sorted	2835	2537	298	0.1051
+3A_D11_sorted	2835	2532	303	0.1069
+3A_D12_sorted	2835	2547	288	0.1016
+3A_D2_sorted	2835	2481	354	0.1249
+3A_D6_sorted	2835	1956	879	0.3101
+3A_D7_sorted	2835	2471	364	0.1284
+3A_D8_sorted	2835	2549	286	0.1009
+3A_D9_sorted	2835	2379	456	0.1608
+3A_E10_sorted	2835	2581	254	0.0896
+3A_E11_sorted	2835	2486	349	0.1231
+3A_E2_sorted	2835	2212	623	0.2198
+3A_E6_sorted	2835	2496	339	0.1196
+3A_E8_sorted	2835	2148	687	0.2423
+3A_E9_sorted	2835	1355	1480	0.5220
+3A_F10_sorted	2835	2474	361	0.1273
+3A_F1_sorted	2835	2414	421	0.1485
+3A_F2_sorted	2835	2549	286	0.1009
+3A_F6_sorted	2835	2360	475	0.1675
+3A_F8_sorted	2835	2478	357	0.1259
+3A_F9_sorted	2835	1412	1423	0.5019
+3A_G10_sorted	2835	2509	326	0.1150
+3A_G11_sorted	2835	2534	301	0.1062
+3A_G1_sorted	2835	2378	457	0.1612
+3A_G4_sorted	2835	2349	486	0.1714
+3A_G6_sorted	2835	1913	922	0.3252
+3A_G8_sorted	2835	2527	308	0.1086
+3A_G9_sorted	2835	1819	1016	0.3584
+3A_H11_sorted	2835	1851	984	0.3471
+3A_H1_sorted	2835	1954	881	0.3108
+3A_H2_sorted	2835	2426	409	0.1443
+3A_H5_sorted	2835	2361	474	0.1672
+3A_H6_sorted	2835	2210	625	0.2205
+3A_H7_sorted	2835	2409	426	0.1503
+3A_H8_sorted	2835	2436	399	0.1407
+3A_H9_sorted	2835	1625	1210	0.4268
+END variant_sites_per_sample
