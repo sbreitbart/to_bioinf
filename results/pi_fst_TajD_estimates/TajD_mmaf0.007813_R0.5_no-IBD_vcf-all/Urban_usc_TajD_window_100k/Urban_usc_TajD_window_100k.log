@@ -1,0 +1,14 @@
+
+VCFtools - 0.1.16
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /home/breitba1/scratch/temp_step10/Urban_usc_pi_vcf-all/urban_populations.recode.vcf
+	--out Urban_usc_TajD_window_100k
+	--TajimaD 100000
+
+After filtering, kept 141 out of 141 Individuals
+Outputting Tajima's D Statistic...
+	TajimaD: Only using bialleleic sites.
+After filtering, kept 352769 out of a possible 352769 Sites
+Run Time = 0.00 seconds
