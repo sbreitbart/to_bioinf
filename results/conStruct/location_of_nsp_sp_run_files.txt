@@ -1,1 +1,1 @@
-On 8/2/2023, I transferred the main conStruct files (data from testing k = 1:5 with spatial and non-spatial models) to the Toshiba hard drive. Took up too much space (~15 GB).
+On 8/2/2023, I transferred the main conStruct files (data from testing k = 1:5 with spatial and non-spatial models) to an external Toshiba hard drive as the data took up too much space (~15 GB).
