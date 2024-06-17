@@ -282,15 +282,20 @@ pi_dist_pred <- ggeffects::ggpredict(pi_dist,
 
 pi_dist_pred_plot <- plot(pi_dist_pred, 
      add.data = F) +
-  geom_ribbon(aes(x = x,
+  # add raw data
+  geom_point(data = pi_data,
+             aes(x = City_dist,
+                 y = pi)) +
+    geom_ribbon(aes(x = x,
                   ymin = conf.low,
                   ymax = conf.high),
               # fill = "#66a182",
                alpha = 0.1
               ) +
-  xlab("Distance to the City Center (km)") +
+  xlab("Distance from the City Center (km)") +
   ylab("π") +
-  ylim(0.00067, 0.00082) +
+  scale_y_continuous(label = scales::comma,
+                     limits = c(0.0006, 0.0009)) +
   labs(title = "") +
   theme_pubr() +
   labs_pubr() 
@@ -306,6 +311,10 @@ pi_usc_pred <- ggeffects::ggpredict(pi_usc,
 
 pi_usc_pred_plot <- plot(pi_usc_pred, 
      add.data = F) +
+    # add raw data
+  geom_point(data = pi_data,
+             aes(x = urb_score,
+                 y = pi)) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
                   ymax = conf.high),
@@ -314,8 +323,8 @@ pi_usc_pred_plot <- plot(pi_usc_pred,
               ) +
   xlab("Urbanization Score") +
   ylab("π") +
-  ylim(0.00067, 0.00082) +
-  labs(title = "") +
+  scale_y_continuous(label = scales::comma,
+                     limits = c(0.0006, 0.0009)) +  labs(title = "") +
   xlim(4, -4) +
   theme_pubr() +
   labs_pubr() 

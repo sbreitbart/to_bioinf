@@ -260,18 +260,21 @@ fis_dist_pred <- ggeffects::ggpredict(fis_dist,
 
 fis_dist_pred_plot <- plot(fis_dist_pred, 
      add.data = F) +
-  # geom_point(data = diversity_all_sites,
-  #            aes(x = City_dist,
-  #                y = fis)) +
+  # add raw data
+  geom_point(data = diversity_all_sites %>%
+             dplyr::filter(fis != 0),
+             aes(x = City_dist,
+                 y = fis)) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
                   ymax = conf.high),
               # fill = "#66a182",
                alpha = 0.1
               ) +
-  xlab("Distance to the City Center (km)") +
+  xlab("Distance from the City Center (km)") +
   ylab(expression(F[IS])) +
-  ylim(0, 0.06) +
+  scale_y_continuous(label = scales::comma,
+                     limits = c(-0.015, 0.1)) + 
   labs(title = "") +
   theme_pubr() +
   labs_pubr() 
@@ -287,6 +290,11 @@ fis_usc_pred <- ggeffects::ggpredict(fis_usc,
  
 fis_usc_pred_plot <- plot(fis_usc_pred, 
      add.data = F) +
+    # add raw data
+  geom_point(data = diversity_all_sites %>%
+             dplyr::filter(fis != 0),
+             aes(x = urb_score,
+                 y = fis)) +
   geom_ribbon(aes(x = x,
                   ymin = conf.low,
                   ymax = conf.high),
@@ -295,8 +303,8 @@ fis_usc_pred_plot <- plot(fis_usc_pred,
               ) +
   xlab("Urbanization Score") +
   ylab(expression(F[IS])) +
-  ylim(0, 0.06) +
-  labs(title = "") +
+  scale_y_continuous(label = scales::comma,
+                     limits = c(-0.015, 0.1)) +   labs(title = "") +
   theme_pubr() +
   labs_pubr() +
   xlim(4, -4)
