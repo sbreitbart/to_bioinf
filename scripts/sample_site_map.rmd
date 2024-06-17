@@ -85,7 +85,7 @@ my_tiles = get_tiles(sites,
 # basemap
 tm_shape(my_tiles,
          raster.downsample = TRUE ) +
-  tm_rgb(alpha = 0.6) + 
+  tm_rgb(alpha = 0.8) + 
   tm_grid(lines = F,
           x = c(-80.5, -80, -79.5, -79, -78.5 )) +
   # sample sites
@@ -112,11 +112,18 @@ tm_shape(my_tiles,
             legend.title.size = 0.95,
             inner.margins = c(0.0, 0.0, 0.0, 0.0),
             legend.bg.color = "white",
-          legend.bg.alpha = 0.5) +
+          legend.bg.alpha = 0.4) +
   tm_compass(type = "4star",
              size = 1, 
              position = c("left", "top")) +
-  tm_scale_bar(position = c(0.3, -0.03)) 
+  tm_scale_bar(position = c(0,-0.03),
+              # position = c(0.3, -0.03),
+               text.color = "black",
+               bg.color = "white",
+               bg.alpha = 0.4#,
+             #  bg.alpha = 0,
+             #  text.size = 1
+             ) 
 
 
 # Export
@@ -132,7 +139,7 @@ tmap_mode("plot")
 # basemap
 tm_shape(my_tiles,
          raster.downsample = TRUE ) +
-  tm_rgb(alpha = 0.6) + 
+  tm_rgb(alpha = 0.8) + 
   tm_grid(lines = F,
           x = c(-80.5, -80, -79.5, -79, -78.5 )) +
   # sample sites
@@ -159,12 +166,18 @@ tm_shape(my_tiles,
             legend.title.size = 0.95,
             inner.margins = c(0.0, 0.0, 0.0, 0.0),
             legend.bg.color = "white",
-          legend.bg.alpha = 0.5) +
+          legend.bg.alpha = 0.4) +
   tm_compass(type = "4star",
              size = 1, 
              position = c("left", "top")) +
-  tm_scale_bar(position = c(0.3, -0.03)) 
-
+  tm_scale_bar(position = c(0,-0.03),
+              # position = c(0.3, -0.03),
+               text.color = "black",
+               bg.color = "white",
+               bg.alpha = 0.4#,
+             #  bg.alpha = 0,
+             #  text.size = 1
+             ) 
 
 
 # Export
@@ -177,7 +190,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/pops_urb_rur_ba
 # basemap
 tm_shape(my_tiles,
          raster.downsample = TRUE ) +
-  tm_rgb(alpha = 0.6) + 
+  tm_rgb(alpha = 0.8) + 
   tm_grid(lines = F,
           x = c(-80.5, -80, -79.5, -79, -78.5 )) +
   # sample sites
@@ -202,12 +215,18 @@ tm_shape(my_tiles,
             legend.height = 0.45,
             inner.margins = c(0.0, 0.0, 0.0, 0.0),
             legend.bg.color = "white",
-          legend.bg.alpha = 0.5) +
+          legend.bg.alpha = 0.4) +
   tm_compass(type = "4star",
              size = 1, 
              position = c("left", "top")) +
-  tm_scale_bar(position = c(0.3, -0.03)) 
-
+  tm_scale_bar(position = c(0,-0.03),
+              # position = c(0.3, -0.03),
+               text.color = "black",
+               bg.color = "white",
+               bg.alpha = 0.4#,
+             #  bg.alpha = 0,
+             #  text.size = 1
+             ) 
 
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_citydist.pdf"),
@@ -220,7 +239,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/sample_site_map/gta_sampling_ci
 # basemap
 tm_shape(my_tiles,
          raster.downsample = TRUE ) +
-  tm_rgb(alpha = 0.6) + 
+  tm_rgb(alpha = 0.8) + 
   tm_grid(lines = F,
           x = c(-80.5, -80, -79.5, -79, -78.5 )) +
   # sample sites
@@ -243,12 +262,18 @@ tm_shape(my_tiles,
             legend.height = 0.45,
             inner.margins = c(0.0, 0.0, 0.0, 0.0),
             legend.bg.color = "white",
-          legend.bg.alpha = 0.5) +
+          legend.bg.alpha = 0.4) +
   tm_compass(type = "4star",
              size = 1, 
              position = c("left", "top")) +
-  tm_scale_bar(position = c(0.3, -0.03)) 
-
+  tm_scale_bar(position = c(0,-0.03),
+              # position = c(0.3, -0.03),
+               text.color = "black",
+               bg.color = "white",
+               bg.alpha = 0.4#,
+             #  bg.alpha = 0,
+             #  text.size = 1
+             ) 
 
 
 # Export
