@@ -22,6 +22,11 @@ urb <- read.csv(here("./clean_data/urb_metrics.csv"))
 full_popmap <- dplyr::left_join(pop_map3,
                          urb,
                          by = "patch_id" )
+
+# Export
+full_popmap %>%
+  dplyr::select(-"X") %>%
+  write.csv(here::here("./clean_data/pop_maps/pop_map3_full.csv"))
 ```
 
 ### Pop map 1
@@ -37,6 +42,11 @@ pop_map1 <- read.csv(
 full_popmap1 <- dplyr::left_join(pop_map1,
                          urb,
                          by = "patch_id" )
+
+# Export
+full_popmap1 %>%
+  dplyr::select(-"X") %>%
+  write.csv(here::here("./clean_data/pop_maps/pop_map1_full.csv"))
 ```
 
 # Export
