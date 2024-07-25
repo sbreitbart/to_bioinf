@@ -1,0 +1,309 @@
+---
+title: "Ne time series modeling"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+author: "Helene Wagner"    
+---
+
+# 1. Introduction
+
+## a) Objective
+
+The goal is to identify periods with distinct rates of change in the reconstructed time series of Ne for the GTA.
+
+## b) Mathematical model
+
+We will assume an exponential growth or decay model for Ne (i.e., contant percent gain or loss of Ne per year within a period), where r is the percent change from one year to the next (growth: r > 0, decay: r < 0):
+
+$Ne_t = Ne_0 * (1+r)^t$
+
+Linearize by taking the log on both sides:
+
+$log(Ne_t)= log(Ne_0) + t * log(1+r)$
+
+Thus, when plotting log(Ne) (on the y axis) against time t (on the x-axis), a period with constant rate of change would be characterized by a constant slope of b = log(1+r), where different periods would differ in their slope b due to a different rate of change, r. 
+
+## c) Piece-wise regression analysis
+
+Piece-wise regression identifies ranges of t with a constant slope and identifies the breakpoints between them. R package `segmented` requires the user to give an initial, rough estimate of the breakpoints (based on visual analysis), then optimizes the estimates so that the regression lines of two adjacent periods meet at the breakpoint between them. Note that this means that the user determines the number of periods to consider.
+
+[Muggeo, V.M.R. (2008). segmented: An R package to fit regression mModels with broken-line relationships. R News, 8, 20-25.](https://journal.r-project.org/articles/RN-2008-004/RN-2008-004.pdf)
+
+## d) Load packages
+
+```{r message=FALSE}
+library(dplyr)
+library(here)
+library(segmented)
+library(readxl)
+```
+
+## e) Data
+
+The data consist of yearly values for Ne reconstructed from the full sample of genotyped individuals of *Asclepias syriaca* through simulation backwards in time with the software Stairway Plot v2 (Liu and Fu 2020). 
+
+The following variables will be used:
+
+- Year: time in years before data collection (summer 2018). 
+- Ne_median: median of estimates across 200 replicate simulations to reconstruct historic Ne.
+
+## f) Import data
+
+```{r message=FALSE}
+Ne_data <- read.delim(here::here("./results/StairwayPlot/mu_1.8e-8/gen_time_2yr/full/full_mmaf0.007813_mut_rate_1.8e-8_2yrs.final.summary")) %>%
+  dplyr::select(-c(theta_per_site_median,
+                   theta_per_site_2.5.,
+                   theta_per_site_97.5.,
+                   n_estimation,
+                   mutation_per_site)) %>%
+  # remove duplicate rows
+  distinct(.keep_all = TRUE)
+names(Ne_data)
+```
+
+# 2. Linearize the relationship to visually identify breakpoints 
+
+```{r}
+plot(log(Ne_median) ~ year, data=Ne_data %>% filter(year < 40000), type="l")
+```
+
+*Interpretation*: Visual identification of breakpoints:
+
+- 30000
+- 8000
+- 2000 (suggested by model fitting)
+- need more resolution for the first 1000 years to identify further breakpoints
+
+```{r}
+breakpoints <- c(2000, 8000, 30000)
+plot(log(Ne_median) ~ year, data=Ne_data %>% filter(year < 1000), type="l")
+```
+
+*Interpretation*: Visual identification of additional breakpoints:
+
+- 700 (chosen a bit low to prevent issues later on)
+- 400
+- 200 (suggested by model fitting)
+- need more resolution for the first 100 years to identify further breakpoints
+
+
+```{r}
+breakpoints <- c(200, 400, 700, breakpoints)
+plot(log(Ne_median) ~ year, data=Ne_data %>% filter(year < 100), type="l")
+```
+
+*Interpretation*: Visual identification of additional breakpoints:
+
+- 40 (chosen a bit low to prevent issues later on)
+- 10
+- 2
+
+```{r}
+breakpoints <- c(2, 10, 40, breakpoints)
+plot(log(Ne_median) ~ year, data=Ne_data %>% filter(year < 5), type="l")
+```
+
+# 3. Fit piecewise regression model
+
+Prepare storage of models
+
+```{r}
+Models <- list()
+```
+
+
+## a) Range between 1 - 100 years
+
+Note: When running the model for the entire dataset with all breakpoints, there is an error message that the breakpoints are too close together. Therefore, the analysis will be performed at three temporal scales.
+
+Filter data for period: <100 years
+
+```{r}
+size = 100 # desired size of subsample
+period = c(1, 100)
+tmp  = Ne_data %>% filter(year < period[2], year > period[1]) 
+factor <- nrow(tmp) %/% size
+tmp  = tmp[c(1:nrow(tmp)) %% factor == 0,]
+dim(tmp)
+```
+
+
+```{r}
+Ne_median.lm <- lm(log(Ne_median) ~ year, data = tmp)
+Ne_median.seg <- segmented(Ne_median.lm, 
+                    seg.Z = ~ year, 
+                    psi = list(year = breakpoints[breakpoints > period[1] & breakpoints < period[2]]))
+Models[[1]] <- Ne_median.seg
+```
+
+```{r}
+summary(Ne_median.seg)
+```
+
+```{r}
+plot(Ne_median.seg)
+lines(tmp$year, log(tmp$Ne_median))
+```
+
+## b) Range between 100 - 2000 years
+
+Filter and resample data for period
+
+```{r}
+size = 100 # desired size of subsample
+period = c(max(Models[[1]]$psi[,2]), 2000)
+tmp  = Ne_data %>% filter(year < period[2], year > period[1]) 
+factor <- nrow(tmp) %/% size
+tmp  = tmp[c(1:nrow(tmp)) %% factor == 0,]
+dim(tmp)
+```
+
+```{r}
+Ne_median.lm <- lm(log(Ne_median) ~ year, data = tmp)
+Ne_median.seg <- segmented(Ne_median.lm, 
+                    seg.Z = ~ year, 
+                    psi = list(year = breakpoints[breakpoints > period[1] & breakpoints < period[2]]))
+
+Models[[2]] <- Ne_median.seg
+```
+
+```{r}
+summary(Ne_median.seg)
+```
+
+```{r}
+plot(Ne_median.seg)
+lines(tmp$year, log(tmp$Ne_median))
+```
+
+## c) Range between 2000 - 15000 years
+
+Filter and resample data for period
+
+```{r}
+tmax <- 15000
+period = c(max(Models[[2]]$psi[,2]), tmax)
+size = 100 # desired size of subsample
+tmp  = Ne_data %>% filter(year < period[2], year > period[1]) 
+factor <- nrow(tmp) %/% size
+tmp  = tmp[c(1:nrow(tmp)) %% factor == 0,]
+dim(tmp)
+```
+
+```{r}
+Ne_median.lm <- lm(log(Ne_median) ~ year, data = tmp)
+Ne_median.seg <- segmented(Ne_median.lm, 
+                    seg.Z = ~ year, 
+                    psi = list(year = breakpoints[breakpoints > period[1] & breakpoints < period[2]]))
+Models[[3]] <- Ne_median.seg
+```
+
+```{r}
+summary(Ne_median.seg)
+```
+
+```{r}
+plot(Ne_median.seg)
+lines(tmp$year, log(tmp$Ne_median))
+```
+
+
+# 4. Summarize results
+
+## a) Fitted breakpoints
+
+```{r}
+Breakpoints <- lapply(1:length(Models), function(i) 
+  data.frame(Model=i, Models[[i]]$psi))
+for(i in 1:length(Breakpoints)) 
+{
+  row.names(Breakpoints[[i]]) <- paste("Model", i, "psi", 1:nrow(Breakpoints[[i]]))
+}
+Breakpoints <- data.frame(Reduce(rbind, Breakpoints))
+Breakpoints$Initial <- breakpoints[breakpoints < tmax]
+
+Breakpoints
+
+```
+
+## b) Estimated rates of change
+
+```{r}
+Rates <- lapply(1:length(Models), function(i) slope(Models[[i]])$year)
+for(i in 1:length(Rates)) 
+{
+  row.names(Rates[[i]]) <- paste("Model", i, row.names(Rates[[i]]))
+  if(i < length(Rates)) {Rates[[i]] = Rates[[i]][1:(nrow(Rates[[i]])-1),]}
+}
+Rates <- data.frame(Reduce(rbind, Rates)) 
+Rates$lower.t <- c(1, signif(Breakpoints$'Est.',2))
+Rates$upper.t <- c(signif(Breakpoints$'Est.',2), tmax)
+Rates$rate.est <- -1 * (exp(Rates$Est) - 1)
+
+Rates   
+```
+
+# 5. Fit single model with all breakpoints
+
+## a) Combine resampled data
+
+```{r}
+tmp <- data.frame(Reduce(rbind, lapply(Models, 
+                   function(mod) mod$model[,c("year", "log(Ne_median)")])))
+names(tmp) <- c("year", "log(Ne_median)")
+tmp$Ne_median <- exp(tmp$"log(Ne_median)")
+dim(tmp)
+```
+
+## b) Fit piecewise regression model
+
+```{r}
+Ne_median.lm <- lm(log(Ne_median) ~ year, data = tmp)
+Ne_median.seg <- segmented(Ne_median.lm, 
+                    seg.Z = ~ year, 
+                    psi = list(year = Breakpoints$Est))
+
+```
+
+```{r}
+summary(Ne_median.seg)
+```
+
+
+```{r}
+plot(Ne_median.seg, xlim=c(0, tmax))
+lines(tmp$year, log(tmp$Ne_median))
+```
+
+```{r}
+plot(Ne_median.seg, xlim=c(0, 1000))
+lines(tmp$year, log(tmp$Ne_median))
+```
+
+## c) Convert years ago to calendar years and slope estimates to population growth rates forward in time
+
+```{r}
+Breakpoints_all <- data.frame(Ne_median.seg$psi) %>% mutate(Initial =  Breakpoints$Est)
+Breakpoints_all
+```
+
+```{r}
+Year0 <- 2019
+Rates_all <- data.frame(slope(Ne_median.seg)$year) 
+Rates_all$rate.est <- -1 * (exp(Rates_all$Est) - 1)
+Rates_all$lower.t <- c(1, Breakpoints_all$'Est.')
+Rates_all$upper.t <- c(Breakpoints_all$'Est.', tmax)
+Rates_all$rate.CI.95.l <-  -1 * (exp(Rates_all$CI.95...l) - 1)
+Rates_all$rate.CI.95.u <-  -1 * (exp(Rates_all$CI.95...u) - 1)
+Rates_all %>% mutate(rate.est =round(rate.est, 5), 
+                     rate.CI.95.l =round(rate.CI.95.l, 5),
+                     rate.CI.95.u =round(rate.CI.95.u, 5)) %>%
+              mutate(year.u = Year0 - round(lower.t), 
+                     year.l = Year0 - round(upper.t)) %>% 
+              dplyr::select( year.l, year.u, rate.est, rate.CI.95.l, rate.CI.95.u)
+```
+
+Here, each period is defined by its beginning (year.l) and end (year.u) in calendar years, and the estimate of the population growth rate (rate.est) is given with the lower and upper limits of a 95% confidence interval. 

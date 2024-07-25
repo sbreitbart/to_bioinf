@@ -23,3 +23,5 @@ This folder contains Stairway Plot output plots with 1 and 2 year generation tim
 'main_figs_1yr_var_mut': Four plots, each showing a model with a 1-year generation time and the following mutation rates: 1, 1.2, 1.8, and 2.6 x 10^-8 (panels A, B, C, D).
 
 'main_figs_2yr_var_mut': Four plots, each showing a model with a 2-year generation time and the following mutation rates: 1, 1.2, 1.8, and 2.6 x 10^-8 (panels A, B, C, D).
+
+'Ne_timeseries_modeling.html': The knitted breakpoint analysis R notebook (Ne_timeseries_modeling.Rmd, located in scripts).
