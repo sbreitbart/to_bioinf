@@ -274,13 +274,68 @@ summary(Ne_median.seg)
 
 
 ```{r}
+# first, show figures
+par(mfrow = c(1, 2))
+
 plot(Ne_median.seg, xlim=c(0, tmax))
 lines(tmp$year, log(tmp$Ne_median))
-```
 
-```{r}
 plot(Ne_median.seg, xlim=c(0, 1000))
 lines(tmp$year, log(tmp$Ne_median))
+
+
+# save figures
+png(filename = here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/breakpoint_figure.png"),
+    width = 10,
+    height = 4,
+    units = "in",
+    res = 500)
+
+par(mfrow = c(1, 2))
+
+# entire plot
+plot(Ne_median.seg,
+     xlim=c(0, tmax),
+     ylim = c(4, 12),
+     col = "brown1",
+     lwd = 2)
+lines(tmp$year,
+      log(tmp$Ne_median),
+     col = "black",
+     lwd = 1,
+     lty = 2)
+legend(x = "bottomright",       
+       legend = c("Linear model",
+                  "Piecewise model"),
+       col = c("black",
+               "brown1"),       
+       lwd = c(1,2),
+       lty = c(2,1),
+       bty = "n",
+       cex = 0.8)
+
+# inset of 1000 years
+plot(Ne_median.seg,
+     xlim=c(0, 1000),
+          ylim = c(4, 12),
+          col = "brown1",
+     lwd = 2)
+lines(tmp$year, 
+      log(tmp$Ne_median),
+           col = "black",
+     lwd = 1,
+     lty = 2)
+legend(x = "bottomright",       
+       legend = c("Linear model",
+                  "Piecewise model"),
+       col = c("black",
+               "brown1"),       
+       lwd = c(1,2),
+       lty = c(2,1),
+       bty = "n",
+       cex = 0.8)
+
+dev.off()
 ```
 
 ## c) Convert years ago to calendar years and slope estimates to population growth rates forward in time
