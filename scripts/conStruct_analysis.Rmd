@@ -378,9 +378,10 @@ sp <- rbind(sp_k1,
     ~str_remove(., "sp_"),
     starts_with("sp_")
   )
+```
 
-
-# Combine both data frames
+### Combine data frames
+```{r}
 sp_nsp <- bind_rows(sp, nsp) %>%
   dplyr::select("type", "k", 1:8) %>%
   pivot_longer(cols = starts_with("rep_"),
@@ -392,7 +393,37 @@ sp_nsp_summary <- sp_nsp %>%
   group_by(type, k) %>%
   summarize(mean_value = mean(value),
             std_error = sd(value) / sqrt(n()))
+```
 
+### Create and export plots, tables
+#### Table
+```{r}
+sp_nsp_summary %>%
+  as.data.frame() %>%
+  dplyr::mutate(across(where(is.numeric),
+                       round,
+                       3)) %>%
+  dplyr::mutate(type = replace(type,
+                              type != "nsp",
+                              "Spatial")) %>%
+  dplyr::mutate(type = replace(type,
+                              type == "nsp",
+                              "Non-spatial")) %>%
+  dplyr::rename(Model = type,
+                K = k,
+                'Predictive Accuracy' = mean_value,
+                SE = std_error) %>%
+  flextable::flextable() %>%
+  flextable::merge_v(j = 1) %>% 
+  flextable::hline(i = 5) %>%
+  flextable::align(j = c(2:4), align = "center", part = "all") %>%
+  fix_border_issues() %>%
+  autofit() %>%
+  flextable::save_as_docx(path = here::here("./Figures_Tables/conStruct/xvalidation.docx"))
+```
+
+#### Scatterplot
+```{r}
 # Plot the scatterplot with confidence intervals
 ggplot(sp_nsp_summary,
        aes(x = k,
