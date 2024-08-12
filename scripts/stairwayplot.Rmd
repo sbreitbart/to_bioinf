@@ -377,66 +377,18 @@ full_fig_2.6e8_2yrs <- read.delim(here::here("./results/StairwayPlot/mu_2.6e-8/g
 
 # Create table with Helene's breakpoint analysis
 Adding this here because this requires data to be imported first, and the following plots need this breakpoint table to be created first.
-## Create original output table
+## Import original output table
 ```{r}
-##        year.l year.u rate.est rate.CI.95.l rate.CI.95.u
-## slope1   2017   2018 -1.78375     -1.67883     -1.89273
-## slope2   2010   2017 -0.26525     -0.25766     -0.27288
-## slope3   1975   2010 -0.04738     -0.04599     -0.04876
-## slope4   1825   1975 -0.00726     -0.00701     -0.00752
-## slope5   1644   1825 -0.00330     -0.00299     -0.00360
-## slope6   1226   1644 -0.00068     -0.00055     -0.00082
-## slope7   -113   1226 -0.00010     -0.00008     -0.00013
-## slope8  -5762   -113  0.00002      0.00002      0.00001
-## slope9 -12981  -5762  0.00014      0.00014      0.00013
+breakpoint_table <- read.csv(here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/breakpoint_table.csv")) %>%
+  as.data.frame() %>%
+  dplyr::select(-1) %>%
+  dplyr::rename("Start" = 1,
+                "End" = 2,
+                "Rate" = 3,
+                "CI_Lower" = 4,
+                "CI_Upper" = 5) %>%
+  dplyr::mutate(
 
-breakpoint_table <- data.frame(
-  "Start" = as.numeric(c(2017,
-                       2010,
-                       1975,
-                       1825,
-                       1644,
-                       1226,
-                       -113,
-                       -5762,
-                       -12981)),
-  "End" = as.numeric(c(2018,
-                     2017,
-                     2010,
-                     1975,
-                     1825,
-                     1644,
-                     1226,
-                     -113,
-                     -5762)),
-  "Rate" = as.numeric(c(-1.78375,
-                      -0.26525,
-                      -0.04738,
-                      -0.00726,
-                      -0.00330,
-                      -0.00068,
-                      -0.00010,
-                      0.00002,
-                      0.00014)),
-  "CI_Lower" = as.numeric(c(-1.67883,
-                                -0.25766,
-                                -0.04599,
-                                -0.00701,
-                                -0.00299,
-                                -0.00055,
-                                -0.00008,
-                                0.00002,
-                                0.00014)),
-  "CI_Upper" = as.numeric(c(-1.89273,
-                                -0.27288,
-                                -0.04876,
-                                -0.00752,
-                                -0.00360,
-                                -0.00082,
-                                -0.00013,
-                                0.00001,
-                                0.00013)),
-  
   # and add historical interpretation
   "Historical_Interpretation" = as.character(c("Conservation groups (e.g., Suzuki Foundation) encourage Toronto residents to plant milkweed",
                                                "\"",

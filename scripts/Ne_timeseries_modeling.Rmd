@@ -353,12 +353,20 @@ Rates_all$lower.t <- c(1, Breakpoints_all$'Est.')
 Rates_all$upper.t <- c(Breakpoints_all$'Est.', tmax)
 Rates_all$rate.CI.95.l <-  -1 * (exp(Rates_all$CI.95...l) - 1)
 Rates_all$rate.CI.95.u <-  -1 * (exp(Rates_all$CI.95...u) - 1)
-Rates_all %>% mutate(rate.est =round(rate.est, 5), 
+full_table <- Rates_all %>% mutate(rate.est =round(rate.est, 5), 
                      rate.CI.95.l =round(rate.CI.95.l, 5),
                      rate.CI.95.u =round(rate.CI.95.u, 5)) %>%
               mutate(year.u = Year0 - round(lower.t), 
                      year.l = Year0 - round(upper.t)) %>% 
               dplyr::select( year.l, year.u, rate.est, rate.CI.95.l, rate.CI.95.u)
+full_table
 ```
 
-Here, each period is defined by its beginning (year.l) and end (year.u) in calendar years, and the estimate of the population growth rate (rate.est) is given with the lower and upper limits of a 95% confidence interval. 
+Here, each period is defined by its beginning (year.l) and end (year.u) in calendar years, and the estimate of the population growth rate (rate.est) is given with the lower and upper limits of a 95% confidence interval.
+
+```{r}
+# export table
+
+write.csv(full_table,
+          here::here("./Figures_Tables/Stairway_plot/mu_1.8e-8/gen_time_2yr/breakpoint_table.csv"))
+```
