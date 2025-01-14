@@ -538,7 +538,7 @@ export_corr_table_fig <- function(correlogram_object,
                linetype = "dotted") +
     scale_shape_manual(values = c(21,22)) +
     scale_fill_manual(values = c("white", "black" )) +
-    labs(x = "Class Index (km)",
+    labs(x = "Euclidean Distance (km)",
          y = expression(paste("Mantel ", italic(r)))) +
     ggpubr::theme_pubr(legend = "none")
   ggrepel::geom_text_repel(
