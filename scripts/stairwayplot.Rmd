@@ -562,7 +562,7 @@ dist_CIs <- ggplot(
                        ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
     xlab("Years ago") +
     ylab("Median Nₑ (million individuals)") +
     theme_bw() +
@@ -617,7 +617,7 @@ dist_CIs_inset <- ggplot(
   ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
   xlab("Years ago") +
   ylab("Median Nₑ (million individuals)") +
   theme_bw() +
@@ -711,7 +711,7 @@ usc_CIs <- ggplot(
   ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
   xlab("Years ago") +
   ylab("Median Nₑ (million individuals)") +
   theme_bw() +
@@ -765,7 +765,7 @@ usc_CIs_inset <- ggplot(
   ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
   xlab("Years ago") +
   ylab("Median Nₑ (million individuals)") +
   theme_bw() +
@@ -910,7 +910,7 @@ dist_CIs_2yr <- ggplot(
   ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
   xlab("Years ago") +
   ylab("Median Nₑ (million individuals)") +
   theme_bw() +
@@ -968,7 +968,7 @@ dist_CIs_inset_2yr <- ggplot(
   ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
   xlab("Years ago") +
   ylab("Median Nₑ (million individuals)") +
   theme_bw() +
@@ -1063,7 +1063,7 @@ usc_CIs_2yr <- ggplot(
   ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
   xlab("Years ago") +
   ylab("Median Nₑ (million individuals)") +
   theme_bw() +
@@ -1117,7 +1117,7 @@ usc_CIs_inset_2yr <- ggplot(
   ) +
   scale_color_manual(name = "Group", 
                      labels=c('Rural', 'Urban'),
-                     values=c('grey', 'black')) +
+                     values=c('darkgrey', 'black')) +
   xlab("Years ago") +
   ylab("Median Nₑ (million individuals)") +
   theme_bw() +
