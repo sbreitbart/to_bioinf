@@ -15,9 +15,13 @@ This folder contains population maps ("pop maps") used in Stacks `populations` s
 
 This folder contains site frequency spectrum data used for demographic modelling with Stairway Plot. Created in the "StairwayPlot.Rmd" script.
 
-### stacks_output
+<!-- ### stacks_output--> 
 
-This folder contains output from Stacks `refmap` and `population` scripts.
+<!-- This folder contains output from Stacks `refmap` and `population` scripts.--> 
+
+### stacks_output_vcfs
+
+This folder contains output from Stacks `population` scripts.
 
 ## File descriptions
 
